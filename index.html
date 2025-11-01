@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -9,14 +8,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
     /* -------------------------------------------------------------------------- */
-    /* --- CSS OPTIMISÉ (Couleurs, Polices, Dimensions) --- */
+    /* --- CSS OPTIMISÉ AVEC MODIFICATIONS DEMANDÉES --- */
     /* -------------------------------------------------------------------------- */
     
     /* Variables de Couleurs pour une meilleure gestion */
     :root {
       --color-primary: #4A90E2; /* Bleu Énergique */
       --color-secondary: #FFC107; /* Jaune Vif/Or pour l'accent */
-      --color-text-dark: #2C3E50; /* Texte Sombre (lisible) */
+      --color-accent: #FF4081; /* Nouvelle couleur pour le dégradé du bouton */
+      --color-text-dark: #1A2C3F; /* Texte plus foncé pour meilleure visibilité */
       --color-text-light: #ECF0F1; /* Texte Clair */
       --color-bg-light: #FFFFFF; /* Fond de Carte */
       --color-bg-gradient-1: #6DD5FA; /* Dégradé Fond 1 */
@@ -95,8 +95,8 @@
       text-transform: uppercase;
       letter-spacing: 2px; /* Augmenté l'espacement */
       text-shadow: 0 4px 10px rgba(0,0,0,0.3); /* Ombre plus marquée */
-      /* Nouveau dégradé pour le texte du titre */
-      background: linear-gradient(45deg, var(--color-text-light) 0%, var(--color-secondary) 100%);
+      /* Nouveau dégradé pour le texte du titre - PLUS FONCÉ */
+      background: linear-gradient(45deg, var(--color-text-light) 0%, var(--color-secondary) 70%, #E6B800 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -108,7 +108,7 @@
       to { filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.7)); } /* Accent sur le jaune secondaire */
     }
     
-    /* Conteneur pour l'icône de badge */
+    /* Conteneur pour l'icône de badge - PLUS COLORÉE */
     .badge-container {
       position: relative;
       margin-right: 15px;
@@ -117,11 +117,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255, 255, 255, 0.3);
+      background: linear-gradient(135deg, var(--color-secondary) 0%, #FF9800 100%);
       backdrop-filter: blur(10px);
       border-radius: 50%;
-      box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
-      animation: badgeRotate 8s linear infinite;
+      box-shadow: 0 4px 15px rgba(255, 193, 7, 0.5);
+      animation: badgeRotate 8s linear infinite, badgePulse 2s ease-in-out infinite;
       border: 1px solid rgba(255, 255, 255, 0.4);
     }
     
@@ -130,22 +130,38 @@
       to { transform: rotate(360deg); }
     }
     
+    @keyframes badgePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
     .badge {
-      color: var(--color-secondary);
+      color: white;
       font-size: 1.4rem; /* Légèrement réduit */
       z-index: 2;
       text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
     }
     
     .tagline{
-      color:var(--color-text-light);
-      font-size:0.95rem; /* Réduit la taille */
-      margin-bottom:10px;
-      font-weight:500;
+      color: var(--color-text-light);
+      font-size: 0.95rem; /* Réduit la taille */
+      margin-bottom: 10px;
+      font-weight: 600; /* Augmenté le poids pour plus de visibilité */
       letter-spacing: 0.8px;
       position: relative;
       display: inline-block;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      text-shadow: 0 2px 5px rgba(0,0,0,0.4); /* Ombre plus prononcée */
+      padding: 8px 20px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(5px);
+      border-radius: 20px;
+      animation: fadeIn 1.5s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     
     .tagline::after {
@@ -206,6 +222,11 @@
     .card-header p{
       color:#607d8b; /* Couleur de texte plus douce */
       font-size:0.9rem; /* Réduit la taille */
+      background: #F0F8FF;
+      padding: 8px 15px;
+      border-radius: 10px;
+      display: inline-block;
+      border-left: 3px solid var(--color-primary);
     }
     
     .form-group{
@@ -352,8 +373,8 @@
       display:block;
       width:100%;
       padding:15px; /* Ajusté le padding */
-      /* Nouveau dégradé pour le bouton */
-      background:linear-gradient(135deg,var(--color-primary) 0%,#79C3F8 100%);
+      /* NOUVEAU DÉGRADÉ avec deux couleurs pour le bouton */
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
       color:white;
       border:none;
       border-radius:10px;
@@ -383,6 +404,7 @@
     .btn:hover:not(:disabled){
       transform:translateY(-3px);
       box-shadow:0 8px 20px rgba(74, 144, 226, 0.4);
+      background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-primary) 100%);
     }
     
     .btn:hover:not(:disabled)::before {
@@ -427,6 +449,28 @@
       opacity: 0.9;
     }
     
+    .footer-links {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    
+    .footer-links a {
+      color: var(--color-text-light);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      padding: 5px 10px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .footer-links a:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: var(--color-secondary);
+    }
+    
     /* ... (Autres styles conservés ou ajustés pour la cohérence) ... */
 
     /* Styles de notification ajustés pour la cohérence des couleurs */
@@ -450,6 +494,10 @@
       .logo{font-size:1.8rem}
       .tagline{font-size:0.85rem}
       .card-header h2{font-size:1.4rem}
+      .footer-links {
+        flex-direction: column;
+        gap: 8px;
+      }
       /* ... (Autres media queries conservées) ... */
     }
     
@@ -585,7 +633,7 @@
     <div class="card">
       <div class="card-header">
         <h2>Créer un compte</h2>
-        <p>Rejoignez notre communauté d'élite dès aujourd'hui</p>
+        <p>Inscription gratuite - Rejoignez notre communauté d'élite dès aujourd'hui</p>
       </div>
 
       <div id="errorMessage" class="error-message"></div>
