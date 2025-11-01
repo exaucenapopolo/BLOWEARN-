@@ -20,6 +20,8 @@
       --color-bg-light: #FFFFFF; /* Fond de Carte */
       --color-bg-gradient-1: #6DD5FA; /* Dégradé Fond 1 */
       --color-bg-gradient-2: #FF7582; /* Dégradé Fond 2 */
+      --color-button-gradient-1: #FF8C00; /* Nouveau dégradé bouton - Orange */
+      --color-button-gradient-2: #FF2E00; /* Nouveau dégradé bouton - Rouge orangé */
     }
 
     /* Nouvelle Police principale (Montserrat) */
@@ -94,8 +96,8 @@
       text-transform: uppercase;
       letter-spacing: 2px; /* Augmenté l'espacement */
       text-shadow: 0 4px 10px rgba(0,0,0,0.3); /* Ombre plus marquée */
-      /* Nouveau dégradé pour le texte du titre */
-      background: linear-gradient(45deg, var(--color-text-light) 0%, var(--color-secondary) 100%);
+      /* Nouveau dégradé pour le texte du titre - PLUS FONCÉ */
+      background: linear-gradient(45deg, #FFFFFF 0%, #FFD700 30%, #FFA500 70%, #FF8C00 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -104,10 +106,10 @@
     
     @keyframes logoGlow {
       from { filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5)); }
-      to { filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.7)); } /* Accent sur le jaune secondaire */
+      to { filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8)); } /* Accent sur le jaune doré */
     }
     
-    /* Conteneur pour l'icône de badge */
+    /* Conteneur pour le logo */
     .badge-container {
       position: relative;
       margin-right: 15px;
@@ -122,6 +124,7 @@
       box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
       animation: badgeRotate 8s linear infinite;
       border: 1px solid rgba(255, 255, 255, 0.4);
+      overflow: hidden;
     }
     
     @keyframes badgeRotate {
@@ -129,11 +132,11 @@
       to { transform: rotate(360deg); }
     }
     
-    .badge {
-      color: var(--color-secondary);
-      font-size: 1.4rem; /* Légèrement réduit */
-      z-index: 2;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    .badge-logo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
     }
     
     .tagline{
@@ -184,7 +187,7 @@
       left: 0;
       right: 0;
       height: 5px; /* Barre de couleur plus épaisse */
-      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      background: linear-gradient(90deg, var(--color-button-gradient-1), var(--color-button-gradient-2));
       border-radius: 18px 18px 0 0;
     }
     
@@ -351,8 +354,8 @@
       display:block;
       width:100%;
       padding:15px; /* Ajusté le padding */
-      /* Nouveau dégradé pour le bouton */
-      background:linear-gradient(135deg,var(--color-primary) 0%,#79C3F8 100%);
+      /* NOUVEAU DÉGRADÉ POUR LE BOUTON - ORANGE À ROUGE */
+      background:linear-gradient(135deg, var(--color-button-gradient-1) 0%, var(--color-button-gradient-2) 100%);
       color:white;
       border:none;
       border-radius:10px;
@@ -361,7 +364,7 @@
       cursor:pointer;
       transition:all 0.3s ease;
       text-align:center;
-      box-shadow:0 4px 15px rgba(74, 144, 226, 0.3);
+      box-shadow:0 4px 15px rgba(255, 140, 0, 0.4);
       font-family: 'Poppins', sans-serif;
       letter-spacing: 1px;
       position: relative;
@@ -381,7 +384,7 @@
     
     .btn:hover:not(:disabled){
       transform:translateY(-3px);
-      box-shadow:0 8px 20px rgba(74, 144, 226, 0.4);
+      box-shadow:0 8px 20px rgba(255, 140, 0, 0.6);
     }
     
     .btn:hover:not(:disabled)::before {
@@ -424,6 +427,39 @@
       font-size:0.75rem; /* Réduit la taille de police */
       text-shadow: 0 1px 3px rgba(0,0,0,0.3);
       opacity: 0.9;
+      position: relative;
+      padding-top: 15px;
+    }
+    
+    .footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    }
+    
+    .footer-links {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+    }
+    
+    .footer-links a {
+      color: var(--color-text-light);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-size: 0.7rem;
+    }
+    
+    .footer-links a:hover {
+      color: var(--color-secondary);
+      text-decoration: underline;
     }
     
     /* ... (Autres styles conservés ou ajustés pour la cohérence) ... */
@@ -449,6 +485,10 @@
       .logo{font-size:1.8rem}
       .tagline{font-size:0.85rem}
       .card-header h2{font-size:1.4rem}
+      .footer-links {
+        flex-direction: column;
+        gap: 8px;
+      }
       /* ... (Autres media queries conservées) ... */
     }
     
@@ -574,7 +614,7 @@
     <div class="logo-header">
       <div class="logo">
         <div class="badge-container">
-          <i class="fas fa-crown badge"></i>
+          <img src="https://raw.githubusercontent.com/exaucenapopolo/BLOWEARN-/refs/heads/main/Image/0a11692a-e800-452f-af09-dba6bd0f6f9e.jpeg" class="badge-logo" alt="Logo BLOWEARN">
         </div>
         <span>BLOWEARN</span>
       </div>
