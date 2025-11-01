@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BLOWEARN AGENCIES - Connexion</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* -------------------------------------------------------------------------- */
+    /* --- CSS OPTIMISÉ (Couleurs, Polices, Dimensions) IDENTIQUE À L'INSCRIPTION --- */
+    /* -------------------------------------------------------------------------- */
+    
+    /* Variables de Couleurs pour une meilleure gestion */
+    :root {
+      --color-primary: #4A90E2; /* Bleu Énergique */
+      --color-secondary: #FFC107; /* Jaune Vif/Or pour l'accent */
+      --color-text-dark: #2C3E50; /* Texte Sombre (lisible) */
+      --color-text-light: #ECF0F1; /* Texte Clair */
+      --color-bg-light: #FFFFFF; /* Fond de Carte */
+      --color-bg-gradient-1: #6DD5FA; /* Dégradé Fond 1 */
+      --color-bg-gradient-2: #FF7582; /* Dégradé Fond 2 */
+    }
+
+    /* Nouvelle Police principale (Montserrat) */
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Montserrat', sans-serif}
+    
+    /* Nouveau fond avec dégradé doux et professionnel */
+    body {
+      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
+      color: var(--color-text-dark);
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    /* Effet de bulles animées en arrière-plan (ajusté pour un look plus subtil) */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 25%),
+        radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 90% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 25%);
+      animation: float 20s ease-in-out infinite;
+      z-index: -1;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-15px) scale(1.02); } /* Mouvement plus subtil */
+    }
+    
+    /* Réduction de la largeur du formulaire */
+    .container{
+      width:100%;
+      max-width:380px; /* Réduit à 380px */
+      margin:0 auto; 
+      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+    }
+    
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    
+    .logo-header{
+      text-align:center;
+      margin-bottom:30px; /* Augmenté l'espacement */
+      position: relative;
+    }
+    
+    /* Style pour le logo: Nouvelle police (Poppins) et dégradé plus soigné */
+    .logo{
+      font-size:2.2rem; /* Légèrement réduit */
+      font-weight:700;
+      color: var(--color-text-light);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin-bottom:10px;
+      position: relative;
+      font-family: 'Poppins', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px; /* Augmenté l'espacement */
+      text-shadow: 0 4px 10px rgba(0,0,0,0.3); /* Ombre plus marquée */
+      /* Nouveau dégradé pour le texte du titre */
+      background: linear-gradient(45deg, var(--color-text-light) 0%, var(--color-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: logoGlow 3s ease-in-out infinite alternate;
+    }
+    
+    @keyframes logoGlow {
+      from { filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5)); }
+      to { filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.7)); } /* Accent sur le jaune secondaire */
+    }
+    
+    /* Conteneur pour l'icône de badge */
+    .badge-container {
+      position: relative;
+      margin-right: 15px;
+      height: 45px; /* Légèrement réduit */
+      width: 45px; /* Légèrement réduit */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+      border-radius: 50%;
+      box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+      animation: badgeRotate 8s linear infinite;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    
+    @keyframes badgeRotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .badge {
+      color: var(--color-secondary);
+      font-size: 1.4rem; /* Légèrement réduit */
+      z-index: 2;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    
+    .tagline{
+      color:var(--color-text-light);
+      font-size:0.95rem; /* Réduit la taille */
+      margin-bottom:10px;
+      font-weight:500;
+      letter-spacing: 0.8px;
+      position: relative;
+      display: inline-block;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    
+    .tagline::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px; /* Réduit la taille de la ligne */
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--color-secondary), transparent);
+    }
+    
+    /* Carte du formulaire : Fond blanc pur avec effet de verre subtil (plus professionnel) */
+    .card{
+      background: rgba(255, 255, 255, 0.95); /* Plus de blanc */
+      backdrop-filter: blur(15px);
+      border-radius:18px; /* Rayon légèrement augmenté */
+      box-shadow:0 15px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.8); /* Ombre plus douce */
+      overflow:hidden;
+      padding:30px; /* Légèrement augmenté le padding */
+      transform: translateY(0);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      border: 1px solid rgba(255,255,255,0.7); /* Bordure plus claire */
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow:0 20px 45px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.8);
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px; /* Barre de couleur plus épaisse */
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: 18px 18px 0 0;
+    }
+    
+    .card-header{
+      text-align:center;
+      margin-bottom:25px;
+    }
+    
+    .card-header h2{
+      color:var(--color-text-dark);
+      font-size:1.6rem; /* Réduit légèrement */
+      font-weight:700;
+      margin-bottom:6px;
+      font-family: 'Poppins', sans-serif; /* Nouvelle police pour le titre du formulaire */
+      letter-spacing: 0.5px;
+    }
+    
+    .card-header p{
+      color:#607d8b; /* Couleur de texte plus douce */
+      font-size:0.9rem; /* Réduit la taille */
+    }
+    
+    .form-group{
+      margin-bottom:18px;
+      position: relative;
+    }
+    
+    label{
+      display:block;
+      margin-bottom:6px; /* Réduit l'espace */
+      font-weight:600;
+      color:var(--color-text-dark);
+      font-size:0.85rem; /* Réduit la taille de police */
+      transition: all 0.3s ease;
+    }
+    
+    .input-group{
+      display:flex;
+      align-items:center;
+      background: var(--color-bg-light); /* Fond de champ blanc */
+      border-radius:10px;
+      overflow:hidden;
+      border:1px solid #E0E0E0; /* Bordure plus nette */
+      transition:all 0.3s ease;
+      position: relative;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Ombre subtile */
+    }
+    
+    .input-group:focus-within{
+      border-color:var(--color-primary);
+      box-shadow:0 0 0 3px rgba(74, 144, 226, 0.2); /* Ombre de focus bleue */
+      background: var(--color-bg-light);
+    }
+    
+    .input-icon{
+      padding:0 15px;
+      color:#9E9E9E; /* Gris plus doux */
+      transition: all 0.3s ease;
+    }
+    
+    .input-group:focus-within .input-icon {
+      color: var(--color-primary);
+    }
+    
+    input,select{
+      width:100%;
+      padding:12px; /* Réduit le padding */
+      border:none;
+      background:transparent;
+      color:var(--color-text-dark);
+      font-size:0.9rem; /* Réduit la taille de police */
+      outline:none;
+      transition: all 0.3s ease;
+    }
+    
+    input::placeholder{
+      color:#B0BEC5;
+    }
+    
+    .checkbox-group{
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      margin:20px 0;
+      padding: 12px;
+      background: #F8F9FA; /* Fond plus clair */
+      border-radius: 10px;
+      border-left: 3px solid var(--color-primary); /* Ligne d'accent primaire */
+    }
+    
+    .checkbox-group input[type="checkbox"]{
+      width:18px; /* Légèrement réduit */
+      height:18px; /* Légèrement réduit */
+      margin-top:2px;
+      flex-shrink:0;
+      accent-color:var(--color-primary);
+      cursor:pointer;
+    }
+    
+    .terms-text{
+      font-size:0.8rem; /* Réduit la taille de police */
+      line-height:1.5;
+      color:#607d8b;
+      max-width:calc(100% - 32px);
+    }
+    
+    .terms-text a{
+      color:var(--color-primary);
+      text-decoration:none;
+      font-weight:600;
+      transition: all 0.2s ease;
+    }
+    
+    .terms-text a:hover{
+      text-decoration:underline;
+      color:var(--color-secondary);
+    }
+    
+    .btn{
+      display:block;
+      width:100%;
+      padding:15px; /* Ajusté le padding */
+      /* Nouveau dégradé pour le bouton */
+      background:linear-gradient(135deg,var(--color-primary) 0%,#79C3F8 100%);
+      color:white;
+      border:none;
+      border-radius:10px;
+      font-size:1rem; /* Réduit légèrement */
+      font-weight:700;
+      cursor:pointer;
+      transition:all 0.3s ease;
+      text-align:center;
+      box-shadow:0 4px 15px rgba(74, 144, 226, 0.3);
+      font-family: 'Poppins', sans-serif;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      transition: left 0.7s ease;
+    }
+    
+    .btn:hover:not(:disabled){
+      transform:translateY(-3px);
+      box-shadow:0 8px 20px rgba(74, 144, 226, 0.4);
+    }
+    
+    .btn:hover:not(:disabled)::before {
+      left: 100%;
+    }
+    
+    .btn:active:not(:disabled){
+      transform:translateY(0);
+    }
+    
+    .btn:disabled{
+      opacity:0.6;
+      cursor:not-allowed;
+      transform: none !important;
+    }
+    
+    .login-link{
+      text-align:center;
+      margin-top:20px;
+      font-size:0.85rem; /* Réduit la taille de police */
+      color:#607d8b;
+    }
+    
+    .login-link a{
+      color:var(--color-primary);
+      text-decoration:none;
+      font-weight:600;
+      transition: all 0.2s ease;
+    }
+    
+    .login-link a:hover{
+      text-decoration:underline;
+      color:var(--color-secondary);
+    }
+    
+    .links {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 15px 0;
+      font-size: 0.8rem;
+    }
+    
+    .remember-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .remember-wrap label {
+      margin: 0;
+      font-weight: normal;
+      color: #607d8b;
+    }
+    
+    .links a {
+      color: var(--color-primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    
+    .links a:hover {
+      text-decoration: underline;
+      color: var(--color-secondary);
+    }
+    
+    .footer{
+      margin-top:25px;
+      text-align:center;
+      color:var(--color-text-light);
+      font-size:0.75rem; /* Réduit la taille de police */
+      text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      opacity: 0.9;
+    }
+    
+    .footer-links {
+      margin-top: 10px;
+    }
+    
+    .footer-links a {
+      color: var(--color-text-light);
+      text-decoration: none;
+      margin: 0 8px;
+      transition: all 0.3s ease;
+    }
+    
+    .footer-links a:hover {
+      color: var(--color-secondary);
+      text-decoration: underline;
+    }
+    
+    /* Styles de notification ajustés pour la cohérence des couleurs */
+    .notification-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .notification {
+      padding: 16px 20px;
+      border-radius: 10px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      max-width: 380px;
+      animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .notification.success {
+      background: linear-gradient(135deg, rgba(76, 175, 80, 0.95) 0%, rgba(67, 160, 71, 0.95) 100%);
+      color: white;
+    }
+    
+    .notification.error {
+      background: linear-gradient(135deg, rgba(244, 67, 54, 0.95) 0%, rgba(211, 47, 47, 0.95) 100%);
+      color: white;
+    }
+    
+    .notification-icon {
+      margin-right: 12px;
+      font-size: 1.3rem;
+    }
+    
+    .notification-content {
+      flex: 1;
+    }
+    
+    .notification-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+      font-size: 1rem;
+    }
+    
+    .notification-message {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+    
+    .notification-close {
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      margin-left: 10px;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+      font-size: 1rem;
+    }
+    
+    .notification-close:hover {
+      opacity: 1;
+    }
+    
+    .notification-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      width: 100%;
+      transform-origin: left;
+      animation: progressBar 5s linear forwards;
+    }
+    
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes progressBar {
+      from {
+        transform: scaleX(1);
+      }
+      to {
+        transform: scaleX(0);
+      }
+    }
+    
+    .form-group {
+      animation: formFieldAppear 0.5s ease forwards;
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    
+    .form-group:nth-child(1) { animation-delay: 0.1s; }
+    .form-group:nth-child(2) { animation-delay: 0.15s; }
+    .form-group:nth-child(3) { animation-delay: 0.2s; }
+    
+    @keyframes formFieldAppear {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Media Queries pour la responsivité */
+    @media (max-width:576px){
+      .container {
+        max-width: 95%; /* Maintient une marge */
+      }
+      
+      .card{padding:25px 15px}
+      .logo{font-size:1.8rem}
+      .tagline{font-size:0.85rem}
+      .card-header h2{font-size:1.4rem}
+      
+      .links {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+      }
+      
+      .notification-container {
+        left: 20px;
+        right: 20px;
+      }
+      
+      .notification {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="notification-container" id="notificationContainer"></div>
+
+  <div class="container">
+    <div class="logo-header">
+      <div class="logo">
+        <div class="badge-container">
+          <i class="fas fa-crown badge"></i>
+        </div>
+        <span>BLOWEARN</span>
+      </div>
+      <div class="tagline">Ta liberté financière dépend de toi à présent.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>Connexion</h2>
+        <p>Accédez à votre compte</p>
+      </div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email">Adresse e-mail</label>
+          <div class="input-group">
+            <div class="input-icon"><i class="fas fa-envelope"></i></div>
+            <input type="email" id="email" name="email" required placeholder="blowearnagencies@gmail.com">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <div class="input-group">
+            <div class="input-icon"><i class="fas fa-lock"></i></div>
+            <input type="password" id="password" name="password" required placeholder="Votre mot de passe">
+          </div>
+        </div>
+
+        <div class="links">
+          <div class="remember-wrap">
+            <input type="checkbox" id="remember" name="remember">
+            <label for="remember">Se souvenir de moi</label>
+          </div>
+          <a href="forgot-password.html">Mot de passe oublié?</a>
+        </div>
+
+        <button type="submit" class="btn"><i class="fas fa-sign-in-alt"></i> Se connecter</button>
+      </form>
+
+      <div class="login-link">Vous n'avez pas de compte? <a href="index.html">Inscrivez-vous</a></div>
+    </div>
+
+    <div class="footer">
+      <div>© 2025 BLOWEARN AGENCIES. Tous droits réservés.</div>
+      <div class="footer-links">
+        <a href="terms.html">Conditions d'utilisation</a>
+        <a href="privacy.html">Politique de confidentialité</a>
+        <a href="support.html">Support: 681144638</a>
+        <a href="https://social-boost-horizon-new-sbh.vercel.app" target="_blank">Propulsé par SHB</a>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, setPersistence, browserSessionPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+    // --- CONFIG --- (même configuration que register.html)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCjGisjgbFc2ZE0BFgdhlUao8bCCeuKP1k",
+      authDomain: "cash-flowr.firebaseapp.com",
+      projectId: "cash-flowr",
+      storageBucket: "cash-flowr.firebasestorage.app",
+      messagingSenderId: "1091928501310",
+      appId: "1:1091928501310:web:4f4de306cde36f378ff56f",
+      measurementId: "G-5SF6VDLZCB"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Système de notification (toast) - identique à register.html
+    function showNotification(type, title, message, duration = 5000) {
+      const notificationContainer = document.getElementById('notificationContainer');
+      
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      
+      const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+      
+      notification.innerHTML = `
+        <i class="fas ${icon} notification-icon"></i>
+        <div class="notification-content">
+          <div class="notification-title">${title}</div>
+          <div class="notification-message">${message}</div>
+        </div>
+        <button class="notification-close">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="notification-progress"></div>
+      `;
+      
+      notificationContainer.appendChild(notification);
+      
+      // Fermer la notification après la durée spécifiée
+      const closeNotification = () => {
+        notification.style.animation = 'slideIn 0.3s ease reverse forwards';
+        setTimeout(() => {
+          if (notificationContainer.contains(notification)) notificationContainer.removeChild(notification);
+        }, 300);
+      };
+      
+      // Bouton de fermeture
+      const closeButton = notification.querySelector('.notification-close');
+      closeButton.addEventListener('click', closeNotification);
+      
+      // Barre de progression
+      const progressBar = notification.querySelector('.notification-progress');
+      progressBar.style.animationDuration = `${duration}ms`;
+      
+      // Fermeture automatique
+      setTimeout(closeNotification, duration);
+    }
+
+    function showError(message) {
+      showNotification('error', 'Erreur', message);
+    }
+    
+    function showSuccess(message) {
+      showNotification('success', 'Succès', message);
+    }
+
+    // -------------------------------
+    // Fonction pour vérifier le statut de paiement dans le document utilisateur
+    // et rediriger en conséquence.
+    // -------------------------------
+    async function checkPaymentStatusAndRedirect(uid) {
+      try {
+        // Lire le document utilisateur dans la collection "users"
+        // Cette lecture est autorisée par la règle 'allow read: if true;' pour /users/{userId}
+        const userDocRef = doc(db, 'users', uid);
+        const userSnapshot = await getDoc(userDocRef);
+
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.data();
+
+          // Vérifier le statut de paiement
+          if (userData.status === 'pending_payment') {
+            showSuccess('Connexion réussie ! Redirection vers la page de paiement...');
+            setTimeout(() => {
+              window.location.assign('paiement.html');
+            }, 2000);
+          } else {
+            showSuccess('Connexion réussie ! Redirection vers votre tableau de bord...');
+            setTimeout(() => {
+              window.location.assign('dashboard.html');
+            }, 2000);
+          }
+        } else {
+          showError('Document utilisateur introuvable. Merci de contacter le support.');
+        }
+      } catch (error) {
+        console.error('Erreur lors de la vérification du statut:', error);
+        showError('Erreur lors de la vérification de votre compte.');
+      }
+    }
+
+    // Gestion de la soumission du formulaire de connexion
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const rememberMe = document.getElementById('remember').checked;
+
+      // UI state
+      const submitBtn = this.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connexion...';
+      submitBtn.disabled = true;
+
+      try {
+        // Définir la persistance de la session
+        const persistence = rememberMe ? browserLocalPersistence : browserSessionPersistence;
+        await setPersistence(auth, persistence);
+        
+        // Se connecter directement avec l'email et le mot de passe
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        
+        // Vérifier le statut de paiement et rediriger en utilisant l'UID
+        await checkPaymentStatusAndRedirect(user.uid);
+        
+      } catch (error) {
+        console.error('Erreur de connexion:', error);
+        
+        // Messages d'erreur conviviaux
+        let message = "Une erreur s'est produite lors de la connexion.";
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-email') {
+          message = "Adresse email ou mot de passe incorrect.";
+        } else if (error.code === 'auth/wrong-password') {
+          message = "Adresse email ou mot de passe incorrect.";
+        } else if (error.code === 'auth/too-many-requests') {
+          message = "Trop de tentatives de connexion. Veuillez réessayer plus tard.";
+        } else {
+          message = error.message || message;
+        }
+        
+        showError(message);
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
