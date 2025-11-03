@@ -308,11 +308,11 @@
     }
 
     /* -------------------------------------------------------------------------- */
-    /* --- SIDEBAR (MENU) --- */
+    /* --- SIDEBAR (MENU) AMÉLIORÉ --- */
     /* -------------------------------------------------------------------------- */
     .sidebar {
       width: 280px;
-      background: rgba(255, 255, 255, 0.95);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 253, 0.95) 100%);
       backdrop-filter: blur(15px);
       border-right: 1px solid rgba(255,255,255,0.7);
       box-shadow: var(--shadow);
@@ -338,12 +338,14 @@
       color: var(--color-text-dark);
       font-size: 0.9rem;
       margin-bottom: 5px;
+      font-weight: 500;
     }
 
     .username {
       font-weight: 600;
       font-size: 1.2rem;
       color: var(--color-primary);
+      font-family: 'Poppins', sans-serif;
     }
 
     .menu-category {
@@ -353,6 +355,8 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
 
     .menu-item {
@@ -367,6 +371,7 @@
       position: relative;
       overflow: hidden;
       animation: fadeIn 0.5s ease-out;
+      font-family: 'Montserrat', sans-serif;
     }
 
     @keyframes fadeIn {
@@ -757,7 +762,7 @@
     }
 
     /* -------------------------------------------------------------------------- */
-    /* --- TROISIÈME GROUPE: CARTES DE GAINS (MOINS COLORÉES) --- */
+    /* --- TROISIÈME GROUPE: CARTES DE GAINS (NOUVELLES ANIMATIONS ET COULEURS) --- */
     /* -------------------------------------------------------------------------- */
     .gain-stats {
       display: grid;
@@ -767,7 +772,7 @@
     }
 
     .gain-stat-card {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(15px);
       border-radius: 15px;
       padding: 15px;
@@ -787,6 +792,26 @@
       to { transform: translateX(0); opacity: 1; }
     }
 
+    /* Nouvelle animation pour les cartes du troisième groupe : effet de pulsation douce */
+    .gain-stat-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+      border-radius: 15px;
+      opacity: 0;
+      animation: gentlePulse 4s ease-in-out infinite;
+      z-index: 1;
+    }
+
+    @keyframes gentlePulse {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+
     .gain-stat-card::before {
       content: '';
       position: absolute;
@@ -794,9 +819,18 @@
       left: 0;
       right: 0;
       height: 3px;
-      background: rgba(74, 144, 226, 0.3);
       border-radius: 15px 15px 0 0;
+      z-index: 2;
     }
+
+    /* Couleurs différentes pour chaque carte du troisième groupe */
+    #whatsapp-gains::before { background: linear-gradient(90deg, #25D366, #128C7E); }
+    #trivia-gains::before { background: linear-gradient(90deg, #9C27B0, #673AB7); }
+    #publicite-gains::before { background: linear-gradient(90deg, #FF9800, #FF5722); }
+    #tiktok-gains::before { background: linear-gradient(90deg, #010101, #69C9D0); }
+    #youtube-gains::before { background: linear-gradient(90deg, #FF0000, #CC0000); }
+    #instagram-gains::before { background: linear-gradient(90deg, #E4405F, #C13584); }
+    #depot-solde::before { background: linear-gradient(90deg, #4CAF50, #2E7D32); }
 
     .gain-stat-card:hover {
       transform: translateY(-5px) scale(1.03);
@@ -831,15 +865,23 @@
       width: 25px;
       height: 25px;
       border-radius: 8px;
-      background-color: rgba(74, 144, 226, 0.1);
-      color: var(--color-primary);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 0.9rem;
       z-index: 2;
       transition: transform 0.3s ease;
+      color: white;
     }
+
+    /* Couleurs d'icônes cohérentes avec les cartes */
+    #whatsapp-gains .gain-stat-icon { background-color: #25D366; }
+    #trivia-gains .gain-stat-icon { background-color: #9C27B0; }
+    #publicite-gains .gain-stat-icon { background-color: #FF9800; }
+    #tiktok-gains .gain-stat-icon { background-color: #010101; }
+    #youtube-gains .gain-stat-icon { background-color: #FF0000; }
+    #instagram-gains .gain-stat-icon { background-color: #E4405F; }
+    #depot-solde .gain-stat-icon { background-color: #4CAF50; }
 
     .gain-stat-card:hover .gain-stat-icon {
       transform: scale(1.2) rotate(15deg);
@@ -848,9 +890,17 @@
     .gain-stat-value {
       font-size: 1rem;
       font-weight: 700;
-      color: var(--color-primary);
       z-index: 2;
     }
+
+    /* Couleurs de texte cohérentes avec les cartes */
+    #whatsapp-gains .gain-stat-value { color: #25D366; }
+    #trivia-gains .gain-stat-value { color: #9C27B0; }
+    #publicite-gains .gain-stat-value { color: #FF9800; }
+    #tiktok-gains .gain-stat-value { color: #010101; }
+    #youtube-gains .gain-stat-value { color: #FF0000; }
+    #instagram-gains .gain-stat-value { color: #E4405F; }
+    #depot-solde .gain-stat-value { color: #4CAF50; }
 
     /* -------------------------------------------------------------------------- */
     /* --- SECTIONS SPÉCIALES (INFORMATIONS UTILISATEUR ET CALENDRIER RÉDUITS) --- */
@@ -1762,7 +1812,7 @@
         </div>
       </div>
       
-      <!-- Troisième groupe avec cartes moins colorées -->
+      <!-- Troisième groupe avec NOUVELLES ANIMATIONS ET COULEURS -->
       <div class="gain-stats">
         <div class="gain-stat-card" id="whatsapp-gains">
           <div class="gain-stat-header">
