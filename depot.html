@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BLOWEARN AGENCIES - Dépôt</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  
+  <style>
+    /* -------------------------------------------------------------------------- */
+    /* --- VARIABLES CSS COHÉRENTES AVEC DASHBOARD.HTML --- */
+    /* -------------------------------------------------------------------------- */
+    :root {
+      --color-primary: #4A90E2; /* Bleu Énergique */
+      --color-secondary: #FFC107; /* Jaune Vif/Or pour l'accent */
+      --color-text-dark: #2C3E50; /* Texte Sombre (lisible) */
+      --color-text-light: #ECF0F1; /* Texte Clair */
+      --color-bg-light: #FFFFFF; /* Fond de Carte */
+      --color-bg-gradient-1: #6DD5FA; /* Dégradé Fond 1 */
+      --color-bg-gradient-2: #FF7582; /* Dégradé Fond 2 */
+      --success-color: #4CD964;
+      --warning-color: #FF9500;
+      --danger-color: #FF3B30;
+      --shadow: 0 15px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.8);
+      --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- STYLES GÉNÉRAUX COHÉRENTS AVEC DASHBOARD.HTML --- */
+    /* -------------------------------------------------------------------------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+      transition: var(--transition);
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
+      color: var(--color-text-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+      visibility: hidden; 
+      opacity: 0;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    
+    body.loaded {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    /* Effet de bulles animées en arrière-plan (copié) */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 25%),
+        radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 90% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 25%);
+      animation: float 20s ease-in-out infinite;
+      z-index: -1;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-15px) scale(1.02); }
+    }
+    
+    /* Styles pour le mode sombre (pour la cohérence avec le JS) */
+    .dark-mode {
+        --color-text-dark: #ECF0F1;
+        --color-text-light: #2C3E50;
+        --color-bg-light: #34495E;
+        --shadow: 0 15px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(52, 73, 94, 0.8);
+    }
+    
+    /* -------------------------------------------------------------------------- */
+    /* --- LOADER COHÉRENT --- */
+    /* -------------------------------------------------------------------------- */
+    .loader-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .loader-container.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loader {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: conic-gradient(#0000 10%, var(--color-primary));
+      -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
+      animation: spin 1s infinite linear;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(1turn); }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- HEADER (COPIÉ) --- */
+    /* -------------------------------------------------------------------------- */
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .dark-mode .header {
+        background: rgba(43, 62, 80, 0.95);
+        border-bottom: 1px solid rgba(52, 73, 94, 0.7);
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--color-text-dark);
+      display: flex;
+      align-items: center;
+      font-family: 'Poppins', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      background: linear-gradient(45deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: logoGlow 3s ease-in-out infinite alternate;
+    }
+    
+    @keyframes logoGlow {
+      from { filter: drop-shadow(0 0 5px rgba(74, 144, 226, 0.5)); }
+      to { filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.7)); }
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .language-selector {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      position: relative;
+    }
+    .dark-mode .language-selector {
+        background: linear-gradient(135deg, #79C3F8 0%, var(--color-primary) 100%);
+        box-shadow: 0 4px 15px rgba(74, 144, 226, 0.5);
+    }
+
+    .language-dropdown, .profile-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      border-radius: 18px;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 150px;
+      z-index: 200;
+      transform-origin: top right;
+      animation: scaleIn 0.2s ease-out forwards;
+      border: 1px solid rgba(255,255,255,0.7);
+      margin-top: 5px;
+    }
+    .dark-mode .language-dropdown, .dark-mode .profile-dropdown {
+        background: rgba(43, 62, 80, 0.95);
+        border: 1px solid rgba(52, 73, 94, 0.7);
+    }
+
+    .language-dropdown.active, .profile-dropdown.active {
+      display: flex;
+    }
+    
+    @keyframes scaleIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    
+    .theme-toggle {
+      background-color: transparent;
+      border: none;
+      color: var(--color-text-dark);
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+    .dark-mode .theme-toggle:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .theme-toggle i {
+      font-size: 1.2rem;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .user-profile .avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background-color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border: 2px solid var(--color-secondary);
+      box-shadow: var(--shadow);
+    }
+
+    .profile-dropdown .theme-toggle {
+        width: 100%;
+        border-radius: 8px;
+        background-color: rgba(0, 0, 0, 0.05);
+        color: var(--color-text-dark);
+        justify-content: flex-start;
+        padding: 10px;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+        text-align: left;
+        gap: 10px;
+    }
+    .profile-dropdown .theme-toggle:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+    .dark-mode .profile-dropdown .theme-toggle {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    .dark-mode .profile-dropdown .theme-toggle:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .profile-dropdown .theme-toggle span {
+      flex-grow: 1;
+      text-align: left;
+    }
+    
+    /* Bouton hamburger */
+    .hamburger-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 30px;
+      height: 25px;
+      padding: 0;
+      order: 2;
+      display: none; /* Caché par défaut sur desktop */
+    }
+    
+    .hamburger-btn .bar {
+      width: 100%;
+      height: 3px;
+      background-color: var(--color-text-dark);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    
+    .hamburger-btn.open .bar:nth-child(2) { opacity: 0; }
+    .hamburger-btn.open .bar:nth-child(1) { transform: translateY(11px) rotate(45deg); }
+    .hamburger-btn.open .bar:nth-child(3) { transform: translateY(-11px) rotate(-45deg); }
+
+
+    /* -------------------------------------------------------------------------- */
+    /* --- STRUCTURE ET SIDEBAR (COPIÉ) --- */
+    /* -------------------------------------------------------------------------- */
+    .main-container {
+      display: flex;
+      flex: 1;
+    }
+
+    .sidebar {
+      width: 280px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.95) 100%);
+      backdrop-filter: blur(15px);
+      border-right: 1px solid rgba(255,255,255,0.7);
+      box-shadow: var(--shadow);
+      height: calc(100vh - 80px);
+      position: sticky;
+      top: 80px;
+      padding: 25px 0;
+      overflow-y: auto;
+      transition: transform 0.4s ease-in-out; 
+    }
+    .dark-mode .sidebar {
+        background: linear-gradient(135deg, rgba(43, 62, 80, 0.98) 0%, rgba(52, 73, 94, 0.95) 100%);
+        border-right: 1px solid rgba(52, 73, 94, 0.7);
+    }
+    
+    /* Style du menu (welcome, item, badge) - Copié */
+    .welcome-section { padding: 0 25px 25px; border-bottom: 1px solid rgba(0, 0, 0, 0.1); margin-bottom: 20px; }
+    .dark-mode .welcome-section { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+    .welcome-text { color: var(--color-text-dark); font-size: 0.9rem; margin-bottom: 5px; font-weight: 500; font-family: 'Quicksand', sans-serif; }
+    .username { font-weight: 600; font-size: 1.2rem; color: var(--color-primary); font-family: 'Quicksand', sans-serif; }
+    .menu-category { padding: 15px 25px 5px; font-size: 0.85rem; color: var(--color-text-dark); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; font-family: 'Quicksand', sans-serif; border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
+    .dark-mode .menu-category { border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+    .menu-item { padding: 12px 25px 12px 35px; display: flex; align-items: center; gap: 15px; color: var(--color-text-dark); text-decoration: none; font-weight: 500; border-left: 4px solid transparent; position: relative; overflow: hidden; animation: fadeIn 0.5s ease-out; font-family: 'Quicksand', sans-serif; }
+    .menu-item::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent); transition: all 0.5s ease; }
+    .menu-item:hover::before { left: 100%; }
+    .menu-item:hover, .menu-item.active { background-color: rgba(0, 0, 0, 0.05); border-left-color: var(--color-primary); color: var(--color-primary); }
+    .dark-mode .menu-item:hover, .dark-mode .menu-item.active { background-color: rgba(255, 255, 255, 0.1); }
+    .menu-item i { width: 20px; text-align: center; font-size: 1.1rem; transition: transform 0.3s ease; }
+    .menu-item:hover i { transform: scale(1.1) rotate(5deg); }
+    .menu-badge { position: absolute; right: 25px; font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2); animation: popIn 0.5s ease-out; }
+    .menu-badge.active { background-color: var(--success-color); color: white; }
+    .menu-badge.inactive { background-color: var(--danger-color); color: white; }
+
+
+    /* -------------------------------------------------------------------------- */
+    /* --- CONTENU PRINCIPAL COHÉRENT --- */
+    /* -------------------------------------------------------------------------- */
+    .content {
+      flex: 1;
+      padding: 30px;
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+      margin-bottom: 25px;
+      color: var(--color-text-dark);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .page-title i {
+      color: var(--color-primary);
+    }
+    
+    /* Overlay pour mobile */
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 90;
+      display: none;
+      transition: opacity 0.4s ease;
+      opacity: 0;
+    }
+    .sidebar-overlay.active {
+      display: block;
+      opacity: 1;
+    }
+
+
+    /* -------------------------------------------------------------------------- */
+    /* --- STYLES SPÉCIFIQUES DÉPÔT (AJOUTÉS POUR BEAUTÉ ET FONCTIONNALITÉ) --- */
+    /* -------------------------------------------------------------------------- */
+
+    .depot-container {
+        display: grid;
+        grid-template-columns: 2fr 1fr; /* Formulaire à gauche, Solde à droite */
+        gap: 30px;
+        margin-top: 20px;
+    }
+
+    .depot-card {
+        background: var(--color-bg-light);
+        border-radius: 18px;
+        padding: 30px;
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+    .dark-mode .depot-card {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .depot-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+    }
+
+    .depot-card h2 {
+        font-size: 1.6rem;
+        color: var(--color-primary);
+        margin-bottom: 25px;
+        font-weight: 700;
+        border-bottom: 2px solid rgba(74, 144, 226, 0.1);
+        padding-bottom: 10px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--color-text-dark);
+        font-family: 'Quicksand', sans-serif;
+    }
+
+    .form-input, .form-select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        font-size: 1rem;
+        color: var(--color-text-dark);
+        background-color: rgba(240, 245, 255, 0.7);
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        font-family: 'Montserrat', sans-serif;
+    }
+    .dark-mode .form-input, .dark-mode .form-select {
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background-color: rgba(68, 87, 106, 0.7);
+        color: var(--color-text-dark);
+    }
+
+    .form-input:focus, .form-select:focus {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        outline: none;
+        background-color: var(--color-bg-light);
+    }
+    .dark-mode .form-input:focus, .dark-mode .form-select:focus {
+        background-color: var(--color-bg-light);
+    }
+
+
+    .payment-methods {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-top: 15px;
+    }
+
+    .payment-method {
+        flex: 1;
+        min-width: 120px;
+        border: 2px solid rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        padding: 15px;
+        text-align: center;
+        cursor: pointer;
+        transition: var(--transition);
+        background-color: rgba(255, 255, 255, 0.8);
+        position: relative;
+        overflow: hidden;
+        min-height: 100px;
+    }
+    .dark-mode .payment-method {
+        background-color: rgba(68, 87, 106, 0.8);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .payment-method:hover {
+        border-color: var(--color-secondary);
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .payment-method.selected {
+        border-color: var(--color-primary);
+        background-color: rgba(74, 144, 226, 0.1);
+        box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.3);
+    }
+    .dark-mode .payment-method.selected {
+        background-color: rgba(74, 144, 226, 0.3);
+    }
+
+    .payment-method i {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        color: var(--color-text-dark);
+        transition: color 0.3s ease;
+    }
+    .payment-method.selected i {
+        color: var(--color-primary);
+    }
+
+    .payment-method p {
+        font-weight: 600;
+        color: var(--color-text-dark);
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(45deg, var(--color-primary) 0%, #79C3F8 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: var(--transition);
+        box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .submit-btn:hover {
+        background: linear-gradient(45deg, #79C3F8 0%, var(--color-primary) 100%);
+        transform: translateY(-3px) scale(1.01);
+        box-shadow: 0 12px 30px rgba(74, 144, 226, 0.5);
+    }
+
+    /* Solde Card (Réutilise les principes des cartes stats du dashboard) */
+    .solde-card-depot {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        border-radius: 18px;
+        padding: 25px;
+        box-shadow: var(--shadow);
+        color: white;
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .solde-card-depot h3 {
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+        font-weight: 500;
+        opacity: 0.8;
+    }
+
+    .solde-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+        font-family: 'Poppins', sans-serif;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .solde-tip {
+        font-size: 0.85rem;
+        opacity: 0.9;
+        padding-top: 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    /* Historique de dépôt */
+    .depot-history {
+        margin-top: 40px;
+        grid-column: 1 / -1; /* Prend toute la largeur sur la grille */
+    }
+
+    .history-card {
+        background: var(--color-bg-light);
+        border-radius: 18px;
+        padding: 30px;
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    .dark-mode .history-card {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+
+    .history-card h2 {
+        font-size: 1.6rem;
+        color: var(--color-text-dark);
+        margin-bottom: 20px;
+        font-weight: 700;
+    }
+
+    .history-table-container {
+        overflow-x: auto;
+    }
+
+    .history-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 10px;
+    }
+
+    .history-table th, .history-table td {
+        padding: 15px 20px;
+        text-align: left;
+        font-family: 'Quicksand', sans-serif;
+        color: var(--color-text-dark);
+    }
+
+    .history-table th {
+        background-color: rgba(74, 144, 226, 0.1);
+        color: var(--color-primary);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+    }
+    .dark-mode .history-table th {
+        background-color: rgba(74, 144, 226, 0.3);
+    }
+
+    .history-table tbody tr {
+        background-color: rgba(255, 255, 255, 0.7);
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    .dark-mode .history-table tbody tr {
+        background-color: rgba(68, 87, 106, 0.7);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    .history-table tr:hover td {
+        background-color: rgba(0, 0, 0, 0.03);
+    }
+    .dark-mode .history-table tr:hover td {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: white;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .status-success { background-color: var(--success-color); }
+    .status-pending { background-color: var(--warning-color); }
+    .status-failed { background-color: var(--danger-color); }
+
+
+    /* -------------------------------------------------------------------------- */
+    /* --- MEDIA QUERIES (COPIÉ) --- */
+    /* -------------------------------------------------------------------------- */
+    @media (max-width: 1200px) {
+      .sidebar {
+        width: 250px;
+      }
+      .content {
+        padding: 20px;
+      }
+      .header {
+        padding: 15px 20px;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 85%;
+        max-width: 320px;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: -100%;
+        z-index: 99;
+        transition: left 0.4s ease-in-out;
+        box-shadow: none; /* Supprime l'ombre de la sidebar */
+      }
+      .sidebar.open {
+        left: 0;
+        box-shadow: var(--shadow); /* Ajoute l'ombre uniquement quand ouvert */
+      }
+
+      .hamburger-btn {
+        display: flex; /* Affiché sur mobile */
+      }
+
+      .main-container {
+        display: block;
+      }
+      
+      .depot-container {
+        grid-template-columns: 1fr;
+      }
+      .depot-history {
+        margin-top: 30px;
+      }
+      
+      .header-controls {
+          gap: 10px;
+      }
+      .logo {
+          font-size: 1.5rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .header {
+        padding: 15px;
+      }
+      .logo {
+          letter-spacing: 1px;
+      }
+      .depot-card {
+        padding: 20px;
+      }
+      .solde-value {
+        font-size: 2rem;
+      }
+    }
+
+  </style>
+</head>
+<body>
+    <div class="loader-container" id="loader">
+        <div class="loader"></div>
+    </div>
+    <div class="notification-container" id="notificationContainer"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <header class="header">
+        <div class="logo">
+            <span>BLOWEARN AGENCIES</span>
+        </div>
+        <div class="header-controls">
+            <button class="language-selector" id="languageSelector">
+                <i class="fas fa-globe"></i>
+                <span id="currentLangDisplay">French</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="language-dropdown" id="languageDropdown">
+                <div class="language-option active" data-lang="fr">
+                    🇫🇷 <span>Français</span>
+                </div>
+                <div class="language-option" data-lang="en">
+                    🇬🇧 <span>English</span>
+                </div>
+            </div>
+
+            <div class="user-profile" id="userProfile">
+                <div class="avatar" id="userAvatar">C</div>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                        <i class="fas fa-moon"></i>
+                        <span>Mode nuit</span>
+                    </button>
+                    <a href="#" class="menu-item" style="border-left: none;">
+                        <i class="fas fa-gear"></i> <span>Paramètres</span>
+                    </a>
+                    <button class="menu-item" id="logoutBtn" style="border-left: none; background: none; color: var(--danger-color); font-weight: 600;">
+                        <i class="fas fa-right-from-bracket"></i> <span>Déconnexion</span>
+                    </button>
+                </div>
+            </div>
+            
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="welcome-section">
+                <p class="welcome-text" data-i18n="sidebar.welcome">Bienvenue,</p>
+                <span class="username" id="sidebarUsername">Chargement...</span>
+            </div>
+
+            <div class="menu-category" data-i18n="sidebar.menu_title_general">GÉNÉRAL</div>
+            <a href="dashboard.html" class="menu-item" id="menu-dashboard">
+              <i class="fas fa-home"></i>
+              <span data-i18n="sidebar.dashboard">Tableau de bord</span>
+            </a>
+            <a href="depot.html" class="menu-item active" id="menu-depot">
+              <i class="fas fa-wallet"></i>
+              <span data-i18n="sidebar.deposit">Dépôt d'argent</span>
+            </a>
+            <a href="retrait.html" class="menu-item" id="menu-retrait">
+              <i class="fas fa-money-bill-transfer"></i>
+              <span data-i18n="sidebar.withdrawal">Retrait d'argent</span>
+            </a>
+            <a href="historique.html" class="menu-item" id="menu-historique">
+              <i class="fas fa-clock-rotate-left"></i>
+              <span data-i18n="sidebar.history">Historique</span>
+            </a>
+            <a href="parrainage.html" class="menu-item" id="menu-parrainage">
+              <i class="fas fa-user-group"></i>
+              <span data-i18n="sidebar.referral">Mon parrainage</span>
+            </a>
+        
+            <div class="menu-category" data-i18n="sidebar.menu_title_tasks">TÂCHES QUOTIDIENNES</div>
+            <a href="whatsapp_task.html" class="menu-item" id="menu-whatsapp">
+              <i class="fab fa-whatsapp"></i>
+              <span data-i18n="sidebar.whatsapp">Gains WhatsApp</span>
+              <span class="menu-badge badge-inactive">☐</span>
+            </a>
+            <a href="trivia_task.html" class="menu-item" id="menu-trivia">
+              <i class="fas fa-brain"></i>
+              <span data-i18n="sidebar.trivia">TRIVIA challenge</span>
+              <span class="menu-badge badge-inactive">☐</span>
+            </a>
+            <a href="publicite_task.html" class="menu-item" id="menu-publicite">
+                <i class="fas fa-bullhorn"></i>
+                <span data-i18n="sidebar.publicite">Publicité</span>
+                <span class="menu-badge badge-inactive">☐</span>
+            </a>
+            <a href="tiktok_task.html" class="menu-item" id="menu-tiktok">
+                <i class="fab fa-tiktok"></i>
+                <span data-i18n="sidebar.tiktok">TikTok Videos</span>
+                <span class="menu-badge badge-inactive">☐</span>
+            </a>
+            <a href="youtube_task.html" class="menu-item" id="menu-youtube">
+                <i class="fab fa-youtube"></i>
+                <span data-i18n="sidebar.youtube">YouTube Videos</span>
+                <span class="menu-badge badge-inactive">☐</span>
+            </a>
+            <a href="instagram_task.html" class="menu-item" id="menu-instagram">
+                <i class="fab fa-instagram"></i>
+                <span data-i18n="sidebar.instagram">Instagram Videos</span>
+                <span class="menu-badge badge-inactive">☐</span>
+            </a>
+        
+            <div class="menu-category" data-i18n="sidebar.menu_title_bonus">BONUS</div>
+            <a href="liste_contacts.html" class="menu-item" id="menu-contacts">
+              <i class="fas fa-address-book"></i>
+              <span data-i18n="sidebar.contacts">Liste de contacts gratuit 🆓</span>
+              <span class="menu-badge badge-inactive">☐</span>
+            </a>
+            <a href="booster_visibilite.html" class="menu-item" id="menu-booster">
+              <i class="fas fa-rocket"></i>
+              <span data-i18n="sidebar.booster">Booster ma visibilité</span>
+              <span class="menu-badge badge-inactive">☐</span>
+            </a>
+            <a href="canva_pro.html" class="menu-item" id="menu-canva">
+              <i class="fas fa-palette"></i>
+              <span data-i18n="sidebar.canva">Canva Pro</span>
+              <span class="menu-badge badge-inactive">☐</span>
+            </a>
+            <a href="connexion_gratuite.html" class="menu-item" id="menu-connexion">
+              <i class="fas fa-shield-alt"></i>
+              <span data-i18n="sidebar.connection">Connexion gratuite</span>
+              <span class="menu-badge badge-inactive">☐</span>
+            </a>
+        </aside>
+
+        <main class="content">
+            <h1 class="page-title" data-i18n="depot.title">
+                <i class="fas fa-wallet"></i>
+                <span>Dépôt d'argent</span>
+            </h1>
+
+            <div class="depot-container">
+                <div class="depot-form-container">
+                    <div class="depot-card">
+                        <h2 data-i18n="depot.form_header">Effectuer un dépôt</h2>
+                        <form class="depot-form" id="depotForm">
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="amount" data-i18n="depot.amount">Montant (XAF)</label>
+                                <input type="number" id="amount" class="form-input" placeholder="Ex: 5000" required min="5000" />
+                                <small style="display: block; margin-top: 5px; color: var(--color-primary); font-family: 'Quicksand', sans-serif;">Le dépôt minimum est de 5000 XAF.</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="phone" data-i18n="depot.phone">Numéro de téléphone pour le dépôt</label>
+                                <input type="tel" id="phone" class="form-input" placeholder="Ex: 6XXXXXXXX" required />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" data-i18n="depot.method">Méthode de paiement</label>
+                                <div class="payment-methods" id="paymentMethods">
+                                    <div class="payment-method selected" data-method="MTN">
+                                        <i class="fas fa-mobile-screen-button" style="color: #FFC107;"></i>
+                                        <p>MTN MoMo</p>
+                                    </div>
+                                    <div class="payment-method" data-method="ORANGE">
+                                        <i class="fas fa-mobile-screen-button" style="color: #FF7F00;"></i>
+                                        <p>Orange Money</p>
+                                    </div>
+                                    <div class="payment-method" data-method="PAYPAL">
+                                        <i class="fab fa-paypal" style="color: #00457C;"></i>
+                                        <p>PayPal</p>
+                                    </div>
+                                    </div>
+                            </div>
+
+                            <button type="submit" class="submit-btn" data-i18n="depot.submit">
+                                <i class="fas fa-arrow-right-to-bracket"></i> Effectuer le dépôt
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="solde-info-container">
+                    <div class="solde-card-depot">
+                        <h3 data-i18n="depot.current_balance">Votre solde actuel</h3>
+                        <div class="solde-value" id="currentBalance">XAF 0</div>
+                        <p class="solde-tip" data-i18n="depot.tip">
+                            Veuillez vérifier que le numéro de téléphone et le montant sont corrects avant de valider la transaction.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="depot-history">
+                    <div class="history-card">
+                        <h2 data-i18n="depot.history_header">Historique des dépôts</h2>
+                        <div class="history-table-container">
+                            <table class="history-table">
+                                <thead>
+                                    <tr>
+                                        <th data-i18n="depot.history_date">Date</th>
+                                        <th data-i18n="depot.history_amount">Montant</th>
+                                        <th data-i18n="depot.history_status">Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="depotHistoryBody">
+                                    <tr>
+                                        <td>2025-10-28</td>
+                                        <td>10 000 XAF</td>
+                                        <td><span class="status-badge status-success">Réussi</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>2025-10-25</td>
+                                        <td>5 000 XAF</td>
+                                        <td><span class="status-badge status-pending">En attente</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>2025-10-20</td>
+                                        <td>7 500 XAF</td>
+                                        <td><span class="status-badge status-failed">Échoué</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Configuration Firebase (Assurez-vous que cela est complet dans votre code réel)
+        const firebaseConfig = {
+            // ... Vos clés de configuration Firebase ici ...
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Sélecteurs UI
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const userProfile = document.getElementById('userProfile');
+        const profileDropdown = document.getElementById('profileDropdown');
+        const themeToggle = document.getElementById('themeToggle');
+        const languageSelector = document.getElementById('languageSelector');
+        const languageDropdown = document.getElementById('languageDropdown');
+        const sidebarUsername = document.getElementById('sidebarUsername');
+        const userAvatar = document.getElementById('userAvatar');
+        const loader = document.getElementById('loader');
+        const currentBalance = document.getElementById('currentBalance');
+        const depotForm = document.getElementById('depotForm');
+        const depotHistoryBody = document.getElementById('depotHistoryBody');
+        const paymentMethods = document.getElementById('paymentMethods');
+        const logoutBtn = document.getElementById('logoutBtn');
+        
+        /******** Variables d'état ********/
+        let currentUser = null;
+        let userData = { solde: 0, theme: 'light' }; // Initialisation minimale
+        let currentLang = 'fr';
+
+        /******** Traductions (Minimal pour les fonctions UI) ********/
+        const translations = {
+            fr: {
+                'header.night_mode': 'Mode nuit',
+                'header.day_mode': 'Mode jour',
+                'notification.success_title': 'Succès',
+                'notification.error_title': 'Erreur',
+                'notification.info_title': 'Information',
+                'notification.deposit_success': 'Dépôt en attente de confirmation. Votre solde sera mis à jour bientôt.',
+                'notification.deposit_error': 'Échec de l\'envoi de la demande de dépôt. Veuillez réessayer.',
+                'logout': 'Déconnexion'
+            },
+            en: {
+                'header.night_mode': 'Night Mode',
+                'header.day_mode': 'Day Mode',
+                'notification.success_title': 'Success',
+                'notification.error_title': 'Error',
+                'notification.info_title': 'Info',
+                'notification.deposit_success': 'Deposit pending confirmation. Your balance will be updated shortly.',
+                'notification.deposit_error': 'Failed to submit deposit request. Please try again.',
+                'logout': 'Logout'
+            }
+        };
+
+        /******** UI helpers (Copied/Adapted from Dashboard.html for consistency) ********/
+        function formatNumberSafe(n) {
+            return (typeof n === 'number' && !isNaN(n)) ? n.toLocaleString('fr-FR') : '0';
+        }
+
+        function showNotification(type, title, message, duration = 4000) {
+            const container = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle');
+            
+            // Les styles de notification sont dans le CSS du dashboard.html, nous les réutilisons ici.
+            notification.innerHTML = `
+                <i class="fas ${icon}" style="font-size: 1.5rem;"></i>
+                <div>
+                    <strong style="display: block; margin-bottom: 5px;">${title}</strong>
+                    <span>${message}</span>
+                </div>
+            `;
+            container.appendChild(notification);
+            
+            setTimeout(() => {
+                // Animation de sortie (slide out)
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(110%)';
+                setTimeout(() => {
+                    if (container.contains(notification)) container.removeChild(notification);
+                }, 300);
+            }, duration);
+        }
+        
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('preferredLanguage', lang);
+            // Mettre à jour la langue affichée
+            document.getElementById('currentLangDisplay').textContent = lang === 'fr' ? 'Français' : 'English';
+            // Mettre à jour les classes actives du dropdown de langue
+            document.querySelectorAll('.language-option').forEach(option => {
+                option.classList.toggle('active', option.dataset.lang === lang);
+            });
+            // Mettre à jour l'icône et le texte du themeToggle dans le dropdown
+            applyTheme();
+
+            // Mettre à jour le texte du bouton de déconnexion
+            if (logoutBtn) logoutBtn.querySelector('span').textContent = translations[currentLang]['logout'];
+            // Ici, vous ajouteriez la logique de traduction complète (data-i18n)
+        }
+
+        function applyTheme() {
+            const isDarkMode = userData.theme === 'dark';
+            document.body.classList.toggle('dark-mode', isDarkMode);
+            if (themeToggle) {
+                themeToggle.innerHTML = isDarkMode 
+                    ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+                    : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
+            }
+        }
+
+        function updateUserInfoUI(user, dbData = {}) {
+            const displayName = dbData.displayName || user.displayName || user.email.split('@')[0];
+            if (sidebarUsername) sidebarUsername.textContent = displayName;
+            if (userAvatar) userAvatar.textContent = displayName.charAt(0).toUpperCase();
+            
+            // Mise à jour du solde
+            if (currentBalance) {
+                currentBalance.textContent = `XAF ${formatNumberSafe(dbData.solde || 0)}`;
+            }
+        }
+        
+        // Fonction pour mettre à jour l'historique (pour la beauté visuelle)
+        function updateHistoryUI(history = []) {
+            if (!depotHistoryBody) return;
+            depotHistoryBody.innerHTML = '';
+            
+            // Simuler l'affichage d'un historique (si non chargé depuis DB, afficher l'exemple)
+            const historyToDisplay = history.length > 0 ? history : [
+                { date: '2025-10-28', amount: 10000, status: 'success' },
+                { date: '2025-10-25', amount: 5000, status: 'pending' },
+                { date: '2025-10-20', amount: 7500, status: 'failed' }
+            ];
+
+            historyToDisplay.forEach(item => {
+                const row = document.createElement('tr');
+                const statusText = item.status === 'success' ? 'Réussi' : (item.status === 'pending' ? 'En attente' : 'Échoué');
+                
+                row.innerHTML = `
+                    <td>${item.date}</td>
+                    <td>${formatNumberSafe(item.amount)} XAF</td>
+                    <td><span class="status-badge status-${item.status}">${statusText}</span></td>
+                `;
+                depotHistoryBody.appendChild(row);
+            });
+        }
+        
+        /******** Gestion des événements UI (Copied from Dashboard.html) ********/
+        if (hamburgerBtn) {
+            hamburgerBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('active');
+                hamburgerBtn.classList.toggle('open');
+            });
+        }
+        if (overlay) {
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+                hamburgerBtn.classList.remove('open');
+            });
+        }
+        if (userProfile) {
+            userProfile.addEventListener('click', (event) => {
+                event.stopPropagation();
+                profileDropdown.classList.toggle('active');
+            });
+        }
+        document.addEventListener('click', (event) => {
+            if (profileDropdown && !userProfile.contains(event.target)) {
+                profileDropdown.classList.remove('active');
+            }
+            if (languageDropdown && !languageSelector.contains(event.target)) {
+                languageDropdown.classList.remove('active');
+            }
+        });
+        
+        if (languageSelector) {
+            languageSelector.addEventListener('click', (event) => {
+                event.stopPropagation();
+                languageDropdown.classList.toggle('active');
+            });
+        }
+
+        document.querySelectorAll('.language-option').forEach(option => {
+            option.addEventListener('click', () => {
+                setLanguage(option.dataset.lang);
+                languageDropdown.classList.remove('active');
+            });
+        });
+
+        if (themeToggle) {
+            themeToggle.addEventListener('click', (event) => {
+                event.stopPropagation();
+                userData.theme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+                applyTheme();
+                saveUserData('theme', userData.theme);
+            });
+        }
+        
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                auth.signOut().then(() => {
+                    showNotification('info', 'Déconnexion', 'Vous êtes déconnecté.');
+                    setTimeout(() => { window.location.href = 'login.html'; }, 1000);
+                }).catch(error => {
+                    showNotification('error', 'Erreur', 'Impossible de se déconnecter.');
+                    console.error('Logout error:', error);
+                });
+            });
+        }
+
+        /******** Logique de Dépôt (Adaptée à la nouvelle structure) ********/
+        if (paymentMethods) {
+            paymentMethods.addEventListener('click', (e) => {
+                const methodDiv = e.target.closest('.payment-method');
+                if (methodDiv) {
+                    document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
+                    methodDiv.classList.add('selected');
+                }
+            });
+        }
+
+        if (depotForm) {
+            depotForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const amountInput = document.getElementById('amount');
+                const phoneInput = document.getElementById('phone');
+                const amount = parseInt(amountInput.value);
+                const phone = phoneInput.value.trim();
+                const selectedMethod = document.querySelector('.payment-method.selected').dataset.method;
+                
+                if (amount < 5000) {
+                    showNotification('error', translations[currentLang]['notification.error_title'], 'Le montant minimum de dépôt est de 5000 XAF.');
+                    return;
+                }
+
+                if (!phone) {
+                    showNotification('error', translations[currentLang]['notification.error_title'], 'Veuillez entrer un numéro de téléphone.');
+                    return;
+                }
+                
+                // Simuler l'envoi au serveur/Firestore pour le traitement
+                try {
+                    // **CONSERVATION DE LA LOGIQUE EXISTANTE (SIMULÉE) :**
+                    // La logique réelle d'envoi de la requête de dépôt au serveur (API Cloud Function)
+                    // devrait être implémentée ici en utilisant le `currentUser.getIdToken()`
+                    
+                    const depositData = {
+                        uid: currentUser.uid,
+                        username: userData.username || currentUser.email.split('@')[0],
+                        amount: amount,
+                        phone: phone,
+                        method: selectedMethod,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        status: 'pending' // 'pending' en attente de confirmation
+                    };
+                    
+                    await db.collection('deposits').add(depositData);
+                    
+                    // Réinitialiser le formulaire
+                    depotForm.reset();
+                    document.querySelector('.payment-method').classList.add('selected');
+
+                    showNotification('success', translations[currentLang]['notification.success_title'], translations[currentLang]['notification.deposit_success']);
+                    
+                    // Mise à jour simplifiée de l'historique (vous la mettrez à jour avec un "watcher" dans votre JS réel)
+                    updateHistoryUI([{ 
+                        date: new Date().toLocaleDateString('fr-FR'), 
+                        amount: amount, 
+                        status: 'pending' 
+                    }, ...depotHistoryBody.querySelectorAll('tr').length > 0 ? [] : (await getSampleHistory())]);
+
+
+                } catch (error) {
+                    console.error("Erreur lors du dépôt :", error);
+                    showNotification('error', translations[currentLang]['notification.error_title'], translations[currentLang]['notification.deposit_error']);
+                }
+            });
+        }
+
+        /******** Firestore Data Handling (Copied/Adapted) ********/
+        async function loadUserData() {
+            if (!currentUser) throw new Error("Aucun utilisateur connecté.");
+            
+            // Tenter de charger par UID
+            let userRef = db.collection('users').doc(currentUser.uid);
+            let doc = await userRef.get();
+            
+            // 🔧 Fallback: Chercher par email si non trouvé (pour la cohérence avec le dashboard)
+            if (!doc.exists && currentUser.email) {
+                const emailQuery = await db.collection('users').where('email', '==', currentUser.email).limit(1).get();
+                if (!emailQuery.empty) {
+                    doc = emailQuery.docs[0];
+                    userRef = doc.ref;
+                }
+            }
+            
+            if (doc.exists) {
+                userData = doc.data();
+                userData.id = doc.id; // Stocker l'ID du document pour les sauvegardes
+            } else {
+                // Créer un document minimal si l'utilisateur est nouveau
+                userData.displayName = currentUser.displayName || currentUser.email.split('@')[0];
+                userData.email = currentUser.email;
+                userData.solde = 0;
+                await db.collection('users').doc(currentUser.uid).set(userData, { merge: true });
+            }
+        }
+        
+        async function saveUserData(key, value) {
+            if (!currentUser) return;
+            try {
+                const userRef = db.collection('users').doc(currentUser.uid);
+                await userRef.set({ [key]: value, lastUpdate: new Date() }, { merge: true });
+            } catch (error) {
+                console.error("Erreur lors de la sauvegarde :", error);
+                // Notification d'erreur si nécessaire
+            }
+        }
+        
+        // Simuler la récupération de l'historique (pour l'UI)
+        async function getSampleHistory() {
+            return [
+                { date: '2025-10-28', amount: 10000, status: 'success' },
+                { date: '2025-10-25', amount: 5000, status: 'pending' },
+                { date: '2025-10-20', amount: 7500, status: 'failed' }
+            ];
+        }
+
+        /******** Point d'entrée principal de l'application ********/
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUser = user;
+                try {
+                    await loadUserData();
+                    updateUserInfoUI(user, userData);
+                    applyTheme();
+                    updateHistoryUI(userData.depotHistory || []); // Charger l'historique réel si disponible
+                    
+                    document.body.classList.add('loaded');
+                    loader.classList.add('hidden');
+                    
+                } catch (error) {
+                    console.error("Erreur critique lors de l'initialisation :", error);
+                    showNotification('error', 'Erreur Critique', "Impossible de charger vos données. Veuillez vous reconnecter.");
+                    auth.signOut();
+                    setTimeout(() => { window.location.href = 'login.html'; }, 3000);
+                }
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        /******** Initialisation au chargement de la page ********/
+        document.addEventListener('DOMContentLoaded', () => {
+            // Charger la langue sauvegardée ou utiliser le français par défaut
+            const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
+            setLanguage(savedLang);
+            updateHistoryUI(); // Charge l'historique d'exemple si pas de données utilisateur
+        });
+    </script>
+</body>
+</html>
