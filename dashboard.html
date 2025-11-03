@@ -357,9 +357,9 @@
     /* --- SIDEBAR (MENU) AMÉLIORÉ AVEC NOUVEAU FOND ET POLICE --- */
     /* -------------------------------------------------------------------------- */
     .sidebar {
-      width: 250px; /* Largeur réduite */
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(240, 245, 255, 0.82) 100%); /* Plus transparent */
-      backdrop-filter: blur(20px); /* Flou plus prononcé */
+      width: 280px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.95) 100%);
+      backdrop-filter: blur(15px);
       border-right: 1px solid rgba(255,255,255,0.7);
       box-shadow: var(--shadow);
       height: calc(100vh - 80px);
@@ -367,15 +367,11 @@
       top: 80px;
       padding: 25px 0;
       overflow-y: auto;
-      transform-origin: left center;
-      opacity: 0;
-      transform: scaleX(0.8) translateX(-20px);
-      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: transform 0.4s ease-in-out; 
     }
     
     .sidebar.open {
-      opacity: 1;
-      transform: scaleX(1) translateX(0);
+      transform: translateX(0);
     }
 
     .welcome-section {
@@ -406,7 +402,7 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       font-weight: 600;
-      font-family: 'Poppins', sans-serif; /* Police professionnelle */
+      font-family: 'Quicksand', sans-serif;
       border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
 
@@ -422,42 +418,13 @@
       position: relative;
       overflow: hidden;
       animation: fadeIn 0.5s ease-out;
-      font-family: 'Poppins', sans-serif; /* Police professionnelle */
-      font-size: 0.95rem; /* Taille légèrement réduite */
-      transition: all 0.3s ease;
-      transform: translateX(-10px);
-      opacity: 0;
+      font-family: 'Quicksand', sans-serif;
     }
 
-    .sidebar.open .menu-item {
-      animation: slideInItem 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
     }
-
-    @keyframes slideInItem {
-      from { transform: translateX(-10px); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-
-    .menu-item:nth-child(1) { animation-delay: 0.05s; }
-    .menu-item:nth-child(2) { animation-delay: 0.1s; }
-    .menu-item:nth-child(3) { animation-delay: 0.15s; }
-    .menu-item:nth-child(4) { animation-delay: 0.2s; }
-    .menu-item:nth-child(5) { animation-delay: 0.25s; }
-    .menu-item:nth-child(6) { animation-delay: 0.3s; }
-    .menu-item:nth-child(7) { animation-delay: 0.35s; }
-    .menu-item:nth-child(8) { animation-delay: 0.4s; }
-    .menu-item:nth-child(9) { animation-delay: 0.45s; }
-    .menu-item:nth-child(10) { animation-delay: 0.5s; }
-    .menu-item:nth-child(11) { animation-delay: 0.55s; }
-    .menu-item:nth-child(12) { animation-delay: 0.6s; }
-    .menu-item:nth-child(13) { animation-delay: 0.65s; }
-    .menu-item:nth-child(14) { animation-delay: 0.7s; }
-    .menu-item:nth-child(15) { animation-delay: 0.75s; }
-    .menu-item:nth-child(16) { animation-delay: 0.8s; }
-    .menu-item:nth-child(17) { animation-delay: 0.85s; }
-    .menu-item:nth-child(18) { animation-delay: 0.9s; }
-    .menu-item:nth-child(19) { animation-delay: 0.95s; }
-    .menu-item:nth-child(20) { animation-delay: 1s; }
     
     .menu-item::before {
       content: '';
@@ -478,7 +445,6 @@
       background-color: rgba(0, 0, 0, 0.05);
       border-left-color: var(--color-primary);
       color: var(--color-primary);
-      transform: translateX(5px);
     }
 
     .menu-item i {
@@ -1495,10 +1461,6 @@
       color: var(--color-text-dark);
     }
 
-    .dark-mode .sidebar {
-      background: linear-gradient(135deg, rgba(59, 66, 82, 0.85) 0%, rgba(76, 86, 106, 0.82) 100%);
-    }
-
     .dark-mode .banner {
       background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
     }
@@ -1539,18 +1501,12 @@
         top: 0;
         left: -100%;
         z-index: 99;
-        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(240, 245, 255, 0.82) 100%);
-        backdrop-filter: blur(20px);
-        transform-origin: left center;
-        opacity: 0;
-        transform: scaleX(0.8) translateX(-20px);
+        transition: left 0.4s ease-in-out;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.97) 100%);
       }
       
       .sidebar.open {
         left: 0;
-        opacity: 1;
-        transform: scaleX(1) translateX(0);
       }
       
       .header {
@@ -2871,129 +2827,187 @@ async function fetchReferralStats(username) {
 }
 
 /******** NOUVEAU: Récupérer la liste des filleuls depuis le serveur ********/
-async function fetchReferralList(username) {
+async function fetchMyReferrals(username) {
   try {
-    const resp = await fetch(`${SERVER_URL}/api/referral-list/${username}`);
+    const resp = await fetch(`${SERVER_URL}/api/my-referrals/${username}`);
     if (!resp.ok) return null;
     const json = await resp.json();
-    return json.referrals || [];
+    return json.referrals || null;
   } catch (err) {
-    console.error('fetchReferralList error', err);
-    return [];
+    console.error('fetchMyReferrals error', err);
+    return null;
   }
 }
 
-/******** Chargement principal de la page ********/
-async function initializeDashboard() {
+/******** Start watcher: détecte passage status -> 'paid' et appelle le serveur ********/
+async function startStatusWatcherAndTriggerProcessing() {
+  if (!currentUser) return;
   try {
-    console.log("🔄 Initialisation du dashboard...");
-    document.getElementById('debugBanner').textContent = "🔍 DEBUG: Initialisation...";
-    
-    // Récupérer la langue préférée
-    const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
-    setLanguage(savedLang);
-    
-    // Récupérer le thème sauvegardé
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    if (savedTheme === 'dark') {
-      document.body.classList.add('dark-mode');
-      if (themeToggle) {
-        themeToggle.innerHTML = `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>`;
+    const userDocRef = db.collection('users').doc(currentUser.uid);
+
+    userDocRef.onSnapshot(async (snap) => {
+      if (!snap.exists) return;
+      const d = snap.data();
+      const status = (d.status || d.statut || '').toString().toLowerCase();
+      const alreadyProcessed = !!d.referralProcessed;
+
+      if (status === 'active' && !alreadyProcessed) {
+        showNotification('info', translations[currentLang]['notification.info'], 'Paiement détecté — distribution en cours...');
+        try {
+          const idToken = await currentUser.getIdToken();
+          const resp = await fetch(`${SERVER_URL}/api/process-referral-on-paid`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
+            body: JSON.stringify({ userDocId: currentUser.uid })
+          });
+          const json = await resp.json().catch(()=>({}));
+          if (resp.ok && json && json.ok) {
+            showNotification('success', translations[currentLang]['notification.success'], 'Gains partagés aux parrains.');
+            await loadUserData();
+            updateDashboardUI();
+            updateUserInfoUI(currentUser, userData);
+          } else {
+            console.error('Erreur process-referral-on-paid:', json);
+            showNotification('error', translations[currentLang]['notification.error'], (json && json.error) ? json.error : 'Erreur lors du partage des gains.');
+          }
+        } catch (err) {
+          console.error('Erreur appel process-referral-on-paid:', err);
+          showNotification('error', translations[currentLang]['notification.error'], 'Impossible d\'appeler le serveur de parrainage.');
+        }
       }
-    }
-    
-    // Vérifier si l'utilisateur est connecté
-    currentUser = auth.currentUser;
-    if (!currentUser) {
-      console.error("❌ Aucun utilisateur connecté.");
-      showNotification('error', translations[currentLang]['notification.error'], 'Veuillez vous connecter.');
-      setTimeout(() => { window.location.href = 'connexion.html'; }, 2000);
-      return;
-    }
-    
-    // Charger les données utilisateur
-    console.log("📥 Chargement des données utilisateur...");
-    document.getElementById('debugBanner').textContent = "🔍 DEBUG: Chargement des données utilisateur...";
-    await loadUserData();
-    
-    // Mettre à jour l'interface
-    console.log("🎨 Mise à jour de l'interface...");
-    updateDashboardUI();
-    updateUserInfoUI(currentUser, userData);
-    
-    // Mettre à jour le lien de parrainage
-    const username = userData.username || userData.displayName || 'user';
-    const baseUrl = window.location.origin + window.location.pathname.replace('dashboard.html', '');
-    const refLink = `${baseUrl}inscription.html?ref=${username}`;
-    if (referralLink) referralLink.textContent = refLink;
-    
-    // Créer les effets de pluie pour les cartes du deuxième groupe
-    console.log("💧 Création des effets de pluie...");
-    createRainEffect('rain-solde');
-    createRainEffect('rain-retire');
-    createRainEffect('rain-parrainage');
-    createRainEffect('rain-bonus');
-    
-    // Initialiser le calendrier
-    console.log("📅 Initialisation du calendrier...");
-    updateCalendar();
-    
-    // Cacher le loader
-    console.log("✅ Dashboard initialisé avec succès!");
-    document.getElementById('debugBanner').textContent = "✅ DEBUG: Dashboard initialisé avec succès!";
-    setTimeout(() => {
-      if (loader) loader.classList.add('hidden');
-      setTimeout(() => { loader.style.display = 'none'; }, 500);
-    }, 800);
-    
-  } catch (error) {
-    console.error("❌ Erreur lors de l'initialisation:", error);
-    document.getElementById('debugBanner').textContent = "❌ DEBUG: Erreur lors de l'initialisation!";
-    showNotification('error', translations[currentLang]['notification.error'], 'Erreur lors du chargement.');
-    
-    // Cacher le loader même en cas d'erreur
-    setTimeout(() => {
-      if (loader) loader.classList.add('hidden');
-      setTimeout(() => { loader.style.display = 'none'; }, 500);
-    }, 800);
+    });
+  } catch (err) {
+    console.error('startStatusWatcherAndTriggerProcessing erreur:', err);
   }
 }
 
-/******** Écouteur d'événements pour l'authentification ********/
+/******** Auth state change (point d'entrée) CORRIGÉ ********/
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     currentUser = user;
-    await initializeDashboard();
+    try {
+      await loadUserData();
+
+      // 🔧 DEBUG BANNER: Afficher le statut ET les sponsors détectés (visible sur iPhone)
+      const debugBanner = document.getElementById('debugBanner');
+      const userStatus = (userData.status || userData.statut || '').toString().toLowerCase().trim();
+      
+      const level1 = userData.level1Sponsor || 'AUCUN';
+      const level2 = userData.level2Sponsor || 'AUCUN';
+      const level3 = userData.level3Sponsor || 'AUCUN';
+      const refProcessed = userData.referralProcessed ? 'OUI' : 'NON';
+      
+      if (debugBanner) {
+        debugBanner.innerHTML = `
+          🔍 DEBUG:<br>
+          Status="${userStatus}" | Email="${userData.email}"<br>
+          L1=${level1} | L2=${level2} | L3=${level3}<br>
+          RefProcessed=${refProcessed}
+        `;
+        debugBanner.style.background = 'linear-gradient(135deg, #4CD964 0%, #2AB32A 100%)';
+      }
+
+      // ✅ CORRECTION: SUPPRIMER LA VÉRIFICATION DU STATUT QUI REDIRIGE VERS PAIEMENT
+      // L'utilisateur connecté doit pouvoir accéder au dashboard sans condition supplémentaire
+      console.log('✅ Accès autorisé au dashboard: utilisateur connecté');
+
+      if (debugBanner) {
+        // Cacher le banner après 10 secondes
+        setTimeout(() => { debugBanner.classList.remove('show'); }, 10000);
+      }
+
+      updateDashboardUI();
+      updateUserInfoUI(user, userData);
+      applyTheme();
+
+      // CORRIGÉ: Générer/obtenir le lien de parrainage via serveur avec username
+      try {
+        if (userData.username) {
+          const serverResp = await requestReferralLinkFromServer(userData.username);
+          if (serverResp && serverResp.referralLink) {
+            referralLink.textContent = serverResp.referralLink;
+            
+            // NOUVEAU: Récupérer les statistiques de parrainage depuis le serveur
+            const stats = await fetchReferralStats(userData.username);
+            if (stats) {
+              console.log('Stats de parrainage du serveur:', stats);
+              userData.solde = stats.solde;
+              userData.activeReferrals = stats.totalReferrals;
+              userData.refEarnings = stats.earnings;
+              userData.parrainage = (stats.earnings.level1 || 0) + (stats.earnings.level2 || 0) + (stats.earnings.level3 || 0);
+              updateDashboardUI();
+              updateUserInfoUI(user, userData);
+            }
+          } else {
+            // Fallback si le serveur ne répond pas
+            referralLink.textContent = `${APP_DOMAIN}/index.html?ref=${encodeURIComponent(userData.username)}`;
+          }
+        } else {
+          // Si pas de username, utiliser displayName/uid en fallback
+          const userReferralId = userData.displayName || currentUser.uid;
+          referralLink.textContent = `${APP_DOMAIN}/index.html?ref=${encodeURIComponent(userReferralId)}`;
+        }
+      } catch (err) {
+        console.warn('Erreur génération lien parrainage', err);
+        const userReferralId = userData.username || userData.displayName || currentUser.uid;
+        referralLink.textContent = `${APP_DOMAIN}/index.html?ref=${encodeURIComponent(userReferralId)}`;
+      }
+
+      // Démarrer le watcher qui déclenchera la répartition au moment où 'status' devient 'paid'
+      startStatusWatcherAndTriggerProcessing();
+
+      document.body.classList.add('loaded');
+      if (loader) loader.classList.add('hidden');
+
+      showNotification('success', translations[currentLang]['notification.success'], `Content de vous revoir, ${userData.displayName || (user.email && user.email.split('@')[0])}!`);
+    } catch (error) {
+      console.error("Erreur critique lors de l'initialisation :", error);
+      showNotification('error', translations[currentLang]['notification.error'], "Impossible de charger vos données. Veuillez vous reconnecter.");
+      auth.signOut();
+      setTimeout(() => { window.location.href = 'login.html'; }, 3000);
+    }
   } else {
-    console.log("❌ Aucun utilisateur connecté, redirection vers la page de connexion...");
-    window.location.href = 'connexion.html';
+    window.location.href = 'login.html';
   }
 });
 
-// Démarrer l'initialisation
+/******** Theme helper ********/
+function applyTheme() {
+  const isDarkMode = userData.theme === 'dark';
+  document.body.classList.toggle('dark-mode', isDarkMode);
+  if (themeToggle) themeToggle.innerHTML = isDarkMode 
+      ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+      : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
+}
+
+/******** Initialisation ********/
 document.addEventListener('DOMContentLoaded', () => {
-  // Récupérer le thème sauvegardé
-  const savedTheme = localStorage.getItem('theme') || 'light';
-  if (savedTheme === 'dark') {
-    document.body.classList.add('dark-mode');
-  }
+  // Charger la langue sauvegardée ou utiliser le français par défaut
+  const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
+  setLanguage(savedLang);
   
-  // Sauvegarder le thème quand il change
-  document.body.addEventListener('click', (e) => {
-    if (e.target.closest('#themeToggle')) {
-      const isDarkMode = document.body.classList.contains('dark-mode');
-      localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-    }
-  });
+  updateCalendar();
   
-  // Sauvegarder la langue quand elle change
-  document.body.addEventListener('click', (e) => {
-    if (e.target.closest('.language-option')) {
-      const lang = e.target.closest('.language-option').dataset.lang;
-      localStorage.setItem('preferredLanguage', lang);
-    }
-  });
+  // Créer les effets de pluie pour les cartes du deuxième groupe
+  setTimeout(() => {
+    createRainEffect('rain-solde', 20);
+    createRainEffect('rain-retire', 20);
+    createRainEffect('rain-parrainage', 20);
+    createRainEffect('rain-bonus', 20);
+  }, 500);
 });
+
+/******** Expose quelques utilitaires pour debug dans console ********/
+window._blowearn = {
+  requestReferralLinkFromServer,
+  fetchReferralStats,
+  fetchMyReferrals,
+  setLanguage
+};
+
+/******** Variables globales manquantes ********/
+const APP_DOMAIN = "https://blowearn-agencies.vercel.app";
+const SERVER_URL = "https://mulaflowr-exaucenapopolo2.replit.app";
 </script>
 </body>
 </html>
