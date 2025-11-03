@@ -2881,7 +2881,7 @@ async function startStatusWatcherAndTriggerProcessing() {
   }
 }
 
-/******** Auth state change (point d'entrée) ********/
+/******** Auth state change (point d'entrée) CORRIGÉ ********/
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     currentUser = user;
@@ -2891,7 +2891,6 @@ auth.onAuthStateChanged(async (user) => {
       // 🔧 DEBUG BANNER: Afficher le statut ET les sponsors détectés (visible sur iPhone)
       const debugBanner = document.getElementById('debugBanner');
       const userStatus = (userData.status || userData.statut || '').toString().toLowerCase().trim();
-      const validStatuses = ['paid', 'active'];
       
       const level1 = userData.level1Sponsor || 'AUCUN';
       const level2 = userData.level2Sponsor || 'AUCUN';
@@ -2905,34 +2904,16 @@ auth.onAuthStateChanged(async (user) => {
           L1=${level1} | L2=${level2} | L3=${level3}<br>
           RefProcessed=${refProcessed}
         `;
-        debugBanner.style.background = validStatuses.includes(userStatus) 
-          ? 'linear-gradient(135deg, #4CD964 0%, #2AB32A 100%)' 
-          : 'linear-gradient(135deg, #FF3B30 0%, #c0392b 100%)';
+        debugBanner.style.background = 'linear-gradient(135deg, #4CD964 0%, #2AB32A 100%)';
       }
 
-      // 🔒 SÉCURITÉ: Vérifier que le statut est "paid" OU "active" avant d'autoriser l'accès au dashboard
-      if (!validStatuses.includes(userStatus)) {
-        console.log('⛔ Accès refusé: statut =', userStatus, '(requis: "paid" ou "active")');
-        if (debugBanner) {
-          debugBanner.textContent = `❌ REFUSÉ: Statut "${userStatus}" non valide. Redirection dans 3s...`;
-        }
-        showNotification('warning', translations[currentLang]['notification.info'], 'Vous devez finaliser votre paiement pour accéder au dashboard.');
-        setTimeout(() => { window.location.href = 'paiement.html'; }, 3000);
-        return;
-      }
-      console.log('✅ Accès autorisé au dashboard: statut =', userStatus);
+      // ✅ CORRECTION: SUPPRIMER LA VÉRIFICATION DU STATUT QUI REDIRIGE VERS PAIEMENT
+      // L'utilisateur connecté doit pouvoir accéder au dashboard sans condition supplémentaire
+      console.log('✅ Accès autorisé au dashboard: utilisateur connecté');
+
       if (debugBanner) {
-        // Cacher le banner après 10 secondes si l'accès est autorisé
+        // Cacher le banner après 10 secondes
         setTimeout(() => { debugBanner.classList.remove('show'); }, 10000);
-      }
-
-      // ✅ CORRIGÉ: Ne plus afficher "Action requise" si le statut est "active"
-      if (userStatus === 'pending_payment') {
-        showNotification('info', translations[currentLang]['notification.info'], 'Veuillez finaliser votre paiement pour activer votre compte.');
-      } else if (userStatus === 'active' && !userData.referralProcessed) {
-        showNotification('info', translations[currentLang]['notification.info'], 'Votre paiement a été détecté. Distribution des gains en cours...');
-      } else if (userStatus === 'active' && userData.referralProcessed) {
-        showNotification('success', translations[currentLang]['notification.success'], `Content de vous revoir, ${userData.displayName || 'ami'} !`);
       }
 
       updateDashboardUI();
@@ -3023,6 +3004,10 @@ window._blowearn = {
   fetchMyReferrals,
   setLanguage
 };
+
+/******** Variables globales manquantes ********/
+const APP_DOMAIN = "https://blowearn-agencies.vercel.app";
+const SERVER_URL = "https://mulaflowr-exaucenapopolo2.replit.app";
 </script>
 </body>
 </html>
