@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BLOWEARN AGENCIES — Paiement d'activation</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* -------------------------------------------------------------------------- */
+    /* --- CSS OPTIMISÉ (Couleurs, Polices, Dimensions) IDENTIQUE À L'INSCRIPTION --- */
+    /* -------------------------------------------------------------------------- */
+    
+    /* Variables de Couleurs pour une meilleure gestion */
+    :root {
+      --color-primary: #4A90E2; /* Bleu Énergique */
+      --color-secondary: #FFC107; /* Jaune Vif/Or pour l'accent */
+      --color-text-dark: #2C3E50; /* Texte Sombre (lisible) */
+      --color-text-light: #ECF0F1; /* Texte Clair */
+      --color-bg-light: #FFFFFF; /* Fond de Carte */
+      --color-bg-gradient-1: #6DD5FA; /* Dégradé Fond 1 */
+      --color-bg-gradient-2: #FF7582; /* Dégradé Fond 2 */
+    }
+
+    /* Nouvelle Police principale (Montserrat) */
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Montserrat', sans-serif}
+    
+    /* Nouveau fond avec dégradé doux et professionnel */
+    body {
+      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
+      color: var(--color-text-dark);
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    /* Effet de bulles animées en arrière-plan (ajusté pour un look plus subtil) */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 25%),
+        radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 90% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 25%);
+      animation: float 20s ease-in-out infinite;
+      z-index: -1;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-15px) scale(1.02); } /* Mouvement plus subtil */
+    }
+    
+    .container{
+      width:100%;
+      max-width:920px;
+      margin:0 auto; 
+      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+    }
+    
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    
+    .wrap {
+      width: 100%;
+      display: flex;
+      gap: 28px;
+      align-items: flex-start;
+    }
+    
+    .left {
+      flex: 1;
+    }
+    
+    .right {
+      width: 360px;
+    }
+    
+    /* Carte du formulaire : Fond blanc pur avec effet de verre subtil (plus professionnel) */
+    .card{
+      background: rgba(255, 255, 255, 0.95); /* Plus de blanc */
+      backdrop-filter: blur(15px);
+      border-radius:18px; /* Rayon légèrement augmenté */
+      box-shadow:0 15px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.8); /* Ombre plus douce */
+      overflow:hidden;
+      padding:30px; /* Légèrement augmenté le padding */
+      transform: translateY(0);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      border: 1px solid rgba(255,255,255,0.7); /* Bordure plus claire */
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow:0 20px 45px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.8);
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px; /* Barre de couleur plus épaisse */
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: 18px 18px 0 0;
+    }
+    
+    .logo-header{
+      text-align:center;
+      margin-bottom:20px;
+      position: relative;
+    }
+    
+    /* Style pour le logo: Nouvelle police (Poppins) et dégradé plus soigné */
+    .logo{
+      font-size:2.2rem; /* Légèrement réduit */
+      font-weight:700;
+      color: var(--color-text-light);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin-bottom:10px;
+      position: relative;
+      font-family: 'Poppins', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px; /* Augmenté l'espacement */
+      text-shadow: 0 4px 10px rgba(0,0,0,0.3); /* Ombre plus marquée */
+      /* Nouveau dégradé pour le texte du titre */
+      background: linear-gradient(45deg, var(--color-text-light) 0%, var(--color-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: logoGlow 3s ease-in-out infinite alternate;
+    }
+    
+    @keyframes logoGlow {
+      from { filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5)); }
+      to { filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.7)); } /* Accent sur le jaune secondaire */
+    }
+    
+    /* Conteneur pour l'icône de badge */
+    .badge-container {
+      position: relative;
+      margin-right: 15px;
+      height: 45px; /* Légèrement réduit */
+      width: 45px; /* Légèrement réduit */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+      border-radius: 50%;
+      box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+      animation: badgeRotate 8s linear infinite;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    
+    @keyframes badgeRotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .badge {
+      color: var(--color-secondary);
+      font-size: 1.4rem; /* Légèrement réduit */
+      z-index: 2;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    
+    .tagline{
+      color:var(--color-text-light);
+      font-size:0.95rem; /* Réduit la taille */
+      margin-bottom:10px;
+      font-weight:500;
+      letter-spacing: 0.8px;
+      position: relative;
+      display: inline-block;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    
+    .card-header{
+      text-align:center;
+      margin-bottom:25px;
+    }
+    
+    .card-header h1{
+      color:var(--color-text-dark);
+      font-size:1.8rem; /* Plus grand pour le titre principal */
+      font-weight:700;
+      margin-bottom:6px;
+      font-family: 'Poppins', sans-serif; /* Nouvelle police pour le titre du formulaire */
+      letter-spacing: 0.5px;
+    }
+    
+    .card-header p{
+      color:#607d8b; /* Couleur de texte plus douce */
+      font-size:0.9rem; /* Réduit la taille */
+    }
+    
+    .amount {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--color-text-dark);
+      margin: 10px 0;
+      text-align: center;
+    }
+    
+    .small {
+      color: #607d8b;
+      font-size: 0.8rem;
+      text-align: center;
+    }
+    
+    .methods {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    
+    .method {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #E0E0E0;
+      background: #F8F9FA;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .method:hover {
+      background: #eef2f6;
+      border-color: var(--color-primary);
+    }
+    
+    .method.selected {
+      background: rgba(74, 144, 226, 0.1);
+      border-color: var(--color-primary);
+    }
+    
+    .btn{
+      display:block;
+      width:100%;
+      padding:15px; /* Ajusté le padding */
+      /* Nouveau dégradé pour le bouton */
+      background:linear-gradient(135deg,var(--color-primary) 0%,#79C3F8 100%);
+      color:white;
+      border:none;
+      border-radius:10px;
+      font-size:1rem; /* Réduit légèrement */
+      font-weight:700;
+      cursor:pointer;
+      transition:all 0.3s ease;
+      text-align:center;
+      box-shadow:0 4px 15px rgba(74, 144, 226, 0.3);
+      font-family: 'Poppins', sans-serif;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      transition: left 0.7s ease;
+    }
+    
+    .btn:hover:not(:disabled){
+      transform:translateY(-3px);
+      box-shadow:0 8px 20px rgba(74, 144, 226, 0.4);
+    }
+    
+    .btn:hover:not(:disabled)::before {
+      left: 100%;
+    }
+    
+    .btn:active:not(:disabled){
+      transform:translateY(0);
+    }
+    
+    .btn:disabled{
+      opacity:0.6;
+      cursor:not-allowed;
+      transform: none !important;
+    }
+    
+    .btn.secondary {
+      background: #F8F9FA;
+      color: var(--color-text-dark);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn.secondary:hover:not(:disabled) {
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .notice {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 10px;
+      background: rgba(255, 193, 7, 0.1);
+      border: 1px solid rgba(255, 193, 7, 0.3);
+      color: var(--color-text-dark);
+    }
+    
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    
+    .muted {
+      color: #607d8b;
+      font-size: 0.8rem;
+    }
+    
+    .center {
+      text-align: center;
+    }
+    
+    .success {
+      background: rgba(76, 175, 80, 0.1);
+      border: 1px solid rgba(76, 175, 80, 0.3);
+      padding: 12px;
+      border-radius: 10px;
+      color: #2E7D32;
+    }
+    
+    .error {
+      background: rgba(244, 67, 54, 0.1);
+      border: 1px solid rgba(244, 67, 54, 0.3);
+      padding: 12px;
+      border-radius: 10px;
+      color: #C62828;
+    }
+    
+    .activation-section {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px dashed #E0E0E0;
+    }
+    
+    .activation-toggle {
+      background: #F8F9FA;
+      border: 1px solid #E0E0E0;
+      padding: 12px;
+      border-radius: 10px;
+      width: 100%;
+      text-align: center;
+      cursor: pointer;
+      color: var(--color-primary);
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .activation-toggle:hover {
+      background: rgba(74, 144, 226, 0.1);
+    }
+    
+    .activation-form {
+      display: none;
+      margin-top: 15px;
+      background: #F8F9FA;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    
+    .form-group {
+      margin-bottom: 18px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+      font-size: 0.85rem;
+    }
+    
+    .input-group{
+      display:flex;
+      align-items:center;
+      background: var(--color-bg-light);
+      border-radius:10px;
+      overflow:hidden;
+      border:1px solid #E0E0E0;
+      transition:all 0.3s ease;
+      position: relative;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    .input-group:focus-within{
+      border-color:var(--color-primary);
+      box-shadow:0 0 0 3px rgba(74, 144, 226, 0.2);
+      background: var(--color-bg-light);
+    }
+    
+    input,select{
+      width:100%;
+      padding:12px;
+      border:none;
+      background:transparent;
+      color:var(--color-text-dark);
+      font-size:0.9rem;
+      outline:none;
+      transition: all 0.3s ease;
+    }
+    
+    input::placeholder{
+      color:#B0BEC5;
+    }
+    
+    input:disabled{
+      cursor:not-allowed;
+      color:#90A4AE;
+    }
+    
+    .file-input {
+      border: 2px dashed #E0E0E0;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-radius: 10px;
+      background: var(--color-bg-light);
+    }
+    
+    .file-input:hover {
+      border-color: var(--color-primary);
+      background: rgba(74, 144, 226, 0.05);
+    }
+    
+    .file-input i {
+      font-size: 24px;
+      color: var(--color-primary);
+      margin-bottom: 8px;
+    }
+    
+    .file-name {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: #607d8b;
+    }
+    
+    .activate-btn {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
+      display: block;
+      width: 100%;
+      padding: 15px;
+      border-radius: 10px;
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 15px;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      font-family: 'Poppins', sans-serif;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+    }
+    
+    .activate-btn:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(74, 144, 226, 0.4);
+    }
+    
+    .capture-notice {
+      background: rgba(255, 193, 7, 0.1);
+      border: 1px solid rgba(255, 193, 7, 0.3);
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      font-size: 0.8rem;
+      color: var(--color-text-dark);
+    }
+    
+    .footer{
+      margin-top:25px;
+      text-align:center;
+      color:var(--color-text-light);
+      font-size:0.75rem;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      opacity: 0.9;
+    }
+    
+    .footer-links {
+      margin-top: 10px;
+    }
+    
+    .footer-links a {
+      color: var(--color-text-light);
+      text-decoration: none;
+      margin: 0 8px;
+      transition: all 0.3s ease;
+    }
+    
+    .footer-links a:hover {
+      color: var(--color-secondary);
+      text-decoration: underline;
+    }
+    
+    /* Media Queries pour la responsivité */
+    @media (max-width:900px){
+      .wrap {
+        flex-direction: column;
+      }
+      
+      .right {
+        width: 100%;
+      }
+      
+      .card{padding:25px 15px}
+      .logo{font-size:1.8rem}
+      .tagline{font-size:0.85rem}
+      .card-header h1{font-size:1.5rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo-header">
+      <div class="logo">
+        <div class="badge-container">
+          <i class="fas fa-crown badge"></i>
+        </div>
+        <span>BLOWEARN</span>
+      </div>
+      <div class="tagline">Ta liberté financière dépend de toi à présent.</div>
+    </div>
+
+    <div class="wrap">
+      <div class="left">
+        <div class="card" aria-live="polite">
+          <div class="card-header">
+            <h1>Activez votre compte</h1>
+            <p>Pour commencer à accéder à votre tableau de bord complet et gagner de l'argent, vous devez activer votre compte avec un paiement unique.</p>
+          </div>
+
+          <div class="capture-notice">
+            <i class="fas fa-camera"></i> <strong>Important :</strong> Dès que votre paiement est validé, faites impérativement une capture d'écran de la confirmation.
+          </div>
+
+          <div class="center">
+            <div><span class="muted">Utilisateur connecté :</span> <strong id="displayName">—</strong></div>
+            <div class="amount">3 600 FCFA</div>
+            <div class="small">Montant unique d'activation. Une fois payé, vous aurez accès à votre tableau de bord.</div>
+          </div>
+
+          <div class="methods">
+            <div class="method" id="mobileMoneyMethod">
+              <div><i class="fas fa-mobile-screen-button" style="font-size:20px;color:var(--color-primary)"></i></div>
+              <div>
+                <div style="font-weight:700">Mobile Money</div>
+                <div class="small">MTN Mobile Money / Orange Money</div>
+              </div>
+            </div>
+
+            <div class="method" id="cardMethod">
+              <div><i class="fas fa-credit-card" style="font-size:20px;color:var(--color-primary)"></i></div>
+              <div>
+                <div style="font-weight:700">Carte bancaire (Visa/Mastercard)</div>
+                <div class="small">Paiement sécurisé par carte bancaire</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button id="payBtn" class="btn"><i class="fas fa-wallet"></i> PAYER MAINTENANT</button>
+          </div>
+
+          <div id="message" style="margin-top:14px"></div>
+          
+          <div class="activation-section">
+            <button class="activation-toggle" id="activationToggle">
+              <i class="fas fa-chevron-down"></i> Vous avez déjà effectué votre paiement ?
+            </button>
+            
+            <div class="activation-form" id="activationForm">
+              <h3 style="color:var(--color-text-dark); margin-bottom:10px;">Activer mon compte</h3>
+              <p class="small">Remplissez ces informations et envoyez la preuve de votre paiement pour activer votre compte.</p>
+              
+              <div class="capture-notice">
+                <i class="fas fa-exclamation-triangle"></i> <strong>Attention :</strong> Vous devez impérativement faire une capture d'écran de votre paiement validé avant de remplir ce formulaire.
+              </div>
+              
+              <div class="form-group">
+                <label for="username">Nom d'utilisateur</label>
+                <div class="input-group">
+                  <div class="input-icon"><i class="fas fa-user"></i></div>
+                  <input type="text" id="username" placeholder="Votre nom d'utilisateur" readonly>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="email">Adresse e-mail</label>
+                <div class="input-group">
+                  <div class="input-icon"><i class="fas fa-envelope"></i></div>
+                  <input type="email" id="email" placeholder="Votre adresse e-mail" readonly>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="country">Pays</label>
+                <div class="input-group">
+                  <div class="input-icon"><i class="fas fa-globe"></i></div>
+                  <input type="text" id="country" placeholder="Votre pays" readonly>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="amount">Montant payé</label>
+                <div class="input-group">
+                  <div class="input-icon"><i class="fas fa-money-bill-wave"></i></div>
+                  <input type="text" id="amount" value="3 600 FCFA" readonly>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="paymentMethod">Moyen de paiement utilisé</label>
+                <div class="input-group">
+                  <div class="input-icon"><i class="fas fa-credit-card"></i></div>
+                  <select id="paymentMethod">
+                    <option value="">Sélectionnez votre moyen de paiement</option>
+                    <option value="mobile_money">Mobile Money (MTN/Orange)</option>
+                    <option value="card">Carte bancaire (Visa/Mastercard)</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="phoneNumber">Numéro de téléphone utilisé pour le paiement</label>
+                <div class="input-group">
+                  <div class="input-icon"><i class="fas fa-phone"></i></div>
+                  <input type="tel" id="phoneNumber" placeholder="Ex: +237 6XX XX XX XX">
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label>Preuve de paiement (capture d'écran)</label>
+                <div class="file-input" id="fileInput">
+                  <i class="fas fa-cloud-upload-alt"></i>
+                  <div>Cliquez pour sélectionner votre capture d'écran</div>
+                  <div class="small">Formats acceptés: JPG, PNG (max 5MB)</div>
+                  <div class="file-name" id="fileName">Aucun fichier sélectionné</div>
+                </div>
+                <input type="file" id="paymentProof" accept="image/*" style="display: none">
+              </div>
+              
+              <button class="activate-btn" id="activateBtn">
+                <i class="fas fa-check-circle"></i> Activer mon compte
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="card">
+          <h3 style="margin-bottom:8px; color:var(--color-text-dark);">Résumé</h3>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div><span class="muted">Montant</span><div style="font-weight:800;font-size:18px">3 600 FCFA</div></div>
+            <div><span class="muted">Statut du compte</span><div id="accountStatus" style="font-weight:700;color:#b76b00">En attente de paiement</div></div>
+            <div id="paymentInfo" class="muted">Méthode : Non sélectionnée</div>
+            <div style="margin-top:8px"><button id="logoutBtn" class="btn secondary">Me déconnecter</button></div>
+          </div>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div class="card">
+          <h4 style="color:var(--color-text-dark); margin-bottom:8px;">Besoin d'aide ?</h4>
+          <p class="small">Contactez le support si vous avez un problème de paiement : <a href="support.html" style="color:var(--color-primary);">Support</a></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div>© 2025 BLOWEARN AGENCIES. Tous droits réservés.</div>
+      <div class="footer-links">
+        <a href="terms.html">Conditions d'utilisation</a>
+        <a href="privacy.html">Politique de confidentialité</a>
+        <a href="support.html">Support: 681144638</a>
+        <a href="https://social-boost-horizon-new-sbh.vercel.app" target="_blank">Propulsé par SHB</a>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCjGisjgbFc2ZE0BFgdhlUao8bCCeuKP1k",
+      authDomain: "cash-flowr.firebaseapp.com",
+      projectId: "cash-flowr",
+      storageBucket: "cash-flowr.firebasestorage.app",
+      messagingSenderId: "1091928501310",
+      appId: "1:1091928501310:web:4f4de306cde36f378ff56f",
+      measurementId: "G-5SF6VDLZCB"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const SERVER_URL = "https://mulaflowr-exaucenapopolo2.replit.app";
+
+    const displayNameEl = document.getElementById('displayName');
+    const accountStatusEl = document.getElementById('accountStatus');
+    const messageEl = document.getElementById('message');
+    const paymentInfo = document.getElementById('paymentInfo');
+    const activationToggle = document.getElementById('activationToggle');
+    const activationForm = document.getElementById('activationForm');
+    const mobileMoneyMethod = document.getElementById('mobileMoneyMethod');
+    const cardMethod = document.getElementById('cardMethod');
+    const fileInput = document.getElementById('fileInput');
+    const paymentProof = document.getElementById('paymentProof');
+    const fileName = document.getElementById('fileName');
+
+    let selectedMethod = null;
+    let currentUser = null;
+    let selectedFile = null;
+    let userCountryCode = null; // Stocke le code pays (cm, sn, etc.)
+
+    // Mapping code pays → nom complet
+    const countryNames = {
+      'cm': 'Cameroun', 'ci': 'Côte d\'Ivoire', 'sn': 'Sénégal', 'ml': 'Mali',
+      'bf': 'Burkina Faso', 'ne': 'Niger', 'tg': 'Togo', 'bj': 'Bénin',
+      'ng': 'Nigeria', 'gh': 'Ghana', 'gn': 'Guinée', 'cd': 'RD Congo',
+      'td': 'Tchad', 'cf': 'République centrafricaine', 'cg': 'Congo-Brazzaville',
+      'gq': 'Guinée équatoriale', 'ga': 'Gabon', 'st': 'Sao Tomé-et-Principe',
+      'gw': 'Guinée-Bissau', 'lr': 'Liberia', 'sl': 'Sierra Leone', 'gm': 'Gambie',
+      'mr': 'Mauritanie', 'ke': 'Kenya', 'ug': 'Ouganda', 'tz': 'Tanzanie',
+      'rw': 'Rwanda', 'bi': 'Burundi', 'et': 'Éthiopie', 'ss': 'Soudan du Sud',
+      'sd': 'Soudan', 'so': 'Somalie', 'dj': 'Djibouti', 'er': 'Érythrée',
+      'dz': 'Algérie', 'eg': 'Égypte', 'ly': 'Libye', 'ma': 'Maroc', 'tn': 'Tunisie',
+      'ao': 'Angola', 'mz': 'Mozambique', 'zm': 'Zambie', 'zw': 'Zimbabwe',
+      'mw': 'Malawi', 'na': 'Namibie', 'bw': 'Botswana', 'sz': 'Eswatini',
+      'ls': 'Lesotho', 'mg': 'Madagascar', 'mu': 'Maurice', 'sc': 'Seychelles',
+      'cv': 'Cap-Vert'
+    };
+
+    // Fonction pour charger les données utilisateur depuis le serveur
+    async function loadUserDataFromServer(idToken) {
+      try {
+        const response = await fetch(`${SERVER_URL}/api/user-data`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${idToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Erreur lors du chargement des données');
+        }
+
+        const data = await response.json();
+        return data.user;
+
+      } catch (error) {
+        console.error('Erreur loadUserDataFromServer:', error);
+        return null;
+      }
+    }
+
+    // Vérifier si l'utilisateur est connecté ; sinon rediriger vers login
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      currentUser = user;
+      
+      // Afficher le nom si disponible
+      displayNameEl.textContent = user.displayName || user.email || user.uid;
+
+      try {
+        // Obtenir le token Firebase
+        const idToken = await user.getIdToken();
+
+        // Charger les données depuis le serveur
+        const userData = await loadUserDataFromServer(idToken);
+
+        if (userData) {
+          // Pré-remplir le formulaire avec les données du serveur
+          document.getElementById('username').value = userData.username || userData.displayName || '';
+          document.getElementById('email').value = userData.email || '';
+
+          // Stocker le code pays et afficher le nom complet
+          if (userData.country) {
+            userCountryCode = userData.country; // Stocke "cm", "sn", etc.
+            const countryName = countryNames[userData.country] || userData.country;
+            document.getElementById('country').value = countryName;
+          }
+
+          // Pré-remplir le numéro de téléphone
+          if (userData.phoneNumber) {
+            document.getElementById('phoneNumber').value = userData.phoneNumber;
+          }
+
+          // Vérifier le statut - "paid" OU "active" permet la redirection
+          const userStatus = (userData.status || '').toString().toLowerCase().trim();
+          const validStatuses = ['paid', 'active'];
+          if (validStatuses.includes(userStatus)) {
+            accountStatusEl.textContent = 'Payé - Accès autorisé';
+            console.log('✅ Statut =', userStatus, '- Redirection vers dashboard');
+            window.location.href = 'dashboard.html';
+            return;
+          } else {
+            accountStatusEl.textContent = 'En attente de paiement';
+            console.log('⏳ Statut actuel:', userStatus, '- Paiement requis');
+          }
+
+          console.log('Données utilisateur chargées:', userData);
+        } else {
+          // Fallback: charger depuis Firestore directement
+          const userRef = doc(db, 'users', user.uid);
+          const snap = await getDoc(userRef);
+          if (snap.exists()) {
+            const data = snap.data();
+            
+            document.getElementById('username').value = data.username || data.displayName || '';
+            document.getElementById('email').value = data.email || user.email || '';
+            
+            if (data.country) {
+              userCountryCode = data.country;
+              const countryName = countryNames[data.country] || data.country;
+              document.getElementById('country').value = countryName;
+            }
+
+            if (data.phoneNumber || data.phone) {
+              document.getElementById('phoneNumber').value = data.phoneNumber || data.phone || '';
+            }
+
+            // Vérifier le statut - "paid" OU "active" permet la redirection
+            const dataStatus = (data.status || '').toString().toLowerCase().trim();
+            const validStatuses = ['paid', 'active'];
+            if (validStatuses.includes(dataStatus)) {
+              accountStatusEl.textContent = 'Payé - Accès autorisé';
+              console.log('✅ Statut =', dataStatus, '- Redirection vers dashboard (Firestore direct)');
+              window.location.href = 'dashboard.html';
+              return;
+            } else {
+              console.log('⏳ Statut actuel:', dataStatus, '- Paiement requis (Firestore direct)');
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Erreur chargement données utilisateur:', err);
+      }
+    });
+
+    // Gestion de la sélection de méthode de paiement
+    mobileMoneyMethod.addEventListener('click', () => {
+      mobileMoneyMethod.classList.add('selected');
+      cardMethod.classList.remove('selected');
+      selectedMethod = 'mobile_money';
+      paymentInfo.textContent = 'Méthode : Mobile Money';
+    });
+
+    cardMethod.addEventListener('click', () => {
+      cardMethod.classList.add('selected');
+      mobileMoneyMethod.classList.remove('selected');
+      selectedMethod = 'card';
+      paymentInfo.textContent = 'Méthode : Carte bancaire';
+    });
+
+    // Handler du bouton de paiement
+    document.getElementById('payBtn').addEventListener('click', async () => {
+      if (!selectedMethod) {
+        messageEl.innerHTML = '<div class="error">Veuillez sélectionner une méthode de paiement.</div>';
+        return;
+      }
+
+      const user = auth.currentUser;
+      if (!user) { 
+        window.location.href = 'login.html'; 
+        return; 
+      }
+
+      // Redirection vers le nouveau lien de paiement Soleaspay
+      window.location.href = 'https://soleaspay.com/qr/pay/sb.html?l=ZnI=&a=MzIwMA==&d=QWN0aXZlciB2b3RyZSBjb21wdGUg&m=Yg==&c=WEFG&k=Vnp3Zm12RWRKam5BQzM1dXVIQ2VJb3RqWXpqN3FHdk5LS09KNFBFejMyWQ==&s=TVVMQUZMT1dSIEFHRU5DSUVTIA==&q=SE1RUUk5NzQ2Tg==';
+    });
+
+    // Toggle du formulaire d'activation
+    activationToggle.addEventListener('click', () => {
+      if (activationForm.style.display === 'block') {
+        activationForm.style.display = 'none';
+        activationToggle.innerHTML = '<i class="fas fa-chevron-down"></i> Vous avez déjà effectué votre paiement ?';
+      } else {
+        activationForm.style.display = 'block';
+        activationToggle.innerHTML = '<i class="fas fa-chevron-up"></i> Masquer le formulaire d\'activation';
+      }
+    });
+
+    // Gestion de l'upload de fichier
+    fileInput.addEventListener('click', () => {
+      paymentProof.click();
+    });
+
+    paymentProof.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        selectedFile = e.target.files[0];
+        fileName.textContent = selectedFile.name;
+      } else {
+        selectedFile = null;
+        fileName.textContent = 'Aucun fichier sélectionné';
+      }
+    });
+
+    // Handler du bouton d'activation
+    document.getElementById('activateBtn').addEventListener('click', async () => {
+      const username = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
+      const countryDisplay = document.getElementById('country').value;
+      const paymentMethod = document.getElementById('paymentMethod').value;
+      const phoneNumber = document.getElementById('phoneNumber').value;
+
+      // Utiliser le code pays stocké (cm, sn, etc.) au lieu du nom affiché
+      const country = userCountryCode || countryDisplay;
+
+      if (!username || !email || !country || !paymentMethod || !phoneNumber) {
+        alert('Veuillez remplir tous les champs requis.');
+        return;
+      }
+
+      if (!selectedFile) {
+        alert('Veuillez sélectionner une capture d\'écran de votre paiement.');
+        return;
+      }
+
+      // Afficher un message de chargement
+      const activateBtn = document.getElementById('activateBtn');
+      const originalText = activateBtn.innerHTML;
+      activateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
+      activateBtn.disabled = true;
+
+      try {
+        // Obtenir le token Firebase pour l'authentification
+        const idToken = await currentUser.getIdToken();
+
+        // Créer un FormData pour envoyer le fichier
+        const formData = new FormData();
+        formData.append('username', username);
+        formData.append('email', email);
+        formData.append('country', country); // Envoie le code pays (cm, sn, etc.)
+        formData.append('paymentMethod', paymentMethod);
+        formData.append('phoneNumber', phoneNumber);
+        formData.append('amount', '3600 FCFA');
+        formData.append('paymentProof', selectedFile);
+        formData.append('idToken', idToken); // Ajouter le token pour l'authentification
+
+        // Envoyer les données au backend
+        const response = await fetch(`${SERVER_URL}/submit-payment`, {
+          method: 'POST',
+          body: formData
+        });
+
+        if (response.ok) {
+          alert('Votre demande d\'activation a été envoyée avec succès! Notre équipe va traiter votre demande sous peu.');
+          // Réinitialiser le formulaire
+          document.getElementById('paymentMethod').value = '';
+          paymentProof.value = '';
+          fileName.textContent = 'Aucun fichier sélectionné';
+          selectedFile = null;
+        } else {
+          // Tenter de lire le message d'erreur du backend
+          let errorMessage = 'Erreur lors de l\'envoi';
+          try {
+             const errorData = await response.json();
+             errorMessage = errorData.error || errorData.message || errorMessage;
+          } catch {
+             // Si la réponse n'est pas du JSON, utiliser le message par défaut
+          }
+          throw new Error(errorMessage);
+        }
+      } catch (error) {
+        console.error('Erreur:', error);
+        alert('Une erreur est survenue lors de l\'envoi: ' + error.message + '. Veuillez réessayer ou contacter le support.');
+      } finally {
+        activateBtn.innerHTML = originalText;
+        activateBtn.disabled = false;
+      }
+    });
+
+    // logout button
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await signOut(auth);
+      window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html>
