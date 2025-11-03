@@ -1,0 +1,2285 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BLOWEARN AGENCIES - Retrait</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  
+  <style>
+    /* -------------------------------------------------------------------------- */
+    /* --- VARIABLES CSS COHÉRENTES AVEC LA PAGE DASHBOARD --- */
+    /* -------------------------------------------------------------------------- */
+    :root {
+      --color-primary: #4A90E2; /* Bleu Énergique */
+      --color-secondary: #FFC107; /* Jaune Vif/Or pour l'accent */
+      --color-text-dark: #2C3E50; /* Texte Sombre (lisible) */
+      --color-text-light: #ECF0F1; /* Texte Clair */
+      --color-bg-light: #FFFFFF; /* Fond de Carte */
+      --color-bg-gradient-1: #6DD5FA; /* Dégradé Fond 1 */
+      --color-bg-gradient-2: #FF7582; /* Dégradé Fond 2 */
+      --success-color: #4CD964;
+      --warning-color: #FF9500;
+      --danger-color: #FF3B30;
+      --shadow: 0 15px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.8);
+      --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- STYLES GÉNÉRAUX COHÉRENTS --- */
+    /* -------------------------------------------------------------------------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+      transition: var(--transition);
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
+      color: var(--color-text-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+      visibility: hidden;
+      opacity: 0;
+    }
+
+    body.loaded {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    /* Effet de bulles animées en arrière-plan */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 25%),
+        radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 90% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 25%);
+      animation: float 20s ease-in-out infinite;
+      z-index: -1;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-15px) scale(1.02); }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- LOADER --- */
+    /* -------------------------------------------------------------------------- */
+    .loader-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .loader-container.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loader {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: conic-gradient(#0000 10%, var(--color-primary));
+      -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
+      animation: spin 1s infinite linear;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(1turn); }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- HEADER --- */
+    /* -------------------------------------------------------------------------- */
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--color-text-dark);
+      display: flex;
+      align-items: center;
+      font-family: 'Poppins', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      background: linear-gradient(45deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: logoGlow 3s ease-in-out infinite alternate;
+    }
+    
+    @keyframes logoGlow {
+      from { filter: drop-shadow(0 0 5px rgba(74, 144, 226, 0.5)); }
+      to { filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.7)); }
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .language-selector {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      position: relative;
+    }
+
+    .language-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      border-radius: 12px;
+      padding: 8px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 140px;
+      z-index: 200;
+      transform-origin: top right;
+      animation: scaleIn 0.2s ease-out forwards;
+      border: 1px solid rgba(255,255,255,0.7);
+      margin-top: 5px;
+    }
+
+    .language-dropdown.active {
+      display: flex;
+    }
+
+    .language-option {
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s ease;
+    }
+
+    .language-option:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .language-option.active {
+      background-color: rgba(74, 144, 226, 0.1);
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    .theme-toggle {
+      background-color: transparent;
+      border: none;
+      color: var(--color-text-dark);
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .theme-toggle i {
+      font-size: 1.2rem;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .user-profile .avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background-color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border: 2px solid var(--color-secondary);
+      box-shadow: var(--shadow);
+    }
+
+    .profile-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      border-radius: 18px;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 150px;
+      z-index: 200;
+      transform-origin: top right;
+      animation: scaleIn 0.2s ease-out forwards;
+      border: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .profile-dropdown.active {
+      display: flex;
+    }
+    
+    @keyframes scaleIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .profile-dropdown .theme-toggle {
+      width: 100%;
+      border-radius: 8px;
+      background-color: rgba(0, 0, 0, 0.05);
+      color: var(--text-color);
+      justify-content: flex-start;
+      padding: 10px;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+      text-align: left;
+      gap: 10px;
+    }
+
+    .profile-dropdown .theme-toggle:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+    
+    .profile-dropdown .theme-toggle span {
+      flex-grow: 1;
+      text-align: left;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- BOUTON HAMBURGER --- */
+    /* -------------------------------------------------------------------------- */
+    .hamburger-btn {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 30px;
+      height: 25px;
+      padding: 0;
+      order: 2;
+    }
+    
+    .hamburger-btn .bar {
+      width: 100%;
+      height: 3px;
+      background-color: var(--color-text-dark);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    
+    .hamburger-btn.open .bar:nth-child(2) {
+      opacity: 0;
+    }
+    
+    .hamburger-btn.open .bar:nth-child(1) {
+      transform: translateY(11px) rotate(45deg);
+    }
+    
+    .hamburger-btn.open .bar:nth-child(3) {
+      transform: translateY(-11px) rotate(-45deg);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- STRUCTURE PRINCIPALE --- */
+    /* -------------------------------------------------------------------------- */
+    .main-container {
+      display: flex;
+      flex: 1;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- SIDEBAR --- */
+    /* -------------------------------------------------------------------------- */
+    .sidebar {
+      width: 280px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.95) 100%);
+      backdrop-filter: blur(15px);
+      border-right: 1px solid rgba(255,255,255,0.7);
+      box-shadow: var(--shadow);
+      height: calc(100vh - 80px);
+      position: sticky;
+      top: 80px;
+      padding: 25px 0;
+      overflow-y: auto;
+      transition: transform 0.4s ease-in-out; 
+    }
+    
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .welcome-section {
+      padding: 0 25px 25px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .welcome-text {
+      color: var(--color-text-dark);
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+      font-weight: 500;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    .username {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: var(--color-primary);
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    .menu-category {
+      padding: 15px 25px 5px;
+      font-size: 0.85rem;
+      color: var(--color-text-dark);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+      font-family: 'Quicksand', sans-serif;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .menu-item {
+      padding: 12px 25px 12px 35px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: var(--color-text-dark);
+      text-decoration: none;
+      font-weight: 500;
+      border-left: 4px solid transparent;
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 0.5s ease-out;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .menu-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
+      transition: all 0.5s ease;
+    }
+    
+    .menu-item:hover::before {
+      left: 100%;
+    }
+
+    .menu-item:hover, .menu-item.active {
+      background-color: rgba(0, 0, 0, 0.05);
+      border-left-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .menu-item i {
+      width: 20px;
+      text-align: center;
+      font-size: 1.1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .menu-item:hover i {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .menu-badge {
+      position: absolute;
+      right: 25px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+      animation: popIn 0.5s ease-out;
+    }
+    
+    @keyframes popIn {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    
+    .menu-badge.active {
+      background-color: var(--success-color);
+      color: white;
+    }
+    
+    .menu-badge.inactive {
+      background-color: var(--danger-color);
+      color: white;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- CONTENU PRINCIPAL --- */
+    /* -------------------------------------------------------------------------- */
+    .content {
+      flex: 1;
+      padding: 30px;
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+      margin-bottom: 25px;
+      color: var(--color-text-dark);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .page-title i {
+      color: var(--color-primary);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- CARTE DE RETRAIT AMÉLIORÉE --- */
+    /* -------------------------------------------------------------------------- */
+    .retrait-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 18px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.7);
+      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .retrait-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: 18px 18px 0 0;
+    }
+
+    .retrait-card h2 {
+      font-size: 1.8rem;
+      color: var(--color-primary);
+      margin-bottom: 15px;
+      text-align: center;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .retrait-card p {
+      font-size: 1rem;
+      color: var(--color-text-dark);
+      text-align: center;
+      line-height: 1.6;
+      margin-bottom: 25px;
+      opacity: 0.8;
+    }
+
+    .user-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      background: rgba(255, 255, 255, 0.5);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .info-label {
+      font-size: 0.85rem;
+      color: var(--color-text-dark);
+      font-weight: 500;
+      opacity: 0.7;
+    }
+
+    .info-value {
+      font-size: 1rem;
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    .solde-actuel {
+      font-size: 1.3rem;
+      font-weight: 700;
+      text-align: center;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .solde-actuel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .solde-actuel span {
+      font-size: 1.8rem;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      display: block;
+      margin-top: 5px;
+    }
+
+    .frais-info {
+      display: flex;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      border: 1px solid rgba(255,255,255,0.5);
+      font-weight: 600;
+    }
+
+    .frais-info .frais {
+      color: var(--danger-color);
+    }
+
+    .frais-info .net {
+      color: var(--success-color);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      color: var(--color-text-dark);
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .form-group label i {
+      color: var(--color-primary);
+    }
+
+    .form-group input, 
+    .form-group select {
+      width: 100%;
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      background-color: rgba(255, 255, 255, 0.8);
+      color: var(--color-text-dark);
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    .form-group input:focus, 
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+      background-color: rgba(255, 255, 255, 0.95);
+      transform: translateY(-2px);
+    }
+
+    .form-group input:invalid {
+      border-color: var(--danger-color);
+    }
+
+    .form-group input:valid {
+      border-color: var(--success-color);
+    }
+
+    .submit-btn {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+      color: white;
+      border: none;
+      padding: 18px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 10px;
+      grid-column: 1 / -1;
+      box-shadow: 0 8px 25px rgba(74, 144, 226, 0.3);
+      position: relative;
+      overflow: hidden;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(74, 144, 226, 0.4);
+    }
+
+    .submit-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .submit-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .submit-btn:hover::before {
+      left: 100%;
+    }
+
+    .note {
+      font-size: 0.9rem;
+      color: var(--danger-color);
+      text-align: center;
+      font-style: italic;
+      padding: 15px;
+      background-color: rgba(255, 59, 48, 0.1);
+      border-radius: 10px;
+      margin-top: 15px;
+      border-left: 4px solid var(--danger-color);
+    }
+
+    .success-note {
+      font-size: 0.9rem;
+      color: var(--success-color);
+      text-align: center;
+      font-style: italic;
+      padding: 15px;
+      background-color: rgba(76, 217, 100, 0.1);
+      border-radius: 10px;
+      margin-top: 15px;
+      border-left: 4px solid var(--success-color);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- HISTORIQUE DES RETRAITS --- */
+    /* -------------------------------------------------------------------------- */
+    .historique-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 18px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.7);
+      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .historique-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: 18px 18px 0 0;
+    }
+
+    .historique-card h2 {
+      font-size: 1.8rem;
+      color: var(--color-primary);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .historique-table-container {
+      overflow-x: auto;
+      margin-top: 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .historique-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 800px;
+    }
+
+    .historique-table thead {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+      color: white;
+    }
+
+    .historique-table th {
+      padding: 15px 10px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .historique-table tbody tr {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      transition: background-color 0.2s ease;
+    }
+
+    .historique-table tbody tr:hover {
+      background-color: rgba(0, 0, 0, 0.03);
+      transform: scale(1.01);
+    }
+
+    .historique-table td {
+      padding: 15px 10px;
+      font-size: 0.95rem;
+      color: var(--color-text-dark);
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: capitalize;
+      text-align: center;
+      min-width: 100px;
+    }
+
+    .status-badge.en_attente {
+      background-color: rgba(255, 149, 0, 0.2);
+      color: var(--warning-color);
+      border: 1px solid var(--warning-color);
+    }
+
+    .status-badge.en_cours {
+      background-color: rgba(74, 144, 226, 0.2);
+      color: var(--color-primary);
+      border: 1px solid var(--color-primary);
+    }
+
+    .status-badge.approuve, .status-badge.succes, .status-badge.termine {
+      background-color: rgba(76, 217, 100, 0.2);
+      color: var(--success-color);
+      border: 1px solid var(--success-color);
+    }
+
+    .status-badge.rejete, .status-badge.refuse {
+      background-color: rgba(255, 59, 48, 0.2);
+      color: var(--danger-color);
+      border: 1px solid var(--danger-color);
+    }
+
+    .montant-cell {
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: var(--color-text-dark);
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      color: rgba(0, 0, 0, 0.1);
+      margin-bottom: 15px;
+    }
+
+    .empty-state p {
+      font-size: 1.1rem;
+      opacity: 0.7;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- FOOTER AMÉLIORÉ --- */
+    /* -------------------------------------------------------------------------- */
+    .footer {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      padding: 20px 30px;
+      text-align: center;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+      margin-top: auto;
+      border-top: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-link {
+      color: var(--color-primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .footer-link:hover {
+      text-decoration: underline;
+      color: var(--color-secondary);
+    }
+
+    .footer-text {
+      color: var(--color-text-dark);
+      font-size: 0.9rem;
+    }
+
+    .support-btn {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      margin-top: 10px;
+    }
+
+    .support-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(74, 144, 226, 0.4);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- NOTIFICATIONS --- */
+    /* -------------------------------------------------------------------------- */
+    .notification-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .notification {
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 350px;
+      animation: slideIn 0.3s ease forwards;
+      position: relative;
+      overflow: hidden;
+      color: white;
+      pointer-events: auto;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .notification.success {
+      background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%);
+    }
+
+    .notification.error {
+      background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%);
+    }
+
+    .notification.info { 
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); 
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(110%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- OVERLAY --- */
+    /* -------------------------------------------------------------------------- */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 98;
+    }
+    
+    .overlay.active {
+      display: block;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- MODE NUIT --- */
+    /* -------------------------------------------------------------------------- */
+    .dark-mode {
+      --color-primary: #5e81ac;
+      --color-secondary: #d08770;
+      --color-text-dark: #eceff4;
+      --color-text-light: #2e3440;
+      --color-bg-light: #3b4252;
+      --color-bg-gradient-1: #2e3440;
+      --color-bg-gradient-2: #4c566a;
+      --success-color: #a3be8c;
+      --warning-color: #ebcb8b;
+      --danger-color: #bf616a;
+      --shadow: 0 15px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
+    }
+
+    .dark-mode body::before {
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(76, 86, 106, 0.4) 0%, transparent 25%),
+        radial-gradient(circle at 80% 10%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 40% 80%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 90% 90%, rgba(76, 86, 106, 0.2) 0%, transparent 25%);
+    }
+
+    .dark-mode .header,
+    .dark-mode .sidebar,
+    .dark-mode .retrait-card,
+    .dark-mode .historique-card,
+    .dark-mode .footer {
+      background: rgba(59, 66, 82, 0.95);
+      color: var(--color-text-dark);
+    }
+
+    .dark-mode .solde-actuel {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- RESPONSIVE --- */
+    /* -------------------------------------------------------------------------- */
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 230px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-container {
+        flex-direction: column;
+      }
+      
+      .hamburger-btn {
+        display: flex;
+        position: static;
+        order: 2;
+      }
+
+      .sidebar {
+        width: 85%;
+        max-width: 320px;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: -100%;
+        z-index: 99;
+        transition: left 0.4s ease-in-out;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.97) 100%);
+      }
+      
+      .sidebar.open {
+        left: 0;
+      }
+      
+      .header {
+        padding: 15px;
+      }
+      
+      .logo {
+        font-size: 1.5rem;
+        margin-left: 0;
+      }
+      
+      .content {
+        padding: 20px;
+      }
+      
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+
+      .user-info-grid {
+        grid-template-columns: 1fr;
+        padding: 15px;
+      }
+
+      .footer-links {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .historique-table {
+        font-size: 0.85rem;
+      }
+
+      .historique-table th,
+      .historique-table td {
+        padding: 10px 8px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .retrait-card, .historique-card {
+        padding: 20px;
+      }
+      
+      .solde-actuel {
+        padding: 15px;
+      }
+      
+      .solde-actuel span {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="loader-container" id="loader">
+    <div class="loader"></div>
+  </div>
+
+  <div class="notification-container" id="notificationContainer"></div>
+
+  <header class="header">
+    <div class="logo">
+      <span>BLOWEARN</span>
+    </div>
+    
+    <div class="header-controls">
+      <div class="language-selector-container">
+        <button class="language-selector" id="languageSelector">
+          <i class="fas fa-globe"></i>
+          <span id="currentLanguage">French</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="language-dropdown" id="languageDropdown">
+          <div class="language-option active" data-lang="fr">
+            <i class="fas fa-check"></i>
+            <span>Français</span>
+          </div>
+          <div class="language-option" data-lang="en">
+            <i class="fas fa-check" style="opacity: 0;"></i>
+            <span>English</span>
+          </div>
+        </div>
+      </div>
+      
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </button>
+      
+      <div class="user-profile" id="userProfile">
+          <div class="avatar" id="userAvatar">U</div>
+          <div class="profile-dropdown" id="profileDropdown">
+              <button class="theme-toggle" id="themeToggle">
+                  <i class="fas fa-moon"></i>
+                  <span>Mode nuit</span>
+              </button>
+          </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="overlay" id="overlay"></div>
+
+  <div class="main-container">
+    <aside class="sidebar" id="sidebar">
+      <div class="welcome-section">
+        <div class="welcome-text" data-i18n="dashboard.title">Dashboard >> BLOWEARN AGENCIES</div>
+        <div class="username" id="sidebarUsername">Utilisateur</div>
+      </div>
+      
+      <div class="menu-category" data-i18n="menu.main">PRINCIPAL</div>
+      <a href="dashboard.html" class="menu-item">
+        <i class="fas fa-home"></i>
+        <span data-i18n="menu.dashboard">Tableau de bord</span>
+        <span class="menu-badge active">☑</span>
+      </a>
+      
+      <a href="depot.html" class="menu-item">
+        <i class="fas fa-wallet"></i>
+        <span data-i18n="menu.deposit">Dépôt 💵</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="bonus_bienvenue.html" class="menu-item">
+        <i class="fas fa-gift"></i>
+        <span data-i18n="menu.welcome_bonus">Bonus de bienvenue</span>
+        <span class="menu-badge inactive">☒</span>
+      </a>
+      
+      <div class="menu-category" data-i18n="menu.accounts">COMPTES</div>
+      <a href="retrait.html" class="menu-item active">
+        <i class="fas fa-money-bill-wave"></i>
+        <span data-i18n="menu.withdrawal">Retrait</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="equipe.html" class="menu-item">
+        <i class="fas fa-users"></i>
+        <span data-i18n="menu.team">Équipe</span>
+        <span class="menu-badge inactive">☒</span>
+      </a>
+
+      <div class="menu-category" data-i18n="menu.special">SPÉCIAL</div>
+      
+      <a href="social_boost.html" class="menu-item">
+        <i class="fas fa-rocket"></i>
+        <span data-i18n="menu.sbh">SBH</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="challenge_reward.html" class="menu-item">
+        <i class="fas fa-medal"></i>
+        <span data-i18n="menu.challenge">Challenge and Reward</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <div class="menu-category" data-i18n="menu.products">PRODUIT / TÂCHE</div>
+      <a href="whatsapp_earn.html" class="menu-item">
+        <i class="fab fa-whatsapp"></i>
+        <span data-i18n="menu.whatsapp_earn">Gagner via Whatsapp</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="gains_publicitaires.html" class="menu-item">
+        <i class="fas fa-ad"></i>
+        <span data-i18n="menu.ad_earnings">Gains publicitaires</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="spin_wheel.html" class="menu-item">
+        <i class="fas fa-trophy"></i>
+        <span data-i18n="menu.fortune_wheel">Roue de la fortune 🏆</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="tiktok_earn.html" class="menu-item">
+        <i class="fab fa-tiktok"></i>
+        <span data-i18n="menu.tiktok_earn">TikTok Earn</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="youtube_earn.html" class="menu-item">
+        <i class="fab fa-youtube"></i>
+        <span data-i18n="menu.youtube_earn">YouTube Earn</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="instagram_earn.html" class="menu-item">
+        <i class="fab fa-instagram"></i>
+        <span data-i18n="menu.instagram_earn">Instagram Earn</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="trivia_challenge.html" class="menu-item">
+        <i class="fas fa-brain"></i>
+        <span data-i18n="menu.trivia">TRIVIA challenge</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <div class="menu-category" data-i18n="menu.bonus">BONUS</div>
+      <a href="liste_contacts.html" class="menu-item">
+        <i class="fas fa-address-book"></i>
+        <span data-i18n="menu.contact_list">Liste de contacts gratuit 🆓</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="booster_visibilite.html" class="menu-item">
+        <i class="fas fa-rocket"></i>
+        <span data-i18n="menu.visibility_booster">Booster ma visibilité</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+
+      <a href="canva_pro.html" class="menu-item">
+        <i class="fas fa-palette"></i>
+        <span data-i18n="menu.canva_pro">Canva Pro</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="connexion_gratuite.html" class="menu-item">
+        <i class="fas fa-shield-alt"></i>
+        <span data-i18n="menu.free_connection">Connexion gratuite</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+    </aside>
+
+    <main class="content">
+      <h1 class="page-title">
+        <i class="fas fa-money-bill-wave"></i>
+        <span data-i18n="withdrawal.title">Demande de retrait</span>
+      </h1>
+
+      <div class="retrait-card">
+        <h2 data-i18n="withdrawal.form_title">🏦 Formulaire de retrait</h2>
+        <p data-i18n="withdrawal.form_description">Remplissez le formulaire ci-dessous pour effectuer un retrait de vos fonds.</p>
+
+        <div class="user-info-grid">
+            <div class="info-item">
+                <span class="info-label" data-i18n="user_info.username">Nom d'utilisateur</span>
+                <span class="info-value" id="infoUsername">Chargement...</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label" data-i18n="user_info.email">Email</span>
+                <span class="info-value" id="infoEmail">Chargement...</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label" data-i18n="withdrawal.payment_status">Statut de paiement</span>
+                <span class="info-value" id="infoPaymentStatus">Chargement...</span>
+            </div>
+        </div>
+
+        <div class="solde-actuel">
+          <span data-i18n="withdrawal.current_balance">Solde actuel:</span> <span id="currentBalance">0</span> XAF
+        </div>
+
+        <div class="frais-info">
+          <div class="frais" data-i18n="withdrawal.fee">Frais de retrait: 500 XAF</div>
+          <div class="net" data-i18n="withdrawal.net_amount">Montant net: <span id="montantNet">0</span> XAF</div>
+        </div>
+
+        <form id="retraitForm" class="form-grid">
+            <div class="form-group">
+                <label for="pays">
+                  <i class="fas fa-globe-africa"></i>
+                  <span data-i18n="withdrawal.country">Pays de retrait *</span>
+                </label>
+                <select id="pays" name="pays" required>
+                    <option value="" data-i18n="withdrawal.select_country">Sélectionnez votre pays</option>
+                    <option value="benin">Bénin</option>
+                    <option value="burkina">Burkina Faso</option>
+                    <option value="cameroun">Cameroun</option>
+                    <option value="coteivoire">Côte d'Ivoire</option>
+                    <option value="mali">Mali</option>
+                    <option value="senegal">Sénégal</option>
+                    <option value="togo">Togo</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="methode">
+                  <i class="fas fa-money-check-alt"></i>
+                  <span data-i18n="withdrawal.method">Méthode de retrait *</span>
+                </label>
+                <select id="methode" name="methode" required disabled>
+                    <option value="" data-i18n="withdrawal.select_method">Sélectionnez d'abord le pays</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="numeroCompte">
+                  <i class="fas fa-mobile-alt"></i>
+                  <span data-i18n="withdrawal.account_number">Numéro de compte/téléphone *</span>
+                </label>
+                <input type="text" id="numeroCompte" name="numeroCompte" placeholder="Ex: 70 123 45 67" required pattern="[0-9\s\+]{8,15}">
+            </div>
+
+            <div class="form-group">
+                <label for="montant">
+                  <i class="fas fa-money-bill-wave"></i>
+                  <span data-i18n="withdrawal.amount">Montant du retrait (XAF) *</span>
+                </label>
+                <input type="number" id="montant" name="montant" placeholder="Entrez le montant" min="3000" required>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="description">
+                  <i class="fas fa-file-alt"></i>
+                  <span data-i18n="withdrawal.description">Description du retrait</span>
+                </label>
+                <input type="text" id="description" name="description" placeholder="Ex: Retrait pour besoins personnels" value="Retrait de fonds BLOWEARN AGENCIES">
+            </div>
+
+            <button type="submit" class="submit-btn" id="retraitBtn">
+                <i class="fas fa-paper-plane"></i> <span data-i18n="withdrawal.submit">Soumettre la demande</span>
+            </button>
+        </form>
+
+        <p class="note" data-i18n="withdrawal.minimum_note">Le montant minimum de retrait est de <strong>3000 XAF</strong>. Les frais de traitement sont de 500 XAF.</p>
+        <p class="success-note" data-i18n="withdrawal.success_note">Vérifiez attentivement vos informations avant de soumettre. Le traitement peut prendre 24-48 heures.</p>
+      </div>
+
+      <!-- HISTORIQUE DES RETRAITS -->
+      <div class="historique-card">
+        <h2>
+          <i class="fas fa-history"></i>
+          <span data-i18n="withdrawal.history_title">Historique de mes retraits</span>
+        </h2>
+        
+        <div class="historique-table-container" id="historiqueContainer">
+          <div class="empty-state">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p data-i18n="withdrawal.loading_history">Chargement de l'historique...</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="terms.html" class="footer-link" data-i18n="footer.terms">Conditions d'utilisation</a>
+        <a href="privacy.html" class="footer-link" data-i18n="footer.privacy">Politique de confidentialité</a>
+        <button class="support-btn" id="supportBtn" data-i18n="footer.support">Support</button>
+        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Propulsé par SBH</a>
+        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Boost Text Management</a>
+      </div>
+      <div class="footer-text">
+        © 2025 BLOWEARN AGENCIES. <span data-i18n="footer.rights">Tous droits réservés.</span>
+      </div>
+    </div>
+  </footer>
+  
+<script>
+/******** CONFIG FIREBASE ********/
+const firebaseConfig = {
+  apiKey: "AIzaSyCjGisjgbFc2ZE0BFgdhlUao8bCCeuKP1k",
+  authDomain: "cash-flowr.firebaseapp.com",
+  projectId: "cash-flowr",
+  storageBucket: "cash-flowr.appspot.com",
+  messagingSenderId: "1091928501310",
+  appId: "1:1091928501310:web:4f4de306cde36f378ff56f",
+  measurementId: "G-5SF6VDLZCB"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+/******** DOM Elements ********/
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+const themeToggle = document.getElementById('themeToggle');
+const userProfile = document.getElementById('userProfile');
+const profileDropdown = document.getElementById('profileDropdown');
+const languageSelector = document.getElementById('languageSelector');
+const languageDropdown = document.getElementById('languageDropdown');
+const currentLanguage = document.getElementById('currentLanguage');
+const sidebarUsername = document.getElementById('sidebarUsername');
+const userAvatar = document.getElementById('userAvatar');
+const loader = document.getElementById('loader');
+const supportBtn = document.getElementById('supportBtn');
+
+const currentBalanceEl = document.getElementById('currentBalance');
+const montantNetEl = document.getElementById('montantNet');
+const retraitForm = document.getElementById('retraitForm');
+const retraitBtn = document.getElementById('retraitBtn');
+const notificationContainer = document.getElementById('notificationContainer');
+const historiqueContainer = document.getElementById('historiqueContainer');
+
+const infoUsername = document.getElementById('infoUsername');
+const infoEmail = document.getElementById('infoEmail');
+const infoPaymentStatus = document.getElementById('infoPaymentStatus');
+
+const paysSelect = document.getElementById('pays');
+const methodeSelect = document.getElementById('methode');
+const numeroCompteInput = document.getElementById('numeroCompte');
+const montantInput = document.getElementById('montant');
+const descriptionInput = document.getElementById('description');
+
+/******** Variables d'état ********/
+let currentUser = null;
+let userData = {};
+let currentLang = 'fr';
+let unsubscribeRetraits = null;
+
+// Frais de retrait
+const FRAIS_RETRAIT = 500;
+
+// Configuration des méthodes de retrait par pays
+const methodesParPays = {
+    benin: ['Moov Money', 'MTN Money', 'Flocash'],
+    burkina: ['Orange Money', 'Moov Money', 'Wave'],
+    cameroun: ['Orange Money', 'MTN Mobile Money', 'Express Union'],
+    coteivoire: ['Orange Money', 'MTN Mobile Money', 'Wave', 'Moov Money'],
+    mali: ['Orange Money', 'Moov Money'],
+    senegal: ['Orange Money', 'Free Money', 'Wave', 'Wizall'],
+    togo: ['Moov Money', 'Togocel', 'Flooz']
+};
+
+/******** Système de traduction ********/
+const translations = {
+  fr: {
+    // Header
+    "header.language": "French",
+    "header.night_mode": "Mode nuit",
+    "header.day_mode": "Mode jour",
+    
+    // Dashboard
+    "dashboard.title": "Dashboard >> BLOWEARN AGENCIES",
+    
+    // Menu
+    "menu.main": "PRINCIPAL",
+    "menu.dashboard": "Tableau de bord",
+    "menu.deposit": "Dépôt 💵",
+    "menu.welcome_bonus": "Bonus de bienvenue",
+    "menu.accounts": "COMPTES",
+    "menu.withdrawal": "Retrait",
+    "menu.team": "Équipe",
+    "menu.special": "SPÉCIAL",
+    "menu.sbh": "SBH",
+    "menu.challenge": "Challenge and Reward",
+    "menu.products": "PRODUIT / TÂCHE",
+    "menu.whatsapp_earn": "Gagner via Whatsapp",
+    "menu.ad_earnings": "Gains publicitaires",
+    "menu.fortune_wheel": "Roue de la fortune 🏆",
+    "menu.tiktok_earn": "TikTok Earn",
+    "menu.youtube_earn": "YouTube Earn",
+    "menu.instagram_earn": "Instagram Earn",
+    "menu.trivia": "TRIVIA challenge",
+    "menu.bonus": "BONUS",
+    "menu.contact_list": "Liste de contacts gratuit 🆓",
+    "menu.visibility_booster": "Booster ma visibilité",
+    "menu.canva_pro": "Canva Pro",
+    "menu.free_connection": "Connexion gratuite",
+    
+    // Withdrawal
+    "withdrawal.title": "Demande de retrait",
+    "withdrawal.form_title": "🏦 Formulaire de retrait",
+    "withdrawal.form_description": "Remplissez le formulaire ci-dessous pour effectuer un retrait de vos fonds.",
+    "withdrawal.payment_status": "Statut de paiement",
+    "withdrawal.current_balance": "Solde actuel:",
+    "withdrawal.fee": "Frais de retrait: 500 XAF",
+    "withdrawal.net_amount": "Montant net:",
+    "withdrawal.country": "Pays de retrait *",
+    "withdrawal.select_country": "Sélectionnez votre pays",
+    "withdrawal.method": "Méthode de retrait *",
+    "withdrawal.select_method": "Sélectionnez d'abord le pays",
+    "withdrawal.account_number": "Numéro de compte/téléphone *",
+    "withdrawal.amount": "Montant du retrait (XAF) *",
+    "withdrawal.description": "Description du retrait",
+    "withdrawal.submit": "Soumettre la demande",
+    "withdrawal.minimum_note": "Le montant minimum de retrait est de <strong>3000 XAF</strong>. Les frais de traitement sont de 500 XAF.",
+    "withdrawal.success_note": "Vérifiez attentivement vos informations avant de soumettre. Le traitement peut prendre 24-48 heures.",
+    "withdrawal.history_title": "Historique de mes retraits",
+    "withdrawal.loading_history": "Chargement de l'historique...",
+    
+    // User Info
+    "user_info.username": "Nom d'utilisateur",
+    "user_info.email": "Email",
+    
+    // Footer
+    "footer.terms": "Conditions d'utilisation",
+    "footer.privacy": "Politique de confidentialité",
+    "footer.support": "Support",
+    "footer.rights": "Tous droits réservés.",
+    
+    // Notifications
+    "notification.success": "Succès",
+    "notification.error": "Erreur",
+    "notification.info": "Information"
+  },
+  en: {
+    // Header
+    "header.language": "English",
+    "header.night_mode": "Night mode",
+    "header.day_mode": "Day mode",
+    
+    // Dashboard
+    "dashboard.title": "Dashboard >> BLOWEARN AGENCIES",
+    
+    // Menu
+    "menu.main": "MAIN",
+    "menu.dashboard": "Dashboard",
+    "menu.deposit": "Deposit 💵",
+    "menu.welcome_bonus": "Welcome Bonus",
+    "menu.accounts": "ACCOUNTS",
+    "menu.withdrawal": "Withdrawal",
+    "menu.team": "Team",
+    "menu.special": "SPECIAL",
+    "menu.sbh": "SBH",
+    "menu.challenge": "Challenge and Reward",
+    "menu.products": "PRODUCT / TASK",
+    "menu.whatsapp_earn": "Earn via Whatsapp",
+    "menu.ad_earnings": "Advertising earnings",
+    "menu.fortune_wheel": "Fortune Wheel 🏆",
+    "menu.tiktok_earn": "TikTok Earn",
+    "menu.youtube_earn": "YouTube Earn",
+    "menu.instagram_earn": "Instagram Earn",
+    "menu.trivia": "TRIVIA challenge",
+    "menu.bonus": "BONUS",
+    "menu.contact_list": "Free contact list 🆓",
+    "menu.visibility_booster": "Boost my visibility",
+    "menu.canva_pro": "Canva Pro",
+    "menu.free_connection": "Free connection",
+    
+    // Withdrawal
+    "withdrawal.title": "Withdrawal Request",
+    "withdrawal.form_title": "🏦 Withdrawal Form",
+    "withdrawal.form_description": "Fill out the form below to withdraw your funds.",
+    "withdrawal.payment_status": "Payment Status",
+    "withdrawal.current_balance": "Current Balance:",
+    "withdrawal.fee": "Withdrawal Fee: 500 XAF",
+    "withdrawal.net_amount": "Net Amount:",
+    "withdrawal.country": "Withdrawal Country *",
+    "withdrawal.select_country": "Select your country",
+    "withdrawal.method": "Withdrawal Method *",
+    "withdrawal.select_method": "Select country first",
+    "withdrawal.account_number": "Account/Phone Number *",
+    "withdrawal.amount": "Withdrawal Amount (XAF) *",
+    "withdrawal.description": "Withdrawal Description",
+    "withdrawal.submit": "Submit Request",
+    "withdrawal.minimum_note": "The minimum withdrawal amount is <strong>3000 XAF</strong>. Processing fees are 500 XAF.",
+    "withdrawal.success_note": "Please verify your information before submitting. Processing may take 24-48 hours.",
+    "withdrawal.history_title": "My Withdrawal History",
+    "withdrawal.loading_history": "Loading history...",
+    
+    // User Info
+    "user_info.username": "Username",
+    "user_info.email": "Email",
+    
+    // Footer
+    "footer.terms": "Terms of Use",
+    "footer.privacy": "Privacy Policy",
+    "footer.support": "Support",
+    "footer.rights": "All rights reserved.",
+    
+    // Notifications
+    "notification.success": "Success",
+    "notification.error": "Error",
+    "notification.info": "Information"
+  }
+};
+
+/******** Fonctions de traduction ********/
+function setLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem('preferredLanguage', lang);
+  
+  // Mettre à jour le sélecteur de langue
+  currentLanguage.textContent = lang === 'fr' ? 'French' : 'English';
+  
+  // Mettre à jour les options de langue
+  document.querySelectorAll('.language-option').forEach(option => {
+    const icon = option.querySelector('i');
+    if (option.dataset.lang === lang) {
+      option.classList.add('active');
+      icon.style.opacity = '1';
+    } else {
+      option.classList.remove('active');
+      icon.style.opacity = '0';
+    }
+  });
+  
+  // Traduire tous les éléments avec data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(element => {
+    const key = element.getAttribute('data-i18n');
+    if (translations[lang] && translations[lang][key]) {
+      if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+        element.placeholder = translations[lang][key];
+      } else {
+        element.textContent = translations[lang][key];
+      }
+    }
+  });
+  
+  // Mettre à jour le texte du thème
+  const isDarkMode = document.body.classList.contains('dark-mode');
+  if (themeToggle) {
+    themeToggle.innerHTML = isDarkMode 
+      ? `<i class="fas fa-sun"></i><span>${translations[lang]['header.day_mode']}</span>` 
+      : `<i class="fas fa-moon"></i><span>${translations[lang]['header.night_mode']}</span>`;
+  }
+}
+
+/******** UI helpers ********/
+function showNotification(type, title, message, duration = 4000) {
+  const container = document.getElementById('notificationContainer');
+  if (!container) return;
+  const notification = document.createElement('div');
+  notification.className = `notification ${type}`;
+  const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle');
+  notification.innerHTML = `
+    <i class="fas ${icon}" style="font-size: 1.5rem;"></i>
+    <div>
+      <strong style="display: block; margin-bottom: 5px;">${title}</strong>
+      <span>${message}</span>
+    </div>
+  `;
+  container.appendChild(notification);
+  setTimeout(() => {
+    notification.style.animation = 'slideIn 0.3s ease reverse forwards';
+    setTimeout(() => { if (container.contains(notification)) container.removeChild(notification); }, 300);
+  }, duration);
+}
+
+function formatNumberSafe(n) { 
+  return (typeof n === 'number' && !isNaN(n)) ? n.toLocaleString('fr-FR') : '0'; 
+}
+
+function formatDate(timestamp) {
+  if (!timestamp) return 'N/A';
+  let date;
+  if (timestamp.toDate) {
+    date = timestamp.toDate();
+  } else if (timestamp instanceof Date) {
+    date = timestamp;
+  } else {
+    date = new Date(timestamp);
+  }
+  return date.toLocaleDateString('fr-FR', { 
+    day: '2-digit', 
+    month: '2-digit', 
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+function getStatusBadgeClass(statut) {
+  const s = (statut || 'en_cours').toLowerCase().replace(/\s+/g, '_');
+  
+  // Statuts de succès
+  if (s === 'approuve' || s === 'approuvé' || s === 'complete' || s === 'completed' || 
+      s === 'succes' || s === 'succès' || s === 'termine' || s === 'terminé' || s === 'success') {
+    return 'succes';
+  }
+  
+  // Statuts de rejet/refus
+  if (s === 'rejete' || s === 'rejeté' || s === 'rejected' || s === 'refuse' || s === 'refusé') {
+    return 'refuse';
+  }
+  
+  // Statut en cours
+  if (s === 'en_cours' || s === 'encours' || s === 'processing' || s === 'traitement') {
+    return 'en_cours';
+  }
+  
+  // Statut en attente (par défaut ou explicite)
+  return 'en_attente';
+}
+
+function getStatusText(statut) {
+  if (!statut) return 'En cours';
+  
+  const s = statut.toLowerCase().replace(/\s+/g, '_');
+  
+  // Statuts de succès
+  if (s === 'approuve' || s === 'approuvé' || s === 'complete' || s === 'completed') return 'Approuvé';
+  if (s === 'succes' || s === 'succès' || s === 'success') return 'Succès';
+  if (s === 'termine' || s === 'terminé') return 'Terminé';
+  
+  // Statuts de rejet/refus
+  if (s === 'rejete' || s === 'rejeté' || s === 'rejected') return 'Rejeté';
+  if (s === 'refuse' || s === 'refusé') return 'Refusé';
+  
+  // Statut en cours
+  if (s === 'en_cours' || s === 'encours' || s === 'processing' || s === 'traitement') return 'En cours';
+  
+  // Statut en attente
+  if (s === 'en_attente' || s === 'enattente' || s === 'pending') return 'En attente';
+  
+  // Si le statut n'est pas reconnu, afficher tel quel (capitaliser la première lettre)
+  return statut.charAt(0).toUpperCase() + statut.slice(1).replace(/_/g, ' ');
+}
+
+/******** UI events ********/
+if (hamburgerBtn) {
+  hamburgerBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('active');
+      hamburgerBtn.classList.toggle('open');
+  });
+}
+if (overlay) {
+  overlay.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('active');
+      hamburgerBtn.classList.remove('open');
+  });
+}
+if (userProfile) {
+  userProfile.addEventListener('click', (event) => {
+      event.stopPropagation();
+      profileDropdown.classList.toggle('active');
+  });
+}
+document.addEventListener('click', (event) => {
+  if (!userProfile || !userProfile.contains(event.target)) {
+    if (profileDropdown) profileDropdown.classList.remove('active');
+  }
+});
+
+// Gestion du sélecteur de langue
+if (languageSelector) {
+  languageSelector.addEventListener('click', (event) => {
+    event.stopPropagation();
+    languageDropdown.classList.toggle('active');
+  });
+}
+
+// Fermer le dropdown de langue quand on clique ailleurs
+document.addEventListener('click', () => {
+  if (languageDropdown) languageDropdown.classList.remove('active');
+});
+
+// Changer de langue
+document.querySelectorAll('.language-option').forEach(option => {
+  option.addEventListener('click', () => {
+    const lang = option.dataset.lang;
+    setLanguage(lang);
+    languageDropdown.classList.remove('active');
+  });
+});
+
+if (themeToggle) {
+  themeToggle.addEventListener('click', (event) => {
+      event.stopPropagation();
+      document.body.classList.toggle('dark-mode');
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      themeToggle.innerHTML = isDarkMode 
+          ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+          : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
+      if(currentUser) saveUserData('theme', isDarkMode ? 'dark' : 'light');
+  });
+}
+
+/******** Bouton Support ********/
+if (supportBtn) {
+  supportBtn.addEventListener('click', () => {
+    window.open('https://wa.me/681144638', '_blank');
+  });
+}
+
+/******** Gestion des méthodes de retrait ********/
+paysSelect.addEventListener('change', function() {
+    const paysSelectionne = this.value;
+    
+    // Réinitialiser la sélection de méthode
+    methodeSelect.innerHTML = '';
+    methodeSelect.disabled = true;
+    
+    if (paysSelectionne && methodesParPays[paysSelectionne]) {
+        methodeSelect.disabled = false;
+        methodeSelect.innerHTML = '<option value="">Sélectionnez une méthode</option>';
+        
+        methodesParPays[paysSelectionne].forEach(methode => {
+            const option = document.createElement('option');
+            option.value = methode.toLowerCase().replace(/\s+/g, '-');
+            option.textContent = methode;
+            methodeSelect.appendChild(option);
+        });
+    } else {
+        methodeSelect.innerHTML = '<option value="">Sélectionnez d\'abord le pays</option>';
+    }
+});
+
+/******** Calcul du montant net en temps réel ********/
+montantInput.addEventListener('input', function() {
+    const montant = parseFloat(this.value) || 0;
+    const montantNet = Math.max(0, montant - FRAIS_RETRAIT);
+    montantNetEl.textContent = formatNumberSafe(montantNet);
+});
+
+/******** Validation du formulaire ********/
+function validerFormulaire() {
+    const montant = parseFloat(montantInput.value);
+    const solde = userData.solde || 0;
+    const minMontant = 3000;
+
+    if (montant < minMontant) {
+        showNotification('error', translations[currentLang]['notification.error'], `Le montant minimum de retrait est de ${minMontant.toLocaleString('fr-FR')} XAF.`);
+        return false;
+    }
+    
+    if (montant > solde) {
+        showNotification('error', translations[currentLang]['notification.error'], `Votre solde actuel est de ${formatNumberSafe(solde)} XAF.`);
+        return false;
+    }
+    
+    // Vérifier que le montant est suffisant pour couvrir les frais
+    if (montant <= FRAIS_RETRAIT) {
+        showNotification('error', translations[currentLang]['notification.error'], `Le montant doit être supérieur aux frais de retrait (${FRAIS_RETRAIT} XAF).`);
+        return false;
+    }
+    
+    if (!numeroCompteInput.checkValidity()) {
+        showNotification('error', translations[currentLang]['notification.error'], 'Veuillez entrer un numéro de compte/téléphone valide.');
+        return false;
+    }
+    
+    return true;
+}
+
+/******** Sauvegarde des données utilisateur ********/
+async function saveUserData(key = null, value = null) {
+  if (!currentUser) return;
+  try {
+    const userRef = db.collection('users').doc(currentUser.uid);
+    const dataToSave = key ? { [key]: value } : userData;
+    await userRef.set({ ...dataToSave, lastUpdate: new Date() }, { merge: true });
+    console.log('Données utilisateur enregistrées.');
+  } catch (error) {
+    console.error("Erreur lors de la sauvegarde :", error);
+    showNotification('error', translations[currentLang]['notification.error'], 'Impossible de sauvegarder vos données.');
+  }
+}
+
+/******** Vérification du statut de paiement ********/
+function isUserPaidFromDoc(docData) {
+  if (!docData) return false;
+  const candidates = [
+    docData.paid, docData.isPaid, docData.paiement, docData.paymentStatus,
+    docData.status, docData.statut, docData.payment, docData.paidStatus
+  ];
+  for (const candidate of candidates) {
+    if (candidate !== undefined && candidate !== null) {
+      if (typeof candidate === 'boolean') return candidate;
+      if (typeof candidate === 'string') {
+        const v = candidate.toLowerCase().trim();
+        return ['true', 'yes', 'paid', 'payé', 'complete', 'completed', 'active', '1'].includes(v);
+      }
+      if (typeof candidate === 'number') return candidate === 1;
+    }
+  }
+  return false;
+}
+
+/******** Chargement des données utilisateur ********/
+async function loadUserData() {
+  if (!currentUser) throw new Error("Aucun utilisateur connecté.");
+  
+  // Chercher par UID puis par email
+  let userRef = db.collection('users').doc(currentUser.uid);
+  let doc = await userRef.get();
+  let foundViaEmail = false;
+
+  // FALLBACK: Si pas trouvé par UID, chercher par email
+  if (!doc.exists && currentUser.email) {
+    console.log('⚠️ Document non trouvé par UID, recherche par email...');
+    const emailQuery = await db.collection('users').where('email', '==', currentUser.email).limit(1).get();
+    if (!emailQuery.empty) {
+      doc = emailQuery.docs[0];
+      userRef = doc.ref;
+      foundViaEmail = true;
+      console.log('✅ Utilisateur trouvé par email:', currentUser.email);
+    }
+  }
+
+  if (doc.exists) {
+    const data = doc.data() || {};
+    userData = {
+      uid: foundViaEmail ? doc.id : currentUser.uid,
+      displayName: data.displayName || currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'Utilisateur'),
+      username: data.username || data.userName || (currentUser.email ? currentUser.email.split('@')[0] : 'Utilisateur'),
+      email: data.email || currentUser.email,
+      solde: Number(data.solde || data.balance || 0),
+      retire: Number(data.retire || data.withdrawn || 0),
+      paid: isUserPaidFromDoc(data),
+      theme: data.theme || 'light',
+      phoneNumber: data.phoneNumber || data.phone || "",
+      country: data.country || data.pays || ""
+    };
+  } else {
+    userData = {
+      uid: currentUser.uid,
+      username: currentUser.email ? currentUser.email.split('@')[0] : 'Utilisateur',
+      email: currentUser.email,
+      solde: 0, 
+      retire: 0, 
+      paid: false, 
+      theme: 'light',
+      phoneNumber: "",
+      country: ""
+    };
+    await saveUserData();
+  }
+}
+
+function updateUI() {
+    if (sidebarUsername) sidebarUsername.textContent = userData.username;
+    if (userAvatar) userAvatar.textContent = userData.username.charAt(0).toUpperCase();
+    if (currentBalanceEl) currentBalanceEl.textContent = formatNumberSafe(userData.solde);
+    
+    // Mettre à jour les informations utilisateur
+    infoUsername.textContent = userData.username;
+    infoEmail.textContent = userData.email;
+    infoPaymentStatus.textContent = userData.paid ? '✅ Payé' : '❌ Non payé';
+    infoPaymentStatus.style.color = userData.paid ? 'var(--success-color)' : 'var(--danger-color)';
+    
+    // Mettre à jour le montant net initial
+    const montant = parseFloat(montantInput.value) || 0;
+    const montantNet = Math.max(0, montant - FRAIS_RETRAIT);
+    montantNetEl.textContent = formatNumberSafe(montantNet);
+}
+
+/******** Chargement de l'historique des retraits en temps réel ********/
+function loadHistoriqueRetraits() {
+  if (!currentUser || !userData.uid) {
+    console.warn('Impossible de charger l\'historique: utilisateur non connecté');
+    return;
+  }
+
+  // Si un listener existe déjà, l'annuler
+  if (unsubscribeRetraits) {
+    console.log('🔄 Annulation de l\'ancien listener...');
+    unsubscribeRetraits();
+  }
+
+  console.log('📊 Mise en place du listener temps réel pour l\'historique des retraits:', userData.uid);
+  
+  // Requête Firestore avec listener temps réel (onSnapshot)
+  const retraitsQuery = db.collection('retraits')
+    .where('userId', '==', userData.uid)
+    .orderBy('date', 'desc')
+    .limit(50);
+  
+  // LISTENER TEMPS RÉEL - Se met à jour automatiquement quand le statut change dans Firestore
+  unsubscribeRetraits = retraitsQuery.onSnapshot(
+    (snapshot) => {
+      console.log('🔄 Mise à jour en temps réel de l\'historique:', snapshot.size, 'retrait(s)');
+      
+      if (snapshot.empty) {
+        historiqueContainer.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <p data-i18n="withdrawal.no_withdrawals">Aucun retrait effectué pour le moment.</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Créer le tableau avec les données
+      let tableHTML = `
+        <table class="historique-table">
+          <thead>
+            <tr>
+              <th data-i18n="withdrawal.date">Date</th>
+              <th data-i18n="withdrawal.amount">Montant</th>
+              <th data-i18n="withdrawal.country">Pays</th>
+              <th data-i18n="withdrawal.method">Méthode</th>
+              <th data-i18n="withdrawal.account_number">Numéro</th>
+              <th data-i18n="withdrawal.description">Description</th>
+              <th data-i18n="withdrawal.status">Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      snapshot.forEach(doc => {
+        const retrait = doc.data();
+        const statusClass = getStatusBadgeClass(retrait.statut);
+        const statusText = getStatusText(retrait.statut);
+        
+        tableHTML += `
+          <tr>
+            <td>${formatDate(retrait.date)}</td>
+            <td class="montant-cell">${formatNumberSafe(retrait.montant)} XAF</td>
+            <td>${retrait.pays || 'N/A'}</td>
+            <td>${retrait.methode || 'N/A'}</td>
+            <td>${retrait.numeroCompte || 'N/A'}</td>
+            <td>${retrait.description || 'N/A'}</td>
+            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+          </tr>
+        `;
+      });
+
+      tableHTML += `
+          </tbody>
+        </table>
+      `;
+
+      historiqueContainer.innerHTML = tableHTML;
+      
+      // Retraduire les en-têtes du tableau
+      setLanguage(currentLang);
+      
+      console.log('✅ Historique mis à jour en temps réel');
+    },
+    (error) => {
+      console.error('❌ Erreur lors de l\'écoute de l\'historique:', error);
+      historiqueContainer.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>Erreur lors du chargement de l'historique.</p>
+        </div>
+      `;
+    }
+  );
+}
+
+/******** Logique de retrait ********/
+retraitForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    if (!currentUser) {
+        showNotification('error', translations[currentLang]['notification.error'], 'Veuillez vous connecter pour effectuer un retrait.');
+        return;
+    }
+
+    if (!validerFormulaire()) {
+        return;
+    }
+
+    const montant = parseFloat(montantInput.value);
+    const pays = paysSelect.options[paysSelect.selectedIndex].text;
+    const methode = methodeSelect.options[methodeSelect.selectedIndex].text;
+    const numeroCompte = numeroCompteInput.value;
+    const description = descriptionInput.value;
+
+    // Désactiver le bouton pendant le traitement
+    retraitBtn.disabled = true;
+    retraitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement...';
+    
+    showNotification('info', translations[currentLang]['notification.info'], 'Votre demande de retrait est en cours de traitement.');
+
+    try {
+        // Obtenir l'idToken pour l'authentification
+        const idToken = await currentUser.getIdToken();
+
+        // Envoyer la demande au serveur
+        const response = await fetch(`https://mulaflowr-exaucenapopolo2.replit.app/api/retrait`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`
+            },
+            body: JSON.stringify({
+                montant: montant,
+                pays: pays,
+                methode: methode,
+                numeroCompte: numeroCompte,
+                description: description,
+                frais: FRAIS_RETRAIT
+            })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.error || 'Erreur lors du retrait');
+        }
+
+        // Mettre à jour les données locales avec les nouveaux soldes du serveur
+        userData.solde = result.nouveauSolde;
+        userData.retire = result.nouveauRetire;
+        updateUI();
+        
+        showNotification('success', translations[currentLang]['notification.success'], 
+            `Votre demande de retrait de ${formatNumberSafe(montant)} XAF a été envoyée avec succès. ` +
+            `Méthode: ${methode} (${pays}). Le traitement peut prendre 24-48 heures.`);
+        
+        // Réinitialiser le formulaire
+        retraitForm.reset();
+        methodeSelect.disabled = true;
+        methodeSelect.innerHTML = '<option value="">Sélectionnez d\'abord le pays</option>';
+        montantNetEl.textContent = '0';
+        
+        // Le listener temps réel se mettra à jour automatiquement
+        
+    } catch (error) {
+        console.error("Erreur lors du retrait :", error);
+        showNotification('error', translations[currentLang]['notification.error'], error.message || 'Une erreur est survenue. Veuillez réessayer.');
+    } finally {
+        retraitBtn.disabled = false;
+        retraitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> <span data-i18n="withdrawal.submit">Soumettre la demande</span>';
+        setLanguage(currentLang); // Retraduire le bouton
+    }
+});
+
+/******** Thème helper ********/
+function applyTheme() {
+  const isDarkMode = userData.theme === 'dark';
+  document.body.classList.toggle('dark-mode', isDarkMode);
+  if (themeToggle) themeToggle.innerHTML = isDarkMode 
+      ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+      : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
+}
+
+/******** Point d'entrée principal ********/
+auth.onAuthStateChanged(async (user) => {
+    if (user) {
+        currentUser = user;
+        try {
+            await loadUserData();
+            
+            // Vérification du statut de paiement
+            if (!userData.paid) {
+                showNotification('info', translations[currentLang]['notification.info'], 'Veuillez finaliser votre inscription pour continuer.');
+                setTimeout(() => { window.location.href = 'depot.html'; }, 2500);
+                return;
+            }
+            
+            updateUI();
+            applyTheme();
+            
+            // Charger l'historique des retraits (listener temps réel)
+            loadHistoriqueRetraits();
+            
+            document.body.classList.add('loaded');
+            loader.classList.add('hidden');
+            
+            showNotification('success', translations[currentLang]['notification.success'], `Solde actuel: ${formatNumberSafe(userData.solde)} XAF`);
+            
+        } catch (error) {
+            console.error("Erreur critique lors de l'initialisation :", error);
+            showNotification('error', translations[currentLang]['notification.error'], "Impossible de charger vos données. Veuillez vous reconnecter.");
+            auth.signOut();
+            setTimeout(() => { window.location.href = 'login.html'; }, 3000);
+        }
+    } else {
+        window.location.href = 'login.html';
+    }
+});
+
+/******** Initialisation ********/
+document.addEventListener('DOMContentLoaded', () => {
+  // Charger la langue sauvegardée ou utiliser le français par défaut
+  const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
+  setLanguage(savedLang);
+});
+
+// Ajouter les traductions manquantes
+translations.fr["withdrawal.no_withdrawals"] = "Aucun retrait effectué pour le moment.";
+translations.fr["withdrawal.date"] = "Date";
+translations.fr["withdrawal.status"] = "Statut";
+
+translations.en["withdrawal.no_withdrawals"] = "No withdrawals made yet.";
+translations.en["withdrawal.date"] = "Date";
+translations.en["withdrawal.status"] = "Status";
+</script>
+</body>
+</html>
