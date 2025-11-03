@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -165,6 +166,51 @@
       gap: 8px;
       font-weight: 500;
       box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      position: relative;
+    }
+
+    .language-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      border-radius: 12px;
+      padding: 8px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 140px;
+      z-index: 200;
+      transform-origin: top right;
+      animation: scaleIn 0.2s ease-out forwards;
+      border: 1px solid rgba(255,255,255,0.7);
+      margin-top: 5px;
+    }
+
+    .language-dropdown.active {
+      display: flex;
+    }
+
+    .language-option {
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s ease;
+    }
+
+    .language-option:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .language-option.active {
+      background-color: rgba(74, 144, 226, 0.1);
+      color: var(--color-primary);
+      font-weight: 600;
     }
 
     .theme-toggle {
@@ -308,11 +354,11 @@
     }
 
     /* -------------------------------------------------------------------------- */
-    /* --- SIDEBAR (MENU) AMÉLIORÉ --- */
+    /* --- SIDEBAR (MENU) AMÉLIORÉ AVEC NOUVEAU FOND ET POLICE --- */
     /* -------------------------------------------------------------------------- */
     .sidebar {
       width: 280px;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 253, 0.95) 100%);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.95) 100%);
       backdrop-filter: blur(15px);
       border-right: 1px solid rgba(255,255,255,0.7);
       box-shadow: var(--shadow);
@@ -339,13 +385,14 @@
       font-size: 0.9rem;
       margin-bottom: 5px;
       font-weight: 500;
+      font-family: 'Quicksand', sans-serif;
     }
 
     .username {
       font-weight: 600;
       font-size: 1.2rem;
       color: var(--color-primary);
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Quicksand', sans-serif;
     }
 
     .menu-category {
@@ -355,7 +402,7 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       font-weight: 600;
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Quicksand', sans-serif;
       border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
 
@@ -371,7 +418,7 @@
       position: relative;
       overflow: hidden;
       animation: fadeIn 0.5s ease-out;
-      font-family: 'Montserrat', sans-serif;
+      font-family: 'Quicksand', sans-serif;
     }
 
     @keyframes fadeIn {
@@ -1245,7 +1292,7 @@
     .telegram { background: linear-gradient(135deg, #0088cc 0%, #006699 100%); }
 
     /* -------------------------------------------------------------------------- */
-    /* --- FOOTER --- */
+    /* --- FOOTER AMÉLIORÉ --- */
     /* -------------------------------------------------------------------------- */
     .footer {
       background: rgba(255, 255, 255, 0.95);
@@ -1447,14 +1494,15 @@
       }
 
       .sidebar {
-        width: 75%;
-        max-width: 300px;
+        width: 85%;
+        max-width: 320px;
         height: 100vh;
         position: fixed;
         top: 0;
         left: -100%;
         z-index: 99;
         transition: left 0.4s ease-in-out;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.97) 100%);
       }
       
       .sidebar.open {
@@ -1515,6 +1563,14 @@
       .user-name {
         display: none;
       }
+      
+      .language-selector span {
+        display: none;
+      }
+      
+      .language-selector {
+        padding: 8px;
+      }
     }
 
     /* -------------------------------------------------------------------------- */
@@ -1556,11 +1612,23 @@
     </div>
     
     <div class="header-controls">
-      <button class="language-selector" id="languageSelector">
-        <i class="fas fa-globe"></i>
-        <span>French</span>
-        <i class="fas fa-chevron-down"></i>
-      </button>
+      <div class="language-selector-container">
+        <button class="language-selector" id="languageSelector">
+          <i class="fas fa-globe"></i>
+          <span id="currentLanguage">French</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="language-dropdown" id="languageDropdown">
+          <div class="language-option active" data-lang="fr">
+            <i class="fas fa-check"></i>
+            <span>Français</span>
+          </div>
+          <div class="language-option" data-lang="en">
+            <i class="fas fa-check" style="opacity: 0;"></i>
+            <span>English</span>
+          </div>
+        </div>
+      </div>
       
       <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
         <div class="bar"></div>
@@ -1585,138 +1653,121 @@
   <div class="main-container">
     <aside class="sidebar" id="sidebar">
       <div class="welcome-section">
-        <div class="welcome-text">Dashboard >> BLOWEARN AGENCIES</div>
+        <div class="welcome-text" data-i18n="dashboard.title">Dashboard >> BLOWEARN AGENCIES</div>
         <div class="username" id="sidebarUsername">Utilisateur</div>
       </div>
       
-      <div class="menu-category">PRINCIPAL</div>
+      <div class="menu-category" data-i18n="menu.main">PRINCIPAL</div>
       <a href="dashboard.html" class="menu-item active">
         <i class="fas fa-home"></i>
-        <span>Tableau de bord</span>
+        <span data-i18n="menu.dashboard">Tableau de bord</span>
         <span class="menu-badge active">☑</span>
       </a>
       
       <a href="depot.html" class="menu-item">
         <i class="fas fa-wallet"></i>
-        <span>Dépôt 💵</span>
+        <span data-i18n="menu.deposit">Dépôt 💵</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="bonus_bienvenue.html" class="menu-item">
         <i class="fas fa-gift"></i>
-        <span>Bonus de bienvenue</span>
+        <span data-i18n="menu.welcome_bonus">Bonus de bienvenue</span>
         <span class="menu-badge inactive">☒</span>
       </a>
       
-      <div class="menu-category">COMPTES</div>
+      <div class="menu-category" data-i18n="menu.accounts">COMPTES</div>
       <a href="retrait.html" class="menu-item">
         <i class="fas fa-money-bill-wave"></i>
-        <span>Retrait</span>
+        <span data-i18n="menu.withdrawal">Retrait</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="equipe.html" class="menu-item">
         <i class="fas fa-users"></i>
-        <span>Équipe</span>
+        <span data-i18n="menu.team">Équipe</span>
         <span class="menu-badge inactive">☒</span>
       </a>
 
-      <div class="menu-category">SPÉCIAL</div>
-      <a href="love_earn.html" class="menu-item">
-        <i class="fas fa-heart"></i>
-        <span>LoveEarn</span>
-        <span class="menu-badge inactive">☐</span>
-      </a>
+      <div class="menu-category" data-i18n="menu.special">SPÉCIAL</div>
       
       <a href="social_boost.html" class="menu-item">
         <i class="fas fa-rocket"></i>
-        <span>SBH</span>
+        <span data-i18n="menu.sbh">SBH</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="challenge_reward.html" class="menu-item">
         <i class="fas fa-medal"></i>
-        <span>Challenge and Reward</span>
+        <span data-i18n="menu.challenge">Challenge and Reward</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
-      <div class="menu-category">PRODUIT / TÂCHE</div>
+      <div class="menu-category" data-i18n="menu.products">PRODUIT / TÂCHE</div>
       <a href="whatsapp_earn.html" class="menu-item">
         <i class="fab fa-whatsapp"></i>
-        <span>Gagner via Whatsapp</span>
-        <span class="menu-badge inactive">☐</span>
-      </a>
-      
-      <a href="movies.html" class="menu-item">
-        <i class="fas fa-film"></i>
-        <span>Films</span>
-        <span class="menu-badge inactive">☐</span>
-      </a>
-      
-      <a href="paris_fixes.html" class="menu-item">
-        <i class="fas fa-chart-line"></i>
-        <span>Paris fixes</span>
+        <span data-i18n="menu.whatsapp_earn">Gagner via Whatsapp</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="gains_publicitaires.html" class="menu-item">
         <i class="fas fa-ad"></i>
-        <span>Gains publicitaires</span>
+        <span data-i18n="menu.ad_earnings">Gains publicitaires</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="spin_wheel.html" class="menu-item">
         <i class="fas fa-trophy"></i>
-        <span>Roue de la fortune 🏆</span>
+        <span data-i18n="menu.fortune_wheel">Roue de la fortune 🏆</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="tiktok_earn.html" class="menu-item">
         <i class="fab fa-tiktok"></i>
-        <span>TikTok Earn</span>
+        <span data-i18n="menu.tiktok_earn">TikTok Earn</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="youtube_earn.html" class="menu-item">
         <i class="fab fa-youtube"></i>
-        <span>YouTube Earn</span>
+        <span data-i18n="menu.youtube_earn">YouTube Earn</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="instagram_earn.html" class="menu-item">
         <i class="fab fa-instagram"></i>
-        <span>Instagram Earn</span>
+        <span data-i18n="menu.instagram_earn">Instagram Earn</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="trivia_challenge.html" class="menu-item">
         <i class="fas fa-brain"></i>
-        <span>TRIVIA challenge</span>
+        <span data-i18n="menu.trivia">TRIVIA challenge</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
-      <div class="menu-category">BONUS</div>
+      <div class="menu-category" data-i18n="menu.bonus">BONUS</div>
       <a href="liste_contacts.html" class="menu-item">
         <i class="fas fa-address-book"></i>
-        <span>Liste de contacts gratuit 🆓</span>
+        <span data-i18n="menu.contact_list">Liste de contacts gratuit 🆓</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="booster_visibilite.html" class="menu-item">
         <i class="fas fa-rocket"></i>
-        <span>Booster ma visibilité</span>
+        <span data-i18n="menu.visibility_booster">Booster ma visibilité</span>
         <span class="menu-badge inactive">☐</span>
       </a>
 
       <a href="canva_pro.html" class="menu-item">
         <i class="fas fa-palette"></i>
-        <span>Canva Pro</span>
+        <span data-i18n="menu.canva_pro">Canva Pro</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="connexion_gratuite.html" class="menu-item">
         <i class="fas fa-shield-alt"></i>
-        <span>Connexion gratuite</span>
+        <span data-i18n="menu.free_connection">Connexion gratuite</span>
         <span class="menu-badge inactive">☐</span>
       </a>
     </aside>
@@ -1724,7 +1775,7 @@
     <main class="content">
       <h1 class="page-title">
         <i class="fas fa-home"></i>
-        <span>Dashboard >> BLOWEARN AGENCIES</span>
+        <span data-i18n="dashboard.title">Dashboard >> BLOWEARN AGENCIES</span>
       </h1>
       
       <!-- Bannière améliorée avec cases dépense et profit -->
@@ -1732,21 +1783,21 @@
         <div class="banner-header">
           <div>
             <div class="banner-title" id="welcomeTitle">
-                Bienvenue,
+                <span data-i18n="banner.welcome">Bienvenue,</span>
                 <span class="username-highlight" id="bannerUsername">Utilisateur</span>
             </div>
-            <div class="banner-text" id="welcomeMessage">
+            <div class="banner-text" id="welcomeMessage" data-i18n="banner.message">
               BLOWEARN AGENCIES vous offre plus de 10 outils numériques pour maximiser vos revenus en ligne. Des annonces aux promotions YouTube et trivia, spécialement conçus pour VOUS ! Améliorez votre présence en ligne dès maintenant ! 💰 🚀
             </div>
           </div>
-          <a href="https://web2apkpro.com/public_download.php?project_id=2263&token=feb8e5d109" class="app-btn">CLIQUEZ ICI pour obtenir l'application Android</a>
+          <a href="https://web2apkpro.com/public_download.php?project_id=2263&token=feb8e5d109" class="app-btn" data-i18n="banner.app_button">CLIQUEZ ICI pour obtenir l'application Android</a>
         </div>
         
         <div class="banner-stats">
           <div class="banner-stat-card" id="banner-depense">
             <div class="banner-stat-title">
               <i class="fas fa-arrow-down"></i>
-              Dépense:
+              <span data-i18n="banner.expense">Dépense:</span>
             </div>
             <div class="banner-stat-value">XAF 0</div>
           </div>
@@ -1754,7 +1805,7 @@
           <div class="banner-stat-card" id="banner-profit">
             <div class="banner-stat-title">
               <i class="fas fa-arrow-up"></i>
-              Profit:
+              <span data-i18n="banner.profit">Profit:</span>
             </div>
             <div class="banner-stat-value">XAF 0</div>
           </div>
@@ -1767,11 +1818,11 @@
           <div class="rain-container" id="rain-solde"></div>
           <div class="large-stat-title">
             <i class="fas fa-wallet large-stat-icon"></i>
-            SOLDE
+            <span data-i18n="stats.balance">SOLDE</span>
           </div>
           <div class="large-stat-value">XAF 0</div>
           <div class="stat-change">
-            <span>Vol:(0%)</span>
+            <span data-i18n="stats.volume">Vol:(0%)</span>
           </div>
         </div>
       
@@ -1779,11 +1830,11 @@
           <div class="rain-container" id="rain-retire"></div>
           <div class="medium-stat-title">
             <i class="fas fa-arrow-up medium-stat-icon"></i>
-            Retiré
+            <span data-i18n="stats.withdrawn">Retiré</span>
           </div>
           <div class="medium-stat-value">XAF 0</div>
           <div class="stat-change">
-            <span>Vol:(0%)</span>
+            <span data-i18n="stats.volume">Vol:(0%)</span>
           </div>
         </div>
         
@@ -1791,11 +1842,11 @@
           <div class="rain-container" id="rain-parrainage"></div>
           <div class="medium-stat-title">
             <i class="fas fa-users medium-stat-icon"></i>
-            Gains de parrainage
+            <span data-i18n="stats.referral_earnings">Gains de parrainage</span>
           </div>
           <div class="medium-stat-value">XAF 0</div>
           <div class="stat-change">
-            <span>Vol:(0%)</span>
+            <span data-i18n="stats.volume">Vol:(0%)</span>
           </div>
         </div>
         
@@ -1803,11 +1854,11 @@
           <div class="rain-container" id="rain-bonus"></div>
           <div class="medium-stat-title">
             <i class="fas fa-gift medium-stat-icon"></i>
-            Bonus d'agent
+            <span data-i18n="stats.agent_bonus">Bonus d'agent</span>
           </div>
           <div class="medium-stat-value">XAF 0</div>
           <div class="stat-change">
-            <span>Vol:(0%)</span>
+            <span data-i18n="stats.volume">Vol:(0%)</span>
           </div>
         </div>
       </div>
@@ -1816,7 +1867,7 @@
       <div class="gain-stats">
         <div class="gain-stat-card" id="whatsapp-gains">
           <div class="gain-stat-header">
-            <div class="gain-stat-title">Gains WhatsApp</div>
+            <div class="gain-stat-title" data-i18n="gains.whatsapp">Gains WhatsApp</div>
             <div class="gain-stat-icon">
               <i class="fab fa-whatsapp"></i>
             </div>
@@ -1826,7 +1877,7 @@
         
         <div class="gain-stat-card" id="trivia-gains">
           <div class="gain-stat-header">
-            <div class="gain-stat-title">Gains Trivia</div>
+            <div class="gain-stat-title" data-i18n="gains.trivia">Gains Trivia</div>
             <div class="gain-stat-icon">
               <i class="fas fa-question-circle"></i>
             </div>
@@ -1836,7 +1887,7 @@
         
         <div class="gain-stat-card" id="publicite-gains">
           <div class="gain-stat-header">
-            <div class="gain-stat-title">Gains publicitaires</div>
+            <div class="gain-stat-title" data-i18n="gains.advertising">Gains publicitaires</div>
             <div class="gain-stat-icon">
               <i class="fas fa-ad"></i>
             </div>
@@ -1846,7 +1897,7 @@
         
         <div class="gain-stat-card" id="tiktok-gains">
           <div class="gain-stat-header">
-            <div class="gain-stat-title">Gains TikTok</div>
+            <div class="gain-stat-title" data-i18n="gains.tiktok">Gains TikTok</div>
             <div class="gain-stat-icon">
               <i class="fab fa-tiktok"></i>
             </div>
@@ -1856,7 +1907,7 @@
         
         <div class="gain-stat-card" id="youtube-gains">
           <div class="gain-stat-header">
-            <div class="gain-stat-title">Gains YouTube</div>
+            <div class="gain-stat-title" data-i18n="gains.youtube">Gains YouTube</div>
             <div class="gain-stat-icon">
               <i class="fab fa-youtube"></i>
             </div>
@@ -1866,7 +1917,7 @@
         
         <div class="gain-stat-card" id="instagram-gains">
           <div class="gain-stat-header">
-            <div class="gain-stat-title">Gains Instagram</div>
+            <div class="gain-stat-title" data-i18n="gains.instagram">Gains Instagram</div>
             <div class="gain-stat-icon">
               <i class="fab fa-instagram"></i>
             </div>
@@ -1876,7 +1927,7 @@
         
         <div class="gain-stat-card" id="depot-solde">
           <div class="gain-stat-header">
-            <div class="gain-stat-title">Solde du dépôt</div>
+            <div class="gain-stat-title" data-i18n="gains.deposit_balance">Solde du dépôt</div>
             <div class="gain-stat-icon">
               <i class="fas fa-piggy-bank"></i>
             </div>
@@ -1886,7 +1937,7 @@
       </div>
       
       <div class="referral-section">
-        <h2 class="section-title">LIEN DE PARRAINAGE</h2>
+        <h2 class="section-title" data-i18n="referral.title">LIEN DE PARRAINAGE</h2>
         
         <div class="referral-content">
           <div class="referral-link-container">
@@ -1894,7 +1945,7 @@
               <div class="link-text" id="referralLink">Chargement du lien...</div> 
               <button class="copy-btn" id="copyLinkBtn">
                 <i class="fas fa-copy"></i>
-                <span>Copier</span>
+                <span data-i18n="referral.copy">Copier</span>
               </button>
             </div>
             
@@ -1913,49 +1964,49 @@
               </div>
             </div>
             
-            <p>Partagez ce lien avec vos amis et gagnez des commissions sur leurs activités.</p>
+            <p data-i18n="referral.description">Partagez ce lien avec vos amis et gagnez des commissions sur leurs activités.</p>
           </div>
         </div>
       </div>
       
       <div class="user-info-section">
-        <h2 class="section-title">INFORMATIONS UTILISATEUR</h2>
+        <h2 class="section-title" data-i18n="user_info.title">INFORMATIONS UTILISATEUR</h2>
         
         <div class="user-info-grid">
           <div class="info-item">
-            <div class="info-label">Nom d'utilisateur</div>
+            <div class="info-label" data-i18n="user_info.username">Nom d'utilisateur</div>
             <div class="info-value" id="info-username">Chargement...</div>
           </div>
           
           <div class="info-item">
-            <div class="info-label">Email</div>
+            <div class="info-label" data-i18n="user_info.email">Email</div>
             <div class="info-value" id="info-email">Chargement...</div>
           </div>
           
           <div class="info-item">
-            <div class="info-label">Téléphone</div>
+            <div class="info-label" data-i18n="user_info.phone">Téléphone</div>
             <div class="info-value" id="info-phone">Chargement...</div>
           </div>
           
           <div class="info-item">
-            <div class="info-label">Pays</div>
+            <div class="info-label" data-i18n="user_info.country">Pays</div>
             <div class="info-value" id="info-country">Chargement...</div>
           </div>
           
           <div class="info-item">
-            <div class="info-label">Parrain</div>
+            <div class="info-label" data-i18n="user_info.referrer">Parrain</div>
             <div class="info-value" id="info-parrain">Chargement...</div> 
           </div>
           
           <div class="info-item">
-            <div class="info-label">Parrainage actif</div>
+            <div class="info-label" data-i18n="user_info.active_referrals">Parrainage actif</div>
             <div class="info-value" id="info-parrainage">Chargement...</div> 
           </div>
         </div>
       </div>
       
       <div class="task-calendar">
-        <h2 class="section-title">CALENDRIER DES TÂCHES</h2>
+        <h2 class="section-title" data-i18n="calendar.title">CALENDRIER DES TÂCHES</h2>
         
         <div class="calendar-header">
           <div class="calendar-month">Septembre 2025</div>
@@ -1970,13 +2021,13 @@
         </div>
         
         <div class="calendar-days">
-          <div class="day-header">Lun</div>
-          <div class="day-header">Mar</div>
-          <div class="day-header">Mer</div>
-          <div class="day-header">Jeu</div>
-          <div class="day-header">Ven</div>
-          <div class="day-header">Sam</div>
-          <div class="day-header">Dim</div>
+          <div class="day-header" data-i18n="calendar.mon">Lun</div>
+          <div class="day-header" data-i18n="calendar.tue">Mar</div>
+          <div class="day-header" data-i18n="calendar.wed">Mer</div>
+          <div class="day-header" data-i18n="calendar.thu">Jeu</div>
+          <div class="day-header" data-i18n="calendar.fri">Ven</div>
+          <div class="day-header" data-i18n="calendar.sat">Sam</div>
+          <div class="day-header" data-i18n="calendar.sun">Dim</div>
         </div>
         
         <div class="calendar-grid">
@@ -1986,46 +2037,46 @@
         <table class="task-table">
           <thead>
             <tr>
-              <th>JOUR</th>
-              <th>TÂCHE</th>
-              <th>BONUS</th>
+              <th data-i18n="calendar.day">JOUR</th>
+              <th data-i18n="calendar.task">TÂCHE</th>
+              <th data-i18n="calendar.bonus">BONUS</th>
             </tr>
           </thead>
           <tbody>
             <tr class="monday-task">
-              <td>LUNDI</td>
-              <td>Vidéos TikTok</td>
-              <td>Liste de contact gratuite, Booster, Visibilité, Roue de la fortune</td>
+              <td data-i18n="calendar.monday">LUNDI</td>
+              <td data-i18n="calendar.monday_task">Vidéos TikTok</td>
+              <td data-i18n="calendar.monday_bonus">Liste de contact gratuite, Booster, Visibilité, Roue de la fortune</td>
             </tr>
             <tr class="tuesday-task">
-              <td>MARDI</td>
-              <td>Vidéos YouTube</td>
-              <td>Liste de contact gratuite, Canva Pro, Connexion gratuite, Roue de la fortune</td>
+              <td data-i18n="calendar.tuesday">MARDI</td>
+              <td data-i18n="calendar.tuesday_task">Vidéos YouTube</td>
+              <td data-i18n="calendar.tuesday_bonus">Liste de contact gratuite, Canva Pro, Connexion gratuite, Roue de la fortune</td>
             </tr>
             <tr class="wednesday-task">
-              <td>MERCREDI</td>
-              <td>Vidéos Instagram</td>
-              <td>Liste de contact gratuite, Booster, Visibilité, Canva Pro</td>
+              <td data-i18n="calendar.wednesday">MERCREDI</td>
+              <td data-i18n="calendar.wednesday_task">Vidéos Instagram</td>
+              <td data-i18n="calendar.wednesday_bonus">Liste de contact gratuite, Booster, Visibilité, Canva Pro</td>
             </tr>
             <tr class="thursday-task">
-              <td>JEUDI</td>
-              <td>Trivia Challenge</td>
-              <td>Liste de contact gratuite, Connexion gratuite, Roue de la fortune</td>
+              <td data-i18n="calendar.thursday">JEUDI</td>
+              <td data-i18n="calendar.thursday_task">Trivia Challenge</td>
+              <td data-i18n="calendar.thursday_bonus">Liste de contact gratuite, Connexion gratuite, Roue de la fortune</td>
             </tr>
             <tr class="friday-task">
-              <td>VENDREDI</td>
-              <td>Game Publicitaire</td>
-              <td>Booster, Visibilité, Canva Pro, Connexion gratuite</td>
+              <td data-i18n="calendar.friday">VENDREDI</td>
+              <td data-i18n="calendar.friday_task">Game Publicitaire</td>
+              <td data-i18n="calendar.friday_bonus">Booster, Visibilité, Canva Pro, Connexion gratuite</td>
             </tr>
             <tr class="saturday-task">
-              <td>SAMEDI</td>
-              <td>Gagner via WhatsApp</td>
-              <td>Liste de contact gratuite, Booster, Visibilité, Roue de la fortune</td>
+              <td data-i18n="calendar.saturday">SAMEDI</td>
+              <td data-i18n="calendar.saturday_task">Gagner via WhatsApp</td>
+              <td data-i18n="calendar.saturday_bonus">Liste de contact gratuite, Booster, Visibilité, Roue de la fortune</td>
             </tr>
             <tr class="sunday-task" style="opacity: 0.7;"> 
-              <td>DIMANCHE</td>
-              <td>Aucune tâche (Repos)</td>
-              <td>Connexion gratuite, Roue de la fortune</td>
+              <td data-i18n="calendar.sunday">DIMANCHE</td>
+              <td data-i18n="calendar.sunday_task">Aucune tâche (Repos)</td>
+              <td data-i18n="calendar.sunday_bonus">Connexion gratuite, Roue de la fortune</td>
             </tr>
           </tbody>
         </table>
@@ -2036,13 +2087,14 @@
   <footer class="footer">
     <div class="footer-content">
       <div class="footer-links">
-        <a href="terms.html" class="footer-link">Conditions d'utilisation</a>
-        <a href="privacy.html" class="footer-link">Politique de confidentialité</a>
-        <button class="support-btn" id="supportBtn">Support</button>
-        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Propulsé par SHB</a>
+        <a href="terms.html" class="footer-link" data-i18n="footer.terms">Conditions d'utilisation</a>
+        <a href="privacy.html" class="footer-link" data-i18n="footer.privacy">Politique de confidentialité</a>
+        <button class="support-btn" id="supportBtn" data-i18n="footer.support">Support</button>
+        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Propulsé par SBH</a>
+        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Boost Text Management</a>
       </div>
       <div class="footer-text">
-        © 2025 BLOWEARN AGENCIES. Tous droits réservés.
+        © 2025 BLOWEARN AGENCIES. <span data-i18n="footer.rights">Tous droits réservés.</span>
       </div>
     </div>
   </footer>
@@ -2073,6 +2125,8 @@ const profileDropdown = document.getElementById('profileDropdown');
 const copyLinkBtn = document.getElementById('copyLinkBtn');
 const referralLink = document.getElementById('referralLink');
 const languageSelector = document.getElementById('languageSelector');
+const languageDropdown = document.getElementById('languageDropdown');
+const currentLanguage = document.getElementById('currentLanguage');
 const shareWhatsApp = document.getElementById('shareWhatsApp');
 const shareFacebook = document.getElementById('shareFacebook');
 const shareTwitter = document.getElementById('shareTwitter');
@@ -2100,9 +2154,284 @@ const supportBtn = document.getElementById('supportBtn');
 let currentDate = new Date();
 let userData = {};
 let currentUser = null;
+let currentLang = 'fr'; // Langue par défaut
 
-const APP_DOMAIN = "https://blowearn-agencies.vercel.app";
-const SERVER_URL = "https://mulaflowr-exaucenapopolo2.replit.app"; // URL du serveur d'origine
+/******** Système de traduction ********/
+const translations = {
+  fr: {
+    // Header
+    "header.language": "French",
+    "header.night_mode": "Mode nuit",
+    "header.day_mode": "Mode jour",
+    
+    // Dashboard
+    "dashboard.title": "Dashboard >> BLOWEARN AGENCIES",
+    
+    // Menu
+    "menu.main": "PRINCIPAL",
+    "menu.dashboard": "Tableau de bord",
+    "menu.deposit": "Dépôt 💵",
+    "menu.welcome_bonus": "Bonus de bienvenue",
+    "menu.accounts": "COMPTES",
+    "menu.withdrawal": "Retrait",
+    "menu.team": "Équipe",
+    "menu.special": "SPÉCIAL",
+    "menu.sbh": "SBH",
+    "menu.challenge": "Challenge and Reward",
+    "menu.products": "PRODUIT / TÂCHE",
+    "menu.whatsapp_earn": "Gagner via Whatsapp",
+    "menu.ad_earnings": "Gains publicitaires",
+    "menu.fortune_wheel": "Roue de la fortune 🏆",
+    "menu.tiktok_earn": "TikTok Earn",
+    "menu.youtube_earn": "YouTube Earn",
+    "menu.instagram_earn": "Instagram Earn",
+    "menu.trivia": "TRIVIA challenge",
+    "menu.bonus": "BONUS",
+    "menu.contact_list": "Liste de contacts gratuit 🆓",
+    "menu.visibility_booster": "Booster ma visibilité",
+    "menu.canva_pro": "Canva Pro",
+    "menu.free_connection": "Connexion gratuite",
+    
+    // Banner
+    "banner.welcome": "Bienvenue,",
+    "banner.message": "BLOWEARN AGENCIES vous offre plus de 10 outils numériques pour maximiser vos revenus en ligne. Des annonces aux promotions YouTube et trivia, spécialement conçus pour VOUS ! Améliorez votre présence en ligne dès maintenant ! 💰 🚀",
+    "banner.app_button": "CLIQUEZ ICI pour obtenir l'application Android",
+    "banner.expense": "Dépense:",
+    "banner.profit": "Profit:",
+    
+    // Stats
+    "stats.balance": "SOLDE",
+    "stats.withdrawn": "Retiré",
+    "stats.referral_earnings": "Gains de parrainage",
+    "stats.agent_bonus": "Bonus d'agent",
+    "stats.volume": "Vol:(0%)",
+    
+    // Gains
+    "gains.whatsapp": "Gains WhatsApp",
+    "gains.trivia": "Gains Trivia",
+    "gains.advertising": "Gains publicitaires",
+    "gains.tiktok": "Gains TikTok",
+    "gains.youtube": "Gains YouTube",
+    "gains.instagram": "Gains Instagram",
+    "gains.deposit_balance": "Solde du dépôt",
+    
+    // Referral
+    "referral.title": "LIEN DE PARRAINAGE",
+    "referral.copy": "Copier",
+    "referral.description": "Partagez ce lien avec vos amis et gagnez des commissions sur leurs activités.",
+    
+    // User Info
+    "user_info.title": "INFORMATIONS UTILISATEUR",
+    "user_info.username": "Nom d'utilisateur",
+    "user_info.email": "Email",
+    "user_info.phone": "Téléphone",
+    "user_info.country": "Pays",
+    "user_info.referrer": "Parrain",
+    "user_info.active_referrals": "Parrainage actif",
+    
+    // Calendar
+    "calendar.title": "CALENDRIER DES TÂCHES",
+    "calendar.day": "JOUR",
+    "calendar.task": "TÂCHE",
+    "calendar.bonus": "BONUS",
+    "calendar.mon": "Lun",
+    "calendar.tue": "Mar",
+    "calendar.wed": "Mer",
+    "calendar.thu": "Jeu",
+    "calendar.fri": "Ven",
+    "calendar.sat": "Sam",
+    "calendar.sun": "Dim",
+    "calendar.monday": "LUNDI",
+    "calendar.tuesday": "MARDI",
+    "calendar.wednesday": "MERCREDI",
+    "calendar.thursday": "JEUDI",
+    "calendar.friday": "VENDREDI",
+    "calendar.saturday": "SAMEDI",
+    "calendar.sunday": "DIMANCHE",
+    "calendar.monday_task": "Vidéos TikTok",
+    "calendar.tuesday_task": "Vidéos YouTube",
+    "calendar.wednesday_task": "Vidéos Instagram",
+    "calendar.thursday_task": "Trivia Challenge",
+    "calendar.friday_task": "Game Publicitaire",
+    "calendar.saturday_task": "Gagner via WhatsApp",
+    "calendar.sunday_task": "Aucune tâche (Repos)",
+    "calendar.monday_bonus": "Liste de contact gratuite, Booster, Visibilité, Roue de la fortune",
+    "calendar.tuesday_bonus": "Liste de contact gratuite, Canva Pro, Connexion gratuite, Roue de la fortune",
+    "calendar.wednesday_bonus": "Liste de contact gratuite, Booster, Visibilité, Canva Pro",
+    "calendar.thursday_bonus": "Liste de contact gratuite, Connexion gratuite, Roue de la fortune",
+    "calendar.friday_bonus": "Booster, Visibilité, Canva Pro, Connexion gratuite",
+    "calendar.saturday_bonus": "Liste de contact gratuite, Booster, Visibilité, Roue de la fortune",
+    "calendar.sunday_bonus": "Connexion gratuite, Roue de la fortune",
+    
+    // Footer
+    "footer.terms": "Conditions d'utilisation",
+    "footer.privacy": "Politique de confidentialité",
+    "footer.support": "Support",
+    "footer.rights": "Tous droits réservés.",
+    
+    // Notifications
+    "notification.success": "Succès",
+    "notification.error": "Erreur",
+    "notification.info": "Information"
+  },
+  en: {
+    // Header
+    "header.language": "English",
+    "header.night_mode": "Night mode",
+    "header.day_mode": "Day mode",
+    
+    // Dashboard
+    "dashboard.title": "Dashboard >> BLOWEARN AGENCIES",
+    
+    // Menu
+    "menu.main": "MAIN",
+    "menu.dashboard": "Dashboard",
+    "menu.deposit": "Deposit 💵",
+    "menu.welcome_bonus": "Welcome Bonus",
+    "menu.accounts": "ACCOUNTS",
+    "menu.withdrawal": "Withdrawal",
+    "menu.team": "Team",
+    "menu.special": "SPECIAL",
+    "menu.sbh": "SBH",
+    "menu.challenge": "Challenge and Reward",
+    "menu.products": "PRODUCT / TASK",
+    "menu.whatsapp_earn": "Earn via Whatsapp",
+    "menu.ad_earnings": "Advertising earnings",
+    "menu.fortune_wheel": "Fortune Wheel 🏆",
+    "menu.tiktok_earn": "TikTok Earn",
+    "menu.youtube_earn": "YouTube Earn",
+    "menu.instagram_earn": "Instagram Earn",
+    "menu.trivia": "TRIVIA challenge",
+    "menu.bonus": "BONUS",
+    "menu.contact_list": "Free contact list 🆓",
+    "menu.visibility_booster": "Boost my visibility",
+    "menu.canva_pro": "Canva Pro",
+    "menu.free_connection": "Free connection",
+    
+    // Banner
+    "banner.welcome": "Welcome,",
+    "banner.message": "BLOWEARN AGENCIES offers you more than 10 digital tools to maximize your online income. From ads to YouTube promotions and trivia, specially designed for YOU! Improve your online presence now! 💰 🚀",
+    "banner.app_button": "CLICK HERE to get the Android app",
+    "banner.expense": "Expense:",
+    "banner.profit": "Profit:",
+    
+    // Stats
+    "stats.balance": "BALANCE",
+    "stats.withdrawn": "Withdrawn",
+    "stats.referral_earnings": "Referral earnings",
+    "stats.agent_bonus": "Agent bonus",
+    "stats.volume": "Vol:(0%)",
+    
+    // Gains
+    "gains.whatsapp": "WhatsApp Earnings",
+    "gains.trivia": "Trivia Earnings",
+    "gains.advertising": "Advertising Earnings",
+    "gains.tiktok": "TikTok Earnings",
+    "gains.youtube": "YouTube Earnings",
+    "gains.instagram": "Instagram Earnings",
+    "gains.deposit_balance": "Deposit balance",
+    
+    // Referral
+    "referral.title": "REFERRAL LINK",
+    "referral.copy": "Copy",
+    "referral.description": "Share this link with your friends and earn commissions on their activities.",
+    
+    // User Info
+    "user_info.title": "USER INFORMATION",
+    "user_info.username": "Username",
+    "user_info.email": "Email",
+    "user_info.phone": "Phone",
+    "user_info.country": "Country",
+    "user_info.referrer": "Referrer",
+    "user_info.active_referrals": "Active referrals",
+    
+    // Calendar
+    "calendar.title": "TASK CALENDAR",
+    "calendar.day": "DAY",
+    "calendar.task": "TASK",
+    "calendar.bonus": "BONUS",
+    "calendar.mon": "Mon",
+    "calendar.tue": "Tue",
+    "calendar.wed": "Wed",
+    "calendar.thu": "Thu",
+    "calendar.fri": "Fri",
+    "calendar.sat": "Sat",
+    "calendar.sun": "Sun",
+    "calendar.monday": "MONDAY",
+    "calendar.tuesday": "TUESDAY",
+    "calendar.wednesday": "WEDNESDAY",
+    "calendar.thursday": "THURSDAY",
+    "calendar.friday": "FRIDAY",
+    "calendar.saturday": "SATURDAY",
+    "calendar.sunday": "SUNDAY",
+    "calendar.monday_task": "TikTok Videos",
+    "calendar.tuesday_task": "YouTube Videos",
+    "calendar.wednesday_task": "Instagram Videos",
+    "calendar.thursday_task": "Trivia Challenge",
+    "calendar.friday_task": "Advertising Game",
+    "calendar.saturday_task": "Earn via WhatsApp",
+    "calendar.sunday_task": "No task (Rest)",
+    "calendar.monday_bonus": "Free contact list, Booster, Visibility, Fortune Wheel",
+    "calendar.tuesday_bonus": "Free contact list, Canva Pro, Free connection, Fortune Wheel",
+    "calendar.wednesday_bonus": "Free contact list, Booster, Visibility, Canva Pro",
+    "calendar.thursday_bonus": "Free contact list, Free connection, Fortune Wheel",
+    "calendar.friday_bonus": "Booster, Visibility, Canva Pro, Free connection",
+    "calendar.saturday_bonus": "Free contact list, Booster, Visibility, Fortune Wheel",
+    "calendar.sunday_bonus": "Free connection, Fortune Wheel",
+    
+    // Footer
+    "footer.terms": "Terms of Use",
+    "footer.privacy": "Privacy Policy",
+    "footer.support": "Support",
+    "footer.rights": "All rights reserved.",
+    
+    // Notifications
+    "notification.success": "Success",
+    "notification.error": "Error",
+    "notification.info": "Information"
+  }
+};
+
+/******** Fonctions de traduction ********/
+function setLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem('preferredLanguage', lang);
+  
+  // Mettre à jour le sélecteur de langue
+  currentLanguage.textContent = lang === 'fr' ? 'French' : 'English';
+  
+  // Mettre à jour les options de langue
+  document.querySelectorAll('.language-option').forEach(option => {
+    const icon = option.querySelector('i');
+    if (option.dataset.lang === lang) {
+      option.classList.add('active');
+      icon.style.opacity = '1';
+    } else {
+      option.classList.remove('active');
+      icon.style.opacity = '0';
+    }
+  });
+  
+  // Traduire tous les éléments avec data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(element => {
+    const key = element.getAttribute('data-i18n');
+    if (translations[lang] && translations[lang][key]) {
+      if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+        element.placeholder = translations[lang][key];
+      } else {
+        element.textContent = translations[lang][key];
+      }
+    }
+  });
+  
+  // Mettre à jour le texte du thème
+  const isDarkMode = document.body.classList.contains('dark-mode');
+  if (themeToggle) {
+    themeToggle.innerHTML = isDarkMode 
+      ? `<i class="fas fa-sun"></i><span>${translations[lang]['header.day_mode']}</span>` 
+      : `<i class="fas fa-moon"></i><span>${translations[lang]['header.night_mode']}</span>`;
+  }
+}
 
 /******** UI helpers ********/
 function showNotification(type, title, message, duration = 4000) {
@@ -2151,14 +2480,37 @@ document.addEventListener('click', (event) => {
     if (profileDropdown) profileDropdown.classList.remove('active');
   }
 });
+
+// Gestion du sélecteur de langue
+if (languageSelector) {
+  languageSelector.addEventListener('click', (event) => {
+    event.stopPropagation();
+    languageDropdown.classList.toggle('active');
+  });
+}
+
+// Fermer le dropdown de langue quand on clique ailleurs
+document.addEventListener('click', () => {
+  if (languageDropdown) languageDropdown.classList.remove('active');
+});
+
+// Changer de langue
+document.querySelectorAll('.language-option').forEach(option => {
+  option.addEventListener('click', () => {
+    const lang = option.dataset.lang;
+    setLanguage(lang);
+    languageDropdown.classList.remove('active');
+  });
+});
+
 if (themeToggle) {
   themeToggle.addEventListener('click', (event) => {
       event.stopPropagation();
       document.body.classList.toggle('dark-mode');
       const isDarkMode = document.body.classList.contains('dark-mode');
       themeToggle.innerHTML = isDarkMode 
-          ? '<i class="fas fa-sun"></i><span>Mode jour</span>' 
-          : '<i class="fas fa-moon"></i><span>Mode nuit</span>';
+          ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+          : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
       if(currentUser) saveUserData('theme', isDarkMode ? 'dark' : 'light');
   });
 }
@@ -2174,16 +2526,28 @@ if (supportBtn) {
 if (copyLinkBtn) {
   copyLinkBtn.addEventListener('click', () => {
     navigator.clipboard.writeText(referralLink.textContent)
-      .then(() => showNotification('success', 'Succès', 'Lien copié dans le presse-papier!'))
-      .catch(() => showNotification('error', 'Erreur', 'Impossible de copier le lien.'));
+      .then(() => showNotification('success', translations[currentLang]['notification.success'], 'Lien copié dans le presse-papier!'))
+      .catch(() => showNotification('error', translations[currentLang]['notification.error'], 'Impossible de copier le lien.'));
   });
 }
 
-const promoMessage = "Tu veux gagner de l'argent en ligne? Regarde les vidéos et gagne de l'argent. Sur ce lien, avec 3000 francs CFA seulement, tu peux gagner 5000 francs par jour. Si tu es intéressé, je t'explique: ";
-if (shareWhatsApp) shareWhatsApp.addEventListener('click', () => { window.open(`https://wa.me/?text=${encodeURIComponent(promoMessage + ' ' + referralLink.textContent)}`, '_blank'); });
-if (shareFacebook) shareFacebook.addEventListener('click', () => { window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink.textContent)}&quote=${encodeURIComponent(promoMessage)}`, '_blank'); });
-if (shareTwitter) shareTwitter.addEventListener('click', () => { window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(promoMessage)}&url=${encodeURIComponent(referralLink.textContent)}`, '_blank'); });
-if (shareTelegram) shareTelegram.addEventListener('click', () => { window.open(`https://t.me/share/url?url=${encodeURIComponent(referralLink.textContent)}&text=${encodeURIComponent(promoMessage)}`, '_blank'); });
+const promoMessage = {
+  fr: "Tu veux gagner de l'argent en ligne? Regarde les vidéos et gagne de l'argent. Sur ce lien, avec 3000 francs CFA seulement, tu peux gagner 5000 francs par jour. Si tu es intéressé, je t'explique: ",
+  en: "Do you want to earn money online? Watch videos and earn money. With this link, with only 3000 CFA francs, you can earn 5000 francs per day. If you're interested, I'll explain: "
+};
+
+if (shareWhatsApp) shareWhatsApp.addEventListener('click', () => { 
+  window.open(`https://wa.me/?text=${encodeURIComponent(promoMessage[currentLang] + ' ' + referralLink.textContent)}`, '_blank'); 
+});
+if (shareFacebook) shareFacebook.addEventListener('click', () => { 
+  window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink.textContent)}&quote=${encodeURIComponent(promoMessage[currentLang])}`, '_blank'); 
+});
+if (shareTwitter) shareTwitter.addEventListener('click', () => { 
+  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(promoMessage[currentLang])}&url=${encodeURIComponent(referralLink.textContent)}`, '_blank'); 
+});
+if (shareTelegram) shareTelegram.addEventListener('click', () => { 
+  window.open(`https://t.me/share/url?url=${encodeURIComponent(referralLink.textContent)}&text=${encodeURIComponent(promoMessage[currentLang])}`, '_blank'); 
+});
 
 /******** Animation de pluie pour les cartes du deuxième groupe ********/
 function createRainEffect(containerId, dropCount = 15) {
@@ -2212,8 +2576,11 @@ function updateCalendar() {
   if (!calendarGrid || !calendarMonth) return;
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
-  const monthNames = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
-  calendarMonth.textContent = `${monthNames[month]} ${year}`;
+  const monthNames = {
+    fr: ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"],
+    en: ["January","February","March","April","May","June","July","August","September","October","November","December"]
+  };
+  calendarMonth.textContent = `${monthNames[currentLang][month]} ${year}`;
   calendarGrid.innerHTML = '';
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -2294,7 +2661,7 @@ async function saveUserData(key = null, value = null) {
     console.log('Données utilisateur enregistrées.');
   } catch (error) {
     console.error("Erreur lors de la sauvegarde :", error);
-    showNotification('error', 'Erreur de sauvegarde', 'Impossible de sauvegarder vos données.');
+    showNotification('error', translations[currentLang]['notification.error'], 'Impossible de sauvegarder vos données.');
   }
 }
 
@@ -2485,7 +2852,7 @@ async function startStatusWatcherAndTriggerProcessing() {
       const alreadyProcessed = !!d.referralProcessed;
 
       if (status === 'active' && !alreadyProcessed) {
-        showNotification('info', 'Parrainage', 'Paiement détecté — distribution en cours...');
+        showNotification('info', translations[currentLang]['notification.info'], 'Paiement détecté — distribution en cours...');
         try {
           const idToken = await currentUser.getIdToken();
           const resp = await fetch(`${SERVER_URL}/api/process-referral-on-paid`, {
@@ -2495,17 +2862,17 @@ async function startStatusWatcherAndTriggerProcessing() {
           });
           const json = await resp.json().catch(()=>({}));
           if (resp.ok && json && json.ok) {
-            showNotification('success', 'Parrainage', 'Gains partagés aux parrains.');
+            showNotification('success', translations[currentLang]['notification.success'], 'Gains partagés aux parrains.');
             await loadUserData();
             updateDashboardUI();
             updateUserInfoUI(currentUser, userData);
           } else {
             console.error('Erreur process-referral-on-paid:', json);
-            showNotification('error', 'Parrainage', (json && json.error) ? json.error : 'Erreur lors du partage des gains.');
+            showNotification('error', translations[currentLang]['notification.error'], (json && json.error) ? json.error : 'Erreur lors du partage des gains.');
           }
         } catch (err) {
           console.error('Erreur appel process-referral-on-paid:', err);
-          showNotification('error', 'Parrainage', 'Impossible d\'appeler le serveur de parrainage.');
+          showNotification('error', translations[currentLang]['notification.error'], 'Impossible d\'appeler le serveur de parrainage.');
         }
       }
     });
@@ -2549,7 +2916,7 @@ auth.onAuthStateChanged(async (user) => {
         if (debugBanner) {
           debugBanner.textContent = `❌ REFUSÉ: Statut "${userStatus}" non valide. Redirection dans 3s...`;
         }
-        showNotification('warning', 'Paiement requis', 'Vous devez finaliser votre paiement pour accéder au dashboard.');
+        showNotification('warning', translations[currentLang]['notification.info'], 'Vous devez finaliser votre paiement pour accéder au dashboard.');
         setTimeout(() => { window.location.href = 'paiement.html'; }, 3000);
         return;
       }
@@ -2561,11 +2928,11 @@ auth.onAuthStateChanged(async (user) => {
 
       // ✅ CORRIGÉ: Ne plus afficher "Action requise" si le statut est "active"
       if (userStatus === 'pending_payment') {
-        showNotification('info', 'Action requise', 'Veuillez finaliser votre paiement pour activer votre compte.');
+        showNotification('info', translations[currentLang]['notification.info'], 'Veuillez finaliser votre paiement pour activer votre compte.');
       } else if (userStatus === 'active' && !userData.referralProcessed) {
-        showNotification('info', 'Parrainage en cours', 'Votre paiement a été détecté. Distribution des gains en cours...');
+        showNotification('info', translations[currentLang]['notification.info'], 'Votre paiement a été détecté. Distribution des gains en cours...');
       } else if (userStatus === 'active' && userData.referralProcessed) {
-        showNotification('success', 'Bienvenue !', `Content de vous revoir, ${userData.displayName || 'ami'} !`);
+        showNotification('success', translations[currentLang]['notification.success'], `Content de vous revoir, ${userData.displayName || 'ami'} !`);
       }
 
       updateDashboardUI();
@@ -2611,10 +2978,10 @@ auth.onAuthStateChanged(async (user) => {
       document.body.classList.add('loaded');
       if (loader) loader.classList.add('hidden');
 
-      showNotification('success', 'Bienvenue !', `Content de vous revoir, ${userData.displayName || (user.email && user.email.split('@')[0])}!`);
+      showNotification('success', translations[currentLang]['notification.success'], `Content de vous revoir, ${userData.displayName || (user.email && user.email.split('@')[0])}!`);
     } catch (error) {
       console.error("Erreur critique lors de l'initialisation :", error);
-      showNotification('error', 'Erreur Critique', "Impossible de charger vos données. Veuillez vous reconnecter.");
+      showNotification('error', translations[currentLang]['notification.error'], "Impossible de charger vos données. Veuillez vous reconnecter.");
       auth.signOut();
       setTimeout(() => { window.location.href = 'login.html'; }, 3000);
     }
@@ -2628,12 +2995,16 @@ function applyTheme() {
   const isDarkMode = userData.theme === 'dark';
   document.body.classList.toggle('dark-mode', isDarkMode);
   if (themeToggle) themeToggle.innerHTML = isDarkMode 
-      ? '<i class="fas fa-sun"></i><span>Mode jour</span>' 
-      : '<i class="fas fa-moon"></i><span>Mode nuit</span>';
+      ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+      : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
 }
 
 /******** Initialisation ********/
 document.addEventListener('DOMContentLoaded', () => {
+  // Charger la langue sauvegardée ou utiliser le français par défaut
+  const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
+  setLanguage(savedLang);
+  
   updateCalendar();
   
   // Créer les effets de pluie pour les cartes du deuxième groupe
@@ -2649,7 +3020,8 @@ document.addEventListener('DOMContentLoaded', () => {
 window._blowearn = {
   requestReferralLinkFromServer,
   fetchReferralStats,
-  fetchMyReferrals
+  fetchMyReferrals,
+  setLanguage
 };
 </script>
 </body>
