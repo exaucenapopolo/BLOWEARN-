@@ -1,0 +1,1953 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BLOWEARN AGENCIES - Bonus de Bienvenue</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  
+  <style>
+    /* -------------------------------------------------------------------------- */
+    /* --- VARIABLES CSS COHÉRENTES AVEC LA PAGE DASHBOARD --- */
+    /* -------------------------------------------------------------------------- */
+    :root {
+      --color-primary: #4A90E2; /* Bleu Énergique */
+      --color-secondary: #FFC107; /* Jaune Vif/Or pour l'accent */
+      --color-text-dark: #2C3E50; /* Texte Sombre (lisible) */
+      --color-text-light: #ECF0F1; /* Texte Clair */
+      --color-bg-light: #FFFFFF; /* Fond de Carte */
+      --color-bg-gradient-1: #6DD5FA; /* Dégradé Fond 1 */
+      --color-bg-gradient-2: #FF7582; /* Dégradé Fond 2 */
+      --success-color: #4CD964;
+      --warning-color: #FF9500;
+      --danger-color: #FF3B30;
+      --shadow: 0 15px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.8);
+      --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- STYLES GÉNÉRAUX COHÉRENTS --- */
+    /* -------------------------------------------------------------------------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+      transition: var(--transition);
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
+      color: var(--color-text-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Effet de bulles animées en arrière-plan */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 25%),
+        radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 90% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 25%);
+      animation: float 20s ease-in-out infinite;
+      z-index: -1;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-15px) scale(1.02); }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- LOADER --- */
+    /* -------------------------------------------------------------------------- */
+    .loader-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .loader-container.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loader {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: conic-gradient(#0000 10%, var(--color-primary));
+      -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
+      animation: spin 1s infinite linear;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(1turn); }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- HEADER --- */
+    /* -------------------------------------------------------------------------- */
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800; /* Plus épais pour plus de visibilité */
+      color: var(--color-text-dark); /* Changé pour plus de contraste */
+      display: flex;
+      align-items: center;
+      font-family: 'Poppins', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Ombre plus prononcée */
+      background: linear-gradient(45deg, var(--color-primary) 0%, var(--color-secondary) 100%); /* Dégradé plus contrasté */
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: logoGlow 3s ease-in-out infinite alternate;
+    }
+    
+    @keyframes logoGlow {
+      from { filter: drop-shadow(0 0 5px rgba(74, 144, 226, 0.5)); }
+      to { filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.7)); }
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .language-selector {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      position: relative;
+    }
+
+    .language-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      border-radius: 12px;
+      padding: 8px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 140px;
+      z-index: 200;
+      transform-origin: top right;
+      animation: scaleIn 0.2s ease-out forwards;
+      border: 1px solid rgba(255,255,255,0.7);
+      margin-top: 5px;
+    }
+
+    .language-dropdown.active {
+      display: flex;
+    }
+
+    .language-option {
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s ease;
+    }
+
+    .language-option:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .language-option.active {
+      background-color: rgba(74, 144, 226, 0.1);
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    .theme-toggle {
+      background-color: transparent;
+      border: none;
+      color: var(--color-text-dark);
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .theme-toggle i {
+      font-size: 1.2rem;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .user-profile .avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background-color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border: 2px solid var(--color-secondary);
+      box-shadow: var(--shadow);
+    }
+
+    .profile-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      border-radius: 18px;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 150px;
+      z-index: 200;
+      transform-origin: top right;
+      animation: scaleIn 0.2s ease-out forwards;
+      border: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .profile-dropdown.active {
+      display: flex;
+    }
+    
+    @keyframes scaleIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .profile-dropdown .theme-toggle {
+      width: 100%;
+      border-radius: 8px;
+      background-color: rgba(0, 0, 0, 0.05);
+      color: var(--text-color);
+      justify-content: flex-start;
+      padding: 10px;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+      text-align: left;
+      gap: 10px;
+    }
+
+    .profile-dropdown .theme-toggle:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+    
+    .profile-dropdown .theme-toggle span {
+      flex-grow: 1;
+      text-align: left;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- BOUTON HAMBURGER (DÉPLACÉ À DROITE) --- */
+    /* -------------------------------------------------------------------------- */
+    .hamburger-btn {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 30px;
+      height: 25px;
+      padding: 0;
+      order: 2; /* Pour le placer à droite dans le header */
+    }
+    
+    .hamburger-btn .bar {
+      width: 100%;
+      height: 3px;
+      background-color: var(--color-text-dark);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    
+    .hamburger-btn.open .bar:nth-child(2) {
+      opacity: 0;
+    }
+    
+    .hamburger-btn.open .bar:nth-child(1) {
+      transform: translateY(11px) rotate(45deg);
+    }
+    
+    .hamburger-btn.open .bar:nth-child(3) {
+      transform: translateY(-11px) rotate(-45deg);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- STRUCTURE PRINCIPALE --- */
+    /* -------------------------------------------------------------------------- */
+    .main-container {
+      display: flex;
+      flex: 1;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- SIDEBAR (MENU) AMÉLIORÉ AVEC NOUVEAU FOND ET POLICE --- */
+    /* -------------------------------------------------------------------------- */
+    .sidebar {
+      width: 280px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.95) 100%);
+      backdrop-filter: blur(15px);
+      border-right: 1px solid rgba(255,255,255,0.7);
+      box-shadow: var(--shadow);
+      height: calc(100vh - 80px);
+      position: sticky;
+      top: 80px;
+      padding: 25px 0;
+      overflow-y: auto;
+      transition: transform 0.4s ease-in-out; 
+    }
+    
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .welcome-section {
+      padding: 0 25px 25px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .welcome-text {
+      color: var(--color-text-dark);
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+      font-weight: 500;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    .username {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: var(--color-primary);
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    .menu-category {
+      padding: 15px 25px 5px;
+      font-size: 0.85rem;
+      color: var(--color-text-dark);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+      font-family: 'Quicksand', sans-serif;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .menu-item {
+      padding: 12px 25px 12px 35px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: var(--color-text-dark);
+      text-decoration: none;
+      font-weight: 500;
+      border-left: 4px solid transparent;
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 0.5s ease-out;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .menu-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
+      transition: all 0.5s ease;
+    }
+    
+    .menu-item:hover::before {
+      left: 100%;
+    }
+
+    .menu-item:hover, .menu-item.active {
+      background-color: rgba(0, 0, 0, 0.05);
+      border-left-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .menu-item i {
+      width: 20px;
+      text-align: center;
+      font-size: 1.1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .menu-item:hover i {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .menu-badge {
+      position: absolute;
+      right: 25px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+      animation: popIn 0.5s ease-out;
+    }
+    
+    @keyframes popIn {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    
+    .menu-badge.active {
+      background-color: var(--success-color);
+      color: white;
+    }
+    
+    .menu-badge.inactive {
+      background-color: var(--danger-color);
+      color: white;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- CONTENU PRINCIPAL --- */
+    /* -------------------------------------------------------------------------- */
+    .content {
+      flex: 1;
+      padding: 30px;
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+      margin-bottom: 25px;
+      color: var(--color-text-dark);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .page-title i {
+      color: var(--color-primary);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- SECTION BONUS AMÉLIORÉE AVEC EFFETS VISUELS --- */
+    /* -------------------------------------------------------------------------- */
+    .bonus-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .bonus-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 18px;
+      padding: 40px;
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.7);
+      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .bonus-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: 18px 18px 0 0;
+    }
+
+    .bonus-card::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transform: rotate(45deg);
+      animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) rotate(45deg); }
+    }
+
+    .bonus-icon {
+      font-size: 5rem;
+      color: gold;
+      margin-bottom: 20px;
+      animation: bounce 2s infinite, glow 2s infinite alternate;
+      filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+      position: relative;
+      z-index: 2;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-15px) scale(1.05); }
+    }
+
+    @keyframes glow {
+      from { filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5)); }
+      to { filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8)); }
+    }
+
+    .bonus-title {
+      font-size: 2.2rem;
+      color: var(--color-primary);
+      margin-bottom: 15px;
+      font-weight: 700;
+      position: relative;
+      z-index: 2;
+    }
+
+    .bonus-amount {
+      font-size: 3.5rem;
+      color: var(--success-color);
+      margin-bottom: 20px;
+      font-weight: 800;
+      position: relative;
+      z-index: 2;
+      text-shadow: 0 2px 10px rgba(76, 217, 100, 0.3);
+      animation: pulseAmount 2s infinite;
+    }
+
+    @keyframes pulseAmount {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .bonus-description {
+      color: var(--color-text-dark);
+      margin-bottom: 30px;
+      line-height: 1.6;
+      position: relative;
+      z-index: 2;
+      font-size: 1.1rem;
+    }
+
+    .claim-btn {
+      background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 18px 40px;
+      font-size: 1.3rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 6px 20px rgba(76, 217, 100, 0.4);
+      position: relative;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    .claim-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: all 0.5s ease;
+    }
+
+    .claim-btn:hover:not(:disabled)::before {
+      left: 100%;
+    }
+
+    .claim-btn:hover:not(:disabled) {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(76, 217, 100, 0.6);
+    }
+
+    .claim-btn:disabled {
+      background: linear-gradient(135deg, #cccccc 0%, #999999 100%);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .bonus-info {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 18px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 600px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.7);
+      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s both;
+    }
+
+    .bonus-info::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: 18px 18px 0 0;
+    }
+
+    .info-title {
+      font-size: 1.5rem;
+      color: var(--color-text-dark);
+      margin-bottom: 20px;
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+    }
+
+    .info-list {
+      list-style-type: none;
+    }
+
+    .info-item {
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      position: relative;
+      z-index: 1;
+      transition: transform 0.2s ease;
+    }
+
+    .info-item:hover {
+      transform: translateX(5px);
+    }
+
+    .info-item:last-child {
+      border-bottom: none;
+    }
+
+    .info-item i {
+      color: var(--success-color);
+      font-size: 1.2rem;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- NOUVELLE SECTION: PROGRESSION DU BONUS --- */
+    /* -------------------------------------------------------------------------- */
+    .bonus-progress {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 18px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 600px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.7);
+      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.4s both;
+    }
+
+    .bonus-progress::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: 18px 18px 0 0;
+    }
+
+    .progress-title {
+      font-size: 1.3rem;
+      color: var(--color-text-dark);
+      margin-bottom: 20px;
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress-steps {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin-bottom: 30px;
+    }
+
+    .progress-steps::before {
+      content: '';
+      position: absolute;
+      top: 15px;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background-color: rgba(0, 0, 0, 0.1);
+      z-index: 1;
+    }
+
+    .progress-bar {
+      position: absolute;
+      top: 15px;
+      left: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      z-index: 2;
+      transition: width 0.5s ease;
+    }
+
+    .progress-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 3;
+    }
+
+    .step-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background-color: rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .step-icon.active {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+      color: white;
+      transform: scale(1.1);
+      box-shadow: 0 4px 10px rgba(74, 144, 226, 0.4);
+    }
+
+    .step-label {
+      font-size: 0.8rem;
+      color: var(--color-text-dark);
+      text-align: center;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- SECTION BONUS SUPPLÉMENTAIRES --- */
+    /* -------------------------------------------------------------------------- */
+    .additional-bonuses {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 18px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 600px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.7);
+      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.6s both;
+    }
+
+    .additional-bonuses::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: 18px 18px 0 0;
+    }
+
+    .bonuses-title {
+      font-size: 1.3rem;
+      color: var(--color-text-dark);
+      margin-bottom: 20px;
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+    }
+
+    .bonus-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 15px;
+    }
+
+    .bonus-item {
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+
+    .bonus-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .bonus-item-icon {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      color: var(--color-primary);
+    }
+
+    .bonus-item-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--color-text-dark);
+      margin-bottom: 5px;
+    }
+
+    .bonus-item-amount {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--success-color);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- FOOTER AMÉLIORÉ --- */
+    /* -------------------------------------------------------------------------- */
+    .footer {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      padding: 20px 30px;
+      text-align: center;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+      margin-top: auto;
+      border-top: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-link {
+      color: var(--color-primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .footer-link:hover {
+      text-decoration: underline;
+      color: var(--color-secondary);
+    }
+
+    .footer-text {
+      color: var(--color-text-dark);
+      font-size: 0.9rem;
+    }
+
+    /* Bouton de support */
+    .support-btn {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      margin-top: 10px;
+    }
+
+    .support-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(74, 144, 226, 0.4);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- NOTIFICATIONS --- */
+    /* -------------------------------------------------------------------------- */
+    .notification-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .notification {
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 350px;
+      animation: slideIn 0.3s ease forwards;
+      position: relative;
+      overflow: hidden;
+      color: white;
+      pointer-events: auto;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .notification.success {
+      background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%);
+    }
+
+    .notification.error {
+      background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%);
+    }
+
+    .notification.info { 
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); 
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(110%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- OVERLAY --- */
+    /* -------------------------------------------------------------------------- */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 98;
+    }
+    
+    .overlay.active {
+      display: block;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- MODE NUIT --- */
+    /* -------------------------------------------------------------------------- */
+    .dark-mode {
+      --color-primary: #5e81ac;
+      --color-secondary: #d08770;
+      --color-text-dark: #eceff4;
+      --color-text-light: #2e3440;
+      --color-bg-light: #3b4252;
+      --color-bg-gradient-1: #2e3440;
+      --color-bg-gradient-2: #4c566a;
+      --success-color: #a3be8c;
+      --warning-color: #ebcb8b;
+      --danger-color: #bf616a;
+      --shadow: 0 15px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
+    }
+
+    .dark-mode body::before {
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(76, 86, 106, 0.4) 0%, transparent 25%),
+        radial-gradient(circle at 80% 10%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 40% 80%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 90% 90%, rgba(76, 86, 106, 0.2) 0%, transparent 25%);
+    }
+
+    .dark-mode .header,
+    .dark-mode .sidebar,
+    .dark-mode .bonus-card,
+    .dark-mode .bonus-info,
+    .dark-mode .bonus-progress,
+    .dark-mode .additional-bonuses,
+    .dark-mode .footer {
+      background: rgba(59, 66, 82, 0.95);
+      color: var(--color-text-dark);
+    }
+
+    .dark-mode .bonus-item {
+      background: rgba(59, 66, 82, 0.7);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- RESPONSIVE --- */
+    /* -------------------------------------------------------------------------- */
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 230px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-container {
+        flex-direction: column;
+      }
+      
+      .hamburger-btn {
+        display: flex;
+        position: static; /* Position normale dans le flux */
+        order: 2; /* Pour le placer à droite */
+      }
+
+      .sidebar {
+        width: 85%;
+        max-width: 320px;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: -100%;
+        z-index: 99;
+        transition: left 0.4s ease-in-out;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.97) 100%);
+      }
+      
+      .sidebar.open {
+        left: 0;
+      }
+      
+      .header {
+        padding: 15px;
+      }
+      
+      .logo {
+        font-size: 1.5rem;
+        margin-left: 0; /* Supprimé le décalage précédent */
+      }
+      
+      .content {
+        padding: 20px;
+      }
+      
+      .bonus-title {
+        font-size: 1.8rem;
+      }
+      
+      .bonus-amount {
+        font-size: 2.8rem;
+      }
+
+      .bonus-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .progress-steps {
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+      }
+
+      .progress-steps::before {
+        display: none;
+      }
+
+      .progress-bar {
+        display: none;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .bonus-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .user-name {
+        display: none;
+      }
+      
+      .language-selector span {
+        display: none;
+      }
+      
+      .language-selector {
+        padding: 8px;
+      }
+
+      .bonus-card {
+        padding: 25px;
+      }
+
+      .bonus-title {
+        font-size: 1.5rem;
+      }
+      
+      .bonus-amount {
+        font-size: 2.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="loader-container" id="loader">
+    <div class="loader"></div>
+  </div>
+
+  <div class="notification-container" id="notificationContainer"></div>
+
+  <header class="header">
+    <div class="logo">
+      <span>BLOWEARN</span>
+    </div>
+    
+    <div class="header-controls">
+      <div class="language-selector-container">
+        <button class="language-selector" id="languageSelector">
+          <i class="fas fa-globe"></i>
+          <span id="currentLanguage">French</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="language-dropdown" id="languageDropdown">
+          <div class="language-option active" data-lang="fr">
+            <i class="fas fa-check"></i>
+            <span>Français</span>
+          </div>
+          <div class="language-option" data-lang="en">
+            <i class="fas fa-check" style="opacity: 0;"></i>
+            <span>English</span>
+          </div>
+        </div>
+      </div>
+      
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </button>
+      
+      <div class="user-profile" id="userProfile">
+          <div class="avatar" id="userAvatar">U</div>
+          <div class="profile-dropdown" id="profileDropdown">
+              <button class="theme-toggle" id="themeToggle">
+                  <i class="fas fa-moon"></i>
+                  <span>Mode nuit</span>
+              </button>
+          </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="overlay" id="overlay"></div>
+
+  <div class="main-container">
+    <aside class="sidebar" id="sidebar">
+      <div class="welcome-section">
+        <div class="welcome-text" data-i18n="dashboard.title">Dashboard >> BLOWEARN AGENCIES</div>
+        <div class="username" id="sidebarUsername">Utilisateur</div>
+      </div>
+      
+      <div class="menu-category" data-i18n="menu.main">PRINCIPAL</div>
+      <a href="dashboard.html" class="menu-item">
+        <i class="fas fa-home"></i>
+        <span data-i18n="menu.dashboard">Tableau de bord</span>
+        <span class="menu-badge inactive">☑</span>
+      </a>
+      
+      <a href="depot.html" class="menu-item">
+        <i class="fas fa-wallet"></i>
+        <span data-i18n="menu.deposit">Dépôt 💵</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="bonus_bienvenue.html" class="menu-item active">
+        <i class="fas fa-gift"></i>
+        <span data-i18n="menu.welcome_bonus">Bonus de bienvenue</span>
+        <span class="menu-badge active">☒</span>
+      </a>
+      
+      <div class="menu-category" data-i18n="menu.accounts">COMPTES</div>
+      <a href="retrait.html" class="menu-item">
+        <i class="fas fa-money-bill-wave"></i>
+        <span data-i18n="menu.withdrawal">Retrait</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="equipe.html" class="menu-item">
+        <i class="fas fa-users"></i>
+        <span data-i18n="menu.team">Équipe</span>
+        <span class="menu-badge inactive">☒</span>
+      </a>
+
+      <div class="menu-category" data-i18n="menu.special">SPÉCIAL</div>
+      
+      <a href="social_boost.html" class="menu-item">
+        <i class="fas fa-rocket"></i>
+        <span data-i18n="menu.sbh">SBH</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="challenge_reward.html" class="menu-item">
+        <i class="fas fa-medal"></i>
+        <span data-i18n="menu.challenge">Challenge and Reward</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <div class="menu-category" data-i18n="menu.products">PRODUIT / TÂCHE</div>
+      <a href="whatsapp_earn.html" class="menu-item">
+        <i class="fab fa-whatsapp"></i>
+        <span data-i18n="menu.whatsapp_earn">Gagner via Whatsapp</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="gains_publicitaires.html" class="menu-item">
+        <i class="fas fa-ad"></i>
+        <span data-i18n="menu.ad_earnings">Gains publicitaires</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="spin_wheel.html" class="menu-item">
+        <i class="fas fa-trophy"></i>
+        <span data-i18n="menu.fortune_wheel">Roue de la fortune 🏆</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="tiktok_earn.html" class="menu-item">
+        <i class="fab fa-tiktok"></i>
+        <span data-i18n="menu.tiktok_earn">TikTok Earn</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="youtube_earn.html" class="menu-item">
+        <i class="fab fa-youtube"></i>
+        <span data-i18n="menu.youtube_earn">YouTube Earn</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="instagram_earn.html" class="menu-item">
+        <i class="fab fa-instagram"></i>
+        <span data-i18n="menu.instagram_earn">Instagram Earn</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="trivia_challenge.html" class="menu-item">
+        <i class="fas fa-brain"></i>
+        <span data-i18n="menu.trivia">TRIVIA challenge</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <div class="menu-category" data-i18n="menu.bonus">BONUS</div>
+      <a href="liste_contacts.html" class="menu-item">
+        <i class="fas fa-address-book"></i>
+        <span data-i18n="menu.contact_list">Liste de contacts gratuit 🆓</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="booster_visibilite.html" class="menu-item">
+        <i class="fas fa-rocket"></i>
+        <span data-i18n="menu.visibility_booster">Booster ma visibilité</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+
+      <a href="canva_pro.html" class="menu-item">
+        <i class="fas fa-palette"></i>
+        <span data-i18n="menu.canva_pro">Canva Pro</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="connexion_gratuite.html" class="menu-item">
+        <i class="fas fa-shield-alt"></i>
+        <span data-i18n="menu.free_connection">Connexion gratuite</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+    </aside>
+
+    <main class="content">
+      <h1 class="page-title">
+        <i class="fas fa-gift"></i>
+        <span data-i18n="bonus.title">Bonus de Bienvenue</span>
+      </h1>
+      
+      <div class="bonus-container">
+        <div class="bonus-card">
+          <i class="fas fa-gift bonus-icon"></i>
+          <h2 class="bonus-title" data-i18n="bonus.congratulations">Félicitations!</h2>
+          <div class="bonus-amount">750 XAF</div>
+          <p class="bonus-description" data-i18n="bonus.description">
+            Vous avez reçu un bonus de bienvenue de 750 XAF pour votre inscription sur BLOWEARN AGENCIES.
+            Cliquez sur le bouton ci-dessous pour réclamer votre bonus et l'ajouter à votre solde.
+          </p>
+          <button class="claim-btn" id="claimBonusBtn" data-i18n="bonus.claim">Récupérer mon bonus</button>
+        </div>
+        
+        <div class="bonus-progress">
+          <h3 class="progress-title" data-i18n="bonus.progress_title">Progression du bonus</h3>
+          <div class="progress-steps">
+            <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+            <div class="progress-step">
+              <div class="step-icon" id="step1">
+                <i class="fas fa-user-plus"></i>
+              </div>
+              <div class="step-label" data-i18n="bonus.step1">Inscription</div>
+            </div>
+            <div class="progress-step">
+              <div class="step-icon" id="step2">
+                <i class="fas fa-gift"></i>
+              </div>
+              <div class="step-label" data-i18n="bonus.step2">Bonus offert</div>
+            </div>
+            <div class="progress-step">
+              <div class="step-icon" id="step3">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <div class="step-label" data-i18n="bonus.step3">Bonus réclamé</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bonus-info">
+          <h3 class="info-title" data-i18n="bonus.info_title">À propos du bonus de bienvenue</h3>
+          <ul class="info-list">
+            <li class="info-item">
+              <i class="fas fa-check-circle"></i>
+              <span data-i18n="bonus.info1">Le bonus de bienvenue est offert à tous les nouveaux membres</span>
+            </li>
+            <li class="info-item">
+              <i class="fas fa-check-circle"></i>
+              <span data-i18n="bonus.info2">Le bonus est crédité immédiatement après confirmation</span>
+            </li>
+            <li class="info-item">
+              <i class="fas fa-check-circle"></i>
+              <span data-i18n="bonus.info3">Le bonus peut être utilisé pour toutes les activités sur la plateforme</span>
+            </li>
+            <li class="info-item">
+              <i class="fas fa-check-circle"></i>
+              <span data-i18n="bonus.info4">Le bonus est valable sans limite de temps</span>
+            </li>
+            <li class="info-item">
+              <i class="fas fa-check-circle"></i>
+              <span data-i18n="bonus.info5">Aucune condition de retrait supplémentaire</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="additional-bonuses">
+          <h3 class="bonuses-title" data-i18n="bonus.additional_title">Bonus supplémentaires disponibles</h3>
+          <div class="bonus-grid">
+            <div class="bonus-item">
+              <div class="bonus-item-icon">
+                <i class="fas fa-user-friends"></i>
+              </div>
+              <div class="bonus-item-title" data-i18n="bonus.parrainage">Parrainage</div>
+              <div class="bonus-item-amount">500 XAF</div>
+            </div>
+            <div class="bonus-item">
+              <div class="bonus-item-icon">
+                <i class="fas fa-tasks"></i>
+              </div>
+              <div class="bonus-item-title" data-i18n="bonus.taches">Tâches quotidiennes</div>
+              <div class="bonus-item-amount">250 XAF</div>
+            </div>
+            <div class="bonus-item">
+              <div class="bonus-item-icon">
+                <i class="fas fa-calendar-check"></i>
+              </div>
+              <div class="bonus-item-title" data-i18n="bonus.presence">Présence continue</div>
+              <div class="bonus-item-amount">1000 XAF</div>
+            </div>
+            <div class="bonus-item">
+              <div class="bonus-item-icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <div class="bonus-item-title" data-i18n="bonus.objectifs">Objectifs atteints</div>
+              <div class="bonus-item-amount">1500 XAF</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="terms.html" class="footer-link" data-i18n="footer.terms">Conditions d'utilisation</a>
+        <a href="privacy.html" class="footer-link" data-i18n="footer.privacy">Politique de confidentialité</a>
+        <button class="support-btn" id="supportBtn" data-i18n="footer.support">Support</button>
+        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Propulsé par SBH</a>
+        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Boost Text Management</a>
+      </div>
+      <div class="footer-text">
+        © 2025 BLOWEARN AGENCIES. <span data-i18n="footer.rights">Tous droits réservés.</span>
+      </div>
+    </div>
+  </footer>
+  
+<script>
+/******** CONFIG FIREBASE ********/
+const firebaseConfig = {
+  apiKey: "AIzaSyCjGisjgbFc2ZE0BFgdhlUao8bCCeuKP1k",
+  authDomain: "cash-flowr.firebaseapp.com",
+  projectId: "cash-flowr",
+  storageBucket: "cash-flowr.appspot.com",
+  messagingSenderId: "1091928501310",
+  appId: "1:1091928501310:web:4f4de306cde36f378ff56f",
+  measurementId: "G-5SF6VDLZCB"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+/******** DOM Elements ********/
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+const themeToggle = document.getElementById('themeToggle');
+const userProfile = document.getElementById('userProfile');
+const profileDropdown = document.getElementById('profileDropdown');
+const languageSelector = document.getElementById('languageSelector');
+const languageDropdown = document.getElementById('languageDropdown');
+const currentLanguage = document.getElementById('currentLanguage');
+const claimBonusBtn = document.getElementById('claimBonusBtn');
+const sidebarUsername = document.getElementById('sidebarUsername');
+const userAvatar = document.getElementById('userAvatar');
+const loader = document.getElementById('loader');
+const supportBtn = document.getElementById('supportBtn');
+const progressBar = document.getElementById('progressBar');
+const step1 = document.getElementById('step1');
+const step2 = document.getElementById('step2');
+const step3 = document.getElementById('step3');
+
+/******** Variables d'état ********/
+let currentUser = null;
+let userData = {};
+let currentLang = 'fr'; // Langue par défaut
+let bonusClaimed = false;
+
+/******** Système de traduction ********/
+const translations = {
+  fr: {
+    // Header
+    "header.language": "French",
+    "header.night_mode": "Mode nuit",
+    "header.day_mode": "Mode jour",
+    
+    // Dashboard
+    "dashboard.title": "Dashboard >> BLOWEARN AGENCIES",
+    
+    // Menu
+    "menu.main": "PRINCIPAL",
+    "menu.dashboard": "Tableau de bord",
+    "menu.deposit": "Dépôt 💵",
+    "menu.welcome_bonus": "Bonus de bienvenue",
+    "menu.accounts": "COMPTES",
+    "menu.withdrawal": "Retrait",
+    "menu.team": "Équipe",
+    "menu.special": "SPÉCIAL",
+    "menu.sbh": "SBH",
+    "menu.challenge": "Challenge and Reward",
+    "menu.products": "PRODUIT / TÂCHE",
+    "menu.whatsapp_earn": "Gagner via Whatsapp",
+    "menu.ad_earnings": "Gains publicitaires",
+    "menu.fortune_wheel": "Roue de la fortune 🏆",
+    "menu.tiktok_earn": "TikTok Earn",
+    "menu.youtube_earn": "YouTube Earn",
+    "menu.instagram_earn": "Instagram Earn",
+    "menu.trivia": "TRIVIA challenge",
+    "menu.bonus": "BONUS",
+    "menu.contact_list": "Liste de contacts gratuit 🆓",
+    "menu.visibility_booster": "Booster ma visibilité",
+    "menu.canva_pro": "Canva Pro",
+    "menu.free_connection": "Connexion gratuite",
+    
+    // Bonus
+    "bonus.title": "Bonus de Bienvenue",
+    "bonus.congratulations": "Félicitations!",
+    "bonus.description": "Vous avez reçu un bonus de bienvenue de 750 XAF pour votre inscription sur BLOWEARN AGENCIES. Cliquez sur le bouton ci-dessous pour réclamer votre bonus et l'ajouter à votre solde.",
+    "bonus.claim": "Récupérer mon bonus",
+    "bonus.progress_title": "Progression du bonus",
+    "bonus.step1": "Inscription",
+    "bonus.step2": "Bonus offert",
+    "bonus.step3": "Bonus réclamé",
+    "bonus.info_title": "À propos du bonus de bienvenue",
+    "bonus.info1": "Le bonus de bienvenue est offert à tous les nouveaux membres",
+    "bonus.info2": "Le bonus est crédité immédiatement après confirmation",
+    "bonus.info3": "Le bonus peut être utilisé pour toutes les activités sur la plateforme",
+    "bonus.info4": "Le bonus est valable sans limite de temps",
+    "bonus.info5": "Aucune condition de retrait supplémentaire",
+    "bonus.additional_title": "Bonus supplémentaires disponibles",
+    "bonus.parrainage": "Parrainage",
+    "bonus.taches": "Tâches quotidiennes",
+    "bonus.presence": "Présence continue",
+    "bonus.objectifs": "Objectifs atteints",
+    
+    // Footer
+    "footer.terms": "Conditions d'utilisation",
+    "footer.privacy": "Politique de confidentialité",
+    "footer.support": "Support",
+    "footer.rights": "Tous droits réservés.",
+    
+    // Notifications
+    "notification.success": "Succès",
+    "notification.error": "Erreur",
+    "notification.info": "Information"
+  },
+  en: {
+    // Header
+    "header.language": "English",
+    "header.night_mode": "Night mode",
+    "header.day_mode": "Day mode",
+    
+    // Dashboard
+    "dashboard.title": "Dashboard >> BLOWEARN AGENCIES",
+    
+    // Menu
+    "menu.main": "MAIN",
+    "menu.dashboard": "Dashboard",
+    "menu.deposit": "Deposit 💵",
+    "menu.welcome_bonus": "Welcome Bonus",
+    "menu.accounts": "ACCOUNTS",
+    "menu.withdrawal": "Withdrawal",
+    "menu.team": "Team",
+    "menu.special": "SPECIAL",
+    "menu.sbh": "SBH",
+    "menu.challenge": "Challenge and Reward",
+    "menu.products": "PRODUCT / TASK",
+    "menu.whatsapp_earn": "Earn via Whatsapp",
+    "menu.ad_earnings": "Advertising earnings",
+    "menu.fortune_wheel": "Fortune Wheel 🏆",
+    "menu.tiktok_earn": "TikTok Earn",
+    "menu.youtube_earn": "YouTube Earn",
+    "menu.instagram_earn": "Instagram Earn",
+    "menu.trivia": "TRIVIA challenge",
+    "menu.bonus": "BONUS",
+    "menu.contact_list": "Free contact list 🆓",
+    "menu.visibility_booster": "Boost my visibility",
+    "menu.canva_pro": "Canva Pro",
+    "menu.free_connection": "Free connection",
+    
+    // Bonus
+    "bonus.title": "Welcome Bonus",
+    "bonus.congratulations": "Congratulations!",
+    "bonus.description": "You have received a welcome bonus of 750 XAF for your registration on BLOWEARN AGENCIES. Click the button below to claim your bonus and add it to your balance.",
+    "bonus.claim": "Claim my bonus",
+    "bonus.progress_title": "Bonus Progress",
+    "bonus.step1": "Registration",
+    "bonus.step2": "Bonus offered",
+    "bonus.step3": "Bonus claimed",
+    "bonus.info_title": "About the welcome bonus",
+    "bonus.info1": "The welcome bonus is offered to all new members",
+    "bonus.info2": "The bonus is credited immediately after confirmation",
+    "bonus.info3": "The bonus can be used for all activities on the platform",
+    "bonus.info4": "The bonus is valid without time limit",
+    "bonus.info5": "No additional withdrawal conditions",
+    "bonus.additional_title": "Additional bonuses available",
+    "bonus.parrainage": "Referral",
+    "bonus.taches": "Daily tasks",
+    "bonus.presence": "Continuous presence",
+    "bonus.objectifs": "Goals achieved",
+    
+    // Footer
+    "footer.terms": "Terms of Use",
+    "footer.privacy": "Privacy Policy",
+    "footer.support": "Support",
+    "footer.rights": "All rights reserved.",
+    
+    // Notifications
+    "notification.success": "Success",
+    "notification.error": "Error",
+    "notification.info": "Information"
+  }
+};
+
+/******** Fonctions de traduction ********/
+function setLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem('preferredLanguage', lang);
+  
+  // Mettre à jour le sélecteur de langue
+  currentLanguage.textContent = lang === 'fr' ? 'French' : 'English';
+  
+  // Mettre à jour les options de langue
+  document.querySelectorAll('.language-option').forEach(option => {
+    const icon = option.querySelector('i');
+    if (option.dataset.lang === lang) {
+      option.classList.add('active');
+      icon.style.opacity = '1';
+    } else {
+      option.classList.remove('active');
+      icon.style.opacity = '0';
+    }
+  });
+  
+  // Traduire tous les éléments avec data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(element => {
+    const key = element.getAttribute('data-i18n');
+    if (translations[lang] && translations[lang][key]) {
+      if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+        element.placeholder = translations[lang][key];
+      } else {
+        element.textContent = translations[lang][key];
+      }
+    }
+  });
+  
+  // Mettre à jour le texte du thème
+  const isDarkMode = document.body.classList.contains('dark-mode');
+  if (themeToggle) {
+    themeToggle.innerHTML = isDarkMode 
+      ? `<i class="fas fa-sun"></i><span>${translations[lang]['header.day_mode']}</span>` 
+      : `<i class="fas fa-moon"></i><span>${translations[lang]['header.night_mode']}</span>`;
+  }
+}
+
+/******** UI helpers ********/
+function showNotification(type, title, message, duration = 4000) {
+  const container = document.getElementById('notificationContainer');
+  if (!container) return;
+  const notification = document.createElement('div');
+  notification.className = `notification ${type}`;
+  const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle');
+  notification.innerHTML = `
+    <i class="fas ${icon}" style="font-size: 1.5rem;"></i>
+    <div>
+      <strong style="display: block; margin-bottom: 5px;">${title}</strong>
+      <span>${message}</span>
+    </div>
+  `;
+  container.appendChild(notification);
+  setTimeout(() => {
+    notification.style.animation = 'slideIn 0.3s ease reverse forwards';
+    setTimeout(() => { if (container.contains(notification)) container.removeChild(notification); }, 300);
+  }, duration);
+}
+
+/******** UI events ********/
+if (hamburgerBtn) {
+  hamburgerBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('active');
+      hamburgerBtn.classList.toggle('open');
+  });
+}
+if (overlay) {
+  overlay.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('active');
+      hamburgerBtn.classList.remove('open');
+  });
+}
+if (userProfile) {
+  userProfile.addEventListener('click', (event) => {
+      event.stopPropagation();
+      profileDropdown.classList.toggle('active');
+  });
+}
+document.addEventListener('click', (event) => {
+  if (!userProfile || !userProfile.contains(event.target)) {
+    if (profileDropdown) profileDropdown.classList.remove('active');
+  }
+});
+
+// Gestion du sélecteur de langue
+if (languageSelector) {
+  languageSelector.addEventListener('click', (event) => {
+    event.stopPropagation();
+    languageDropdown.classList.toggle('active');
+  });
+}
+
+// Fermer le dropdown de langue quand on clique ailleurs
+document.addEventListener('click', () => {
+  if (languageDropdown) languageDropdown.classList.remove('active');
+});
+
+// Changer de langue
+document.querySelectorAll('.language-option').forEach(option => {
+  option.addEventListener('click', () => {
+    const lang = option.dataset.lang;
+    setLanguage(lang);
+    languageDropdown.classList.remove('active');
+  });
+});
+
+if (themeToggle) {
+  themeToggle.addEventListener('click', (event) => {
+      event.stopPropagation();
+      document.body.classList.toggle('dark-mode');
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      themeToggle.innerHTML = isDarkMode 
+          ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+          : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
+      if(currentUser) saveUserData('theme', isDarkMode ? 'dark' : 'light');
+  });
+}
+
+/******** Bouton Support ********/
+if (supportBtn) {
+  supportBtn.addEventListener('click', () => {
+    window.open('https://wa.me/681144638', '_blank');
+  });
+}
+
+/******** Réclamation du bonus ********/
+if (claimBonusBtn) {
+  claimBonusBtn.addEventListener('click', async () => {
+    if (bonusClaimed) return;
+    
+    try {
+      showNotification('info', translations[currentLang]['notification.info'], 'Votre bonus est en cours de traitement...');
+      
+      // Simulation d'un délai de traitement
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Mise à jour des données utilisateur
+      userData.bonusAgent = (userData.bonusAgent || 0) + 750;
+      userData.solde = (userData.solde || 0) + 750;
+      userData.welcomeBonusClaimed = true;
+      bonusClaimed = true;
+      
+      // Sauvegarde des données
+      await saveUserData();
+      
+      // Désactivation du bouton
+      claimBonusBtn.disabled = true;
+      claimBonusBtn.textContent = translations[currentLang]['bonus.claimed'] || 'Bonus déjà réclamé';
+      
+      // Mise à jour de la progression
+      updateProgress(100);
+      
+      showNotification('success', translations[currentLang]['notification.success'], 'Votre bonus de 750 XAF a été crédité avec succès!');
+      
+    } catch (error) {
+      console.error('Erreur lors de la réclamation du bonus:', error);
+      showNotification('error', translations[currentLang]['notification.error'], 'Une erreur est survenue lors de la réclamation du bonus');
+    }
+  });
+}
+
+/******** Mise à jour de la progression ********/
+function updateProgress(percentage) {
+  if (progressBar) {
+    progressBar.style.width = `${percentage}%`;
+  }
+  
+  // Mise à jour des étapes
+  if (step1) step1.classList.add('active');
+  if (step2) step2.classList.add('active');
+  if (step3 && percentage === 100) step3.classList.add('active');
+}
+
+/******** Fonctions de gestion des données utilisateur ********/
+async function saveUserData(key = null, value = null) {
+  if (!currentUser) return;
+  try {
+    const userRef = db.collection('users').doc(currentUser.uid);
+    const dataToSave = key ? { [key]: value } : userData;
+    await userRef.set({ ...dataToSave, lastUpdate: new Date() }, { merge: true });
+    console.log('Données utilisateur enregistrées avec succès.');
+  } catch (error) {
+    console.error("Erreur lors de la sauvegarde des données :", error);
+    showNotification('error', translations[currentLang]['notification.error'], 'Impossible de sauvegarder vos données.');
+  }
+}
+
+async function loadUserData() {
+  if (!currentUser) throw new Error("Aucun utilisateur connecté pour charger les données.");
+  
+  // CORRECTION BOUCLE INFINIE: Chercher par UID puis par email (comme dashboard.html)
+  let userRef = db.collection('users').doc(currentUser.uid);
+  let doc = await userRef.get();
+  let foundViaEmail = false;
+
+  // 🔧 FALLBACK: Si pas trouvé par UID, chercher par email
+  if (!doc.exists && currentUser.email) {
+    console.log('⚠️ Document non trouvé par UID, recherche par email...');
+    const emailQuery = await db.collection('users').where('email', '==', currentUser.email).limit(1).get();
+    if (!emailQuery.empty) {
+      doc = emailQuery.docs[0];
+      userRef = doc.ref;
+      foundViaEmail = true;
+      console.log('✅ Utilisateur trouvé par email:', currentUser.email);
+    }
+  }
+
+  if (doc.exists) {
+    const data = doc.data() || {};
+    userData = {
+      bonusAgent: Number(data.bonusAgent || data.agentBonus || 0),
+      solde: Number(data.solde || data.balance || 0),
+      displayName: data.displayName || currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'Utilisateur'),
+      theme: data.theme || 'light',
+      welcomeBonusClaimed: data.welcomeBonusClaimed || false,
+      email: data.email || currentUser.email,
+      username: data.username || data.userName || null
+    };
+    
+    // Vérifier si le bonus a déjà été réclamé
+    bonusClaimed = userData.welcomeBonusClaimed;
+    if (bonusClaimed) {
+      claimBonusBtn.disabled = true;
+      claimBonusBtn.textContent = 'Bonus déjà réclamé';
+      updateProgress(100);
+    } else {
+      updateProgress(33); // Bonus offert mais pas encore réclamé
+    }
+  } else {
+    userData = { 
+      bonusAgent: 0, 
+      solde: 0, 
+      theme: 'light', 
+      welcomeBonusClaimed: false,
+      displayName: currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'Utilisateur'),
+      email: currentUser.email,
+      username: null
+    };
+    await saveUserData();
+    updateProgress(33); // Nouvel utilisateur, bonus offert
+  }
+}
+
+function applyTheme() {
+  const isDarkMode = userData.theme === 'dark';
+  document.body.classList.toggle('dark-mode', isDarkMode);
+  if (themeToggle) {
+    themeToggle.innerHTML = isDarkMode 
+      ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+      : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
+  }
+}
+
+function updateUserInfoUI(user, dbData = {}) {
+  const displayName = dbData.displayName || user.displayName || (user.email ? user.email.split('@')[0] : 'Utilisateur');
+  if (sidebarUsername) sidebarUsername.textContent = displayName;
+  if (userAvatar) userAvatar.textContent = displayName.charAt(0).toUpperCase();
+}
+
+/******** Point d'entrée principal de l'application ********/
+auth.onAuthStateChanged(async (user) => {
+  if (user) {
+    currentUser = user;
+    try {
+      await loadUserData();
+      updateUserInfoUI(user, userData);
+      applyTheme();
+      
+      document.body.classList.add('loaded');
+      loader.classList.add('hidden');
+      
+      showNotification('success', translations[currentLang]['notification.success'], `Bienvenue sur la page des bonus, ${userData.displayName}!`);
+    } catch (error) {
+      console.error("Erreur critique lors de l'initialisation :", error);
+      showNotification('error', translations[currentLang]['notification.error'], "Impossible de charger vos données. Veuillez vous reconnecter.");
+      auth.signOut();
+      setTimeout(() => { window.location.href = 'login.html'; }, 3000);
+    }
+  } else {
+    window.location.href = 'login.html';
+  }
+});
+
+/******** Initialisation au chargement de la page ********/
+document.addEventListener('DOMContentLoaded', () => {
+  // Charger la langue sauvegardée ou utiliser le français par défaut
+  const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
+  setLanguage(savedLang);
+  
+  // Initialiser la progression
+  updateProgress(0);
+});
+</script>
+</body>
+</html>
