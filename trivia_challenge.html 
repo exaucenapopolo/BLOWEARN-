@@ -1,0 +1,4697 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BLOWEARN AGENCIES - Trivia Challenge</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  
+  <style>
+    /* -------------------------------------------------------------------------- */
+    /* --- VARIABLES CSS COHÉRENTES AVEC LA PAGE D'INSCRIPTION --- */
+    /* -------------------------------------------------------------------------- */
+    :root {
+      --color-primary: #4A90E2; /* Bleu Énergique */
+      --color-secondary: #FFC107; /* Jaune Vif/Or pour l'accent */
+      --color-text-dark: #2C3E50; /* Texte Sombre (lisible) */
+      --color-text-light: #ECF0F1; /* Texte Clair */
+      --color-bg-light: #FFFFFF; /* Fond de Carte */
+      --color-bg-gradient-1: #6DD5FA; /* Dégradé Fond 1 */
+      --color-bg-gradient-2: #FF7582; /* Dégradé Fond 2 */
+      --success-color: #4CD964;
+      --warning-color: #FF9500;
+      --danger-color: #FF3B30;
+      --shadow: 0 15px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.8);
+      --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- STYLES GÉNÉRAUX COHÉRENTS --- */
+    /* -------------------------------------------------------------------------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+      transition: var(--transition);
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
+      color: var(--color-text-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Effet de bulles animées en arrière-plan */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 25%),
+        radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 90% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 25%);
+      animation: float 20s ease-in-out infinite;
+      z-index: -1;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-15px) scale(1.02); }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- LOADER --- */
+    /* -------------------------------------------------------------------------- */
+    .loader-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .loader-container.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loader {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: conic-gradient(#0000 10%, var(--color-primary));
+      -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
+      animation: spin 1s infinite linear;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(1turn); }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- HEADER --- */
+    /* -------------------------------------------------------------------------- */
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800; /* Plus épais pour plus de visibilité */
+      color: var(--color-text-dark); /* Changé pour plus de contraste */
+      display: flex;
+      align-items: center;
+      font-family: 'Poppins', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Ombre plus prononcée */
+      background: linear-gradient(45deg, var(--color-primary) 0%, var(--color-secondary) 100%); /* Dégradé plus contrasté */
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: logoGlow 3s ease-in-out infinite alternate;
+    }
+    
+    @keyframes logoGlow {
+      from { filter: drop-shadow(0 0 5px rgba(74, 144, 226, 0.5)); }
+      to { filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.7)); }
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .language-selector {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      position: relative;
+    }
+
+    .language-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      border-radius: 12px;
+      padding: 8px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 140px;
+      z-index: 200;
+      transform-origin: top right;
+      animation: scaleIn 0.2s ease-out forwards;
+      border: 1px solid rgba(255,255,255,0.7);
+      margin-top: 5px;
+    }
+
+    .language-dropdown.active {
+      display: flex;
+    }
+
+    .language-option {
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s ease;
+    }
+
+    .language-option:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .language-option.active {
+      background-color: rgba(74, 144, 226, 0.1);
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    .theme-toggle {
+      background-color: transparent;
+      border: none;
+      color: var(--color-text-dark);
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .theme-toggle i {
+      font-size: 1.2rem;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .user-profile .avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background-color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border: 2px solid var(--color-secondary);
+      box-shadow: var(--shadow);
+    }
+
+    .profile-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      border-radius: 18px;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 150px;
+      z-index: 200;
+      transform-origin: top right;
+      animation: scaleIn 0.2s ease-out forwards;
+      border: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .profile-dropdown.active {
+      display: flex;
+    }
+    
+    @keyframes scaleIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .profile-dropdown .theme-toggle {
+      width: 100%;
+      border-radius: 8px;
+      background-color: rgba(0, 0, 0, 0.05);
+      color: var(--text-color);
+      justify-content: flex-start;
+      padding: 10px;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+      text-align: left;
+      gap: 10px;
+    }
+
+    .profile-dropdown .theme-toggle:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+    
+    .profile-dropdown .theme-toggle span {
+      flex-grow: 1;
+      text-align: left;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- BOUTON HAMBURGER (DÉPLACÉ À DROITE) --- */
+    /* -------------------------------------------------------------------------- */
+    .hamburger-btn {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 30px;
+      height: 25px;
+      padding: 0;
+      order: 2; /* Pour le placer à droite dans le header */
+    }
+    
+    .hamburger-btn .bar {
+      width: 100%;
+      height: 3px;
+      background-color: var(--color-text-dark);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    
+    .hamburger-btn.open .bar:nth-child(2) {
+      opacity: 0;
+    }
+    
+    .hamburger-btn.open .bar:nth-child(1) {
+      transform: translateY(11px) rotate(45deg);
+    }
+    
+    .hamburger-btn.open .bar:nth-child(3) {
+      transform: translateY(-11px) rotate(-45deg);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- STRUCTURE PRINCIPALE --- */
+    /* -------------------------------------------------------------------------- */
+    .main-container {
+      display: flex;
+      flex: 1;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- SIDEBAR (MENU) AMÉLIORÉ AVEC NOUVEAU FOND ET POLICE --- */
+    /* -------------------------------------------------------------------------- */
+    .sidebar {
+      width: 280px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.95) 100%);
+      backdrop-filter: blur(15px);
+      border-right: 1px solid rgba(255,255,255,0.7);
+      box-shadow: var(--shadow);
+      height: calc(100vh - 80px);
+      position: sticky;
+      top: 80px;
+      padding: 25px 0;
+      overflow-y: auto;
+      transition: transform 0.4s ease-in-out; 
+    }
+    
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .welcome-section {
+      padding: 0 25px 25px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .welcome-text {
+      color: var(--color-text-dark);
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+      font-weight: 500;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    .username {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: var(--color-primary);
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    .menu-category {
+      padding: 15px 25px 5px;
+      font-size: 0.85rem;
+      color: var(--color-text-dark);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+      font-family: 'Quicksand', sans-serif;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .menu-item {
+      padding: 12px 25px 12px 35px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: var(--color-text-dark);
+      text-decoration: none;
+      font-weight: 500;
+      border-left: 4px solid transparent;
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 0.5s ease-out;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .menu-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
+      transition: all 0.5s ease;
+    }
+    
+    .menu-item:hover::before {
+      left: 100%;
+    }
+
+    .menu-item:hover, .menu-item.active {
+      background-color: rgba(0, 0, 0, 0.05);
+      border-left-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .menu-item i {
+      width: 20px;
+      text-align: center;
+      font-size: 1.1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .menu-item:hover i {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .menu-badge {
+      position: absolute;
+      right: 25px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+      animation: popIn 0.5s ease-out;
+    }
+    
+    @keyframes popIn {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    
+    .menu-badge.active {
+      background-color: var(--success-color);
+      color: white;
+    }
+    
+    .menu-badge.inactive {
+      background-color: var(--danger-color);
+      color: white;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- CONTENU PRINCIPAL --- */
+    /* -------------------------------------------------------------------------- */
+    .content {
+      flex: 1;
+      padding: 30px;
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+      margin-bottom: 25px;
+      color: var(--color-text-dark);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .page-title i {
+      color: var(--color-primary);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- ALERTE JEUDI --- */
+    /* -------------------------------------------------------------------------- */
+    .thursday-alert {
+      background: linear-gradient(135deg, var(--warning-color) 0%, #FF6B00 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 18px;
+      margin-bottom: 30px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      animation: pulseGlow 2s infinite;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .thursday-alert h3 {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .thursday-alert p {
+      font-size: 1rem;
+      margin-bottom: 5px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .thursday-alert .countdown {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-top: 10px;
+      font-family: 'Quicksand', sans-serif;
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 20px rgba(255, 149, 0, 0.5); }
+      50% { box-shadow: 0 0 40px rgba(255, 149, 0, 0.8); }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- SECTION TRIVIA CHALLENGE --- */
+    /* -------------------------------------------------------------------------- */
+    .trivia-section {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 18px;
+      padding: 25px;
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.7);
+      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .trivia-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: 18px 18px 0 0;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      color: var(--color-text-dark);
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .difficulty-badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-left: 10px;
+    }
+
+    .difficulty-easy {
+      background-color: var(--success-color);
+      color: white;
+    }
+
+    .difficulty-hard {
+      background-color: var(--danger-color);
+      color: white;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- TIMER --- */
+    /* -------------------------------------------------------------------------- */
+    .timer-container {
+      text-align: center;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .timer-circle {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin: 0 auto;
+    }
+
+    .timer-bg {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background-color: rgba(0, 0, 0, 0.05);
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .timer-progress {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      clip: rect(0, 60px, 120px, 0);
+      background: conic-gradient(var(--color-primary) 0%, var(--color-secondary) 100%);
+      transition: transform 0.1s linear;
+    }
+
+    .timer-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-text-dark);
+    }
+
+    .timer-label {
+      margin-top: 10px;
+      font-size: 1rem;
+      color: var(--color-text-dark);
+      opacity: 0.8;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- PROGRESS BAR --- */
+    /* -------------------------------------------------------------------------- */
+    .progress-container {
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress-text {
+      text-align: center;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+    }
+
+    .progress-bar {
+      height: 10px;
+      background-color: rgba(0, 0, 0, 0.05);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+      border-radius: 5px;
+      transition: width 0.3s ease;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- QUESTION CONTAINER --- */
+    /* -------------------------------------------------------------------------- */
+    .question-container {
+      background-color: rgba(255, 255, 255, 0.5);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .question-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--color-text-dark);
+    }
+
+    .options-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .option {
+      padding: 12px 15px;
+      background-color: rgba(255, 255, 255, 0.7);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .option:hover {
+      background-color: var(--color-primary);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+    }
+
+    .option.selected {
+      background-color: var(--color-primary);
+      color: white;
+    }
+
+    .option.correct {
+      background-color: var(--success-color);
+      color: white;
+    }
+
+    .option.incorrect {
+      background-color: var(--danger-color);
+      color: white;
+    }
+
+    .option input[type="radio"] {
+      display: none;
+    }
+
+    .option-label {
+      flex: 1;
+      cursor: pointer;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- BOUTONS D'ACTION --- */
+    /* -------------------------------------------------------------------------- */
+    .action-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      position: relative;
+      z-index: 1;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 12px 25px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(74, 144, 226, 0.4);
+    }
+
+    .btn-primary:disabled {
+      background: linear-gradient(135deg, #cccccc 0%, #999999 100%);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%);
+      color: white;
+    }
+
+    .btn-success:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(76, 217, 100, 0.4);
+    }
+
+    .btn-success:disabled {
+      background: linear-gradient(135deg, #cccccc 0%, #999999 100%);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- RÉSULTATS --- */
+    /* -------------------------------------------------------------------------- */
+    .results-container {
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      display: none;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .results-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: var(--color-text-dark);
+    }
+
+    .results-score {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--color-primary);
+    }
+
+    .results-message {
+      margin-bottom: 20px;
+      color: var(--color-text-dark);
+      opacity: 0.8;
+    }
+
+    .reward-info {
+      background: linear-gradient(135deg, rgba(76, 217, 100, 0.2) 0%, rgba(42, 179, 42, 0.2) 100%);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(76, 217, 100, 0.3);
+    }
+
+    .reward-amount {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--success-color);
+      margin-bottom: 5px;
+    }
+
+    .reward-text {
+      font-size: 0.9rem;
+      color: var(--color-text-dark);
+      opacity: 0.8;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- STATISTIQUES QUOTIDIENNES --- */
+    /* -------------------------------------------------------------------------- */
+    .daily-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.7);
+      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: 15px 15px 0 0;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--color-text-dark);
+      opacity: 0.8;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- FOOTER AMÉLIORÉ --- */
+    /* -------------------------------------------------------------------------- */
+    .footer {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      padding: 20px 30px;
+      text-align: center;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+      margin-top: auto;
+      border-top: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-link {
+      color: var(--color-primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .footer-link:hover {
+      text-decoration: underline;
+      color: var(--color-secondary);
+    }
+
+    .footer-text {
+      color: var(--color-text-dark);
+      font-size: 0.9rem;
+    }
+
+    /* Bouton de support */
+    .support-btn {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      margin-top: 10px;
+    }
+
+    .support-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(74, 144, 226, 0.4);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- NOTIFICATIONS --- */
+    /* -------------------------------------------------------------------------- */
+    .notification-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .notification {
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 350px;
+      animation: slideIn 0.3s ease forwards;
+      position: relative;
+      overflow: hidden;
+      color: white;
+      pointer-events: auto;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .notification.success {
+      background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%);
+    }
+
+    .notification.error {
+      background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%);
+    }
+
+    .notification.info { 
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); 
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(110%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- OVERLAY --- */
+    /* -------------------------------------------------------------------------- */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 98;
+    }
+    
+    .overlay.active {
+      display: block;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- MODE NUIT --- */
+    /* -------------------------------------------------------------------------- */
+    .dark-mode {
+      --color-primary: #5e81ac;
+      --color-secondary: #d08770;
+      --color-text-dark: #eceff4;
+      --color-text-light: #2e3440;
+      --color-bg-light: #3b4252;
+      --color-bg-gradient-1: #2e3440;
+      --color-bg-gradient-2: #4c566a;
+      --success-color: #a3be8c;
+      --warning-color: #ebcb8b;
+      --danger-color: #bf616a;
+      --shadow: 0 15px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
+    }
+
+    .dark-mode body::before {
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(76, 86, 106, 0.4) 0%, transparent 25%),
+        radial-gradient(circle at 80% 10%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 40% 80%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 90% 90%, rgba(76, 86, 106, 0.2) 0%, transparent 25%);
+    }
+
+    .dark-mode .header,
+    .dark-mode .sidebar,
+    .dark-mode .trivia-section,
+    .dark-mode .stat-card,
+    .dark-mode .footer {
+      background: rgba(59, 66, 82, 0.95);
+      color: var(--color-text-dark);
+    }
+
+    .dark-mode .thursday-alert {
+      background: linear-gradient(135deg, var(--warning-color) 0%, #d08770 100%);
+    }
+
+    .dark-mode .question-container,
+    .dark-mode .results-container {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .dark-mode .option {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .dark-mode .reward-info {
+      background: linear-gradient(135deg, rgba(163, 190, 140, 0.2) 0%, rgba(143, 188, 143, 0.2) 100%);
+      border: 1px solid rgba(163, 190, 140, 0.3);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- RESPONSIVE --- */
+    /* -------------------------------------------------------------------------- */
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 230px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-container {
+        flex-direction: column;
+      }
+      
+      .hamburger-btn {
+        display: flex;
+        position: static; /* Position normale dans le flux */
+        order: 2; /* Pour le placer à droite */
+      }
+
+      .sidebar {
+        width: 85%;
+        max-width: 320px;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: -100%;
+        z-index: 99;
+        transition: left 0.4s ease-in-out;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.97) 100%);
+      }
+      
+      .sidebar.open {
+        left: 0;
+      }
+      
+      .header {
+        padding: 15px;
+      }
+      
+      .logo {
+        font-size: 1.5rem;
+        margin-left: 0; /* Supprimé le décalage précédent */
+      }
+      
+      .content {
+        padding: 20px;
+      }
+      
+      .daily-stats {
+        grid-template-columns: 1fr;
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .footer-links {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="loader-container" id="loader">
+    <div class="loader"></div>
+  </div>
+
+  <div class="notification-container" id="notificationContainer"></div>
+
+  <header class="header">
+    <div class="logo">
+      <span>BLOWEARN</span>
+    </div>
+    
+    <div class="header-controls">
+      <div class="language-selector-container">
+        <button class="language-selector" id="languageSelector">
+          <i class="fas fa-globe"></i>
+          <span id="currentLanguage">French</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="language-dropdown" id="languageDropdown">
+          <div class="language-option active" data-lang="fr">
+            <i class="fas fa-check"></i>
+            <span>Français</span>
+          </div>
+          <div class="language-option" data-lang="en">
+            <i class="fas fa-check" style="opacity: 0;"></i>
+            <span>English</span>
+          </div>
+        </div>
+      </div>
+      
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </button>
+      
+      <div class="user-profile" id="userProfile">
+          <div class="avatar" id="userAvatar">U</div>
+          <div class="profile-dropdown" id="profileDropdown">
+              <button class="theme-toggle" id="themeToggle">
+                  <i class="fas fa-moon"></i>
+                  <span>Mode nuit</span>
+              </button>
+          </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="overlay" id="overlay"></div>
+
+  <div class="main-container">
+    <aside class="sidebar" id="sidebar">
+      <div class="welcome-section">
+        <div class="welcome-text" data-i18n="dashboard.title">Trivia Challenge >> BLOWEARN AGENCIES</div>
+        <div class="username" id="sidebarUsername">Utilisateur</div>
+      </div>
+      
+      <div class="menu-category" data-i18n="menu.main">PRINCIPAL</div>
+      <a href="dashboard.html" class="menu-item">
+        <i class="fas fa-home"></i>
+        <span data-i18n="menu.dashboard">Tableau de bord</span>
+      </a>
+      
+      <a href="depot.html" class="menu-item">
+        <i class="fas fa-wallet"></i>
+        <span data-i18n="menu.deposit">Dépôt 💵</span>
+      </a>
+      
+      <a href="bonus_bienvenue.html" class="menu-item">
+        <i class="fas fa-gift"></i>
+        <span data-i18n="menu.welcome_bonus">Bonus de bienvenue</span>
+      </a>
+      
+      <div class="menu-category" data-i18n="menu.accounts">COMPTES</div>
+      <a href="retrait.html" class="menu-item">
+        <i class="fas fa-money-bill-wave"></i>
+        <span data-i18n="menu.withdrawal">Retrait</span>
+      </a>
+      
+      <a href="equipe.html" class="menu-item">
+        <i class="fas fa-users"></i>
+        <span data-i18n="menu.team">Équipe</span>
+      </a>
+
+      <div class="menu-category" data-i18n="menu.special">SPÉCIAL</div>
+      
+      <a href="social_boost.html" class="menu-item">
+        <i class="fas fa-rocket"></i>
+        <span data-i18n="menu.sbh">SBH</span>
+      </a>
+      
+      <a href="challenge_reward.html" class="menu-item">
+        <i class="fas fa-medal"></i>
+        <span data-i18n="menu.challenge">Challenge and Reward</span>
+      </a>
+      
+      <div class="menu-category" data-i18n="menu.products">PRODUIT / TÂCHE</div>
+      <a href="whatsapp_earn.html" class="menu-item">
+        <i class="fab fa-whatsapp"></i>
+        <span data-i18n="menu.whatsapp_earn">Gagner via Whatsapp</span>
+      </a>
+      
+      <a href="gains_publicitaires.html" class="menu-item">
+        <i class="fas fa-ad"></i>
+        <span data-i18n="menu.ad_earnings">Gains publicitaires</span>
+      </a>
+      
+      <a href="spin_wheel.html" class="menu-item">
+        <i class="fas fa-trophy"></i>
+        <span data-i18n="menu.fortune_wheel">Roue de la fortune 🏆</span>
+      </a>
+      
+      <a href="tiktok_earn.html" class="menu-item">
+        <i class="fab fa-tiktok"></i>
+        <span data-i18n="menu.tiktok_earn">TikTok Earn</span>
+      </a>
+      
+      <a href="youtube_earn.html" class="menu-item">
+        <i class="fab fa-youtube"></i>
+        <span data-i18n="menu.youtube_earn">YouTube Earn</span>
+      </a>
+      
+      <a href="instagram_earn.html" class="menu-item">
+        <i class="fab fa-instagram"></i>
+        <span data-i18n="menu.instagram_earn">Instagram Earn</span>
+      </a>
+      
+      <a href="trivia_challenge.html" class="menu-item active">
+        <i class="fas fa-brain"></i>
+        <span data-i18n="menu.trivia">TRIVIA challenge</span>
+        <span class="menu-badge active">☑</span>
+      </a>
+      
+      <div class="menu-category" data-i18n="menu.bonus">BONUS</div>
+      <a href="liste_contacts.html" class="menu-item">
+        <i class="fas fa-address-book"></i>
+        <span data-i18n="menu.contact_list">Liste de contacts gratuit 🆓</span>
+      </a>
+      
+      <a href="booster_visibilite.html" class="menu-item">
+        <i class="fas fa-rocket"></i>
+        <span data-i18n="menu.visibility_booster">Booster ma visibilité</span>
+      </a>
+
+      <a href="canva_pro.html" class="menu-item">
+        <i class="fas fa-palette"></i>
+        <span data-i18n="menu.canva_pro">Canva Pro</span>
+      </a>
+      
+      <a href="connexion_gratuite.html" class="menu-item">
+        <i class="fas fa-shield-alt"></i>
+        <span data-i18n="menu.free_connection">Connexion gratuite</span>
+      </a>
+    </aside>
+
+    <main class="content">
+      <h1 class="page-title">
+        <i class="fas fa-brain"></i>
+        <span data-i18n="trivia.title">Trivia Challenge</span>
+      </h1>
+      
+      <!-- Alerte Jeudi -->
+      <div class="thursday-alert" id="thursdayAlert" style="display: none;">
+        <h3>
+          <i class="fas fa-calendar-alt"></i>
+          <span data-i18n="trivia.thursday_only">Disponible uniquement le jeudi</span>
+        </h3>
+        <p data-i18n="trivia.thursday_message">Le Trivia Challenge est accessible chaque jeudi pour gagner jusqu'à 500 FCFA</p>
+        <div class="countdown" id="thursdayCountdown">Calcul en cours...</div>
+      </div>
+      
+      <div class="trivia-section">
+        <h2 class="section-title">
+          <span data-i18n="trivia.challenge_title">Testez vos connaissances et gagnez de l'argent</span>
+          <span class="difficulty-badge" id="difficultyBadge"></span>
+        </h2>
+        
+        <!-- Timer Container -->
+        <div class="timer-container">
+          <div class="timer-circle">
+            <div class="timer-bg"></div>
+            <div class="timer-progress" id="timerProgress"></div>
+            <div class="timer-text" id="timerText">7s</div>
+          </div>
+          <div class="timer-label" data-i18n="trivia.time_left">Temps restant</div>
+        </div>
+        
+        <div class="progress-container">
+          <div class="progress-text" id="progressText" data-i18n="trivia.question_progress">Question 1/5</div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 20%"></div>
+          </div>
+        </div>
+        
+        <div class="question-container" id="questionContainer">
+          <div class="question-text" id="questionText" data-i18n="trivia.loading_question">Chargement de la question...</div>
+          <div class="options-container" id="optionsContainer">
+            <!-- Options will be loaded here -->
+          </div>
+        </div>
+        
+        <!-- Boutons d'action modifiés - bouton de soumission retiré -->
+        <div class="action-buttons">
+          <button class="btn btn-success" id="nextButton" style="display: none;">
+            <i class="fas fa-arrow-right"></i>
+            <span data-i18n="trivia.next_question">Question suivante</span>
+          </button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+          <div class="results-title" data-i18n="trivia.results_title">Résultats du Quiz</div>
+          <div class="results-score" id="resultsScore">0/5</div>
+          <div class="results-message" id="resultsMessage"></div>
+          
+          <div class="reward-info">
+            <div class="reward-amount" id="totalEarningsDisplay">+0 FCFA</div>
+            <div class="reward-text" data-i18n="trivia.potential_earnings">Gains potentiels pour ce quiz</div>
+          </div>
+          
+          <button class="btn btn-success" id="claimRewardButton" disabled>
+            <i class="fas fa-coins"></i>
+            <span data-i18n="trivia.claim_reward">Réclamer la récompense</span>
+          </button>
+
+          <button class="btn btn-primary" id="nextQuizButton" style="display: none;">
+            <i class="fas fa-redo"></i>
+            <span data-i18n="trivia.next_quiz">Prochain Quiz (Demain)</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="daily-stats">
+        <div class="stat-card">
+          <div class="stat-value" id="quizzesCompleted">0</div>
+          <div class="stat-label" data-i18n="trivia.quizzes_completed">Quiz complétés aujourd'hui</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-value" id="earnedToday">0 FCFA</div>
+          <div class="stat-label" data-i18n="trivia.earned_today">Gagné aujourd'hui</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="terms.html" class="footer-link" data-i18n="footer.terms">Conditions d'utilisation</a>
+        <a href="privacy.html" class="footer-link" data-i18n="footer.privacy">Politique de confidentialité</a>
+        <button class="support-btn" id="supportBtn" data-i18n="footer.support">Support</button>
+        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Propulsé par SBH</a>
+        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Boost Text Management</a>
+      </div>
+      <div class="footer-text">
+        © 2025 BLOWEARN AGENCIES. <span data-i18n="footer.rights">Tous droits réservés.</span>
+      </div>
+    </div>
+  </footer>
+  
+<script>
+/******** CONFIG FIREBASE ********/
+const firebaseConfig = {
+  apiKey: "AIzaSyCjGisjgbFc2ZE0BFgdhlUao8bCCeuKP1k",
+  authDomain: "cash-flowr.firebaseapp.com",
+  projectId: "cash-flowr",
+  storageBucket: "cash-flowr.appspot.com",
+  messagingSenderId: "1091928501310",
+  appId: "1:1091928501310:web:4f4de306cde36f378ff56f",
+  measurementId: "G-5SF6VDLZCB"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+/******** DOM Elements ********/
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+const themeToggle = document.getElementById('themeToggle');
+const userProfile = document.getElementById('userProfile');
+const profileDropdown = document.getElementById('profileDropdown');
+const languageSelector = document.getElementById('languageSelector');
+const languageDropdown = document.getElementById('languageDropdown');
+const currentLanguage = document.getElementById('currentLanguage');
+const loader = document.getElementById('loader');
+const sidebarUsername = document.getElementById('sidebarUsername');
+const userAvatar = document.getElementById('userAvatar');
+const supportBtn = document.getElementById('supportBtn');
+
+// Trivia Challenge specific elements
+const progressText = document.getElementById('progressText');
+const progressFill = document.getElementById('progressFill');
+const questionContainer = document.getElementById('questionContainer');
+const questionText = document.getElementById('questionText');
+const optionsContainer = document.getElementById('optionsContainer');
+const nextButton = document.getElementById('nextButton');
+const resultsContainer = document.getElementById('resultsContainer');
+const resultsScore = document.getElementById('resultsScore');
+const resultsMessage = document.getElementById('resultsMessage');
+const totalEarningsDisplay = document.getElementById('totalEarningsDisplay');
+const claimRewardButton = document.getElementById('claimRewardButton');
+const nextQuizButton = document.getElementById('nextQuizButton');
+const quizzesCompleted = document.getElementById('quizzesCompleted');
+const earnedToday = document.getElementById('earnedToday');
+const difficultyBadge = document.getElementById('difficultyBadge');
+
+// NEW: Timer elements
+const timerProgress = document.getElementById('timerProgress');
+const timerText = document.getElementById('timerText');
+
+// NEW: Thursday alert elements
+const thursdayAlert = document.getElementById('thursdayAlert');
+const thursdayCountdown = document.getElementById('thursdayCountdown');
+
+/******** State variables ********/
+let currentUser = null;
+let userData = {};
+let currentQuestions = [];
+let currentQuestionIndex = 0;
+let selectedOption = null;
+let score = 0;
+let quizzesCompletedToday = 0;
+let earningsToday = 0;
+let totalEarningsForClaim = 0;
+let isClaimed = false;
+
+// NEW: Timer variables
+let countdownInterval = null;
+let timeLeft = 7;
+
+// NEW: Answer validation tracking
+let questionAnswered = false;
+
+/******** Variables globales ********/
+let currentLang = 'fr'; // Langue par défaut
+
+/******** Système de traduction ********/
+const translations = {
+  fr: {
+    // Header
+    "header.language": "French",
+    "header.night_mode": "Mode nuit",
+    "header.day_mode": "Mode jour",
+    
+    // Dashboard
+    "dashboard.title": "Dashboard >> BLOWEARN AGENCIES",
+    
+    // Menu
+    "menu.main": "PRINCIPAL",
+    "menu.dashboard": "Tableau de bord",
+    "menu.deposit": "Dépôt 💵",
+    "menu.welcome_bonus": "Bonus de bienvenue",
+    "menu.accounts": "COMPTES",
+    "menu.withdrawal": "Retrait",
+    "menu.team": "Équipe",
+    "menu.special": "SPÉCIAL",
+    "menu.sbh": "SBH",
+    "menu.challenge": "Challenge and Reward",
+    "menu.products": "PRODUIT / TÂCHE",
+    "menu.whatsapp_earn": "Gagner via Whatsapp",
+    "menu.ad_earnings": "Gains publicitaires",
+    "menu.fortune_wheel": "Roue de la fortune 🏆",
+    "menu.tiktok_earn": "TikTok Earn",
+    "menu.youtube_earn": "YouTube Earn",
+    "menu.instagram_earn": "Instagram Earn",
+    "menu.trivia": "TRIVIA challenge",
+    "menu.bonus": "BONUS",
+    "menu.contact_list": "Liste de contacts gratuit 🆓",
+    "menu.visibility_booster": "Booster ma visibilité",
+    "menu.canva_pro": "Canva Pro",
+    "menu.free_connection": "Connexion gratuite",
+    
+    // Trivia
+    "trivia.title": "Trivia Challenge",
+    "trivia.thursday_only": "Disponible uniquement le jeudi",
+    "trivia.thursday_message": "Le Trivia Challenge est accessible chaque jeudi pour gagner jusqu'à 500 FCFA",
+    "trivia.challenge_title": "Testez vos connaissances et gagnez de l'argent",
+    "trivia.time_left": "Temps restant",
+    "trivia.question_progress": "Question 1/5",
+    "trivia.loading_question": "Chargement de la question...",
+    "trivia.next_question": "Question suivante",
+    "trivia.results_title": "Résultats du Quiz",
+    "trivia.potential_earnings": "Gains potentiels pour ce quiz",
+    "trivia.claim_reward": "Réclamer la récompense",
+    "trivia.next_quiz": "Prochain Quiz (Demain)",
+    "trivia.quizzes_completed": "Quiz complétés aujourd'hui",
+    "trivia.earned_today": "Gagné aujourd'hui",
+    
+    // Footer
+    "footer.terms": "Conditions d'utilisation",
+    "footer.privacy": "Politique de confidentialité",
+    "footer.support": "Support",
+    "footer.rights": "Tous droits réservés.",
+    
+    // Notifications
+    "notification.success": "Succès",
+    "notification.error": "Erreur",
+    "notification.info": "Information"
+  },
+  en: {
+    // Header
+    "header.language": "English",
+    "header.night_mode": "Night mode",
+    "header.day_mode": "Day mode",
+    
+    // Dashboard
+    "dashboard.title": "Dashboard >> BLOWEARN AGENCIES",
+    
+    // Menu
+    "menu.main": "MAIN",
+    "menu.dashboard": "Dashboard",
+    "menu.deposit": "Deposit 💵",
+    "menu.welcome_bonus": "Welcome Bonus",
+    "menu.accounts": "ACCOUNTS",
+    "menu.withdrawal": "Withdrawal",
+    "menu.team": "Team",
+    "menu.special": "SPECIAL",
+    "menu.sbh": "SBH",
+    "menu.challenge": "Challenge and Reward",
+    "menu.products": "PRODUCT / TASK",
+    "menu.whatsapp_earn": "Earn via Whatsapp",
+    "menu.ad_earnings": "Advertising earnings",
+    "menu.fortune_wheel": "Fortune Wheel 🏆",
+    "menu.tiktok_earn": "TikTok Earn",
+    "menu.youtube_earn": "YouTube Earn",
+    "menu.instagram_earn": "Instagram Earn",
+    "menu.trivia": "TRIVIA challenge",
+    "menu.bonus": "BONUS",
+    "menu.contact_list": "Free contact list 🆓",
+    "menu.visibility_booster": "Boost my visibility",
+    "menu.canva_pro": "Canva Pro",
+    "menu.free_connection": "Free connection",
+    
+    // Trivia
+    "trivia.title": "Trivia Challenge",
+    "trivia.thursday_only": "Available only on Thursday",
+    "trivia.thursday_message": "The Trivia Challenge is accessible every Thursday to earn up to 500 FCFA",
+    "trivia.challenge_title": "Test your knowledge and earn money",
+    "trivia.time_left": "Time left",
+    "trivia.question_progress": "Question 1/5",
+    "trivia.loading_question": "Loading question...",
+    "trivia.next_question": "Next question",
+    "trivia.results_title": "Quiz Results",
+    "trivia.potential_earnings": "Potential earnings for this quiz",
+    "trivia.claim_reward": "Claim reward",
+    "trivia.next_quiz": "Next Quiz (Tomorrow)",
+    "trivia.quizzes_completed": "Quizzes completed today",
+    "trivia.earned_today": "Earned today",
+    
+    // Footer
+    "footer.terms": "Terms of Use",
+    "footer.privacy": "Privacy Policy",
+    "footer.support": "Support",
+    "footer.rights": "All rights reserved.",
+    
+    // Notifications
+    "notification.success": "Success",
+    "notification.error": "Error",
+    "notification.info": "Information"
+  }
+};
+
+/******** Fonctions de traduction ********/
+function setLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem('preferredLanguage', lang);
+  
+  // Mettre à jour le sélecteur de langue
+  currentLanguage.textContent = lang === 'fr' ? 'French' : 'English';
+  
+  // Mettre à jour les options de langue
+  document.querySelectorAll('.language-option').forEach(option => {
+    const icon = option.querySelector('i');
+    if (option.dataset.lang === lang) {
+      option.classList.add('active');
+      icon.style.opacity = '1';
+    } else {
+      option.classList.remove('active');
+      icon.style.opacity = '0';
+    }
+  });
+  
+  // Traduire tous les éléments avec data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(element => {
+    const key = element.getAttribute('data-i18n');
+    if (translations[lang] && translations[lang][key]) {
+      if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+        element.placeholder = translations[lang][key];
+      } else {
+        element.textContent = translations[lang][key];
+      }
+    }
+  });
+  
+  // Mettre à jour le texte du thème
+  const isDarkMode = document.body.classList.contains('dark-mode');
+  if (themeToggle) {
+    themeToggle.innerHTML = isDarkMode 
+      ? `<i class="fas fa-sun"></i><span>${translations[lang]['header.day_mode']}</span>` 
+      : `<i class="fas fa-moon"></i><span>${translations[lang]['header.night_mode']}</span>`;
+  }
+}
+
+/******** NEW: Thursday-only enforcement ********/
+const ENFORCE_THURSDAY = true;
+
+/******** Financial settings with 500 FCFA limit ********/
+const MAX_QUIZ_PER_DAY = 5; // 5 questions per day
+const REWARD_PER_QUESTION = 100; // 100 FCFA per question = 500 FCFA max per day
+const MAX_CLAIM_PER_DAY = 500; // 500 FCFA limit
+
+/******** Questions for Trivia Challenge ********/
+const allQuestions = [
+  { question: "Quel fruit est jaune ?", options: ["Banane", "Pomme", "Orange", "Raisin"], correctAnswer: 0 },
+  { question: "Quelle est la capitale de la France ?", options: ["Lyon", "Paris", "Marseille", "Bordeaux"], correctAnswer: 1 },
+  { question: "Combien de côtés a un triangle ?", options: ["3", "4", "5", "6"], correctAnswer: 0 },
+  { question: "Quel animal dit 'meow' ?", options: ["Chien", "Chat", "Vache", "Oiseau"], correctAnswer: 1 },
+  { question: "Quelle planète est appelée la planète rouge ?", options: ["Terre", "Mars", "Jupiter", "Vénus"], correctAnswer: 1 },
+  { question: "Quel écrivain a écrit 'Les Misérables' ?", options: ["Émile Zola", "Gustave Flaubert", "Victor Hugo", "Albert Camus"], correctAnswer: 2 },
+  { question: "Quel est l'élément chimique avec le symbole 'Au' ?", options: ["Argent", "Platine", "Or", "Uranium"], correctAnswer: 2 },
+  { question: "Quel pays a la plus grande superficie au monde ?", options: ["Canada", "Chine", "États-Unis", "Russie"], correctAnswer: 3 },
+  { question: "Quel est le plus grand océan du monde ?", options: ["Océan Atlantique", "Océan Indien", "Océan Arctique", "Océan Pacifique"], correctAnswer: 3 },
+  { question: "Qui a peint 'La Nuit étoilée' ?", options: ["Pablo Picasso", "Claude Monet", "Salvador Dalí", "Vincent van Gogh"], correctAnswer: 3 }
+];
+
+/******** UI helpers ********/
+function showNotification(type, title, message, duration = 4000) {
+  const container = document.getElementById('notificationContainer');
+  if (!container) return;
+  const notification = document.createElement('div');
+  notification.className = `notification ${type}`;
+  const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle');
+  notification.innerHTML = `
+    <i class="fas ${icon}" style="font-size: 1.5rem;"></i>
+    <div>
+      <strong style="display: block; margin-bottom: 5px;">${title}</strong>
+      <span>${message}</span>
+    </div>
+  `;
+  container.appendChild(notification);
+  setTimeout(() => {
+    notification.style.animation = 'slideIn 0.3s ease reverse forwards';
+    setTimeout(() => { if (container.contains(notification)) container.removeChild(notification); }, 300);
+  }, duration);
+}
+
+/******** UI events ********/
+if (hamburgerBtn) {
+  hamburgerBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('active');
+      hamburgerBtn.classList.toggle('open');
+  });
+}
+if (overlay) {
+  overlay.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('active');
+      hamburgerBtn.classList.remove('open');
+  });
+}
+if (userProfile) {
+  userProfile.addEventListener('click', (event) => {
+      event.stopPropagation();
+      profileDropdown.classList.toggle('active');
+  });
+}
+document.addEventListener('click', (event) => {
+  if (!userProfile || !userProfile.contains(event.target)) {
+    if (profileDropdown) profileDropdown.classList.remove('active');
+  }
+});
+
+// Gestion du sélecteur de langue
+if (languageSelector) {
+  languageSelector.addEventListener('click', (event) => {
+    event.stopPropagation();
+    languageDropdown.classList.toggle('active');
+  });
+}
+
+// Fermer le dropdown de langue quand on clique ailleurs
+document.addEventListener('click', () => {
+  if (languageDropdown) languageDropdown.classList.remove('active');
+});
+
+// Changer de langue
+document.querySelectorAll('.language-option').forEach(option => {
+  option.addEventListener('click', () => {
+    const lang = option.dataset.lang;
+    setLanguage(lang);
+    languageDropdown.classList.remove('active');
+  });
+});
+
+if (themeToggle) {
+  themeToggle.addEventListener('click', (event) => {
+      event.stopPropagation();
+      document.body.classList.toggle('dark-mode');
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      themeToggle.innerHTML = isDarkMode 
+          ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+          : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
+      if(currentUser) saveUserData('theme', isDarkMode ? 'dark' : 'light');
+  });
+}
+
+/******** Bouton Support ********/
+if (supportBtn) {
+  supportBtn.addEventListener('click', () => {
+    window.open('https://wa.me/681144638', '_blank');
+  });
+}
+
+/******** NEW: Thursday availability functions ********/
+function isTodayThursday() {
+  try {
+    const formatter = new Intl.DateTimeFormat('en-US', { 
+      timeZone: 'Africa/Douala',
+      weekday: 'long' 
+    });
+    const dayName = formatter.format(new Date());
+    return dayName === 'Thursday';
+  } catch (error) {
+    console.warn('Timezone Africa/Douala non supporté, fallback local');
+    const d = new Date();
+    return d.getDay() === 4; // 4 = Thursday
+  }
+}
+
+function getNextThursdayCountdown() {
+  const now = new Date();
+  const currentDay = now.getDay();
+  let daysUntilThursday = (4 - currentDay + 7) % 7;
+  if (daysUntilThursday === 0) daysUntilThursday = 7;
+  const nextThursday = new Date(now);
+  nextThursday.setDate(now.getDate() + daysUntilThursday);
+  nextThursday.setHours(0, 0, 0, 0);
+  const diff = nextThursday - now;
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+  return { days, hours, minutes, seconds };
+}
+
+function updateThursdayUI() {
+  const isThursday = isTodayThursday();
+  if (ENFORCE_THURSDAY && !isThursday) {
+    if (thursdayAlert) thursdayAlert.style.display = 'block';
+    if (countdownInterval) clearInterval(countdownInterval);
+    countdownInterval = setInterval(() => {
+      const countdown = getNextThursdayCountdown();
+      if (thursdayCountdown) thursdayCountdown.textContent = `Prochain jeudi dans: ${countdown.days}j ${countdown.hours}h ${countdown.minutes}m ${countdown.seconds}s`;
+      if (countdown.days === 0 && countdown.hours === 0 && countdown.minutes === 0 && countdown.seconds === 0) {
+        window.location.reload();
+      }
+    }, 1000);
+  } else {
+    if (thursdayAlert) thursdayAlert.style.display = 'none';
+    if (countdownInterval) clearInterval(countdownInterval);
+  }
+  return isThursday;
+}
+
+/******** Utility functions ********/
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+function getTodayString() {
+  return new Date().toDateString();
+}
+
+/******** NEW: Countdown timer functions ********/
+function startCountdown() {
+  timeLeft = 7;
+  updateTimerUI();
+  
+  if (countdownInterval) clearInterval(countdownInterval);
+  
+  countdownInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerUI();
+    
+    if (timeLeft <= 0) {
+      clearInterval(countdownInterval);
+      if (!questionAnswered) {
+        handleTimeUp();
+      }
+    }
+  }, 1000);
+}
+
+function updateTimerUI() {
+  timerText.textContent = `${timeLeft}s`;
+  const progress = ((7 - timeLeft) / 7) * 360;
+  timerProgress.style.transform = `rotate(${progress}deg)`;
+}
+
+function handleTimeUp() {
+  questionAnswered = true;
+  const question = currentQuestions[currentQuestionIndex];
+  
+  // Show correct answer
+  document.querySelectorAll('.option').forEach(opt => {
+    const originalIndex = parseInt(opt.dataset.originalIndex);
+    if (originalIndex === question.correctAnswer) {
+      opt.classList.add('correct');
+    }
+  });
+  
+  showNotification('error', 'Temps écoulé!', `La bonne réponse était: ${question.options[question.correctAnswer]}`);
+  
+  // Disable all options
+  document.querySelectorAll('.option').forEach(opt => {
+    opt.style.pointerEvents = 'none';
+  });
+  
+  // Automatically move to next question after 2 seconds
+  setTimeout(() => {
+    nextQuestion();
+  }, 2000);
+}
+
+function stopCountdown() {
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+    countdownInterval = null;
+  }
+}
+
+/******** Quiz functions ********/
+function initQuiz() {
+  const today = getTodayString();
+  const isThursday = updateThursdayUI();
+  
+  // Check if it's Thursday
+  if (ENFORCE_THURSDAY && !isThursday) {
+    showNotification('info', 'Non disponible', 'Le Trivia Challenge n\'est disponible que le jeudi.');
+    questionContainer.style.display = 'none';
+    resultsContainer.style.display = 'none';
+    return;
+  }
+
+  // Reset daily stats if date changed
+  if (userData.lastTriviaDate !== today) {
+    userData.triviaCompletedToday = 0;
+    userData.triviaEarningsToday = 0;
+    userData.triviaClaimedToday = false;
+    saveUserData({ 
+      lastTriviaDate: today, 
+      triviaCompletedToday: 0, 
+      triviaEarningsToday: 0,
+      triviaClaimedToday: false
+    });
+  }
+  
+  quizzesCompletedToday = userData.triviaCompletedToday || 0;
+  earningsToday = userData.triviaEarningsToday || 0;
+  isClaimed = userData.triviaClaimedToday || false;
+  
+  updateDailyStats();
+
+  // Check if user has completed today's quota
+  if (quizzesCompletedToday >= MAX_QUIZ_PER_DAY) {
+    showQuizUnavailableUI(isClaimed);
+    return;
+  }
+
+  // Select 5 random questions
+  currentQuestions = shuffleArray([...allQuestions]).slice(0, 5);
+  
+  startQuiz();
+}
+
+function showQuizUnavailableUI(claimed) {
+  questionContainer.style.display = 'none';
+  resultsContainer.style.display = 'block';
+  
+  resultsScore.textContent = `${MAX_QUIZ_PER_DAY}/${MAX_QUIZ_PER_DAY}`;
+  
+  if (claimed) {
+    resultsMessage.textContent = `Vous avez complété vos ${MAX_QUIZ_PER_DAY} questions d'aujourd'hui et réclamé ${earningsToday} FCFA. Revenez demain!`;
+    claimRewardButton.style.display = 'none';
+  } else {
+    resultsMessage.textContent = `Vous avez complété vos ${MAX_QUIZ_PER_DAY} questions d'aujourd'hui.`;
+    claimRewardButton.style.display = 'none';
+  }
+  totalEarningsDisplay.textContent = `+${earningsToday} FCFA`;
+  nextQuizButton.style.display = 'inline-flex';
+}
+
+function startQuiz() {
+  currentQuestionIndex = 0;
+  score = 0;
+  selectedOption = null;
+  totalEarningsForClaim = 0;
+  questionAnswered = false;
+
+  resultsContainer.style.display = 'none';
+  questionContainer.style.display = 'block';
+  nextButton.style.display = 'none';
+  
+  loadQuestion();
+}
+
+function loadQuestion() {
+  questionAnswered = false;
+  const question = currentQuestions[currentQuestionIndex];
+  const shuffledOptions = shuffleArray(question.options.map((opt, index) => ({ text: opt, originalIndex: index })));
+  
+  questionText.textContent = `Q${currentQuestionIndex + 1}: ${question.question}`;
+  
+  // Update progress
+  progressText.textContent = `Question ${currentQuestionIndex + 1}/${currentQuestions.length}`;
+  progressFill.style.width = `${((currentQuestionIndex + 1) / currentQuestions.length) * 100}%`;
+  
+  // Generate options
+  optionsContainer.innerHTML = '';
+  shuffledOptions.forEach((option, index) => {
+    const optionElement = document.createElement('div');
+    optionElement.className = 'option';
+    optionElement.innerHTML = `<label class="option-label">${option.text}</label>`;
+    optionElement.dataset.originalIndex = option.originalIndex;
+    optionElement.addEventListener('click', () => selectOption(optionElement, option.originalIndex));
+    optionsContainer.appendChild(optionElement);
+  });
+  
+  // Start countdown timer
+  startCountdown();
+  
+  // Reset button states
+  nextButton.style.display = 'none';
+}
+
+function selectOption(optionElement, originalIndex) {
+  if (questionAnswered) return;
+  
+  questionAnswered = true;
+  stopCountdown();
+  
+  // Deselect all options
+  document.querySelectorAll('.option').forEach(opt => {
+    opt.classList.remove('selected');
+  });
+  
+  // Select clicked option
+  optionElement.classList.add('selected');
+  selectedOption = originalIndex;
+
+  const question = currentQuestions[currentQuestionIndex];
+  const allOptions = document.querySelectorAll('.option');
+  
+  // Disable all options
+  allOptions.forEach(opt => {
+    opt.style.pointerEvents = 'none';
+  });
+  
+  let isCorrect = (selectedOption === question.correctAnswer);
+
+  // Show correct/incorrect answers
+  allOptions.forEach(opt => {
+    const optOriginalIndex = parseInt(opt.dataset.originalIndex);
+    if (optOriginalIndex === question.correctAnswer) {
+        opt.classList.add('correct');
+    }
+    if (optOriginalIndex === selectedOption && !isCorrect) {
+        opt.classList.add('incorrect');
+    }
+  });
+  
+  // Update score and earnings
+  if (isCorrect) {
+    score++;
+    totalEarningsForClaim += REWARD_PER_QUESTION;
+    showNotification('success', 'Bonne réponse!', `Vous avez gagné ${REWARD_PER_QUESTION} FCFA pour cette question.`);
+  } else {
+    showNotification('error', 'Mauvaise réponse', `La bonne réponse était: ${question.options[question.correctAnswer]}`);
+  }
+  
+  // Automatically move to next question after 2 seconds
+  setTimeout(() => {
+    nextQuestion();
+  }, 2000);
+}
+
+function nextQuestion() {
+  currentQuestionIndex++;
+  
+  if (currentQuestionIndex < currentQuestions.length) {
+    loadQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function showResults() {
+  stopCountdown();
+  
+  // Apply 500 FCFA limit
+  if (totalEarningsForClaim > MAX_CLAIM_PER_DAY) {
+    totalEarningsForClaim = MAX_CLAIM_PER_DAY;
+  }
+
+  resultsScore.textContent = `${score}/${currentQuestions.length}`;
+  
+  if (score === currentQuestions.length) {
+    resultsMessage.textContent = 'Félicitations! Vous avez répondu correctement à toutes les questions!';
+  } else if (score > 0) {
+    resultsMessage.textContent = `Bon travail! Vous avez répondu correctement à ${score} questions.`;
+  } else {
+    resultsMessage.textContent = 'Pas de chance cette fois! Réessayez demain.';
+  }
+  
+  totalEarningsDisplay.textContent = `+${totalEarningsForClaim} FCFA`;
+  
+  // Update user data locally + store trivia counters (ces mises à jour ne touchent pas `solde`)
+  userData.triviaCompletedToday = (userData.triviaCompletedToday || 0) + 1;
+  userData.triviaEarningsToday = totalEarningsForClaim;
+  
+  saveUserData({ 
+    triviaCompletedToday: userData.triviaCompletedToday, 
+    triviaEarningsToday: userData.triviaEarningsToday
+  });
+  
+  // Update daily stats
+  quizzesCompletedToday = userData.triviaCompletedToday;
+  earningsToday = userData.triviaEarningsToday;
+  updateDailyStats();
+
+  // Show results
+  questionContainer.style.display = 'none';
+  resultsContainer.style.display = 'block';
+  
+  const today = getTodayString();
+  const isTodayClaimed = userData.lastTriviaClaimDate === today;
+
+  if (totalEarningsForClaim > 0 && !isTodayClaimed) {
+    claimRewardButton.disabled = false;
+    claimRewardButton.textContent = `Réclamer ${totalEarningsForClaim} FCFA`;
+  } else if (isTodayClaimed) {
+    claimRewardButton.disabled = true;
+    claimRewardButton.textContent = 'Récompense déjà réclamée!';
+  } else {
+    claimRewardButton.disabled = true;
+    claimRewardButton.textContent = 'Pas de gain à réclamer';
+  }
+  
+  nextQuizButton.style.display = 'inline-flex';
+}
+
+function updateDailyStats() {
+  quizzesCompleted.textContent = `${quizzesCompletedToday}/${MAX_QUIZ_PER_DAY}`;
+  earnedToday.textContent = `${earningsToday} FCFA`;
+}
+
+/******** Reward claim handling ********/
+claimRewardButton.addEventListener('click', async () => {
+  if (!currentUser) { 
+    showNotification('error','Non connecté','Veuillez vous connecter.'); 
+    return; 
+  }
+  if (totalEarningsForClaim <= 0) {
+    showNotification('info', 'Pas de gain', 'Il n\'y a pas de gain à réclamer.');
+    return;
+  }
+  
+  const today = getTodayString();
+  if (userData.lastTriviaClaimDate === today) {
+      showNotification('info', 'Déjà réclamé', 'Vous avez déjà réclamé les gains du quiz d\'aujourd\'hui.');
+      return;
+  }
+  
+  const REWARD_AMOUNT = totalEarningsForClaim;
+  const MAX_INCREMENT_PER_REQUEST = 500;
+
+  try {
+    const uid = currentUser.uid;
+    const userRef = db.collection('users').doc(uid);
+
+    /****************************************************************
+     * IMPORTANT: transaction **DOES NOT** modify 'solde' (intentionnel)
+     * Only updates: profit, triviaGains, triviaEarningsToday, lastTriviaClaimDate
+     * If you want `solde` to be incremented, call a Cloud Function / backend
+     * that uses Admin SDK (server-side) to update `solde` securely.
+     ****************************************************************/
+    await db.runTransaction(async (tx) => {
+      const snap = await tx.get(userRef);
+      if (!snap.exists) throw new Error('Utilisateur introuvable.');
+
+      const doc = snap.data() || {};
+      let profitDoc = Number(doc.profit || 0);
+      let triviaGainsDoc = Number(doc.triviaGains || 0);
+
+      // Double-check claim date
+      if (doc.lastTriviaClaimDate === today) {
+        throw new Error('Réclamation du jour déjà effectuée.');
+      }
+
+      // Security check (client-side)
+      if (REWARD_AMOUNT <= 0 || REWARD_AMOUNT > MAX_INCREMENT_PER_REQUEST) {
+        throw new Error('Montant de récompense invalide.');
+      }
+
+      // Calculate new amounts (note: solde NOT changed here)
+      const newProfit = profitDoc + REWARD_AMOUNT;
+      const newTriviaGains = triviaGainsDoc + REWARD_AMOUNT;
+
+      // Update transaction — **no solde field**
+      tx.update(userRef, {
+        profit: newProfit,
+        triviaGains: newTriviaGains,
+        triviaEarningsToday: REWARD_AMOUNT,
+        lastTriviaClaimDate: today
+      });
+    });
+
+    // Success — update local UI/data
+    userData.lastTriviaClaimDate = today;
+    claimRewardButton.disabled = true;
+    claimRewardButton.textContent = 'Récompense réclamée!';
+    // Message clair : solde non modifié côté client
+    showNotification('success', 'Récompense Ajoutée!', `${REWARD_AMOUNT} FCFA ont été enregistrés dans profit/triviaGains. (Le solde n'est pas modifié côté client.)`);
+
+    earningsToday = REWARD_AMOUNT;
+    updateDailyStats();
+
+    /************************************************************************
+     * Optionnel : si tu veux créditer le champ `solde`, appelle ici une
+     * Cloud Function sécurisée (Admin SDK) qui ajoutera REWARD_AMOUNT à solde.
+     * Exemple d'appel (si tu as déployé la function 'claimTriviaReward'):
+     *
+     * const claimFn = firebase.functions().httpsCallable('claimTriviaReward');
+     * await claimFn({ amount: REWARD_AMOUNT });
+     *
+     * (Je n'appelle rien ici automatiquement — c'est volontaire : tu as demandé
+     * que le client **ne modifie jamais** solde.)
+     ************************************************************************/
+
+  } catch (err) {
+    console.error('Erreur lors de la réclamation:', err);
+    const msg = err.message || 'Impossible d\'enregistrer la récompense. Réessayez.';
+    showNotification('error', 'Erreur de Réclamation', msg);
+  }
+});
+
+nextQuizButton.addEventListener('click', () => {
+  showNotification('info', 'À demain!', 'Vous avez complété votre quiz du jour. Rendez-vous demain!');
+});
+
+/******** User data management ********/
+async function saveUserData(dataToSave) {
+  if (!currentUser) return;
+  try {
+    const userRef = db.collection('users').doc(currentUser.uid);
+    // merge:true pour ne pas écraser d'autres champs
+    await userRef.set(dataToSave, { merge: true });
+  } catch (error) {
+    console.error("Erreur lors de la sauvegarde des données :", error);
+    showNotification('error', 'Erreur de sauvegarde', 'Impossible de sauvegarder vos données.');
+  }
+}
+
+async function loadUserData() {
+  if (!currentUser) throw new Error("Aucun utilisateur connecté.");
+  const userRef = db.collection('users').doc(currentUser.uid);
+  const doc = await userRef.get();
+  const today = getTodayString();
+
+  if (doc.exists) {
+      userData = doc.data() || {};
+  } else {
+    // IMPORTANT: NE PAS initialiser/écrire `solde` côté client.
+    // On initialise seulement les champs permis côté client.
+    userData = {
+      triviaCompletedToday: 0,
+      triviaEarningsToday: 0,
+      lastTriviaDate: null,
+      lastTriviaClaimDate: null,
+      profit: 0,
+      triviaGains: 0
+    };
+    // Sauvegarde initiale — n'inclut PAS solde
+    await saveUserData(userData);
+  }
+  
+  // Reset daily stats if date changed
+  if (userData.lastTriviaDate !== today) {
+      userData.triviaCompletedToday = 0;
+      userData.triviaEarningsToday = 0;
+      userData.lastTriviaDate = today;
+  }
+
+  return userData;
+}
+
+function updateUserInfoUI(user, dbData = {}) {
+    const displayName = dbData.displayName || user.displayName || (user.email ? user.email.split('@')[0] : 'Utilisateur');
+    if (sidebarUsername) sidebarUsername.textContent = displayName;
+    if (userAvatar) userAvatar.textContent = displayName.charAt(0).toUpperCase();
+}
+
+function applyTheme() {
+    const isDarkMode = userData.theme === 'dark';
+    document.body.classList.toggle('dark-mode', isDarkMode);
+    if (themeToggle) {
+      themeToggle.innerHTML = isDarkMode 
+          ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+          : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
+    }
+}
+
+/******** Main initialization ********/
+auth.onAuthStateChanged(async (user) => {
+    if (user) {
+        currentUser = user;
+        try {
+            userData = await loadUserData();
+
+            // Check payment status
+            const userStatus = (userData.status || userData.statut || '').toString().toLowerCase().trim();
+            const validStatuses = ['paid', 'active'];
+            if (!validStatuses.includes(userStatus)) {
+                showNotification('info','Action requise','Veuillez finaliser votre inscription.');
+                setTimeout(() => { window.location.href = 'paiement.html'; }, 2000);
+                return;
+            }
+            
+            updateUserInfoUI(user, userData);
+            applyTheme();
+            initQuiz();
+            
+            document.body.classList.add('loaded');
+            loader.classList.add('hidden');
+            
+            showNotification('success', 'Bienvenue!', 'Prêt pour le Trivia Challenge!');
+
+        } catch (error) {
+            console.error("Erreur critique lors de l'initialisation :", error);
+            showNotification('error', 'Erreur Critique', "Impossible de charger vos données.");
+            auth.signOut();
+            setTimeout(() => { window.location.href = 'login.html'; }, 3000);
+        }
+    } else {
+        window.location.href = 'login.html';
+    }
+});
+
+/******** Initialisation au chargement de la page ********/
+document.addEventListener('DOMContentLoaded', () => {
+  // Charger la langue sauvegardée ou utiliser le français par défaut
+  const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
+  setLanguage(savedLang);
+});
+</script>
+</body>
+</html><!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BLOWEARN AGENCIES - Trivia Challenge</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  
+  <style>
+    /* -------------------------------------------------------------------------- */
+    /* --- VARIABLES CSS COHÉRENTES AVEC LA PAGE D'INSCRIPTION --- */
+    /* -------------------------------------------------------------------------- */
+    :root {
+      --color-primary: #4A90E2; /* Bleu Énergique */
+      --color-secondary: #FFC107; /* Jaune Vif/Or pour l'accent */
+      --color-text-dark: #2C3E50; /* Texte Sombre (lisible) */
+      --color-text-light: #ECF0F1; /* Texte Clair */
+      --color-bg-light: #FFFFFF; /* Fond de Carte */
+      --color-bg-gradient-1: #6DD5FA; /* Dégradé Fond 1 */
+      --color-bg-gradient-2: #FF7582; /* Dégradé Fond 2 */
+      --success-color: #4CD964;
+      --warning-color: #FF9500;
+      --danger-color: #FF3B30;
+      --shadow: 0 15px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.8);
+      --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- STYLES GÉNÉRAUX COHÉRENTS --- */
+    /* -------------------------------------------------------------------------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+      transition: var(--transition);
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
+      color: var(--color-text-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Effet de bulles animées en arrière-plan */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 25%),
+        radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 90% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 25%);
+      animation: float 20s ease-in-out infinite;
+      z-index: -1;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-15px) scale(1.02); }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- LOADER --- */
+    /* -------------------------------------------------------------------------- */
+    .loader-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .loader-container.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loader {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: conic-gradient(#0000 10%, var(--color-primary));
+      -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
+      animation: spin 1s infinite linear;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(1turn); }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- HEADER --- */
+    /* -------------------------------------------------------------------------- */
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800; /* Plus épais pour plus de visibilité */
+      color: var(--color-text-dark); /* Changé pour plus de contraste */
+      display: flex;
+      align-items: center;
+      font-family: 'Poppins', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Ombre plus prononcée */
+      background: linear-gradient(45deg, var(--color-primary) 0%, var(--color-secondary) 100%); /* Dégradé plus contrasté */
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: logoGlow 3s ease-in-out infinite alternate;
+    }
+    
+    @keyframes logoGlow {
+      from { filter: drop-shadow(0 0 5px rgba(74, 144, 226, 0.5)); }
+      to { filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.7)); }
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .language-selector {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      position: relative;
+    }
+
+    .language-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      border-radius: 12px;
+      padding: 8px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 140px;
+      z-index: 200;
+      transform-origin: top right;
+      animation: scaleIn 0.2s ease-out forwards;
+      border: 1px solid rgba(255,255,255,0.7);
+      margin-top: 5px;
+    }
+
+    .language-dropdown.active {
+      display: flex;
+    }
+
+    .language-option {
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s ease;
+    }
+
+    .language-option:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .language-option.active {
+      background-color: rgba(74, 144, 226, 0.1);
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    .theme-toggle {
+      background-color: transparent;
+      border: none;
+      color: var(--color-text-dark);
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .theme-toggle i {
+      font-size: 1.2rem;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .user-profile .avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background-color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border: 2px solid var(--color-secondary);
+      box-shadow: var(--shadow);
+    }
+
+    .profile-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      border-radius: 18px;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 150px;
+      z-index: 200;
+      transform-origin: top right;
+      animation: scaleIn 0.2s ease-out forwards;
+      border: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .profile-dropdown.active {
+      display: flex;
+    }
+    
+    @keyframes scaleIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .profile-dropdown .theme-toggle {
+      width: 100%;
+      border-radius: 8px;
+      background-color: rgba(0, 0, 0, 0.05);
+      color: var(--text-color);
+      justify-content: flex-start;
+      padding: 10px;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+      text-align: left;
+      gap: 10px;
+    }
+
+    .profile-dropdown .theme-toggle:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+    
+    .profile-dropdown .theme-toggle span {
+      flex-grow: 1;
+      text-align: left;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- BOUTON HAMBURGER (DÉPLACÉ À DROITE) --- */
+    /* -------------------------------------------------------------------------- */
+    .hamburger-btn {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 30px;
+      height: 25px;
+      padding: 0;
+      order: 2; /* Pour le placer à droite dans le header */
+    }
+    
+    .hamburger-btn .bar {
+      width: 100%;
+      height: 3px;
+      background-color: var(--color-text-dark);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    
+    .hamburger-btn.open .bar:nth-child(2) {
+      opacity: 0;
+    }
+    
+    .hamburger-btn.open .bar:nth-child(1) {
+      transform: translateY(11px) rotate(45deg);
+    }
+    
+    .hamburger-btn.open .bar:nth-child(3) {
+      transform: translateY(-11px) rotate(-45deg);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- STRUCTURE PRINCIPALE --- */
+    /* -------------------------------------------------------------------------- */
+    .main-container {
+      display: flex;
+      flex: 1;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- SIDEBAR (MENU) AMÉLIORÉ AVEC NOUVEAU FOND ET POLICE --- */
+    /* -------------------------------------------------------------------------- */
+    .sidebar {
+      width: 280px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.95) 100%);
+      backdrop-filter: blur(15px);
+      border-right: 1px solid rgba(255,255,255,0.7);
+      box-shadow: var(--shadow);
+      height: calc(100vh - 80px);
+      position: sticky;
+      top: 80px;
+      padding: 25px 0;
+      overflow-y: auto;
+      transition: transform 0.4s ease-in-out; 
+    }
+    
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .welcome-section {
+      padding: 0 25px 25px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .welcome-text {
+      color: var(--color-text-dark);
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+      font-weight: 500;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    .username {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: var(--color-primary);
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    .menu-category {
+      padding: 15px 25px 5px;
+      font-size: 0.85rem;
+      color: var(--color-text-dark);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+      font-family: 'Quicksand', sans-serif;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .menu-item {
+      padding: 12px 25px 12px 35px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: var(--color-text-dark);
+      text-decoration: none;
+      font-weight: 500;
+      border-left: 4px solid transparent;
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 0.5s ease-out;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .menu-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
+      transition: all 0.5s ease;
+    }
+    
+    .menu-item:hover::before {
+      left: 100%;
+    }
+
+    .menu-item:hover, .menu-item.active {
+      background-color: rgba(0, 0, 0, 0.05);
+      border-left-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .menu-item i {
+      width: 20px;
+      text-align: center;
+      font-size: 1.1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .menu-item:hover i {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .menu-badge {
+      position: absolute;
+      right: 25px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+      animation: popIn 0.5s ease-out;
+    }
+    
+    @keyframes popIn {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    
+    .menu-badge.active {
+      background-color: var(--success-color);
+      color: white;
+    }
+    
+    .menu-badge.inactive {
+      background-color: var(--danger-color);
+      color: white;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- CONTENU PRINCIPAL --- */
+    /* -------------------------------------------------------------------------- */
+    .content {
+      flex: 1;
+      padding: 30px;
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+      margin-bottom: 25px;
+      color: var(--color-text-dark);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .page-title i {
+      color: var(--color-primary);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- ALERTE JEUDI --- */
+    /* -------------------------------------------------------------------------- */
+    .thursday-alert {
+      background: linear-gradient(135deg, var(--warning-color) 0%, #FF6B00 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 18px;
+      margin-bottom: 30px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      animation: pulseGlow 2s infinite;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .thursday-alert h3 {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .thursday-alert p {
+      font-size: 1rem;
+      margin-bottom: 5px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .thursday-alert .countdown {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-top: 10px;
+      font-family: 'Quicksand', sans-serif;
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 20px rgba(255, 149, 0, 0.5); }
+      50% { box-shadow: 0 0 40px rgba(255, 149, 0, 0.8); }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- SECTION TRIVIA CHALLENGE --- */
+    /* -------------------------------------------------------------------------- */
+    .trivia-section {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 18px;
+      padding: 25px;
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.7);
+      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .trivia-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: 18px 18px 0 0;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      color: var(--color-text-dark);
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .difficulty-badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-left: 10px;
+    }
+
+    .difficulty-easy {
+      background-color: var(--success-color);
+      color: white;
+    }
+
+    .difficulty-hard {
+      background-color: var(--danger-color);
+      color: white;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- TIMER --- */
+    /* -------------------------------------------------------------------------- */
+    .timer-container {
+      text-align: center;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .timer-circle {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin: 0 auto;
+    }
+
+    .timer-bg {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background-color: rgba(0, 0, 0, 0.05);
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .timer-progress {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      clip: rect(0, 60px, 120px, 0);
+      background: conic-gradient(var(--color-primary) 0%, var(--color-secondary) 100%);
+      transition: transform 0.1s linear;
+    }
+
+    .timer-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-text-dark);
+    }
+
+    .timer-label {
+      margin-top: 10px;
+      font-size: 1rem;
+      color: var(--color-text-dark);
+      opacity: 0.8;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- PROGRESS BAR --- */
+    /* -------------------------------------------------------------------------- */
+    .progress-container {
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress-text {
+      text-align: center;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+    }
+
+    .progress-bar {
+      height: 10px;
+      background-color: rgba(0, 0, 0, 0.05);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+      border-radius: 5px;
+      transition: width 0.3s ease;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- QUESTION CONTAINER --- */
+    /* -------------------------------------------------------------------------- */
+    .question-container {
+      background-color: rgba(255, 255, 255, 0.5);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .question-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--color-text-dark);
+    }
+
+    .options-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .option {
+      padding: 12px 15px;
+      background-color: rgba(255, 255, 255, 0.7);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .option:hover {
+      background-color: var(--color-primary);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+    }
+
+    .option.selected {
+      background-color: var(--color-primary);
+      color: white;
+    }
+
+    .option.correct {
+      background-color: var(--success-color);
+      color: white;
+    }
+
+    .option.incorrect {
+      background-color: var(--danger-color);
+      color: white;
+    }
+
+    .option input[type="radio"] {
+      display: none;
+    }
+
+    .option-label {
+      flex: 1;
+      cursor: pointer;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- BOUTONS D'ACTION --- */
+    /* -------------------------------------------------------------------------- */
+    .action-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      position: relative;
+      z-index: 1;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 12px 25px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(74, 144, 226, 0.4);
+    }
+
+    .btn-primary:disabled {
+      background: linear-gradient(135deg, #cccccc 0%, #999999 100%);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%);
+      color: white;
+    }
+
+    .btn-success:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(76, 217, 100, 0.4);
+    }
+
+    .btn-success:disabled {
+      background: linear-gradient(135deg, #cccccc 0%, #999999 100%);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- RÉSULTATS --- */
+    /* -------------------------------------------------------------------------- */
+    .results-container {
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      display: none;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .results-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: var(--color-text-dark);
+    }
+
+    .results-score {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--color-primary);
+    }
+
+    .results-message {
+      margin-bottom: 20px;
+      color: var(--color-text-dark);
+      opacity: 0.8;
+    }
+
+    .reward-info {
+      background: linear-gradient(135deg, rgba(76, 217, 100, 0.2) 0%, rgba(42, 179, 42, 0.2) 100%);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(76, 217, 100, 0.3);
+    }
+
+    .reward-amount {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--success-color);
+      margin-bottom: 5px;
+    }
+
+    .reward-text {
+      font-size: 0.9rem;
+      color: var(--color-text-dark);
+      opacity: 0.8;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- STATISTIQUES QUOTIDIENNES --- */
+    /* -------------------------------------------------------------------------- */
+    .daily-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.7);
+      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: 15px 15px 0 0;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--color-text-dark);
+      opacity: 0.8;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- FOOTER AMÉLIORÉ --- */
+    /* -------------------------------------------------------------------------- */
+    .footer {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      padding: 20px 30px;
+      text-align: center;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+      margin-top: auto;
+      border-top: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-link {
+      color: var(--color-primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .footer-link:hover {
+      text-decoration: underline;
+      color: var(--color-secondary);
+    }
+
+    .footer-text {
+      color: var(--color-text-dark);
+      font-size: 0.9rem;
+    }
+
+    /* Bouton de support */
+    .support-btn {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      margin-top: 10px;
+    }
+
+    .support-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(74, 144, 226, 0.4);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- NOTIFICATIONS --- */
+    /* -------------------------------------------------------------------------- */
+    .notification-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .notification {
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 350px;
+      animation: slideIn 0.3s ease forwards;
+      position: relative;
+      overflow: hidden;
+      color: white;
+      pointer-events: auto;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .notification.success {
+      background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%);
+    }
+
+    .notification.error {
+      background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%);
+    }
+
+    .notification.info { 
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); 
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(110%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- OVERLAY --- */
+    /* -------------------------------------------------------------------------- */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 98;
+    }
+    
+    .overlay.active {
+      display: block;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- MODE NUIT --- */
+    /* -------------------------------------------------------------------------- */
+    .dark-mode {
+      --color-primary: #5e81ac;
+      --color-secondary: #d08770;
+      --color-text-dark: #eceff4;
+      --color-text-light: #2e3440;
+      --color-bg-light: #3b4252;
+      --color-bg-gradient-1: #2e3440;
+      --color-bg-gradient-2: #4c566a;
+      --success-color: #a3be8c;
+      --warning-color: #ebcb8b;
+      --danger-color: #bf616a;
+      --shadow: 0 15px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
+    }
+
+    .dark-mode body::before {
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(76, 86, 106, 0.4) 0%, transparent 25%),
+        radial-gradient(circle at 80% 10%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 40% 80%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 90% 90%, rgba(76, 86, 106, 0.2) 0%, transparent 25%);
+    }
+
+    .dark-mode .header,
+    .dark-mode .sidebar,
+    .dark-mode .trivia-section,
+    .dark-mode .stat-card,
+    .dark-mode .footer {
+      background: rgba(59, 66, 82, 0.95);
+      color: var(--color-text-dark);
+    }
+
+    .dark-mode .thursday-alert {
+      background: linear-gradient(135deg, var(--warning-color) 0%, #d08770 100%);
+    }
+
+    .dark-mode .question-container,
+    .dark-mode .results-container {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .dark-mode .option {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .dark-mode .reward-info {
+      background: linear-gradient(135deg, rgba(163, 190, 140, 0.2) 0%, rgba(143, 188, 143, 0.2) 100%);
+      border: 1px solid rgba(163, 190, 140, 0.3);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- RESPONSIVE --- */
+    /* -------------------------------------------------------------------------- */
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 230px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-container {
+        flex-direction: column;
+      }
+      
+      .hamburger-btn {
+        display: flex;
+        position: static; /* Position normale dans le flux */
+        order: 2; /* Pour le placer à droite */
+      }
+
+      .sidebar {
+        width: 85%;
+        max-width: 320px;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: -100%;
+        z-index: 99;
+        transition: left 0.4s ease-in-out;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.97) 100%);
+      }
+      
+      .sidebar.open {
+        left: 0;
+      }
+      
+      .header {
+        padding: 15px;
+      }
+      
+      .logo {
+        font-size: 1.5rem;
+        margin-left: 0; /* Supprimé le décalage précédent */
+      }
+      
+      .content {
+        padding: 20px;
+      }
+      
+      .daily-stats {
+        grid-template-columns: 1fr;
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .footer-links {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="loader-container" id="loader">
+    <div class="loader"></div>
+  </div>
+
+  <div class="notification-container" id="notificationContainer"></div>
+
+  <header class="header">
+    <div class="logo">
+      <span>BLOWEARN</span>
+    </div>
+    
+    <div class="header-controls">
+      <div class="language-selector-container">
+        <button class="language-selector" id="languageSelector">
+          <i class="fas fa-globe"></i>
+          <span id="currentLanguage">French</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="language-dropdown" id="languageDropdown">
+          <div class="language-option active" data-lang="fr">
+            <i class="fas fa-check"></i>
+            <span>Français</span>
+          </div>
+          <div class="language-option" data-lang="en">
+            <i class="fas fa-check" style="opacity: 0;"></i>
+            <span>English</span>
+          </div>
+        </div>
+      </div>
+      
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </button>
+      
+      <div class="user-profile" id="userProfile">
+          <div class="avatar" id="userAvatar">U</div>
+          <div class="profile-dropdown" id="profileDropdown">
+              <button class="theme-toggle" id="themeToggle">
+                  <i class="fas fa-moon"></i>
+                  <span>Mode nuit</span>
+              </button>
+          </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="overlay" id="overlay"></div>
+
+  <div class="main-container">
+    <aside class="sidebar" id="sidebar">
+      <div class="welcome-section">
+        <div class="welcome-text" data-i18n="dashboard.title">Trivia Challenge >> BLOWEARN AGENCIES</div>
+        <div class="username" id="sidebarUsername">Utilisateur</div>
+      </div>
+      
+      <div class="menu-category" data-i18n="menu.main">PRINCIPAL</div>
+      <a href="dashboard.html" class="menu-item">
+        <i class="fas fa-home"></i>
+        <span data-i18n="menu.dashboard">Tableau de bord</span>
+      </a>
+      
+      <a href="depot.html" class="menu-item">
+        <i class="fas fa-wallet"></i>
+        <span data-i18n="menu.deposit">Dépôt 💵</span>
+      </a>
+      
+      <a href="bonus_bienvenue.html" class="menu-item">
+        <i class="fas fa-gift"></i>
+        <span data-i18n="menu.welcome_bonus">Bonus de bienvenue</span>
+      </a>
+      
+      <div class="menu-category" data-i18n="menu.accounts">COMPTES</div>
+      <a href="retrait.html" class="menu-item">
+        <i class="fas fa-money-bill-wave"></i>
+        <span data-i18n="menu.withdrawal">Retrait</span>
+      </a>
+      
+      <a href="equipe.html" class="menu-item">
+        <i class="fas fa-users"></i>
+        <span data-i18n="menu.team">Équipe</span>
+      </a>
+
+      <div class="menu-category" data-i18n="menu.special">SPÉCIAL</div>
+      
+      <a href="social_boost.html" class="menu-item">
+        <i class="fas fa-rocket"></i>
+        <span data-i18n="menu.sbh">SBH</span>
+      </a>
+      
+      <a href="challenge_reward.html" class="menu-item">
+        <i class="fas fa-medal"></i>
+        <span data-i18n="menu.challenge">Challenge and Reward</span>
+      </a>
+      
+      <div class="menu-category" data-i18n="menu.products">PRODUIT / TÂCHE</div>
+      <a href="whatsapp_earn.html" class="menu-item">
+        <i class="fab fa-whatsapp"></i>
+        <span data-i18n="menu.whatsapp_earn">Gagner via Whatsapp</span>
+      </a>
+      
+      <a href="gains_publicitaires.html" class="menu-item">
+        <i class="fas fa-ad"></i>
+        <span data-i18n="menu.ad_earnings">Gains publicitaires</span>
+      </a>
+      
+      <a href="spin_wheel.html" class="menu-item">
+        <i class="fas fa-trophy"></i>
+        <span data-i18n="menu.fortune_wheel">Roue de la fortune 🏆</span>
+      </a>
+      
+      <a href="tiktok_earn.html" class="menu-item">
+        <i class="fab fa-tiktok"></i>
+        <span data-i18n="menu.tiktok_earn">TikTok Earn</span>
+      </a>
+      
+      <a href="youtube_earn.html" class="menu-item">
+        <i class="fab fa-youtube"></i>
+        <span data-i18n="menu.youtube_earn">YouTube Earn</span>
+      </a>
+      
+      <a href="instagram_earn.html" class="menu-item">
+        <i class="fab fa-instagram"></i>
+        <span data-i18n="menu.instagram_earn">Instagram Earn</span>
+      </a>
+      
+      <a href="trivia_challenge.html" class="menu-item active">
+        <i class="fas fa-brain"></i>
+        <span data-i18n="menu.trivia">TRIVIA challenge</span>
+        <span class="menu-badge active">☑</span>
+      </a>
+      
+      <div class="menu-category" data-i18n="menu.bonus">BONUS</div>
+      <a href="liste_contacts.html" class="menu-item">
+        <i class="fas fa-address-book"></i>
+        <span data-i18n="menu.contact_list">Liste de contacts gratuit 🆓</span>
+      </a>
+      
+      <a href="booster_visibilite.html" class="menu-item">
+        <i class="fas fa-rocket"></i>
+        <span data-i18n="menu.visibility_booster">Booster ma visibilité</span>
+      </a>
+
+      <a href="canva_pro.html" class="menu-item">
+        <i class="fas fa-palette"></i>
+        <span data-i18n="menu.canva_pro">Canva Pro</span>
+      </a>
+      
+      <a href="connexion_gratuite.html" class="menu-item">
+        <i class="fas fa-shield-alt"></i>
+        <span data-i18n="menu.free_connection">Connexion gratuite</span>
+      </a>
+    </aside>
+
+    <main class="content">
+      <h1 class="page-title">
+        <i class="fas fa-brain"></i>
+        <span data-i18n="trivia.title">Trivia Challenge</span>
+      </h1>
+      
+      <!-- Alerte Jeudi -->
+      <div class="thursday-alert" id="thursdayAlert" style="display: none;">
+        <h3>
+          <i class="fas fa-calendar-alt"></i>
+          <span data-i18n="trivia.thursday_only">Disponible uniquement le jeudi</span>
+        </h3>
+        <p data-i18n="trivia.thursday_message">Le Trivia Challenge est accessible chaque jeudi pour gagner jusqu'à 500 FCFA</p>
+        <div class="countdown" id="thursdayCountdown">Calcul en cours...</div>
+      </div>
+      
+      <div class="trivia-section">
+        <h2 class="section-title">
+          <span data-i18n="trivia.challenge_title">Testez vos connaissances et gagnez de l'argent</span>
+          <span class="difficulty-badge" id="difficultyBadge"></span>
+        </h2>
+        
+        <!-- Timer Container -->
+        <div class="timer-container">
+          <div class="timer-circle">
+            <div class="timer-bg"></div>
+            <div class="timer-progress" id="timerProgress"></div>
+            <div class="timer-text" id="timerText">7s</div>
+          </div>
+          <div class="timer-label" data-i18n="trivia.time_left">Temps restant</div>
+        </div>
+        
+        <div class="progress-container">
+          <div class="progress-text" id="progressText" data-i18n="trivia.question_progress">Question 1/5</div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 20%"></div>
+          </div>
+        </div>
+        
+        <div class="question-container" id="questionContainer">
+          <div class="question-text" id="questionText" data-i18n="trivia.loading_question">Chargement de la question...</div>
+          <div class="options-container" id="optionsContainer">
+            <!-- Options will be loaded here -->
+          </div>
+        </div>
+        
+        <!-- Boutons d'action modifiés - bouton de soumission retiré -->
+        <div class="action-buttons">
+          <button class="btn btn-success" id="nextButton" style="display: none;">
+            <i class="fas fa-arrow-right"></i>
+            <span data-i18n="trivia.next_question">Question suivante</span>
+          </button>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+          <div class="results-title" data-i18n="trivia.results_title">Résultats du Quiz</div>
+          <div class="results-score" id="resultsScore">0/5</div>
+          <div class="results-message" id="resultsMessage"></div>
+          
+          <div class="reward-info">
+            <div class="reward-amount" id="totalEarningsDisplay">+0 FCFA</div>
+            <div class="reward-text" data-i18n="trivia.potential_earnings">Gains potentiels pour ce quiz</div>
+          </div>
+          
+          <button class="btn btn-success" id="claimRewardButton" disabled>
+            <i class="fas fa-coins"></i>
+            <span data-i18n="trivia.claim_reward">Réclamer la récompense</span>
+          </button>
+
+          <button class="btn btn-primary" id="nextQuizButton" style="display: none;">
+            <i class="fas fa-redo"></i>
+            <span data-i18n="trivia.next_quiz">Prochain Quiz (Demain)</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="daily-stats">
+        <div class="stat-card">
+          <div class="stat-value" id="quizzesCompleted">0</div>
+          <div class="stat-label" data-i18n="trivia.quizzes_completed">Quiz complétés aujourd'hui</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-value" id="earnedToday">0 FCFA</div>
+          <div class="stat-label" data-i18n="trivia.earned_today">Gagné aujourd'hui</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="terms.html" class="footer-link" data-i18n="footer.terms">Conditions d'utilisation</a>
+        <a href="privacy.html" class="footer-link" data-i18n="footer.privacy">Politique de confidentialité</a>
+        <button class="support-btn" id="supportBtn" data-i18n="footer.support">Support</button>
+        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Propulsé par SBH</a>
+        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Boost Text Management</a>
+      </div>
+      <div class="footer-text">
+        © 2025 BLOWEARN AGENCIES. <span data-i18n="footer.rights">Tous droits réservés.</span>
+      </div>
+    </div>
+  </footer>
+  
+<script>
+/******** CONFIG FIREBASE ********/
+const firebaseConfig = {
+  apiKey: "AIzaSyCjGisjgbFc2ZE0BFgdhlUao8bCCeuKP1k",
+  authDomain: "cash-flowr.firebaseapp.com",
+  projectId: "cash-flowr",
+  storageBucket: "cash-flowr.appspot.com",
+  messagingSenderId: "1091928501310",
+  appId: "1:1091928501310:web:4f4de306cde36f378ff56f",
+  measurementId: "G-5SF6VDLZCB"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+/******** DOM Elements ********/
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+const themeToggle = document.getElementById('themeToggle');
+const userProfile = document.getElementById('userProfile');
+const profileDropdown = document.getElementById('profileDropdown');
+const languageSelector = document.getElementById('languageSelector');
+const languageDropdown = document.getElementById('languageDropdown');
+const currentLanguage = document.getElementById('currentLanguage');
+const loader = document.getElementById('loader');
+const sidebarUsername = document.getElementById('sidebarUsername');
+const userAvatar = document.getElementById('userAvatar');
+const supportBtn = document.getElementById('supportBtn');
+
+// Trivia Challenge specific elements
+const progressText = document.getElementById('progressText');
+const progressFill = document.getElementById('progressFill');
+const questionContainer = document.getElementById('questionContainer');
+const questionText = document.getElementById('questionText');
+const optionsContainer = document.getElementById('optionsContainer');
+const nextButton = document.getElementById('nextButton');
+const resultsContainer = document.getElementById('resultsContainer');
+const resultsScore = document.getElementById('resultsScore');
+const resultsMessage = document.getElementById('resultsMessage');
+const totalEarningsDisplay = document.getElementById('totalEarningsDisplay');
+const claimRewardButton = document.getElementById('claimRewardButton');
+const nextQuizButton = document.getElementById('nextQuizButton');
+const quizzesCompleted = document.getElementById('quizzesCompleted');
+const earnedToday = document.getElementById('earnedToday');
+const difficultyBadge = document.getElementById('difficultyBadge');
+
+// NEW: Timer elements
+const timerProgress = document.getElementById('timerProgress');
+const timerText = document.getElementById('timerText');
+
+// NEW: Thursday alert elements
+const thursdayAlert = document.getElementById('thursdayAlert');
+const thursdayCountdown = document.getElementById('thursdayCountdown');
+
+/******** State variables ********/
+let currentUser = null;
+let userData = {};
+let currentQuestions = [];
+let currentQuestionIndex = 0;
+let selectedOption = null;
+let score = 0;
+let quizzesCompletedToday = 0;
+let earningsToday = 0;
+let totalEarningsForClaim = 0;
+let isClaimed = false;
+
+// NEW: Timer variables
+let countdownInterval = null;
+let timeLeft = 7;
+
+// NEW: Answer validation tracking
+let questionAnswered = false;
+
+/******** Variables globales ********/
+let currentLang = 'fr'; // Langue par défaut
+
+/******** Système de traduction ********/
+const translations = {
+  fr: {
+    // Header
+    "header.language": "French",
+    "header.night_mode": "Mode nuit",
+    "header.day_mode": "Mode jour",
+    
+    // Dashboard
+    "dashboard.title": "Dashboard >> BLOWEARN AGENCIES",
+    
+    // Menu
+    "menu.main": "PRINCIPAL",
+    "menu.dashboard": "Tableau de bord",
+    "menu.deposit": "Dépôt 💵",
+    "menu.welcome_bonus": "Bonus de bienvenue",
+    "menu.accounts": "COMPTES",
+    "menu.withdrawal": "Retrait",
+    "menu.team": "Équipe",
+    "menu.special": "SPÉCIAL",
+    "menu.sbh": "SBH",
+    "menu.challenge": "Challenge and Reward",
+    "menu.products": "PRODUIT / TÂCHE",
+    "menu.whatsapp_earn": "Gagner via Whatsapp",
+    "menu.ad_earnings": "Gains publicitaires",
+    "menu.fortune_wheel": "Roue de la fortune 🏆",
+    "menu.tiktok_earn": "TikTok Earn",
+    "menu.youtube_earn": "YouTube Earn",
+    "menu.instagram_earn": "Instagram Earn",
+    "menu.trivia": "TRIVIA challenge",
+    "menu.bonus": "BONUS",
+    "menu.contact_list": "Liste de contacts gratuit 🆓",
+    "menu.visibility_booster": "Booster ma visibilité",
+    "menu.canva_pro": "Canva Pro",
+    "menu.free_connection": "Connexion gratuite",
+    
+    // Trivia
+    "trivia.title": "Trivia Challenge",
+    "trivia.thursday_only": "Disponible uniquement le jeudi",
+    "trivia.thursday_message": "Le Trivia Challenge est accessible chaque jeudi pour gagner jusqu'à 500 FCFA",
+    "trivia.challenge_title": "Testez vos connaissances et gagnez de l'argent",
+    "trivia.time_left": "Temps restant",
+    "trivia.question_progress": "Question 1/5",
+    "trivia.loading_question": "Chargement de la question...",
+    "trivia.next_question": "Question suivante",
+    "trivia.results_title": "Résultats du Quiz",
+    "trivia.potential_earnings": "Gains potentiels pour ce quiz",
+    "trivia.claim_reward": "Réclamer la récompense",
+    "trivia.next_quiz": "Prochain Quiz (Demain)",
+    "trivia.quizzes_completed": "Quiz complétés aujourd'hui",
+    "trivia.earned_today": "Gagné aujourd'hui",
+    
+    // Footer
+    "footer.terms": "Conditions d'utilisation",
+    "footer.privacy": "Politique de confidentialité",
+    "footer.support": "Support",
+    "footer.rights": "Tous droits réservés.",
+    
+    // Notifications
+    "notification.success": "Succès",
+    "notification.error": "Erreur",
+    "notification.info": "Information"
+  },
+  en: {
+    // Header
+    "header.language": "English",
+    "header.night_mode": "Night mode",
+    "header.day_mode": "Day mode",
+    
+    // Dashboard
+    "dashboard.title": "Dashboard >> BLOWEARN AGENCIES",
+    
+    // Menu
+    "menu.main": "MAIN",
+    "menu.dashboard": "Dashboard",
+    "menu.deposit": "Deposit 💵",
+    "menu.welcome_bonus": "Welcome Bonus",
+    "menu.accounts": "ACCOUNTS",
+    "menu.withdrawal": "Withdrawal",
+    "menu.team": "Team",
+    "menu.special": "SPECIAL",
+    "menu.sbh": "SBH",
+    "menu.challenge": "Challenge and Reward",
+    "menu.products": "PRODUCT / TASK",
+    "menu.whatsapp_earn": "Earn via Whatsapp",
+    "menu.ad_earnings": "Advertising earnings",
+    "menu.fortune_wheel": "Fortune Wheel 🏆",
+    "menu.tiktok_earn": "TikTok Earn",
+    "menu.youtube_earn": "YouTube Earn",
+    "menu.instagram_earn": "Instagram Earn",
+    "menu.trivia": "TRIVIA challenge",
+    "menu.bonus": "BONUS",
+    "menu.contact_list": "Free contact list 🆓",
+    "menu.visibility_booster": "Boost my visibility",
+    "menu.canva_pro": "Canva Pro",
+    "menu.free_connection": "Free connection",
+    
+    // Trivia
+    "trivia.title": "Trivia Challenge",
+    "trivia.thursday_only": "Available only on Thursday",
+    "trivia.thursday_message": "The Trivia Challenge is accessible every Thursday to earn up to 500 FCFA",
+    "trivia.challenge_title": "Test your knowledge and earn money",
+    "trivia.time_left": "Time left",
+    "trivia.question_progress": "Question 1/5",
+    "trivia.loading_question": "Loading question...",
+    "trivia.next_question": "Next question",
+    "trivia.results_title": "Quiz Results",
+    "trivia.potential_earnings": "Potential earnings for this quiz",
+    "trivia.claim_reward": "Claim reward",
+    "trivia.next_quiz": "Next Quiz (Tomorrow)",
+    "trivia.quizzes_completed": "Quizzes completed today",
+    "trivia.earned_today": "Earned today",
+    
+    // Footer
+    "footer.terms": "Terms of Use",
+    "footer.privacy": "Privacy Policy",
+    "footer.support": "Support",
+    "footer.rights": "All rights reserved.",
+    
+    // Notifications
+    "notification.success": "Success",
+    "notification.error": "Error",
+    "notification.info": "Information"
+  }
+};
+
+/******** Fonctions de traduction ********/
+function setLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem('preferredLanguage', lang);
+  
+  // Mettre à jour le sélecteur de langue
+  currentLanguage.textContent = lang === 'fr' ? 'French' : 'English';
+  
+  // Mettre à jour les options de langue
+  document.querySelectorAll('.language-option').forEach(option => {
+    const icon = option.querySelector('i');
+    if (option.dataset.lang === lang) {
+      option.classList.add('active');
+      icon.style.opacity = '1';
+    } else {
+      option.classList.remove('active');
+      icon.style.opacity = '0';
+    }
+  });
+  
+  // Traduire tous les éléments avec data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(element => {
+    const key = element.getAttribute('data-i18n');
+    if (translations[lang] && translations[lang][key]) {
+      if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+        element.placeholder = translations[lang][key];
+      } else {
+        element.textContent = translations[lang][key];
+      }
+    }
+  });
+  
+  // Mettre à jour le texte du thème
+  const isDarkMode = document.body.classList.contains('dark-mode');
+  if (themeToggle) {
+    themeToggle.innerHTML = isDarkMode 
+      ? `<i class="fas fa-sun"></i><span>${translations[lang]['header.day_mode']}</span>` 
+      : `<i class="fas fa-moon"></i><span>${translations[lang]['header.night_mode']}</span>`;
+  }
+}
+
+/******** NEW: Thursday-only enforcement ********/
+const ENFORCE_THURSDAY = true;
+
+/******** Financial settings with 500 FCFA limit ********/
+const MAX_QUIZ_PER_DAY = 5; // 5 questions per day
+const REWARD_PER_QUESTION = 100; // 100 FCFA per question = 500 FCFA max per day
+const MAX_CLAIM_PER_DAY = 500; // 500 FCFA limit
+
+/******** Questions for Trivia Challenge ********/
+const allQuestions = [
+  { question: "Quel fruit est jaune ?", options: ["Banane", "Pomme", "Orange", "Raisin"], correctAnswer: 0 },
+  { question: "Quelle est la capitale de la France ?", options: ["Lyon", "Paris", "Marseille", "Bordeaux"], correctAnswer: 1 },
+  { question: "Combien de côtés a un triangle ?", options: ["3", "4", "5", "6"], correctAnswer: 0 },
+  { question: "Quel animal dit 'meow' ?", options: ["Chien", "Chat", "Vache", "Oiseau"], correctAnswer: 1 },
+  { question: "Quelle planète est appelée la planète rouge ?", options: ["Terre", "Mars", "Jupiter", "Vénus"], correctAnswer: 1 },
+  { question: "Quel écrivain a écrit 'Les Misérables' ?", options: ["Émile Zola", "Gustave Flaubert", "Victor Hugo", "Albert Camus"], correctAnswer: 2 },
+  { question: "Quel est l'élément chimique avec le symbole 'Au' ?", options: ["Argent", "Platine", "Or", "Uranium"], correctAnswer: 2 },
+  { question: "Quel pays a la plus grande superficie au monde ?", options: ["Canada", "Chine", "États-Unis", "Russie"], correctAnswer: 3 },
+  { question: "Quel est le plus grand océan du monde ?", options: ["Océan Atlantique", "Océan Indien", "Océan Arctique", "Océan Pacifique"], correctAnswer: 3 },
+  { question: "Qui a peint 'La Nuit étoilée' ?", options: ["Pablo Picasso", "Claude Monet", "Salvador Dalí", "Vincent van Gogh"], correctAnswer: 3 }
+];
+
+/******** UI helpers ********/
+function showNotification(type, title, message, duration = 4000) {
+  const container = document.getElementById('notificationContainer');
+  if (!container) return;
+  const notification = document.createElement('div');
+  notification.className = `notification ${type}`;
+  const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle');
+  notification.innerHTML = `
+    <i class="fas ${icon}" style="font-size: 1.5rem;"></i>
+    <div>
+      <strong style="display: block; margin-bottom: 5px;">${title}</strong>
+      <span>${message}</span>
+    </div>
+  `;
+  container.appendChild(notification);
+  setTimeout(() => {
+    notification.style.animation = 'slideIn 0.3s ease reverse forwards';
+    setTimeout(() => { if (container.contains(notification)) container.removeChild(notification); }, 300);
+  }, duration);
+}
+
+/******** UI events ********/
+if (hamburgerBtn) {
+  hamburgerBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('active');
+      hamburgerBtn.classList.toggle('open');
+  });
+}
+if (overlay) {
+  overlay.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('active');
+      hamburgerBtn.classList.remove('open');
+  });
+}
+if (userProfile) {
+  userProfile.addEventListener('click', (event) => {
+      event.stopPropagation();
+      profileDropdown.classList.toggle('active');
+  });
+}
+document.addEventListener('click', (event) => {
+  if (!userProfile || !userProfile.contains(event.target)) {
+    if (profileDropdown) profileDropdown.classList.remove('active');
+  }
+});
+
+// Gestion du sélecteur de langue
+if (languageSelector) {
+  languageSelector.addEventListener('click', (event) => {
+    event.stopPropagation();
+    languageDropdown.classList.toggle('active');
+  });
+}
+
+// Fermer le dropdown de langue quand on clique ailleurs
+document.addEventListener('click', () => {
+  if (languageDropdown) languageDropdown.classList.remove('active');
+});
+
+// Changer de langue
+document.querySelectorAll('.language-option').forEach(option => {
+  option.addEventListener('click', () => {
+    const lang = option.dataset.lang;
+    setLanguage(lang);
+    languageDropdown.classList.remove('active');
+  });
+});
+
+if (themeToggle) {
+  themeToggle.addEventListener('click', (event) => {
+      event.stopPropagation();
+      document.body.classList.toggle('dark-mode');
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      themeToggle.innerHTML = isDarkMode 
+          ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+          : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
+      if(currentUser) saveUserData('theme', isDarkMode ? 'dark' : 'light');
+  });
+}
+
+/******** Bouton Support ********/
+if (supportBtn) {
+  supportBtn.addEventListener('click', () => {
+    window.open('https://wa.me/681144638', '_blank');
+  });
+}
+
+/******** NEW: Thursday availability functions ********/
+function isTodayThursday() {
+  try {
+    const formatter = new Intl.DateTimeFormat('en-US', { 
+      timeZone: 'Africa/Douala',
+      weekday: 'long' 
+    });
+    const dayName = formatter.format(new Date());
+    return dayName === 'Thursday';
+  } catch (error) {
+    console.warn('Timezone Africa/Douala non supporté, fallback local');
+    const d = new Date();
+    return d.getDay() === 4; // 4 = Thursday
+  }
+}
+
+function getNextThursdayCountdown() {
+  const now = new Date();
+  const currentDay = now.getDay();
+  let daysUntilThursday = (4 - currentDay + 7) % 7;
+  if (daysUntilThursday === 0) daysUntilThursday = 7;
+  const nextThursday = new Date(now);
+  nextThursday.setDate(now.getDate() + daysUntilThursday);
+  nextThursday.setHours(0, 0, 0, 0);
+  const diff = nextThursday - now;
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+  return { days, hours, minutes, seconds };
+}
+
+function updateThursdayUI() {
+  const isThursday = isTodayThursday();
+  if (ENFORCE_THURSDAY && !isThursday) {
+    if (thursdayAlert) thursdayAlert.style.display = 'block';
+    if (countdownInterval) clearInterval(countdownInterval);
+    countdownInterval = setInterval(() => {
+      const countdown = getNextThursdayCountdown();
+      if (thursdayCountdown) thursdayCountdown.textContent = `Prochain jeudi dans: ${countdown.days}j ${countdown.hours}h ${countdown.minutes}m ${countdown.seconds}s`;
+      if (countdown.days === 0 && countdown.hours === 0 && countdown.minutes === 0 && countdown.seconds === 0) {
+        window.location.reload();
+      }
+    }, 1000);
+  } else {
+    if (thursdayAlert) thursdayAlert.style.display = 'none';
+    if (countdownInterval) clearInterval(countdownInterval);
+  }
+  return isThursday;
+}
+
+/******** Utility functions ********/
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+function getTodayString() {
+  return new Date().toDateString();
+}
+
+/******** NEW: Countdown timer functions ********/
+function startCountdown() {
+  timeLeft = 7;
+  updateTimerUI();
+  
+  if (countdownInterval) clearInterval(countdownInterval);
+  
+  countdownInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerUI();
+    
+    if (timeLeft <= 0) {
+      clearInterval(countdownInterval);
+      if (!questionAnswered) {
+        handleTimeUp();
+      }
+    }
+  }, 1000);
+}
+
+function updateTimerUI() {
+  timerText.textContent = `${timeLeft}s`;
+  const progress = ((7 - timeLeft) / 7) * 360;
+  timerProgress.style.transform = `rotate(${progress}deg)`;
+}
+
+function handleTimeUp() {
+  questionAnswered = true;
+  const question = currentQuestions[currentQuestionIndex];
+  
+  // Show correct answer
+  document.querySelectorAll('.option').forEach(opt => {
+    const originalIndex = parseInt(opt.dataset.originalIndex);
+    if (originalIndex === question.correctAnswer) {
+      opt.classList.add('correct');
+    }
+  });
+  
+  showNotification('error', 'Temps écoulé!', `La bonne réponse était: ${question.options[question.correctAnswer]}`);
+  
+  // Disable all options
+  document.querySelectorAll('.option').forEach(opt => {
+    opt.style.pointerEvents = 'none';
+  });
+  
+  // Automatically move to next question after 2 seconds
+  setTimeout(() => {
+    nextQuestion();
+  }, 2000);
+}
+
+function stopCountdown() {
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+    countdownInterval = null;
+  }
+}
+
+/******** Quiz functions ********/
+function initQuiz() {
+  const today = getTodayString();
+  const isThursday = updateThursdayUI();
+  
+  // Check if it's Thursday
+  if (ENFORCE_THURSDAY && !isThursday) {
+    showNotification('info', 'Non disponible', 'Le Trivia Challenge n\'est disponible que le jeudi.');
+    questionContainer.style.display = 'none';
+    resultsContainer.style.display = 'none';
+    return;
+  }
+
+  // Reset daily stats if date changed
+  if (userData.lastTriviaDate !== today) {
+    userData.triviaCompletedToday = 0;
+    userData.triviaEarningsToday = 0;
+    userData.triviaClaimedToday = false;
+    saveUserData({ 
+      lastTriviaDate: today, 
+      triviaCompletedToday: 0, 
+      triviaEarningsToday: 0,
+      triviaClaimedToday: false
+    });
+  }
+  
+  quizzesCompletedToday = userData.triviaCompletedToday || 0;
+  earningsToday = userData.triviaEarningsToday || 0;
+  isClaimed = userData.triviaClaimedToday || false;
+  
+  updateDailyStats();
+
+  // Check if user has completed today's quota
+  if (quizzesCompletedToday >= MAX_QUIZ_PER_DAY) {
+    showQuizUnavailableUI(isClaimed);
+    return;
+  }
+
+  // Select 5 random questions
+  currentQuestions = shuffleArray([...allQuestions]).slice(0, 5);
+  
+  startQuiz();
+}
+
+function showQuizUnavailableUI(claimed) {
+  questionContainer.style.display = 'none';
+  resultsContainer.style.display = 'block';
+  
+  resultsScore.textContent = `${MAX_QUIZ_PER_DAY}/${MAX_QUIZ_PER_DAY}`;
+  
+  if (claimed) {
+    resultsMessage.textContent = `Vous avez complété vos ${MAX_QUIZ_PER_DAY} questions d'aujourd'hui et réclamé ${earningsToday} FCFA. Revenez demain!`;
+    claimRewardButton.style.display = 'none';
+  } else {
+    resultsMessage.textContent = `Vous avez complété vos ${MAX_QUIZ_PER_DAY} questions d'aujourd'hui.`;
+    claimRewardButton.style.display = 'none';
+  }
+  totalEarningsDisplay.textContent = `+${earningsToday} FCFA`;
+  nextQuizButton.style.display = 'inline-flex';
+}
+
+function startQuiz() {
+  currentQuestionIndex = 0;
+  score = 0;
+  selectedOption = null;
+  totalEarningsForClaim = 0;
+  questionAnswered = false;
+
+  resultsContainer.style.display = 'none';
+  questionContainer.style.display = 'block';
+  nextButton.style.display = 'none';
+  
+  loadQuestion();
+}
+
+function loadQuestion() {
+  questionAnswered = false;
+  const question = currentQuestions[currentQuestionIndex];
+  const shuffledOptions = shuffleArray(question.options.map((opt, index) => ({ text: opt, originalIndex: index })));
+  
+  questionText.textContent = `Q${currentQuestionIndex + 1}: ${question.question}`;
+  
+  // Update progress
+  progressText.textContent = `Question ${currentQuestionIndex + 1}/${currentQuestions.length}`;
+  progressFill.style.width = `${((currentQuestionIndex + 1) / currentQuestions.length) * 100}%`;
+  
+  // Generate options
+  optionsContainer.innerHTML = '';
+  shuffledOptions.forEach((option, index) => {
+    const optionElement = document.createElement('div');
+    optionElement.className = 'option';
+    optionElement.innerHTML = `<label class="option-label">${option.text}</label>`;
+    optionElement.dataset.originalIndex = option.originalIndex;
+    optionElement.addEventListener('click', () => selectOption(optionElement, option.originalIndex));
+    optionsContainer.appendChild(optionElement);
+  });
+  
+  // Start countdown timer
+  startCountdown();
+  
+  // Reset button states
+  nextButton.style.display = 'none';
+}
+
+function selectOption(optionElement, originalIndex) {
+  if (questionAnswered) return;
+  
+  questionAnswered = true;
+  stopCountdown();
+  
+  // Deselect all options
+  document.querySelectorAll('.option').forEach(opt => {
+    opt.classList.remove('selected');
+  });
+  
+  // Select clicked option
+  optionElement.classList.add('selected');
+  selectedOption = originalIndex;
+
+  const question = currentQuestions[currentQuestionIndex];
+  const allOptions = document.querySelectorAll('.option');
+  
+  // Disable all options
+  allOptions.forEach(opt => {
+    opt.style.pointerEvents = 'none';
+  });
+  
+  let isCorrect = (selectedOption === question.correctAnswer);
+
+  // Show correct/incorrect answers
+  allOptions.forEach(opt => {
+    const optOriginalIndex = parseInt(opt.dataset.originalIndex);
+    if (optOriginalIndex === question.correctAnswer) {
+        opt.classList.add('correct');
+    }
+    if (optOriginalIndex === selectedOption && !isCorrect) {
+        opt.classList.add('incorrect');
+    }
+  });
+  
+  // Update score and earnings
+  if (isCorrect) {
+    score++;
+    totalEarningsForClaim += REWARD_PER_QUESTION;
+    showNotification('success', 'Bonne réponse!', `Vous avez gagné ${REWARD_PER_QUESTION} FCFA pour cette question.`);
+  } else {
+    showNotification('error', 'Mauvaise réponse', `La bonne réponse était: ${question.options[question.correctAnswer]}`);
+  }
+  
+  // Automatically move to next question after 2 seconds
+  setTimeout(() => {
+    nextQuestion();
+  }, 2000);
+}
+
+function nextQuestion() {
+  currentQuestionIndex++;
+  
+  if (currentQuestionIndex < currentQuestions.length) {
+    loadQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function showResults() {
+  stopCountdown();
+  
+  // Apply 500 FCFA limit
+  if (totalEarningsForClaim > MAX_CLAIM_PER_DAY) {
+    totalEarningsForClaim = MAX_CLAIM_PER_DAY;
+  }
+
+  resultsScore.textContent = `${score}/${currentQuestions.length}`;
+  
+  if (score === currentQuestions.length) {
+    resultsMessage.textContent = 'Félicitations! Vous avez répondu correctement à toutes les questions!';
+  } else if (score > 0) {
+    resultsMessage.textContent = `Bon travail! Vous avez répondu correctement à ${score} questions.`;
+  } else {
+    resultsMessage.textContent = 'Pas de chance cette fois! Réessayez demain.';
+  }
+  
+  totalEarningsDisplay.textContent = `+${totalEarningsForClaim} FCFA`;
+  
+  // Update user data locally + store trivia counters (ces mises à jour ne touchent pas `solde`)
+  userData.triviaCompletedToday = (userData.triviaCompletedToday || 0) + 1;
+  userData.triviaEarningsToday = totalEarningsForClaim;
+  
+  saveUserData({ 
+    triviaCompletedToday: userData.triviaCompletedToday, 
+    triviaEarningsToday: userData.triviaEarningsToday
+  });
+  
+  // Update daily stats
+  quizzesCompletedToday = userData.triviaCompletedToday;
+  earningsToday = userData.triviaEarningsToday;
+  updateDailyStats();
+
+  // Show results
+  questionContainer.style.display = 'none';
+  resultsContainer.style.display = 'block';
+  
+  const today = getTodayString();
+  const isTodayClaimed = userData.lastTriviaClaimDate === today;
+
+  if (totalEarningsForClaim > 0 && !isTodayClaimed) {
+    claimRewardButton.disabled = false;
+    claimRewardButton.textContent = `Réclamer ${totalEarningsForClaim} FCFA`;
+  } else if (isTodayClaimed) {
+    claimRewardButton.disabled = true;
+    claimRewardButton.textContent = 'Récompense déjà réclamée!';
+  } else {
+    claimRewardButton.disabled = true;
+    claimRewardButton.textContent = 'Pas de gain à réclamer';
+  }
+  
+  nextQuizButton.style.display = 'inline-flex';
+}
+
+function updateDailyStats() {
+  quizzesCompleted.textContent = `${quizzesCompletedToday}/${MAX_QUIZ_PER_DAY}`;
+  earnedToday.textContent = `${earningsToday} FCFA`;
+}
+
+/******** Reward claim handling ********/
+claimRewardButton.addEventListener('click', async () => {
+  if (!currentUser) { 
+    showNotification('error','Non connecté','Veuillez vous connecter.'); 
+    return; 
+  }
+  if (totalEarningsForClaim <= 0) {
+    showNotification('info', 'Pas de gain', 'Il n\'y a pas de gain à réclamer.');
+    return;
+  }
+  
+  const today = getTodayString();
+  if (userData.lastTriviaClaimDate === today) {
+      showNotification('info', 'Déjà réclamé', 'Vous avez déjà réclamé les gains du quiz d\'aujourd\'hui.');
+      return;
+  }
+  
+  const REWARD_AMOUNT = totalEarningsForClaim;
+  const MAX_INCREMENT_PER_REQUEST = 500;
+
+  try {
+    const uid = currentUser.uid;
+    const userRef = db.collection('users').doc(uid);
+
+    /****************************************************************
+     * IMPORTANT: transaction **DOES NOT** modify 'solde' (intentionnel)
+     * Only updates: profit, triviaGains, triviaEarningsToday, lastTriviaClaimDate
+     * If you want `solde` to be incremented, call a Cloud Function / backend
+     * that uses Admin SDK (server-side) to update `solde` securely.
+     ****************************************************************/
+    await db.runTransaction(async (tx) => {
+      const snap = await tx.get(userRef);
+      if (!snap.exists) throw new Error('Utilisateur introuvable.');
+
+      const doc = snap.data() || {};
+      let profitDoc = Number(doc.profit || 0);
+      let triviaGainsDoc = Number(doc.triviaGains || 0);
+
+      // Double-check claim date
+      if (doc.lastTriviaClaimDate === today) {
+        throw new Error('Réclamation du jour déjà effectuée.');
+      }
+
+      // Security check (client-side)
+      if (REWARD_AMOUNT <= 0 || REWARD_AMOUNT > MAX_INCREMENT_PER_REQUEST) {
+        throw new Error('Montant de récompense invalide.');
+      }
+
+      // Calculate new amounts (note: solde NOT changed here)
+      const newProfit = profitDoc + REWARD_AMOUNT;
+      const newTriviaGains = triviaGainsDoc + REWARD_AMOUNT;
+
+      // Update transaction — **no solde field**
+      tx.update(userRef, {
+        profit: newProfit,
+        triviaGains: newTriviaGains,
+        triviaEarningsToday: REWARD_AMOUNT,
+        lastTriviaClaimDate: today
+      });
+    });
+
+    // Success — update local UI/data
+    userData.lastTriviaClaimDate = today;
+    claimRewardButton.disabled = true;
+    claimRewardButton.textContent = 'Récompense réclamée!';
+    // Message clair : solde non modifié côté client
+    showNotification('success', 'Récompense Ajoutée!', `${REWARD_AMOUNT} FCFA ont été enregistrés dans profit/triviaGains. (Le solde n'est pas modifié côté client.)`);
+
+    earningsToday = REWARD_AMOUNT;
+    updateDailyStats();
+
+    /************************************************************************
+     * Optionnel : si tu veux créditer le champ `solde`, appelle ici une
+     * Cloud Function sécurisée (Admin SDK) qui ajoutera REWARD_AMOUNT à solde.
+     * Exemple d'appel (si tu as déployé la function 'claimTriviaReward'):
+     *
+     * const claimFn = firebase.functions().httpsCallable('claimTriviaReward');
+     * await claimFn({ amount: REWARD_AMOUNT });
+     *
+     * (Je n'appelle rien ici automatiquement — c'est volontaire : tu as demandé
+     * que le client **ne modifie jamais** solde.)
+     ************************************************************************/
+
+  } catch (err) {
+    console.error('Erreur lors de la réclamation:', err);
+    const msg = err.message || 'Impossible d\'enregistrer la récompense. Réessayez.';
+    showNotification('error', 'Erreur de Réclamation', msg);
+  }
+});
+
+nextQuizButton.addEventListener('click', () => {
+  showNotification('info', 'À demain!', 'Vous avez complété votre quiz du jour. Rendez-vous demain!');
+});
+
+/******** User data management ********/
+async function saveUserData(dataToSave) {
+  if (!currentUser) return;
+  try {
+    const userRef = db.collection('users').doc(currentUser.uid);
+    // merge:true pour ne pas écraser d'autres champs
+    await userRef.set(dataToSave, { merge: true });
+  } catch (error) {
+    console.error("Erreur lors de la sauvegarde des données :", error);
+    showNotification('error', 'Erreur de sauvegarde', 'Impossible de sauvegarder vos données.');
+  }
+}
+
+async function loadUserData() {
+  if (!currentUser) throw new Error("Aucun utilisateur connecté.");
+  const userRef = db.collection('users').doc(currentUser.uid);
+  const doc = await userRef.get();
+  const today = getTodayString();
+
+  if (doc.exists) {
+      userData = doc.data() || {};
+  } else {
+    // IMPORTANT: NE PAS initialiser/écrire `solde` côté client.
+    // On initialise seulement les champs permis côté client.
+    userData = {
+      triviaCompletedToday: 0,
+      triviaEarningsToday: 0,
+      lastTriviaDate: null,
+      lastTriviaClaimDate: null,
+      profit: 0,
+      triviaGains: 0
+    };
+    // Sauvegarde initiale — n'inclut PAS solde
+    await saveUserData(userData);
+  }
+  
+  // Reset daily stats if date changed
+  if (userData.lastTriviaDate !== today) {
+      userData.triviaCompletedToday = 0;
+      userData.triviaEarningsToday = 0;
+      userData.lastTriviaDate = today;
+  }
+
+  return userData;
+}
+
+function updateUserInfoUI(user, dbData = {}) {
+    const displayName = dbData.displayName || user.displayName || (user.email ? user.email.split('@')[0] : 'Utilisateur');
+    if (sidebarUsername) sidebarUsername.textContent = displayName;
+    if (userAvatar) userAvatar.textContent = displayName.charAt(0).toUpperCase();
+}
+
+function applyTheme() {
+    const isDarkMode = userData.theme === 'dark';
+    document.body.classList.toggle('dark-mode', isDarkMode);
+    if (themeToggle) {
+      themeToggle.innerHTML = isDarkMode 
+          ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+          : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
+    }
+}
+
+/******** Main initialization ********/
+auth.onAuthStateChanged(async (user) => {
+    if (user) {
+        currentUser = user;
+        try {
+            userData = await loadUserData();
+
+            // Check payment status
+            const userStatus = (userData.status || userData.statut || '').toString().toLowerCase().trim();
+            const validStatuses = ['paid', 'active'];
+            if (!validStatuses.includes(userStatus)) {
+                showNotification('info','Action requise','Veuillez finaliser votre inscription.');
+                setTimeout(() => { window.location.href = 'paiement.html'; }, 2000);
+                return;
+            }
+            
+            updateUserInfoUI(user, userData);
+            applyTheme();
+            initQuiz();
+            
+            document.body.classList.add('loaded');
+            loader.classList.add('hidden');
+            
+            showNotification('success', 'Bienvenue!', 'Prêt pour le Trivia Challenge!');
+
+        } catch (error) {
+            console.error("Erreur critique lors de l'initialisation :", error);
+            showNotification('error', 'Erreur Critique', "Impossible de charger vos données.");
+            auth.signOut();
+            setTimeout(() => { window.location.href = 'login.html'; }, 3000);
+        }
+    } else {
+        window.location.href = 'login.html';
+    }
+});
+
+/******** Initialisation au chargement de la page ********/
+document.addEventListener('DOMContentLoaded', () => {
+  // Charger la langue sauvegardée ou utiliser le français par défaut
+  const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
+  setLanguage(savedLang);
+});
+</script>
+</body>
+</html>
