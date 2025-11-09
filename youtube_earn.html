@@ -3,98 +3,87 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MULAFLOWR - YouTube Earn</title>
+  <title>BLOWEARN AGENCIES - YouTube Earn</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   
   <style>
-    /* Styles de base */
-    body {
-      background: linear-gradient(135deg, #d5e8d9 0%, #c5dfe6 100%);
-      color: var(--text-color);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      visibility: hidden; 
-      opacity: 0;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
-    }
-
-    body.loaded {
-      visibility: visible;
-      opacity: 1;
-    }
-
+    /* -------------------------------------------------------------------------- */
+    /* --- VARIABLES CSS COHÉRENTES AVEC LE DASHBOARD --- */
+    /* -------------------------------------------------------------------------- */
     :root {
-      --primary-color: #3a8ee6;
-      --primary-light: #4da6ff;
-      --primary-dark: #2c75c9;
-      --secondary-color: #4c566a;
-      --accent-color: #5e81ac;
-      --background-light: #f5f7fb;
-      --background-dark: #e5e9f0;
-      --card-bg: #ffffff;
-      --text-color: #2e3440;
-      --text-light: #4c566a;
+      --color-primary: #4A90E2; /* Bleu Énergique */
+      --color-secondary: #FFC107; /* Jaune Vif/Or pour l'accent */
+      --color-text-dark: #2C3E50; /* Texte Sombre (lisible) */
+      --color-text-light: #ECF0F1; /* Texte Clair */
+      --color-bg-light: #FFFFFF; /* Fond de Carte */
+      --color-bg-gradient-1: #6DD5FA; /* Dégradé Fond 1 */
+      --color-bg-gradient-2: #FF7582; /* Dégradé Fond 2 */
       --success-color: #4CD964;
       --warning-color: #FF9500;
       --danger-color: #FF3B30;
-      --purple-color: #AF52DE;
-      --teal-color: #5AC8FA;
-      --orange-color: #FF9500;
-      --pink-color: #FF2D55;
-      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      --transition: all 0.3s ease;
-      --badge-active: #4CD964;
-      --badge-pending: #FF9500;
-      --badge-inactive: #FF3B30;
+      --shadow: 0 15px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.8);
+      --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    .dark-mode {
-      --primary-color: #5e81ac;
-      --primary-light: #81a1c1;
-      --primary-dark: #4c566a;
-      --secondary-color: #d8dee9;
-      --accent-color: #88c0d0;
-      --background-light: #2e3440;
-      --background-dark: #3b4252;
-      --card-bg: #434c5e;
-      --text-color: #eceff4;
-      --text-light: #d8dee9;
-      --success-color: #4CD964;
-      --warning-color: #FF9500;
-      --danger-color: #FF3B30;
-      --purple-color: #AF52DE;
-      --teal-color: #5AC8FA;
-      --orange-color: #FF9500;
-      --pink-color: #FF2D55;
-      --shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-      --badge-active: #2ecc71;
-      --badge-pending: #f1c40f;
-      --badge-inactive: #e74c3c;
-    }
-
+    /* -------------------------------------------------------------------------- */
+    /* --- STYLES GÉNÉRAUX COHÉRENTS --- */
+    /* -------------------------------------------------------------------------- */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Montserrat', sans-serif;
       transition: var(--transition);
     }
+
+    body {
+      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
+      color: var(--color-text-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Effet de bulles animées en arrière-plan */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 25%),
+        radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 90% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 25%);
+      animation: float 20s ease-in-out infinite;
+      z-index: -1;
+    }
     
-    /* Loader */
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-15px) scale(1.02); }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- LOADER --- */
+    /* -------------------------------------------------------------------------- */
     .loader-container {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(135deg, #d5e8d9 0%, #c5dfe6 100%);
+      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -111,20 +100,21 @@
       width: 60px;
       height: 60px;
       border-radius: 50%;
-      background: conic-gradient(#0000 10%, var(--primary-color));
+      background: conic-gradient(#0000 10%, var(--color-primary));
       -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
       animation: spin 1s infinite linear;
     }
 
     @keyframes spin {
-      to {
-        transform: rotate(1turn);
-      }
+      to { transform: rotate(1turn); }
     }
 
-    /* Header styles */
+    /* -------------------------------------------------------------------------- */
+    /* --- HEADER --- */
+    /* -------------------------------------------------------------------------- */
     .header {
-      background-color: var(--card-bg);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
       box-shadow: var(--shadow);
       padding: 15px 30px;
       display: flex;
@@ -133,17 +123,29 @@
       position: sticky;
       top: 0;
       z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.7);
     }
 
     .logo {
       font-size: 1.8rem;
-      font-weight: 800;
-      color: var(--primary-color);
+      font-weight: 800; /* Plus épais pour plus de visibilité */
+      color: var(--color-text-dark); /* Changé pour plus de contraste */
       display: flex;
       align-items: center;
-      font-family: 'Montserrat', sans-serif;
+      font-family: 'Poppins', sans-serif;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Ombre plus prononcée */
+      background: linear-gradient(45deg, var(--color-primary) 0%, var(--color-secondary) 100%); /* Dégradé plus contrasté */
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: logoGlow 3s ease-in-out infinite alternate;
+    }
+    
+    @keyframes logoGlow {
+      from { filter: drop-shadow(0 0 5px rgba(74, 144, 226, 0.5)); }
+      to { filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.7)); }
     }
 
     .header-controls {
@@ -153,7 +155,7 @@
     }
 
     .language-selector {
-      background-color: var(--primary-light);
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
       color: white;
       border: none;
       border-radius: 20px;
@@ -163,28 +165,75 @@
       align-items: center;
       gap: 8px;
       font-weight: 500;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      position: relative;
+    }
+
+    .language-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      border-radius: 12px;
+      padding: 8px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 140px;
+      z-index: 200;
+      transform-origin: top right;
+      animation: scaleIn 0.2s ease-out forwards;
+      border: 1px solid rgba(255,255,255,0.7);
+      margin-top: 5px;
+    }
+
+    .language-dropdown.active {
+      display: flex;
+    }
+
+    .language-option {
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s ease;
+    }
+
+    .language-option:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .language-option.active {
+      background-color: rgba(74, 144, 226, 0.1);
+      color: var(--color-primary);
+      font-weight: 600;
     }
 
     .theme-toggle {
-        background-color: transparent;
-        border: none;
-        color: var(--secondary-color);
-        cursor: pointer;
-        padding: 5px;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background-color 0.3s ease;
+      background-color: transparent;
+      border: none;
+      color: var(--color-text-dark);
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease;
     }
 
     .theme-toggle:hover {
-        background-color: rgba(0, 0, 0, 0.05);
+      background-color: rgba(0, 0, 0, 0.05);
     }
+
     .theme-toggle i {
-        font-size: 1.2rem;
+      font-size: 1.2rem;
     }
 
     .user-profile {
@@ -199,110 +248,119 @@
       width: 45px;
       height: 45px;
       border-radius: 50%;
-      background-color: var(--primary-color);
+      background-color: var(--color-primary);
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       font-size: 1.2rem;
       font-weight: bold;
-      border: 2px solid var(--primary-light);
+      border: 2px solid var(--color-secondary);
       box-shadow: var(--shadow);
     }
 
     .profile-dropdown {
-        position: absolute;
-        top: 100%;
-        right: 0;
-        background-color: var(--card-bg);
-        box-shadow: var(--shadow);
-        border-radius: 8px;
-        padding: 10px;
-        display: none;
-        flex-direction: column;
-        gap: 5px;
-        min-width: 150px;
-        z-index: 200;
-        transform-origin: top right;
-        animation: scaleIn 0.2s ease-out forwards;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      border-radius: 18px;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 150px;
+      z-index: 200;
+      transform-origin: top right;
+      animation: scaleIn 0.2s ease-out forwards;
+      border: 1px solid rgba(255,255,255,0.7);
     }
 
     .profile-dropdown.active {
-        display: flex;
+      display: flex;
     }
     
     @keyframes scaleIn {
-        from { transform: scale(0.9); opacity: 0; }
-        to { transform: scale(1); opacity: 1; }
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
     }
 
     .profile-dropdown .theme-toggle {
-        width: 100%;
-        border-radius: 8px;
-        background-color: rgba(0, 0, 0, 0.05);
-        color: var(--text-color);
-        justify-content: flex-start;
-        padding: 10px;
-        transition: background-color 0.2s ease, transform 0.2s ease;
-        text-align: left;
-        gap: 10px;
+      width: 100%;
+      border-radius: 8px;
+      background-color: rgba(0, 0, 0, 0.05);
+      color: var(--text-color);
+      justify-content: flex-start;
+      padding: 10px;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+      text-align: left;
+      gap: 10px;
     }
+
     .profile-dropdown .theme-toggle:hover {
-        background-color: rgba(0, 0, 0, 0.1);
-        transform: translateY(-2px);
+      background-color: rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
     }
     
     .profile-dropdown .theme-toggle span {
-        flex-grow: 1;
-        text-align: left;
+      flex-grow: 1;
+      text-align: left;
     }
 
-    /* Bouton hamburger */
+    /* -------------------------------------------------------------------------- */
+    /* --- BOUTON HAMBURGER (DÉPLACÉ À DROITE) --- */
+    /* -------------------------------------------------------------------------- */
     .hamburger-btn {
-        display: none;
-        background: none;
-        border: none;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-        width: 30px;
-        height: 25px;
-        padding: 0;
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 30px;
+      height: 25px;
+      padding: 0;
+      order: 2; /* Pour le placer à droite dans le header */
     }
     
     .hamburger-btn .bar {
-        width: 100%;
-        height: 3px;
-        background-color: var(--secondary-color);
-        transition: transform 0.3s ease, opacity 0.3s ease;
+      width: 100%;
+      height: 3px;
+      background-color: var(--color-text-dark);
+      transition: transform 0.3s ease, opacity 0.3s ease;
     }
     
     .hamburger-btn.open .bar:nth-child(2) {
-        opacity: 0;
+      opacity: 0;
     }
     
     .hamburger-btn.open .bar:nth-child(1) {
-        transform: translateY(11px) rotate(45deg);
+      transform: translateY(11px) rotate(45deg);
     }
     
     .hamburger-btn.open .bar:nth-child(3) {
-        transform: translateY(-11px) rotate(-45deg);
+      transform: translateY(-11px) rotate(-45deg);
     }
 
-    /* Main layout */
+    /* -------------------------------------------------------------------------- */
+    /* --- STRUCTURE PRINCIPALE --- */
+    /* -------------------------------------------------------------------------- */
     .main-container {
       display: flex;
       flex: 1;
     }
 
-    /* Sidebar */
+    /* -------------------------------------------------------------------------- */
+    /* --- SIDEBAR (MENU) AMÉLIORÉ AVEC NOUVEAU FOND ET POLICE --- */
+    /* -------------------------------------------------------------------------- */
     .sidebar {
       width: 280px;
-      background: rgba(255, 255, 255, 0.75);
-      backdrop-filter: blur(10px);
-      -webkit-backcast-filter: blur(10px);
-      border-right: 1px solid rgba(255, 255, 255, 0.2);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.95) 100%);
+      backdrop-filter: blur(15px);
+      border-right: 1px solid rgba(255,255,255,0.7);
       box-shadow: var(--shadow);
       height: calc(100vh - 80px);
       position: sticky;
@@ -313,7 +371,7 @@
     }
     
     .sidebar.open {
-        transform: translateX(0);
+      transform: translateX(0);
     }
 
     .welcome-section {
@@ -323,24 +381,29 @@
     }
 
     .welcome-text {
-      color: var(--text-light);
+      color: var(--color-text-dark);
       font-size: 0.9rem;
       margin-bottom: 5px;
+      font-weight: 500;
+      font-family: 'Quicksand', sans-serif;
     }
 
     .username {
       font-weight: 600;
       font-size: 1.2rem;
-      color: var(--primary-color);
+      color: var(--color-primary);
+      font-family: 'Quicksand', sans-serif;
     }
 
     .menu-category {
       padding: 15px 25px 5px;
       font-size: 0.85rem;
-      color: var(--text-light);
+      color: var(--color-text-dark);
       text-transform: uppercase;
       letter-spacing: 1px;
       font-weight: 600;
+      font-family: 'Quicksand', sans-serif;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
 
     .menu-item {
@@ -348,13 +411,14 @@
       display: flex;
       align-items: center;
       gap: 15px;
-      color: var(--text-color);
+      color: var(--color-text-dark);
       text-decoration: none;
       font-weight: 500;
       border-left: 4px solid transparent;
       position: relative;
       overflow: hidden;
       animation: fadeIn 0.5s ease-out;
+      font-family: 'Quicksand', sans-serif;
     }
 
     @keyframes fadeIn {
@@ -372,14 +436,15 @@
       background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
       transition: all 0.5s ease;
     }
+    
     .menu-item:hover::before {
       left: 100%;
     }
 
     .menu-item:hover, .menu-item.active {
       background-color: rgba(0, 0, 0, 0.05);
-      border-left-color: var(--primary-color);
-      color: var(--primary-color);
+      border-left-color: var(--color-primary);
+      color: var(--color-primary);
     }
 
     .menu-item i {
@@ -410,16 +475,18 @@
     }
     
     .menu-badge.active {
-      background-color: var(--badge-active);
+      background-color: var(--success-color);
       color: white;
     }
     
     .menu-badge.inactive {
-      background-color: var(--badge-inactive);
+      background-color: var(--danger-color);
       color: white;
     }
 
-    /* Contenu principal */
+    /* -------------------------------------------------------------------------- */
+    /* --- CONTENU PRINCIPAL --- */
+    /* -------------------------------------------------------------------------- */
     .content {
       flex: 1;
       padding: 30px;
@@ -428,52 +495,58 @@
     .page-title {
       font-size: 1.5rem;
       margin-bottom: 25px;
-      color: var(--secondary-color);
+      color: var(--color-text-dark);
       font-weight: 700;
       display: flex;
       align-items: center;
       gap: 10px;
+      font-family: 'Poppins', sans-serif;
     }
 
     .page-title i {
-      color: var(--primary-color);
+      color: var(--color-primary);
     }
 
-    /* Section de gain YouTube */
+    /* -------------------------------------------------------------------------- */
+    /* --- SECTION YOUTUBE EARN --- */
+    /* -------------------------------------------------------------------------- */
     .earn-section {
-      background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 18px;
       padding: 25px;
       box-shadow: var(--shadow);
       margin-bottom: 30px;
       position: relative;
       overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.7);
+      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .earn-section::before {
       content: '';
       position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
-      transform: rotate(45deg);
-      animation: shimmer 3s infinite;
-    }
-
-    @keyframes shimmer {
-      0% { transform: translateX(-100%) rotate(45deg); }
-      100% { transform: translateX(100%) rotate(45deg); }
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: 18px 18px 0 0;
     }
 
     .section-title {
       font-size: 1.3rem;
       margin-bottom: 20px;
-      color: var(--secondary-color);
+      color: var(--color-text-dark);
       font-weight: 600;
       position: relative;
       z-index: 1;
+      font-family: 'Poppins', sans-serif;
     }
 
     .video-container {
@@ -548,7 +621,7 @@
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      background-color: var(--background-light);
+      background-color: rgba(0, 0, 0, 0.05);
       box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
@@ -560,7 +633,7 @@
       height: 100%;
       border-radius: 50%;
       clip: rect(0, 60px, 120px, 0);
-      background: conic-gradient(var(--primary-color) 0%, var(--primary-light) 100%);
+      background: conic-gradient(var(--color-primary) 0%, var(--color-secondary) 100%);
       transition: transform 0.1s linear;
     }
 
@@ -571,23 +644,25 @@
       transform: translate(-50%, -50%);
       font-size: 1.5rem;
       font-weight: 700;
-      color: var(--text-color);
+      color: var(--color-text-dark);
     }
 
     .timer-label {
       margin-top: 10px;
       font-size: 1rem;
-      color: var(--text-light);
+      color: var(--color-text-dark);
+      opacity: 0.7;
     }
 
     .reward-info {
-      background-color: rgba(255, 255, 255, 0.7);
+      background-color: rgba(255, 255, 255, 0.5);
       border-radius: 10px;
       padding: 15px;
       margin-bottom: 20px;
       text-align: center;
       position: relative;
       z-index: 1;
+      border: 1px solid rgba(255,255,255,0.7);
     }
 
     .reward-amount {
@@ -599,7 +674,8 @@
 
     .reward-text {
       font-size: 0.9rem;
-      color: var(--text-light);
+      color: var(--color-text-dark);
+      opacity: 0.8;
     }
 
     .action-buttons {
@@ -621,16 +697,17 @@
       align-items: center;
       gap: 8px;
       transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
       color: white;
     }
 
     .btn-primary:hover {
       transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     }
 
     .btn-primary:disabled {
@@ -647,7 +724,7 @@
 
     .btn-success:hover {
       transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     }
 
     .btn-success:disabled {
@@ -665,137 +742,66 @@
     }
 
     .stat-card {
-      background: linear-gradient(135deg, #f0f8ff 0%, #e0f0ff 100%);
-      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 15px;
       padding: 15px;
       box-shadow: var(--shadow);
-      text-align: center;
+      display: flex;
+      flex-direction: column;
+      height: 100px;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.7);
+      animation: slideInFromLeft 0.6s ease-out;
+    }
+
+    @keyframes slideInFromLeft {
+      from { transform: translateX(-50px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      border-radius: 15px 15px 0 0;
+      z-index: 2;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px) scale(1.03);
+      box-shadow: 0 20px 45px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.8);
     }
 
     .stat-value {
       font-size: 1.5rem;
       font-weight: 700;
-      color: var(--primary-color);
+      color: var(--color-primary);
       margin-bottom: 5px;
+      z-index: 2;
     }
 
     .stat-label {
       font-size: 0.9rem;
-      color: var(--text-light);
+      color: var(--color-text-dark);
+      opacity: 0.8;
+      z-index: 2;
     }
 
-    /* Footer */
-    .footer {
-      background-color: var(--card-bg);
-      padding: 20px 30px;
-      text-align: center;
-      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
-      margin-top: auto;
-    }
-
-    .footer-content {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .footer-link {
-      color: var(--primary-color);
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.2s ease;
-    }
-
-    .footer-link:hover {
-      text-decoration: underline;
-      color: var(--primary-dark);
-    }
-
-    .footer-text {
-      color: var(--text-light);
-      font-size: 0.9rem;
-    }
-
-    /* Overlay */
-    .overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 98;
-    }
-    
-    .overlay.active {
-      display: block;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .main-container {
-            flex-direction: column;
-        }
-
-        .hamburger-btn {
-            display: flex;
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 101;
-        }
-
-        .sidebar {
-            width: 75%;
-            max-width: 300px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: -100%;
-            z-index: 99;
-            transition: left 0.4s ease-in-out;
-        }
-        
-        .sidebar.open {
-            left: 0;
-        }
-        
-        .header {
-            padding: 15px;
-        }
-        
-        .logo {
-            font-size: 1.5rem;
-            margin-left: 50px;
-        }
-        
-        .content {
-            padding: 20px;
-        }
-        
-        .daily-stats {
-            grid-template-columns: 1fr;
-        }
-        
-        .action-buttons {
-            flex-direction: column;
-        }
-    }
-
-    /* Tuesday Alert Banner */
+    /* -------------------------------------------------------------------------- */
+    /* --- ALERTE MARDI --- */
+    /* -------------------------------------------------------------------------- */
     .tuesday-alert {
-      background: linear-gradient(135deg, #FF9500 0%, #FF6B00 100%);
+      background: linear-gradient(135deg, var(--warning-color) 0%, #FF6B00 100%);
       color: white;
       padding: 20px;
-      border-radius: 10px;
+      border-radius: 18px;
       margin-bottom: 20px;
       text-align: center;
       box-shadow: var(--shadow);
@@ -820,7 +826,7 @@
       font-size: 1.5rem;
       font-weight: 700;
       margin-top: 10px;
-      font-family: 'Roboto Mono', monospace;
+      font-family: 'Montserrat', monospace;
     }
 
     @keyframes pulseGlow {
@@ -851,7 +857,7 @@
 
     .video-overlay i {
       font-size: 3rem;
-      color: #FF9500;
+      color: var(--warning-color);
       margin-bottom: 15px;
     }
 
@@ -866,7 +872,71 @@
       font-size: 1rem;
     }
 
-    /* Animation for notifications */
+    /* -------------------------------------------------------------------------- */
+    /* --- FOOTER AMÉLIORÉ --- */
+    /* -------------------------------------------------------------------------- */
+    .footer {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      padding: 20px 30px;
+      text-align: center;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+      margin-top: auto;
+      border-top: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-link {
+      color: var(--color-primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .footer-link:hover {
+      text-decoration: underline;
+      color: var(--color-secondary);
+    }
+
+    .footer-text {
+      color: var(--color-text-dark);
+      font-size: 0.9rem;
+    }
+
+    /* Bouton de support */
+    .support-btn {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      margin-top: 10px;
+    }
+
+    .support-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(74, 144, 226, 0.4);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- NOTIFICATIONS --- */
+    /* -------------------------------------------------------------------------- */
     .notification-container {
       position: fixed;
       top: 20px;
@@ -880,8 +950,8 @@
 
     .notification {
       padding: 15px 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border-radius: 10px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
       display: flex;
       align-items: center;
       gap: 10px;
@@ -891,6 +961,8 @@
       overflow: hidden;
       color: white;
       pointer-events: auto;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
     }
 
     .notification.success {
@@ -902,7 +974,7 @@
     }
 
     .notification.info { 
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); 
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); 
     }
 
     @keyframes slideIn {
@@ -915,6 +987,134 @@
         opacity: 1;
       }
     }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- OVERLAY --- */
+    /* -------------------------------------------------------------------------- */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 98;
+    }
+    
+    .overlay.active {
+      display: block;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- MODE NUIT --- */
+    /* -------------------------------------------------------------------------- */
+    .dark-mode {
+      --color-primary: #5e81ac;
+      --color-secondary: #d08770;
+      --color-text-dark: #eceff4;
+      --color-text-light: #2e3440;
+      --color-bg-light: #3b4252;
+      --color-bg-gradient-1: #2e3440;
+      --color-bg-gradient-2: #4c566a;
+      --success-color: #a3be8c;
+      --warning-color: #ebcb8b;
+      --danger-color: #bf616a;
+      --shadow: 0 15px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
+    }
+
+    .dark-mode body::before {
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(76, 86, 106, 0.4) 0%, transparent 25%),
+        radial-gradient(circle at 80% 10%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 40% 80%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 90% 90%, rgba(76, 86, 106, 0.2) 0%, transparent 25%);
+    }
+
+    .dark-mode .header,
+    .dark-mode .sidebar,
+    .dark-mode .earn-section,
+    .dark-mode .stat-card,
+    .dark-mode .footer {
+      background: rgba(59, 66, 82, 0.95);
+      color: var(--color-text-dark);
+    }
+
+    .dark-mode .tuesday-alert {
+      background: linear-gradient(135deg, var(--warning-color) 0%, #d08770 100%);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- RESPONSIVE --- */
+    /* -------------------------------------------------------------------------- */
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 230px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-container {
+        flex-direction: column;
+      }
+      
+      .hamburger-btn {
+        display: flex;
+        position: static; /* Position normale dans le flux */
+        order: 2; /* Pour le placer à droite */
+      }
+
+      .sidebar {
+        width: 85%;
+        max-width: 320px;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: -100%;
+        z-index: 99;
+        transition: left 0.4s ease-in-out;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.97) 100%);
+      }
+      
+      .sidebar.open {
+        left: 0;
+      }
+      
+      .header {
+        padding: 15px;
+      }
+      
+      .logo {
+        font-size: 1.5rem;
+        margin-left: 0; /* Supprimé le décalage précédent */
+      }
+      
+      .content {
+        padding: 20px;
+      }
+      
+      .daily-stats {
+        grid-template-columns: 1fr;
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .user-name {
+        display: none;
+      }
+      
+      .language-selector span {
+        display: none;
+      }
+      
+      .language-selector {
+        padding: 8px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -925,21 +1125,33 @@
   <div class="notification-container" id="notificationContainer"></div>
 
   <header class="header">
-    <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-    </button>
-    
     <div class="logo">
-      <span>MULAFLOWR</span>
+      <span>BLOWEARN</span>
     </div>
     
     <div class="header-controls">
-      <button class="language-selector" id="languageSelector">
-        <i class="fas fa-globe"></i>
-        <span>French</span>
-        <i class="fas fa-chevron-down"></i>
+      <div class="language-selector-container">
+        <button class="language-selector" id="languageSelector">
+          <i class="fas fa-globe"></i>
+          <span id="currentLanguage">French</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="language-dropdown" id="languageDropdown">
+          <div class="language-option active" data-lang="fr">
+            <i class="fas fa-check"></i>
+            <span>Français</span>
+          </div>
+          <div class="language-option" data-lang="en">
+            <i class="fas fa-check" style="opacity: 0;"></i>
+            <span>English</span>
+          </div>
+        </div>
+      </div>
+      
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
       </button>
       
       <div class="user-profile" id="userProfile">
@@ -959,110 +1171,156 @@
   <div class="main-container">
     <aside class="sidebar" id="sidebar">
       <div class="welcome-section">
-        <p class="welcome-text">Bienvenue,</p>
-        <h3 class="username" id="sidebarUsername">Utilisateur</h3>
+        <div class="welcome-text" data-i18n="dashboard.title">Dashboard >> BLOWEARN AGENCIES</div>
+        <div class="username" id="sidebarUsername">Utilisateur</div>
       </div>
-
-      <div class="menu-category">MENU PRINCIPAL</div>
-      <a href="dashboard_SOLUTION_FINALE.html" class="menu-item">
+      
+      <div class="menu-category" data-i18n="menu.main">PRINCIPAL</div>
+      <a href="dashboard.html" class="menu-item">
         <i class="fas fa-home"></i>
-        <span>Accueil</span>
-      </a>
-      
-      <a href="equipe.html" class="menu-item">
-        <i class="fas fa-users"></i>
-        <span>Mon équipe</span>
-      </a>
-      
-      <a href="retrait.html" class="menu-item">
-        <i class="fas fa-money-bill-wave"></i>
-        <span>Retrait</span>
+        <span data-i18n="menu.dashboard">Tableau de bord</span>
+        <span class="menu-badge active">☑</span>
       </a>
       
       <a href="depot.html" class="menu-item">
         <i class="fas fa-wallet"></i>
-        <span>Dépôt</span>
+        <span data-i18n="menu.deposit">Dépôt 💵</span>
+        <span class="menu-badge inactive">☐</span>
       </a>
       
-      <div class="menu-category">PRODUIT / TACHE</div>
+      <a href="bonus_bienvenue.html" class="menu-item">
+        <i class="fas fa-gift"></i>
+        <span data-i18n="menu.welcome_bonus">Bonus de bienvenue</span>
+        <span class="menu-badge inactive">☒</span>
+      </a>
+      
+      <div class="menu-category" data-i18n="menu.accounts">COMPTES</div>
+      <a href="retrait.html" class="menu-item">
+        <i class="fas fa-money-bill-wave"></i>
+        <span data-i18n="menu.withdrawal">Retrait</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="equipe.html" class="menu-item">
+        <i class="fas fa-users"></i>
+        <span data-i18n="menu.team">Équipe</span>
+        <span class="menu-badge inactive">☒</span>
+      </a>
+
+      <div class="menu-category" data-i18n="menu.special">SPÉCIAL</div>
+      
+      <a href="social_boost.html" class="menu-item">
+        <i class="fas fa-rocket"></i>
+        <span data-i18n="menu.sbh">SBH</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="challenge_reward.html" class="menu-item">
+        <i class="fas fa-medal"></i>
+        <span data-i18n="menu.challenge">Challenge and Reward</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <div class="menu-category" data-i18n="menu.products">PRODUIT / TÂCHE</div>
       <a href="whatsapp_earn.html" class="menu-item">
         <i class="fab fa-whatsapp"></i>
-        <span>Gagner via Whatsapp</span>
+        <span data-i18n="menu.whatsapp_earn">Gagner via Whatsapp</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="gains_publicitaires.html" class="menu-item">
+        <i class="fas fa-ad"></i>
+        <span data-i18n="menu.ad_earnings">Gains publicitaires</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="spin_wheel.html" class="menu-item">
+        <i class="fas fa-trophy"></i>
+        <span data-i18n="menu.fortune_wheel">Roue de la fortune 🏆</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="tiktok_earn.html" class="menu-item">
+        <i class="fab fa-tiktok"></i>
+        <span data-i18n="menu.tiktok_earn">TikTok Earn</span>
+        <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="youtube_earn.html" class="menu-item active">
         <i class="fab fa-youtube"></i>
-        <span>Gagner via YouTube</span>
+        <span data-i18n="menu.youtube_earn">YouTube Earn</span>
+        <span class="menu-badge inactive">☐</span>
       </a>
       
-      <a href="youtube_earn.html" class="menu-item">
-        <i class="fab fa-youtube"></i>
-        <span>Gagner via YouTube</span>
-      </a>
-      
-      <a href="publicite_earn.html" class="menu-item">
-        <i class="fas fa-ad"></i>
-        <span>Pub + Clics</span>
+      <a href="instagram_earn.html" class="menu-item">
+        <i class="fab fa-instagram"></i>
+        <span data-i18n="menu.instagram_earn">Instagram Earn</span>
+        <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="trivia_challenge.html" class="menu-item">
         <i class="fas fa-brain"></i>
-        <span>TRIVIA challenge</span>
+        <span data-i18n="menu.trivia">TRIVIA challenge</span>
+        <span class="menu-badge inactive">☐</span>
       </a>
       
-      <div class="menu-category">BONUS</div>
+      <div class="menu-category" data-i18n="menu.bonus">BONUS</div>
       <a href="liste_contacts.html" class="menu-item">
         <i class="fas fa-address-book"></i>
-        <span>Liste de contacts gratuit 🆓</span>
+        <span data-i18n="menu.contact_list">Liste de contacts gratuit 🆓</span>
+        <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="booster_visibilite.html" class="menu-item">
         <i class="fas fa-rocket"></i>
-        <span>Booster ma visibilité</span>
+        <span data-i18n="menu.visibility_booster">Booster ma visibilité</span>
+        <span class="menu-badge inactive">☐</span>
       </a>
 
       <a href="canva_pro.html" class="menu-item">
         <i class="fas fa-palette"></i>
-        <span>Canva Pro</span>
+        <span data-i18n="menu.canva_pro">Canva Pro</span>
+        <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="connexion_gratuite.html" class="menu-item">
         <i class="fas fa-shield-alt"></i>
-        <span>Connexion gratuite</span>
+        <span data-i18n="menu.free_connection">Connexion gratuite</span>
+        <span class="menu-badge inactive">☐</span>
       </a>
     </aside>
 
     <main class="content">
       <h1 class="page-title">
         <i class="fab fa-youtube"></i>
-        <span>YouTube Earn</span>
+        <span data-i18n="menu.youtube_earn">YouTube Earn</span>
       </h1>
       
       <div class="tuesday-alert" id="tuesdayAlert" style="display: none;">
         <h3>
           <i class="fas fa-calendar-alt"></i>
-          <span>Disponible uniquement le mardi</span>
+          <span data-i18n="youtube.only_tuesday">Disponible uniquement le mardi</span>
         </h3>
-        <p>Les vidéos YouTube sont accessibles chaque mardi pour gagner 250 FCFA par vidéo</p>
-        <div class="countdown" id="tuesdayCountdown">Calcul en cours...</div>
+        <p data-i18n="youtube.tuesday_message">Les vidéos YouTube sont accessibles chaque mardi pour gagner 250 FCFA par vidéo</p>
+        <div class="countdown" id="tuesdayCountdown" data-i18n="youtube.calculating">Calcul en cours...</div>
       </div>
       
       <div class="earn-section">
-        <h2 class="section-title">Gagnez de l'argent en regardant des vidéos YouTube</h2>
+        <h2 class="section-title" data-i18n="youtube.earn_money">Gagnez de l'argent en regardant des vidéos YouTube</h2>
         
         <div class="video-container">
           <div class="video-placeholder">
             <video class="video-player" id="youtubeVideo" playsinline>
               <source src="https://assets.mixkit.co/videos/preview/mixkit-girl-in-neon-sign-1232-large.mp4" type="video/mp4">
-              Votre navigateur ne supporte pas la lecture de vidéos.
+              <span data-i18n="youtube.video_not_supported">Votre navigateur ne supporte pas la lecture de vidéos.</span>
             </video>
             <div class="play-button" id="playButton">
               <i class="fas fa-play"></i>
             </div>
             <div class="video-overlay" id="videoOverlay">
               <i class="fas fa-lock"></i>
-              <h4>Vidéo verrouillée</h4>
-              <p>Revenez mardi pour gagner 250 FCFA</p>
+              <h4 data-i18n="youtube.video_locked">Vidéo verrouillée</h4>
+              <p data-i18n="youtube.comeback_tuesday">Revenez mardi pour gagner 250 FCFA</p>
             </div>
           </div>
         </div>
@@ -1073,22 +1331,22 @@
             <div class="timer-progress" id="timerProgress"></div>
             <div class="timer-text" id="timerText">10s</div>
           </div>
-          <div class="timer-label">Temps restant</div>
+          <div class="timer-label" data-i18n="youtube.time_remaining">Temps restant</div>
         </div>
         
         <div class="reward-info">
           <div class="reward-amount">+250 FCFA</div>
-          <div class="reward-text">Gagnez 250 FCFA pour chaque vidéo regardée jusqu'au bout</div>
+          <div class="reward-text" data-i18n="youtube.reward_description">Gagnez 250 FCFA pour chaque vidéo regardée jusqu'au bout</div>
         </div>
         
         <div class="action-buttons">
           <button class="btn btn-primary" id="startButton" disabled>
             <i class="fas fa-play-circle"></i>
-            <span>Commencer à regarder</span>
+            <span data-i18n="youtube.start_watching">Commencer à regarder</span>
           </button>
           <button class="btn btn-success" id="claimButton" disabled>
             <i class="fas fa-coins"></i>
-            <span>Réclamer la récompense</span>
+            <span data-i18n="youtube.claim_reward">Réclamer la récompense</span>
           </button>
         </div>
       </div>
@@ -1096,12 +1354,12 @@
       <div class="daily-stats">
         <div class="stat-card">
           <div class="stat-value" id="videosWatched">0/2</div>
-          <div class="stat-label">Vidéos regardées aujourd'hui</div>
+          <div class="stat-label" data-i18n="youtube.videos_watched">Vidéos regardées aujourd'hui</div>
         </div>
         
         <div class="stat-card">
           <div class="stat-value" id="earnedToday">0 FCFA</div>
-          <div class="stat-label">Gagné aujourd'hui</div>
+          <div class="stat-label" data-i18n="youtube.earned_today">Gagné aujourd'hui</div>
         </div>
       </div>
     </main>
@@ -1110,15 +1368,19 @@
   <footer class="footer">
     <div class="footer-content">
       <div class="footer-links">
-        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Pro Tech Management</a>
-        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Site propulsé par Social Boost Horizon</a>
+        <a href="terms.html" class="footer-link" data-i18n="footer.terms">Conditions d'utilisation</a>
+        <a href="privacy.html" class="footer-link" data-i18n="footer.privacy">Politique de confidentialité</a>
+        <button class="support-btn" id="supportBtn" data-i18n="footer.support">Support</button>
+        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Propulsé par SBH</a>
+        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Boost Text Management</a>
       </div>
       <div class="footer-text">
-        © 2025 MULAFLOWR. Tous droits réservés.
+        © 2025 BLOWEARN AGENCIES. <span data-i18n="footer.rights">Tous droits réservés.</span>
       </div>
     </div>
   </footer>
-  <script>
+  
+<script>
 /******** CONFIG FIREBASE ********/
 const firebaseConfig = {
   apiKey: "AIzaSyCjGisjgbFc2ZE0BFgdhlUao8bCCeuKP1k",
@@ -1129,6 +1391,7 @@ const firebaseConfig = {
   appId: "1:1091928501310:web:4f4de306cde36f378ff56f",
   measurementId: "G-5SF6VDLZCB"
 };
+
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
@@ -1141,6 +1404,8 @@ const themeToggle = document.getElementById('themeToggle');
 const userProfile = document.getElementById('userProfile');
 const profileDropdown = document.getElementById('profileDropdown');
 const languageSelector = document.getElementById('languageSelector');
+const languageDropdown = document.getElementById('languageDropdown');
+const currentLanguage = document.getElementById('currentLanguage');
 const loader = document.getElementById('loader');
 const sidebarUsername = document.getElementById('sidebarUsername');
 const userAvatar = document.getElementById('userAvatar');
@@ -1153,6 +1418,7 @@ const startButton = document.getElementById('startButton');
 const claimButton = document.getElementById('claimButton');
 const videosWatched = document.getElementById('videosWatched');
 const earnedToday = document.getElementById('earnedToday');
+const supportBtn = document.getElementById('supportBtn');
 
 /******** Config des vidéos Cloudinary ********/
 const CLOUD_NAME = 'do83voiqy';
@@ -1191,9 +1457,175 @@ const claimedFlags = new Array(publicIdList.length).fill(false);
 
 let nextButton = null;
 let countdownInterval = null;
+let currentLang = 'fr'; // Langue par défaut
+
+/******** Système de traduction ********/
+const translations = {
+  fr: {
+    // Header
+    "header.language": "French",
+    "header.night_mode": "Mode nuit",
+    "header.day_mode": "Mode jour",
+    
+    // Dashboard
+    "dashboard.title": "Dashboard >> BLOWEARN AGENCIES",
+    
+    // Menu
+    "menu.main": "PRINCIPAL",
+    "menu.dashboard": "Tableau de bord",
+    "menu.deposit": "Dépôt 💵",
+    "menu.welcome_bonus": "Bonus de bienvenue",
+    "menu.accounts": "COMPTES",
+    "menu.withdrawal": "Retrait",
+    "menu.team": "Équipe",
+    "menu.special": "SPÉCIAL",
+    "menu.sbh": "SBH",
+    "menu.challenge": "Challenge and Reward",
+    "menu.products": "PRODUIT / TÂCHE",
+    "menu.whatsapp_earn": "Gagner via Whatsapp",
+    "menu.ad_earnings": "Gains publicitaires",
+    "menu.fortune_wheel": "Roue de la fortune 🏆",
+    "menu.tiktok_earn": "TikTok Earn",
+    "menu.youtube_earn": "YouTube Earn",
+    "menu.instagram_earn": "Instagram Earn",
+    "menu.trivia": "TRIVIA challenge",
+    "menu.bonus": "BONUS",
+    "menu.contact_list": "Liste de contacts gratuit 🆓",
+    "menu.visibility_booster": "Booster ma visibilité",
+    "menu.canva_pro": "Canva Pro",
+    "menu.free_connection": "Connexion gratuite",
+    
+    // YouTube Earn
+    "youtube.only_tuesday": "Disponible uniquement le mardi",
+    "youtube.tuesday_message": "Les vidéos YouTube sont accessibles chaque mardi pour gagner 250 FCFA par vidéo",
+    "youtube.calculating": "Calcul en cours...",
+    "youtube.earn_money": "Gagnez de l'argent en regardant des vidéos YouTube",
+    "youtube.video_not_supported": "Votre navigateur ne supporte pas la lecture de vidéos.",
+    "youtube.video_locked": "Vidéo verrouillée",
+    "youtube.comeback_tuesday": "Revenez mardi pour gagner 250 FCFA",
+    "youtube.time_remaining": "Temps restant",
+    "youtube.reward_description": "Gagnez 250 FCFA pour chaque vidéo regardée jusqu'au bout",
+    "youtube.start_watching": "Commencer à regarder",
+    "youtube.claim_reward": "Réclamer la récompense",
+    "youtube.videos_watched": "Vidéos regardées aujourd'hui",
+    "youtube.earned_today": "Gagné aujourd'hui",
+    
+    // Footer
+    "footer.terms": "Conditions d'utilisation",
+    "footer.privacy": "Politique de confidentialité",
+    "footer.support": "Support",
+    "footer.rights": "Tous droits réservés.",
+    
+    // Notifications
+    "notification.success": "Succès",
+    "notification.error": "Erreur",
+    "notification.info": "Information"
+  },
+  en: {
+    // Header
+    "header.language": "English",
+    "header.night_mode": "Night mode",
+    "header.day_mode": "Day mode",
+    
+    // Dashboard
+    "dashboard.title": "Dashboard >> BLOWEARN AGENCIES",
+    
+    // Menu
+    "menu.main": "MAIN",
+    "menu.dashboard": "Dashboard",
+    "menu.deposit": "Deposit 💵",
+    "menu.welcome_bonus": "Welcome Bonus",
+    "menu.accounts": "ACCOUNTS",
+    "menu.withdrawal": "Withdrawal",
+    "menu.team": "Team",
+    "menu.special": "SPECIAL",
+    "menu.sbh": "SBH",
+    "menu.challenge": "Challenge and Reward",
+    "menu.products": "PRODUCT / TASK",
+    "menu.whatsapp_earn": "Earn via Whatsapp",
+    "menu.ad_earnings": "Advertising earnings",
+    "menu.fortune_wheel": "Fortune Wheel 🏆",
+    "menu.tiktok_earn": "TikTok Earn",
+    "menu.youtube_earn": "YouTube Earn",
+    "menu.instagram_earn": "Instagram Earn",
+    "menu.trivia": "TRIVIA challenge",
+    "menu.bonus": "BONUS",
+    "menu.contact_list": "Free contact list 🆓",
+    "menu.visibility_booster": "Boost my visibility",
+    "menu.canva_pro": "Canva Pro",
+    "menu.free_connection": "Free connection",
+    
+    // YouTube Earn
+    "youtube.only_tuesday": "Available only on Tuesday",
+    "youtube.tuesday_message": "YouTube videos are accessible every Tuesday to earn 250 CFA per video",
+    "youtube.calculating": "Calculating...",
+    "youtube.earn_money": "Earn money by watching YouTube videos",
+    "youtube.video_not_supported": "Your browser does not support video playback.",
+    "youtube.video_locked": "Video locked",
+    "youtube.comeback_tuesday": "Come back Tuesday to earn 250 CFA",
+    "youtube.time_remaining": "Time remaining",
+    "youtube.reward_description": "Earn 250 CFA for each video watched to the end",
+    "youtube.start_watching": "Start watching",
+    "youtube.claim_reward": "Claim reward",
+    "youtube.videos_watched": "Videos watched today",
+    "youtube.earned_today": "Earned today",
+    
+    // Footer
+    "footer.terms": "Terms of Use",
+    "footer.privacy": "Privacy Policy",
+    "footer.support": "Support",
+    "footer.rights": "All rights reserved.",
+    
+    // Notifications
+    "notification.success": "Success",
+    "notification.error": "Error",
+    "notification.info": "Information"
+  }
+};
+
+/******** Fonctions de traduction ********/
+function setLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem('preferredLanguage', lang);
+  
+  // Mettre à jour le sélecteur de langue
+  currentLanguage.textContent = lang === 'fr' ? 'French' : 'English';
+  
+  // Mettre à jour les options de langue
+  document.querySelectorAll('.language-option').forEach(option => {
+    const icon = option.querySelector('i');
+    if (option.dataset.lang === lang) {
+      option.classList.add('active');
+      icon.style.opacity = '1';
+    } else {
+      option.classList.remove('active');
+      icon.style.opacity = '0';
+    }
+  });
+  
+  // Traduire tous les éléments avec data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(element => {
+    const key = element.getAttribute('data-i18n');
+    if (translations[lang] && translations[lang][key]) {
+      if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+        element.placeholder = translations[lang][key];
+      } else {
+        element.textContent = translations[lang][key];
+      }
+    }
+  });
+  
+  // Mettre à jour le texte du thème
+  const isDarkMode = document.body.classList.contains('dark-mode');
+  if (themeToggle) {
+    themeToggle.innerHTML = isDarkMode 
+      ? `<i class="fas fa-sun"></i><span>${translations[lang]['header.day_mode']}</span>` 
+      : `<i class="fas fa-moon"></i><span>${translations[lang]['header.night_mode']}</span>`;
+  }
+}
 
 /******** UI helpers ********/
-function showNotification(type, title, message, duration = 3500) {
+function showNotification(type, title, message, duration = 4000) {
   const container = document.getElementById('notificationContainer');
   if (!container) return;
   const notification = document.createElement('div');
@@ -1202,7 +1634,7 @@ function showNotification(type, title, message, duration = 3500) {
   notification.innerHTML = `
     <i class="fas ${icon}" style="font-size: 1.5rem;"></i>
     <div>
-      <strong style="display:block;margin-bottom:5px;">${title}</strong>
+      <strong style="display: block; margin-bottom: 5px;">${title}</strong>
       <span>${message}</span>
     </div>
   `;
@@ -1213,31 +1645,73 @@ function showNotification(type, title, message, duration = 3500) {
   }, duration);
 }
 
-/******** Menu & UI de base ********/
-hamburgerBtn.addEventListener('click', () => {
-  sidebar.classList.toggle('open');
-  overlay.classList.toggle('active');
-  hamburgerBtn.classList.toggle('open');
-});
-overlay.addEventListener('click', () => {
-  sidebar.classList.remove('open');
-  overlay.classList.remove('active');
-  hamburgerBtn.classList.remove('open');
-});
-userProfile.addEventListener('click', (event) => {
-  event.stopPropagation();
-  profileDropdown.classList.toggle('active');
-});
+/******** UI events ********/
+if (hamburgerBtn) {
+  hamburgerBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('active');
+      hamburgerBtn.classList.toggle('open');
+  });
+}
+if (overlay) {
+  overlay.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('active');
+      hamburgerBtn.classList.remove('open');
+  });
+}
+if (userProfile) {
+  userProfile.addEventListener('click', (event) => {
+      event.stopPropagation();
+      profileDropdown.classList.toggle('active');
+  });
+}
 document.addEventListener('click', (event) => {
-  if (!userProfile.contains(event.target)) profileDropdown.classList.remove('active');
+  if (!userProfile || !userProfile.contains(event.target)) {
+    if (profileDropdown) profileDropdown.classList.remove('active');
+  }
 });
-themeToggle.addEventListener('click', (event) => {
-  event.stopPropagation();
-  document.body.classList.toggle('dark-mode');
-  const isDarkMode = document.body.classList.contains('dark-mode');
-  themeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i><span>Mode jour</span>' : '<i class="fas fa-moon"></i><span>Mode nuit</span>';
-  if (currentUser) saveUserData('theme', isDarkMode ? 'dark' : 'light');
+
+// Gestion du sélecteur de langue
+if (languageSelector) {
+  languageSelector.addEventListener('click', (event) => {
+    event.stopPropagation();
+    languageDropdown.classList.toggle('active');
+  });
+}
+
+// Fermer le dropdown de langue quand on clique ailleurs
+document.addEventListener('click', () => {
+  if (languageDropdown) languageDropdown.classList.remove('active');
 });
+
+// Changer de langue
+document.querySelectorAll('.language-option').forEach(option => {
+  option.addEventListener('click', () => {
+    const lang = option.dataset.lang;
+    setLanguage(lang);
+    languageDropdown.classList.remove('active');
+  });
+});
+
+if (themeToggle) {
+  themeToggle.addEventListener('click', (event) => {
+      event.stopPropagation();
+      document.body.classList.toggle('dark-mode');
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      themeToggle.innerHTML = isDarkMode 
+          ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+          : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
+      if(currentUser) saveUserData('theme', isDarkMode ? 'dark' : 'light');
+  });
+}
+
+/******** Bouton Support ********/
+if (supportBtn) {
+  supportBtn.addEventListener('click', () => {
+    window.open('https://wa.me/681144638', '_blank');
+  });
+}
 
 /******** Helpers pour jour (Tuesday) - Timezone Africa/Douala ********/
 // 🟢 CHANGEMENT: Jour ciblé = Mardi (Tuesday)
@@ -1677,7 +2151,9 @@ function updateUserInfoUI(user, dbData = {}) {
 function applyTheme() {
   const isDarkMode = userData.theme === 'dark';
   document.body.classList.toggle('dark-mode', isDarkMode);
-  themeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i><span>Mode jour</span>' : '<i class="fas fa-moon"></i><span>Mode nuit</span>';
+  themeToggle.innerHTML = isDarkMode 
+      ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+      : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
 }
 
 /******** Auth & init principal ********/
@@ -1749,8 +2225,13 @@ auth.onAuthStateChanged(async (user) => {
   }
 });
 
-/******** Petit preload ********/
+/******** Initialisation ********/
 document.addEventListener('DOMContentLoaded', () => {
+  // Charger la langue sauvegardée ou utiliser le français par défaut
+  const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
+  setLanguage(savedLang);
+  
+  // Petit preload
   if (publicIdList.length) {
     const link = document.createElement('link');
     link.rel = 'preload';
@@ -1761,6 +2242,5 @@ document.addEventListener('DOMContentLoaded', () => {
   setTimeout(()=> { if (loader) loader.classList.add('hidden'); }, 700);
 });
 </script>
-
 </body>
 </html>
