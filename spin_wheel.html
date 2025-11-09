@@ -5,21 +5,83 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>MULAFLOWR - Spin Wheel</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet"> 
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   
   <style>
-    /* Styles de base */
+    /* -------------------------------------------------------------------------- */
+    /* --- VARIABLES CSS COHÉRENTES AVEC LE DASHBOARD --- */
+    /* -------------------------------------------------------------------------- */
+    :root {
+      --color-primary: #4A90E2;
+      --color-secondary: #FFC107;
+      --color-text-dark: #2C3E50;
+      --color-text-light: #ECF0F1;
+      --color-bg-light: #FFFFFF;
+      --color-bg-gradient-1: #6DD5FA;
+      --color-bg-gradient-2: #FF7582;
+      --success-color: #4CD964;
+      --warning-color: #FF9500;
+      --danger-color: #FF3B30;
+      --purple-color: #AF52DE;
+      --teal-color: #5AC8FA;
+      --orange-color: #FF9500;
+      --pink-color: #FF2D55;
+      --shadow: 0 15px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.8);
+      --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      --badge-active: #4CD964;
+      --badge-pending: #FF9500;
+      --badge-inactive: #FF3B30;
+      --wheel-color: #FF9500;
+      --wheel-light: #FFE0B2;
+    }
+
+    .dark-mode {
+      --color-primary: #5e81ac;
+      --color-secondary: #d08770;
+      --color-text-dark: #eceff4;
+      --color-text-light: #2e3440;
+      --color-bg-light: #3b4252;
+      --color-bg-gradient-1: #2e3440;
+      --color-bg-gradient-2: #4c566a;
+      --success-color: #a3be8c;
+      --warning-color: #ebcb8b;
+      --danger-color: #bf616a;
+      --purple-color: #AF52DE;
+      --teal-color: #5AC8FA;
+      --orange-color: #FF9500;
+      --pink-color: #FF2D55;
+      --shadow: 0 15px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
+      --badge-active: #2ecc71;
+      --badge-pending: #f1c40f;
+      --badge-inactive: #e74c3c;
+      --wheel-color: #FFB74D;
+      --wheel-light: #5D4037;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- STYLES GÉNÉRAUX COHÉRENTS --- */
+    /* -------------------------------------------------------------------------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+      transition: var(--transition);
+    }
+
     body {
-      background: linear-gradient(135deg, #d5e8d9 0%, #c5dfe6 100%);
-      color: var(--text-color);
+      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
+      color: var(--color-text-dark);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
       visibility: hidden; 
       opacity: 0;
       transition: opacity 0.5s ease, visibility 0.5s ease;
@@ -30,75 +92,38 @@
       opacity: 1;
     }
 
-    :root {
-      --primary-color: #3a8ee6;
-      --primary-light: #4da6ff;
-      --primary-dark: #2c75c9;
-      --secondary-color: #4c566a;
-      --accent-color: #5e81ac;
-      --background-light: #f5f7fb;
-      --background-dark: #e5e9f0;
-      --card-bg: #ffffff;
-      --text-color: #2e3440;
-      --text-light: #4c566a;
-      --success-color: #4CD964;
-      --warning-color: #FF9500;
-      --danger-color: #FF3B30;
-      --purple-color: #AF52DE;
-      --teal-color: #5AC8FA;
-      --orange-color: #FF9500;
-      --pink-color: #FF2D55;
-      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      --transition: all 0.3s ease;
-      --badge-active: #4CD964;
-      --badge-pending: #FF9500;
-      --badge-inactive: #FF3B30;
-      --wheel-color: #FF9500;
-      --wheel-light: #FFE0B2;
-    }
-
-    .dark-mode {
-      --primary-color: #5e81ac;
-      --primary-light: #81a1c1;
-      --primary-dark: #4c566a;
-      --secondary-color: #d8dee9;
-      --accent-color: #88c0d0;
-      --background-light: #2e3440;
-      --background-dark: #3b4252;
-      --card-bg: #434c5e;
-      --text-color: #eceff4;
-      --text-light: #d8dee9;
-      --success-color: #4CD964;
-      --warning-color: #FF9500;
-      --danger-color: #FF3B30;
-      --purple-color: #AF52DE;
-      --teal-color: #5AC8FA;
-      --orange-color: #FF9500;
-      --pink-color: #FF2D55;
-      --shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-      --badge-active: #2ecc71;
-      --badge-pending: #f1c40f;
-      --badge-inactive: #e74c3c;
-      --wheel-color: #FFB74D;
-      --wheel-light: #5D4037;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      transition: var(--transition);
+    /* Effet de bulles animées en arrière-plan */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 25%),
+        radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 90% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 25%);
+      animation: float 20s ease-in-out infinite;
+      z-index: -1;
     }
     
-    /* Loader */
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-15px) scale(1.02); }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- LOADER --- */
+    /* -------------------------------------------------------------------------- */
     .loader-container {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(135deg, #d5e8d9 0%, #c5dfe6 100%);
+      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -115,20 +140,21 @@
       width: 60px;
       height: 60px;
       border-radius: 50%;
-      background: conic-gradient(#0000 10%, var(--primary-color));
+      background: conic-gradient(#0000 10%, var(--color-primary));
       -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
       animation: spin 1s infinite linear;
     }
 
     @keyframes spin {
-      to {
-        transform: rotate(1turn);
-      }
+      to { transform: rotate(1turn); }
     }
 
-    /* Header styles */
+    /* -------------------------------------------------------------------------- */
+    /* --- HEADER --- */
+    /* -------------------------------------------------------------------------- */
     .header {
-      background-color: var(--card-bg);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
       box-shadow: var(--shadow);
       padding: 15px 30px;
       display: flex;
@@ -137,17 +163,29 @@
       position: sticky;
       top: 0;
       z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.7);
     }
 
     .logo {
       font-size: 1.8rem;
       font-weight: 800;
-      color: var(--primary-color);
+      color: var(--color-text-dark);
       display: flex;
       align-items: center;
-      font-family: 'Montserrat', sans-serif;
+      font-family: 'Poppins', sans-serif;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      background: linear-gradient(45deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: logoGlow 3s ease-in-out infinite alternate;
+    }
+    
+    @keyframes logoGlow {
+      from { filter: drop-shadow(0 0 5px rgba(74, 144, 226, 0.5)); }
+      to { filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.7)); }
     }
 
     .header-controls {
@@ -157,7 +195,7 @@
     }
 
     .language-selector {
-      background-color: var(--primary-light);
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
       color: white;
       border: none;
       border-radius: 20px;
@@ -167,12 +205,14 @@
       align-items: center;
       gap: 8px;
       font-weight: 500;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      position: relative;
     }
 
     .theme-toggle {
         background-color: transparent;
         border: none;
-        color: var(--secondary-color);
+        color: var(--color-text-dark);
         cursor: pointer;
         padding: 5px;
         border-radius: 50%;
@@ -203,14 +243,14 @@
       width: 45px;
       height: 45px;
       border-radius: 50%;
-      background-color: var(--primary-color);
+      background-color: var(--color-primary);
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       font-size: 1.2rem;
       font-weight: bold;
-      border: 2px solid var(--primary-light);
+      border: 2px solid var(--color-secondary);
       box-shadow: var(--shadow);
     }
 
@@ -218,9 +258,10 @@
         position: absolute;
         top: 100%;
         right: 0;
-        background-color: var(--card-bg);
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(15px);
         box-shadow: var(--shadow);
-        border-radius: 8px;
+        border-radius: 18px;
         padding: 10px;
         display: none;
         flex-direction: column;
@@ -229,6 +270,7 @@
         z-index: 200;
         transform-origin: top right;
         animation: scaleIn 0.2s ease-out forwards;
+        border: 1px solid rgba(255,255,255,0.7);
     }
 
     .profile-dropdown.active {
@@ -278,7 +320,7 @@
     .hamburger-btn .bar {
         width: 100%;
         height: 3px;
-        background-color: var(--secondary-color);
+        background-color: var(--color-text-dark);
         transition: transform 0.3s ease, opacity 0.3s ease;
     }
     
@@ -294,19 +336,22 @@
         transform: translateY(-11px) rotate(-45deg);
     }
 
-    /* Main layout */
+    /* -------------------------------------------------------------------------- */
+    /* --- STRUCTURE PRINCIPALE --- */
+    /* -------------------------------------------------------------------------- */
     .main-container {
       display: flex;
       flex: 1;
     }
 
-    /* Styles de la Sidebar (Menu) */
+    /* -------------------------------------------------------------------------- */
+    /* --- SIDEBAR (MENU) AMÉLIORÉ --- */
+    /* -------------------------------------------------------------------------- */
     .sidebar {
       width: 280px;
-      background: rgba(255, 255, 255, 0.75);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-right: 1px solid rgba(255, 255, 255, 0.2);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.95) 100%);
+      backdrop-filter: blur(15px);
+      border-right: 1px solid rgba(255,255,255,0.7);
       box-shadow: var(--shadow);
       height: calc(100vh - 80px);
       position: sticky;
@@ -327,24 +372,29 @@
     }
 
     .welcome-text {
-      color: var(--text-light);
+      color: var(--color-text-dark);
       font-size: 0.9rem;
       margin-bottom: 5px;
+      font-weight: 500;
+      font-family: 'Quicksand', sans-serif;
     }
 
     .username {
       font-weight: 600;
       font-size: 1.2rem;
-      color: var(--primary-color);
+      color: var(--color-primary);
+      font-family: 'Quicksand', sans-serif;
     }
 
     .menu-category {
       padding: 15px 25px 5px;
       font-size: 0.85rem;
-      color: var(--text-light);
+      color: var(--color-text-dark);
       text-transform: uppercase;
       letter-spacing: 1px;
       font-weight: 600;
+      font-family: 'Quicksand', sans-serif;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
 
     .menu-item {
@@ -352,13 +402,14 @@
       display: flex;
       align-items: center;
       gap: 15px;
-      color: var(--text-color);
+      color: var(--color-text-dark);
       text-decoration: none;
       font-weight: 500;
       border-left: 4px solid transparent;
       position: relative;
       overflow: hidden;
       animation: fadeIn 0.5s ease-out;
+      font-family: 'Quicksand', sans-serif;
     }
 
     @keyframes fadeIn {
@@ -382,8 +433,8 @@
 
     .menu-item:hover, .menu-item.active {
       background-color: rgba(0, 0, 0, 0.05);
-      border-left-color: var(--primary-color);
-      color: var(--primary-color);
+      border-left-color: var(--color-primary);
+      color: var(--color-primary);
     }
 
     .menu-item i {
@@ -423,7 +474,9 @@
       color: white;
     }
 
-    /* Contenu principal */
+    /* -------------------------------------------------------------------------- */
+    /* --- CONTENU PRINCIPAL --- */
+    /* -------------------------------------------------------------------------- */
     .content {
       flex: 1;
       padding: 30px;
@@ -432,27 +485,36 @@
     .page-title {
       font-size: 1.5rem;
       margin-bottom: 25px;
-      color: var(--secondary-color);
+      color: var(--color-text-dark);
       font-weight: 700;
       display: flex;
       align-items: center;
       gap: 10px;
+      font-family: 'Poppins', sans-serif;
     }
 
     .page-title i {
-      color: var(--wheel-color);
+      color: var(--color-primary);
     }
 
-    /* Bannière Spin Wheel */
+    /* -------------------------------------------------------------------------- */
+    /* --- BANNIÈRE SPIN WHEEL AMÉLIORÉE --- */
+    /* -------------------------------------------------------------------------- */
     .wheel-banner {
       background: linear-gradient(135deg, var(--wheel-color) 0%, #F57C00 100%);
-      border-radius: 12px;
+      border-radius: 18px;
       padding: 25px;
       box-shadow: var(--shadow);
       margin-bottom: 30px;
       color: white;
       position: relative;
       overflow: hidden;
+      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .wheel-banner::before {
@@ -489,23 +551,44 @@
       line-height: 1.6;
     }
 
-    /* Sections Spin Wheel */
+    /* -------------------------------------------------------------------------- */
+    /* --- SECTIONS SPIN WHEEL AMÉLIORÉES --- */
+    /* -------------------------------------------------------------------------- */
     .wheel-section {
-      background-color: var(--card-bg);
-      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 18px;
       padding: 25px;
       box-shadow: var(--shadow);
       margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.7);
+      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .wheel-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: 18px 18px 0 0;
     }
 
     .section-title {
       font-size: 1.3rem;
       margin-bottom: 20px;
-      color: var(--secondary-color);
+      color: var(--color-text-dark);
       font-weight: 600;
       display: flex;
       align-items: center;
       gap: 10px;
+      position: relative;
+      z-index: 1;
+      font-family: 'Poppins', sans-serif;
     }
 
     .section-title i {
@@ -515,10 +598,13 @@
     .section-subtitle {
       font-size: 1rem;
       margin-bottom: 20px;
-      color: var(--text-light);
+      color: var(--color-text-dark);
+      opacity: 0.8;
     }
 
-    /* Conteneur de la roue */
+    /* -------------------------------------------------------------------------- */
+    /* --- CONTENEUR DE LA ROUE AMÉLIORÉ --- */
+    /* -------------------------------------------------------------------------- */
     .wheel-container {
       display: flex;
       flex-direction: column;
@@ -530,68 +616,86 @@
 
     .wheel-wrapper {
       position: relative;
-      width: 300px;
-      height: 300px;
+      width: 400px;
+      height: 400px;
       margin-bottom: 30px;
     }
 
     #wheel {
       width: 100%;
       height: 100%;
-      transition: transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+      transition: transform 5s cubic-bezier(0.2, 0.8, 0.2, 1);
       transform-origin: center;
+      border-radius: 50%;
+      box-shadow: 
+        0 0 0 8px rgba(255, 255, 255, 0.8),
+        0 0 20px rgba(0, 0, 0, 0.2),
+        inset 0 0 20px rgba(0, 0, 0, 0.1);
     }
 
     .wheel-pointer {
       position: absolute;
-      top: -20px;
+      top: -25px;
       left: 50%;
       transform: translateX(-50%);
-      width: 20px;
-      height: 40px;
-      background-color: var(--danger-color);
+      width: 30px;
+      height: 50px;
+      background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%);
       clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
       z-index: 10;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      border-radius: 2px;
     }
 
-    /* Formulaire de mise */
+    /* -------------------------------------------------------------------------- */
+    /* --- FORMULAIRE DE MISE AMÉLIORÉ --- */
+    /* -------------------------------------------------------------------------- */
     .bet-form {
-      background: linear-gradient(135deg, #e6fffd 0%, #b2fff8 100%);
-      border-radius: 12px;
-      padding: 20px;
+      background: linear-gradient(135deg, rgba(230, 255, 253, 0.9) 0%, rgba(178, 255, 248, 0.9) 100%);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 25px;
       margin-bottom: 25px;
       text-align: center;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,0.7);
+      width: 100%;
+      max-width: 400px;
     }
 
     .form-group {
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
 
     .form-label {
       display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      color: var(--text-color);
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+      font-size: 1.1rem;
     }
 
     .form-input {
       width: 100%;
       max-width: 200px;
-      padding: 12px 15px;
+      padding: 15px 20px;
       border: 1px solid rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
-      background-color: var(--background-light);
-      color: var(--text-color);
-      font-size: 0.95rem;
+      border-radius: 12px;
+      background-color: rgba(255, 255, 255, 0.8);
+      color: var(--color-text-dark);
+      font-size: 1.1rem;
       text-align: center;
       margin: 0 auto;
       transition: all 0.3s ease;
+      font-weight: 600;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
     .form-input:focus {
       outline: none;
       border-color: var(--wheel-color);
-      box-shadow: 0 0 0 3px rgba(255, 149, 0, 0.1);
+      box-shadow: 0 0 0 3px rgba(255, 149, 0, 0.2), inset 0 2px 5px rgba(0, 0, 0, 0.1);
+      transform: scale(1.05);
     }
 
     .form-required {
@@ -600,24 +704,45 @@
 
     .form-hint {
       font-size: 0.85rem;
-      color: var(--text-light);
-      margin-top: 5px;
+      color: var(--color-text-dark);
+      margin-top: 8px;
+      opacity: 0.7;
     }
 
-    /* Boutons */
+    /* -------------------------------------------------------------------------- */
+    /* --- BOUTONS AMÉLIORÉS --- */
+    /* -------------------------------------------------------------------------- */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 12px 20px;
+      gap: 10px;
+      padding: 15px 25px;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
       font-weight: 600;
-      font-size: 0.95rem;
+      font-size: 1.1rem;
       cursor: pointer;
       transition: all 0.3s ease;
       text-decoration: none;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: all 0.5s ease;
+    }
+
+    .btn:hover::before {
+      left: 100%;
     }
 
     .btn-primary {
@@ -626,8 +751,8 @@
     }
 
     .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(255, 149, 0, 0.3);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(255, 149, 0, 0.4);
     }
 
     .btn-success {
@@ -636,8 +761,8 @@
     }
 
     .btn-success:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(76, 217, 100, 0.3);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(76, 217, 100, 0.4);
     }
 
     .btn-danger {
@@ -646,48 +771,172 @@
     }
 
     .btn-danger:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(255, 59, 48, 0.3);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(255, 59, 48, 0.4);
     }
 
     .btn-large {
-      padding: 15px 25px;
-      font-size: 1.1rem;
+      padding: 18px 30px;
+      font-size: 1.2rem;
     }
 
     .btn-full {
       width: 100%;
     }
 
-    /* Résultats */
+    .btn-spin {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- RÉSULTATS AMÉLIORÉS --- */
+    /* -------------------------------------------------------------------------- */
     .result-container {
-      background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-dark) 100%);
-      border-radius: 12px;
-      padding: 20px;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+      border-radius: 18px;
+      padding: 25px;
       color: white;
       text-align: center;
       margin-top: 25px;
       display: none;
+      box-shadow: var(--shadow);
+      animation: bounceIn 0.6s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @keyframes bounceIn {
+      0% { transform: scale(0.3); opacity: 0; }
+      50% { transform: scale(1.05); }
+      70% { transform: scale(0.9); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .result-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 18px 18px 0 0;
     }
 
     .result-title {
-      font-size: 1.2rem;
-      margin-bottom: 10px;
+      font-size: 1.3rem;
+      margin-bottom: 15px;
       font-weight: 600;
     }
 
     .result-value {
-      font-size: 2rem;
+      font-size: 2.5rem;
       font-weight: 700;
       margin-bottom: 15px;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     }
 
     .result-message {
-      font-size: 1rem;
+      font-size: 1.1rem;
       opacity: 0.9;
     }
 
-    /* Historique des tours */
+    /* Effets spéciaux pour les gains et pertes */
+    .result-win {
+      background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%);
+      animation: winEffect 0.5s ease-out;
+    }
+
+    @keyframes winEffect {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(76, 217, 100, 0.7); }
+      100% { transform: scale(1); }
+    }
+
+    .result-lose {
+      background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%);
+      animation: loseEffect 0.5s ease-out;
+    }
+
+    @keyframes loseEffect {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      50% { transform: translateX(10px); }
+      75% { transform: translateX(-10px); }
+      100% { transform: translateX(0); }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- INFORMATIONS SUR LES GAINS AMÉLIORÉES --- */
+    /* -------------------------------------------------------------------------- */
+    .prizes-info {
+      background: linear-gradient(135deg, rgba(224, 247, 250, 0.9) 0%, rgba(178, 235, 242, 0.9) 100%);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 25px;
+      margin-top: 25px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .prizes-title {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+      text-align: center;
+    }
+
+    .prizes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .prize-item {
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 10px;
+      padding: 15px 10px;
+      text-align: center;
+      font-weight: 600;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .prize-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .prize-bankrupt {
+      background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%);
+      color: white;
+      border-color: #c0392b;
+    }
+
+    .prize-pass {
+      background: linear-gradient(135deg, var(--warning-color) 0%, #FF6B00 100%);
+      color: white;
+      border-color: #FF6B00;
+    }
+
+    .prize-zero {
+      background: linear-gradient(135deg, #9E9E9E 0%, #616161 100%);
+      color: white;
+      border-color: #616161;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- HISTORIQUE DES TOURS AMÉLIORÉ --- */
+    /* -------------------------------------------------------------------------- */
     .history-section {
       margin-top: 30px;
     }
@@ -696,96 +945,60 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      overflow: hidden;
     }
 
     .history-table th, .history-table td {
-      padding: 12px 15px;
+      padding: 15px;
       text-align: left;
       border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     }
 
     .history-table th {
-      background-color: rgba(0, 0, 0, 0.05);
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
+      color: white;
       font-weight: 600;
-      color: var(--text-light);
     }
 
     .history-table tr {
       transition: background-color 0.2s ease;
+      background-color: rgba(255, 255, 255, 0.8);
     }
 
     .history-table tr:hover {
       background-color: rgba(0, 0, 0, 0.03);
+      transform: scale(1.01);
     }
 
     .gain-positive {
       color: var(--success-color);
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .gain-negative {
       color: var(--danger-color);
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .gain-neutral {
-      color: var(--text-light);
-      font-weight: 600;
+      color: var(--color-text-dark);
+      font-weight: 700;
+      opacity: 0.7;
     }
 
-    /* Informations sur les gains */
-    .prizes-info {
-      background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
-      border-radius: 12px;
-      padding: 20px;
-      margin-top: 25px;
-    }
-
-    .prizes-title {
-      font-size: 1.1rem;
-      margin-bottom: 15px;
-      font-weight: 600;
-      color: var(--text-color);
-      text-align: center;
-    }
-
-    .prizes-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-      gap: 10px;
-      margin-top: 15px;
-    }
-
-    .prize-item {
-      background-color: rgba(255, 255, 255, 0.7);
-      border-radius: 8px;
-      padding: 10px;
-      text-align: center;
-      font-weight: 500;
-    }
-
-    .prize-bankrupt {
-      background-color: var(--danger-color);
-      color: white;
-    }
-
-    .prize-pass {
-      background-color: var(--warning-color);
-      color: white;
-    }
-
-    .prize-zero {
-      background-color: var(--text-light);
-      color: white;
-    }
-
-    /* Footer */
+    /* -------------------------------------------------------------------------- */
+    /* --- FOOTER AMÉLIORÉ --- */
+    /* -------------------------------------------------------------------------- */
     .footer {
-      background-color: var(--card-bg);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
       padding: 20px 30px;
       text-align: center;
       box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
       margin-top: auto;
+      border-top: 1px solid rgba(255,255,255,0.7);
     }
 
     .footer-content {
@@ -802,7 +1015,7 @@
     }
 
     .footer-link {
-      color: var(--primary-color);
+      color: var(--color-primary);
       text-decoration: none;
       font-weight: 500;
       transition: color 0.2s ease;
@@ -810,15 +1023,17 @@
 
     .footer-link:hover {
       text-decoration: underline;
-      color: var(--primary-dark);
+      color: var(--color-secondary);
     }
 
     .footer-text {
-      color: var(--text-light);
+      color: var(--color-text-dark);
       font-size: 0.9rem;
     }
 
-    /* Overlay et modal */
+    /* -------------------------------------------------------------------------- */
+    /* --- OVERLAY ET MODAL --- */
+    /* -------------------------------------------------------------------------- */
     .overlay {
       display: none;
       position: fixed;
@@ -834,7 +1049,9 @@
       display: block;
     }
 
-    /* Animation for notifications */
+    /* -------------------------------------------------------------------------- */
+    /* --- NOTIFICATIONS AMÉLIORÉES --- */
+    /* -------------------------------------------------------------------------- */
     .notification-container {
       position: fixed;
       top: 20px;
@@ -848,8 +1065,8 @@
 
     .notification {
       padding: 15px 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
       display: flex;
       align-items: center;
       gap: 10px;
@@ -859,6 +1076,8 @@
       overflow: hidden;
       color: white;
       pointer-events: auto;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
     }
 
     .notification.success {
@@ -870,7 +1089,7 @@
     }
 
     .notification.info { 
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); 
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); 
     }
 
     @keyframes slideIn {
@@ -884,15 +1103,37 @@
       }
     }
 
-    /* Responsive adjustments */
+    /* -------------------------------------------------------------------------- */
+    /* --- ANIMATIONS SPÉCIALES POUR LA ROUE --- */
+    /* -------------------------------------------------------------------------- */
+    .wheel-spin-effect {
+      animation: wheelGlow 2s ease-in-out infinite;
+    }
+
+    @keyframes wheelGlow {
+      0%, 100% { filter: drop-shadow(0 0 5px rgba(255, 149, 0, 0.5)); }
+      50% { filter: drop-shadow(0 0 20px rgba(255, 149, 0, 0.8)); }
+    }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #f00;
+      opacity: 0;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- RESPONSIVE ADJUSTMENTS --- */
+    /* -------------------------------------------------------------------------- */
     @media (max-width: 992px) {
       .sidebar {
         width: 230px;
       }
       
       .wheel-wrapper {
-        width: 250px;
-        height: 250px;
+        width: 350px;
+        height: 350px;
       }
     }
 
@@ -942,13 +1183,17 @@
         }
         
         .wheel-wrapper {
-            width: 200px;
-            height: 200px;
+            width: 300px;
+            height: 300px;
         }
         
         .history-table {
           display: block;
           overflow-x: auto;
+        }
+        
+        .prizes-grid {
+          grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
         }
     }
 
@@ -960,6 +1205,15 @@
       
       .prizes-grid {
         grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      }
+      
+      .wheel-wrapper {
+        width: 250px;
+        height: 250px;
+      }
+      
+      .bet-form {
+        padding: 20px;
       }
     }
   </style>
@@ -985,7 +1239,7 @@
     <div class="header-controls">
       <button class="language-selector" id="languageSelector">
         <i class="fas fa-globe"></i>
-        <span>French</span>
+        <span id="currentLanguage">French</span>
         <i class="fas fa-chevron-down"></i>
       </button>
       
@@ -994,7 +1248,7 @@
           <div class="profile-dropdown" id="profileDropdown">
               <button class="theme-toggle" id="themeToggle">
                   <i class="fas fa-moon"></i>
-                  <span>Mode nuit</span>
+                  <span data-i18n="header.night_mode">Mode nuit</span>
               </button>
           </div>
       </div>
@@ -1006,159 +1260,159 @@
   <div class="main-container">
     <aside class="sidebar" id="sidebar">
       <div class="welcome-section">
-        <div class="welcome-text">Spin Wheel >> MULAFLOWR</div>
+        <div class="welcome-text" data-i18n="wheel.title">Spin Wheel >> MULAFLOWR</div>
         <div class="username" id="sidebarUsername">Utilisateur</div>
       </div>
       
-      <div class="menu-category">PRINCIPAL</div>
+      <div class="menu-category" data-i18n="menu.main">PRINCIPAL</div>
       <a href="dashboard.html" class="menu-item">
         <i class="fas fa-home"></i>
-        <span>Tableau de bord</span>
+        <span data-i18n="menu.dashboard">Tableau de bord</span>
       </a>
       
       <a href="depot.html" class="menu-item">
         <i class="fas fa-wallet"></i>
-        <span>Dépôt 💵</span>
+        <span data-i18n="menu.deposit">Dépôt 💵</span>
       </a>
       
       <a href="bonus_bienvenue.html" class="menu-item">
         <i class="fas fa-gift"></i>
-        <span>Bonus de bienvenue</span>
+        <span data-i18n="menu.welcome_bonus">Bonus de bienvenue</span>
       </a>
       
-      <div class="menu-category">COMPTES</div>
+      <div class="menu-category" data-i18n="menu.accounts">COMPTES</div>
       <a href="retrait.html" class="menu-item">
         <i class="fas fa-money-bill-wave"></i>
-        <span>Retrait</span>
+        <span data-i18n="menu.withdrawal">Retrait</span>
       </a>
       
       <a href="equipe.html" class="menu-item">
         <i class="fas fa-users"></i>
-        <span>Équipe</span>
+        <span data-i18n="menu.team">Équipe</span>
       </a>
 
-      <div class="menu-category">SPÉCIAL</div>
+      <div class="menu-category" data-i18n="menu.special">SPÉCIAL</div>
       <a href="love_earn.html" class="menu-item">
         <i class="fas fa-heart"></i>
-        <span>LoveEarn</span>
+        <span data-i18n="menu.love_earn">LoveEarn</span>
       </a>
       
       <a href="social_boost.html" class="menu-item">
         <i class="fas fa-rocket"></i>
-        <span>SBH</span>
+        <span data-i18n="menu.sbh">SBH</span>
       </a>
       
       <a href="challenge_reward.html" class="menu-item">
         <i class="fas fa-medal"></i>
-        <span>Challenge and Reward</span>
+        <span data-i18n="menu.challenge">Challenge and Reward</span>
       </a>
       
-      <div class="menu-category">PRODUIT / TACHE</div>
+      <div class="menu-category" data-i18n="menu.products">PRODUIT / TÂCHE</div>
       <a href="whatsapp_earn.html" class="menu-item">
         <i class="fab fa-whatsapp"></i>
-        <span>Gagner via Whatsapp</span>
+        <span data-i18n="menu.whatsapp_earn">Gagner via Whatsapp</span>
       </a>
       
       <a href="movies.html" class="menu-item">
         <i class="fas fa-film"></i>
-        <span>Movies</span>
+        <span data-i18n="menu.movies">Movies</span>
       </a>
       
       <a href="paris_fixes.html" class="menu-item">
         <i class="fas fa-chart-line"></i>
-        <span>Paris fixes</span>
+        <span data-i18n="menu.fixed_bets">Paris fixes</span>
       </a>
       
       <a href="gains_publicitaires.html" class="menu-item">
         <i class="fas fa-ad"></i>
-        <span>Gains publicitaires</span>
+        <span data-i18n="menu.ad_earnings">Gains publicitaires</span>
       </a>
       
       <a href="spin_wheel.html" class="menu-item active">
         <i class="fas fa-trophy"></i>
-        <span>Spin wheel 🏆</span>
+        <span data-i18n="menu.fortune_wheel">Spin wheel 🏆</span>
         <span class="menu-badge active">☑</span>
       </a>
       
       <a href="tiktok_earn.html" class="menu-item">
         <i class="fab fa-tiktok"></i>
-        <span>TikTok Earn</span>
+        <span data-i18n="menu.tiktok_earn">TikTok Earn</span>
       </a>
       
       <a href="youtube_earn.html" class="menu-item">
         <i class="fab fa-youtube"></i>
-        <span>YouTube Earn</span>
+        <span data-i18n="menu.youtube_earn">YouTube Earn</span>
       </a>
       
       <a href="instagram_earn.html" class="menu-item">
         <i class="fab fa-instagram"></i>
-        <span>Instagram Earn</span>
+        <span data-i18n="menu.instagram_earn">Instagram Earn</span>
       </a>
       
       <a href="trivia_challenge.html" class="menu-item">
         <i class="fas fa-brain"></i>
-        <span>TRIVIA challenge</span>
+        <span data-i18n="menu.trivia">TRIVIA challenge</span>
       </a>
       
-      <div class="menu-category">BONUS</div>
+      <div class="menu-category" data-i18n="menu.bonus">BONUS</div>
       <a href="liste_contacts.html" class="menu-item">
         <i class="fas fa-address-book"></i>
-        <span>Liste de contacts gratuit 🆓</span>
+        <span data-i18n="menu.contact_list">Liste de contacts gratuit 🆓</span>
       </a>
       
       <a href="booster_visibilite.html" class="menu-item">
         <i class="fas fa-rocket"></i>
-        <span>Booster ma visibilité</span>
+        <span data-i18n="menu.visibility_booster">Booster ma visibilité</span>
       </a>
 
       <a href="canva_pro.html" class="menu-item">
         <i class="fas fa-palette"></i>
-        <span>Canva Pro</span>
+        <span data-i18n="menu.canva_pro">Canva Pro</span>
       </a>
       
       <a href="connexion_gratuite.html" class="menu-item">
         <i class="fas fa-shield-alt"></i>
-        <span>Connexion gratuite</span>
+        <span data-i18n="menu.free_connection">Connexion gratuite</span>
       </a>
     </aside>
 
     <main class="content">
       <h1 class="page-title">
         <i class="fas fa-trophy"></i>
-        <span>Spin Wheel - Roue de la Fortune</span>
+        <span data-i18n="wheel.title">Spin Wheel - Roue de la Fortune</span>
       </h1>
       
       <div class="wheel-banner">
-        <h2 class="banner-title">Tentez votre chance à la Roue de la Fortune!</h2>
-        <div class="banner-text">
+        <h2 class="banner-title" data-i18n="wheel.banner_title">Tentez votre chance à la Roue de la Fortune!</h2>
+        <div class="banner-text" data-i18n="wheel.banner_text">
           Faites tourner la roue et gagnez jusqu'à 5000 FCFA! Misez un montant, faites tourner la roue et multipliez vos gains. Attention à la banqueroute qui vous fait tout perdre! Une fois gratuit par jour pour tous les utilisateurs, puis misez pour continuer à jouer.
         </div>
       </div>
       
       <div class="wheel-section">
-        <h2 class="section-title"><i class="fas fa-dice"></i> La Roue de la Fortune</h2>
-        <p class="section-subtitle">Faites tourner la roue et découvrez votre gain!</p>
+        <h2 class="section-title"><i class="fas fa-dice"></i> <span data-i18n="wheel.wheel_title">La Roue de la Fortune</span></h2>
+        <p class="section-subtitle" data-i18n="wheel.wheel_subtitle">Faites tourner la roue et découvrez votre gain!</p>
         
         <div class="wheel-container">
           <div class="wheel-wrapper">
             <div class="wheel-pointer"></div>
-            <canvas id="wheel" width="300" height="300"></canvas>
+            <canvas id="wheel" width="400" height="400"></canvas>
           </div>
           
           <div class="bet-form">
             <div class="form-group">
-              <label for="betAmount" class="form-label">Montant de votre mise <span class="form-required">*</span></label>
+              <label for="betAmount" class="form-label" data-i18n="wheel.bet_amount">Montant de votre mise <span class="form-required">*</span></label>
               <input type="number" id="betAmount" class="form-input" min="50" value="50" required>
-              <p class="form-hint">Mise minimale: 50 FCFA</p>
+              <p class="form-hint" data-i18n="wheel.min_bet">Mise minimale: 50 FCFA</p>
             </div>
             
-            <button id="spinBtn" class="btn btn-primary btn-large">
-              <i class="fas fa-redo"></i> Tourner la roue
+            <button id="spinBtn" class="btn btn-primary btn-large btn-spin">
+              <i class="fas fa-redo"></i> <span data-i18n="wheel.spin_button">Tourner la roue</span>
             </button>
           </div>
           
           <div class="result-container" id="resultContainer">
-            <div class="result-title">Résultat</div>
+            <div class="result-title" data-i18n="wheel.result">Résultat</div>
             <div class="result-value" id="resultValue">0 FCFA</div>
             <div class="result-message" id="resultMessage"></div>
           </div>
@@ -1166,11 +1420,11 @@
       </div>
       
       <div class="wheel-section">
-        <h2 class="section-title"><i class="fas fa-info-circle"></i> Comment jouer</h2>
-        <p class="section-subtitle">Règles du jeu et informations importantes</p>
+        <h2 class="section-title"><i class="fas fa-info-circle"></i> <span data-i18n="wheel.how_to_play">Comment jouer</span></h2>
+        <p class="section-subtitle" data-i18n="wheel.rules_subtitle">Règles du jeu et informations importantes</p>
         
         <div class="prizes-info">
-          <div class="prizes-title">Gains possibles sur la roue</div>
+          <div class="prizes-title" data-i18n="wheel.possible_prizes">Gains possibles sur la roue</div>
           <div class="prizes-grid">
             <div class="prize-item">100 FCFA</div>
             <div class="prize-item">200 FCFA</div>
@@ -1182,50 +1436,50 @@
             <div class="prize-item">2000 FCFA</div>
             <div class="prize-item">3000 FCFA</div>
             <div class="prize-item">5000 FCFA</div>
-            <div class="prize-item prize-bankrupt">Banqueroute</div>
-            <div class="prize-item prize-pass">Passe</div>
+            <div class="prize-item prize-bankrupt" data-i18n="wheel.bankrupt">Banqueroute</div>
+            <div class="prize-item prize-pass" data-i18n="wheel.pass">Passe</div>
             <div class="prize-item prize-zero">0</div>
           </div>
         </div>
         
         <div style="margin-top: 25px;">
-          <h4>Règles du jeu:</h4>
-          <ul style="margin-left: 20px; margin-bottom: 20px;">
-            <li>Chaque utilisateur a droit à <strong>1 tour gratuit</strong> par jour</li>
-            <li>Après le tour gratuit, vous devez miser pour continuer à jouer</li>
-            <li>La mise minimale est de <strong>50 FCFA</strong></li>
-            <li>Vos gains sont calculés en multipliant votre mise par la valeur sur laquelle la roue s'arrête</li>
-            <li>Si la roue s'arrête sur <strong>Banqueroute</strong>, vous perdez votre mise</li>
-            <li>Si la roue s'arrête sur <strong>Passe</strong>, vous conservez votre mise mais ne gagnez rien</li>
-            <li>Si la roue s'arrête sur <strong>0</strong>, vous ne gagnez rien mais ne perdez pas votre mise</li>
+          <h4 data-i18n="wheel.rules_title">Règles du jeu:</h4>
+          <ul style="margin-left: 20px; margin-bottom: 20px; color: var(--color-text-dark);">
+            <li data-i18n="wheel.rule1">Chaque utilisateur a droit à <strong>1 tour gratuit</strong> par jour</li>
+            <li data-i18n="wheel.rule2">Après le tour gratuit, vous devez miser pour continuer à jouer</li>
+            <li data-i18n="wheel.rule3">La mise minimale est de <strong>50 FCFA</strong></li>
+            <li data-i18n="wheel.rule4">Vos gains sont calculés en multipliant votre mise par la valeur sur laquelle la roue s'arrête</li>
+            <li data-i18n="wheel.rule5">Si la roue s'arrête sur <strong>Banqueroute</strong>, vous perdez votre mise</li>
+            <li data-i18n="wheel.rule6">Si la roue s'arrête sur <strong>Passe</strong>, vous conservez votre mise mais ne gagnez rien</li>
+            <li data-i18n="wheel.rule7">Si la roue s'arrête sur <strong>0</strong>, vous ne gagnez rien mais ne perdez pas votre mise</li>
           </ul>
           
-          <h4>Exemples de gains:</h4>
-          <ul style="margin-left: 20px;">
-            <li>Mise de 100 FCFA + gain de 500 FCFA = <strong>500 FCFA</strong> (500 × 100)</li>
-            <li>Mise de 200 FCFA + gain de 1000 FCFA = <strong>2000 FCFA</strong> (1000 × 200)</li>
-            <li>Mise de 50 FCFA + Banqueroute = <strong>Perte de 50 FCFA</strong></li>
+          <h4 data-i18n="wheel.examples_title">Exemples de gains:</h4>
+          <ul style="margin-left: 20px; color: var(--color-text-dark);">
+            <li data-i18n="wheel.example1">Mise de 100 FCFA + gain de 500 FCFA = <strong>500 FCFA</strong> (500 × 100)</li>
+            <li data-i18n="wheel.example2">Mise de 200 FCFA + gain de 1000 FCFA = <strong>2000 FCFA</strong> (1000 × 200)</li>
+            <li data-i18n="wheel.example3">Mise de 50 FCFA + Banqueroute = <strong>Perte de 50 FCFA</strong></li>
           </ul>
         </div>
       </div>
       
       <div class="wheel-section">
-        <h2 class="section-title"><i class="fas fa-history"></i> Historique de vos Tours</h2>
-        <p class="section-subtitle">Suivez l'historique de vos gains et pertes</p>
+        <h2 class="section-title"><i class="fas fa-history"></i> <span data-i18n="wheel.history_title">Historique de vos Tours</span></h2>
+        <p class="section-subtitle" data-i18n="wheel.history_subtitle">Suivez l'historique de vos gains et pertes</p>
         
         <div class="history-section">
           <table class="history-table">
             <thead>
               <tr>
-                <th>Date</th>
-                <th>Mise</th>
-                <th>Résultat</th>
-                <th>Gain/Perte</th>
+                <th data-i18n="wheel.history_date">Date</th>
+                <th data-i18n="wheel.history_bet">Mise</th>
+                <th data-i18n="wheel.history_result">Résultat</th>
+                <th data-i18n="wheel.history_gain">Gain/Perte</th>
               </tr>
             </thead>
             <tbody id="spinHistoryBody">
               <tr>
-                <td colspan="4" style="text-align: center; padding: 20px;">
+                <td colspan="4" style="text-align: center; padding: 20px;" data-i18n="wheel.no_history">
                   Aucun historique pour le moment
                 </td>
               </tr>
@@ -1243,7 +1497,7 @@
         <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Site propulsé par Social Boost Horizon</a>
       </div>
       <div class="footer-text">
-        © 2025 MULAFLOWR. Tous droits réservés.
+        © 2025 MULAFLOWR. <span data-i18n="footer.rights">Tous droits réservés.</span>
       </div>
     </div>
   </footer>
@@ -1292,6 +1546,193 @@
     let ctx = null;
     let lastRotation = 0;
     let dailyFreeSpinReset = null;
+
+    /******** Système de traduction ********/
+    const translations = {
+      fr: {
+        // Header
+        "header.night_mode": "Mode nuit",
+        "header.day_mode": "Mode jour",
+        
+        // Wheel
+        "wheel.title": "Spin Wheel - Roue de la Fortune",
+        "wheel.banner_title": "Tentez votre chance à la Roue de la Fortune!",
+        "wheel.banner_text": "Faites tourner la roue et gagnez jusqu'à 5000 FCFA! Misez un montant, faites tourner la roue et multipliez vos gains. Attention à la banqueroute qui vous fait tout perdre! Une fois gratuit par jour pour tous les utilisateurs, puis misez pour continuer à jouer.",
+        "wheel.wheel_title": "La Roue de la Fortune",
+        "wheel.wheel_subtitle": "Faites tourner la roue et découvrez votre gain!",
+        "wheel.bet_amount": "Montant de votre mise",
+        "wheel.min_bet": "Mise minimale: 50 FCFA",
+        "wheel.spin_button": "Tourner la roue",
+        "wheel.result": "Résultat",
+        "wheel.how_to_play": "Comment jouer",
+        "wheel.rules_subtitle": "Règles du jeu et informations importantes",
+        "wheel.possible_prizes": "Gains possibles sur la roue",
+        "wheel.bankrupt": "Banqueroute",
+        "wheel.pass": "Passe",
+        "wheel.rules_title": "Règles du jeu:",
+        "wheel.rule1": "Chaque utilisateur a droit à <strong>1 tour gratuit</strong> par jour",
+        "wheel.rule2": "Après le tour gratuit, vous devez miser pour continuer à jouer",
+        "wheel.rule3": "La mise minimale est de <strong>50 FCFA</strong>",
+        "wheel.rule4": "Vos gains sont calculés en multipliant votre mise par la valeur sur laquelle la roue s'arrête",
+        "wheel.rule5": "Si la roue s'arrête sur <strong>Banqueroute</strong>, vous perdez votre mise",
+        "wheel.rule6": "Si la roue s'arrête sur <strong>Passe</strong>, vous conservez votre mise mais ne gagnez rien",
+        "wheel.rule7": "Si la roue s'arrête sur <strong>0</strong>, vous ne gagnez rien mais ne perdez pas votre mise",
+        "wheel.examples_title": "Exemples de gains:",
+        "wheel.example1": "Mise de 100 FCFA + gain de 500 FCFA = <strong>500 FCFA</strong> (500 × 100)",
+        "wheel.example2": "Mise de 200 FCFA + gain de 1000 FCFA = <strong>2000 FCFA</strong> (1000 × 200)",
+        "wheel.example3": "Mise de 50 FCFA + Banqueroute = <strong>Perte de 50 FCFA</strong>",
+        "wheel.history_title": "Historique de vos Tours",
+        "wheel.history_subtitle": "Suivez l'historique de vos gains et pertes",
+        "wheel.history_date": "Date",
+        "wheel.history_bet": "Mise",
+        "wheel.history_result": "Résultat",
+        "wheel.history_gain": "Gain/Perte",
+        "wheel.no_history": "Aucun historique pour le moment",
+        
+        // Menu
+        "menu.main": "PRINCIPAL",
+        "menu.dashboard": "Tableau de bord",
+        "menu.deposit": "Dépôt 💵",
+        "menu.welcome_bonus": "Bonus de bienvenue",
+        "menu.accounts": "COMPTES",
+        "menu.withdrawal": "Retrait",
+        "menu.team": "Équipe",
+        "menu.special": "SPÉCIAL",
+        "menu.love_earn": "LoveEarn",
+        "menu.sbh": "SBH",
+        "menu.challenge": "Challenge and Reward",
+        "menu.products": "PRODUIT / TÂCHE",
+        "menu.whatsapp_earn": "Gagner via Whatsapp",
+        "menu.movies": "Movies",
+        "menu.fixed_bets": "Paris fixes",
+        "menu.ad_earnings": "Gains publicitaires",
+        "menu.fortune_wheel": "Spin wheel 🏆",
+        "menu.tiktok_earn": "TikTok Earn",
+        "menu.youtube_earn": "YouTube Earn",
+        "menu.instagram_earn": "Instagram Earn",
+        "menu.trivia": "TRIVIA challenge",
+        "menu.bonus": "BONUS",
+        "menu.contact_list": "Liste de contacts gratuit 🆓",
+        "menu.visibility_booster": "Booster ma visibilité",
+        "menu.canva_pro": "Canva Pro",
+        "menu.free_connection": "Connexion gratuite",
+        
+        // Footer
+        "footer.rights": "Tous droits réservés.",
+        
+        // Notifications
+        "notification.success": "Succès",
+        "notification.error": "Erreur",
+        "notification.info": "Information"
+      },
+      en: {
+        // Header
+        "header.night_mode": "Night mode",
+        "header.day_mode": "Day mode",
+        
+        // Wheel
+        "wheel.title": "Spin Wheel - Fortune Wheel",
+        "wheel.banner_title": "Try your luck at the Fortune Wheel!",
+        "wheel.banner_text": "Spin the wheel and win up to 5000 FCFA! Place a bet, spin the wheel and multiply your winnings. Watch out for bankruptcy which makes you lose everything! Once free per day for all users, then bet to continue playing.",
+        "wheel.wheel_title": "The Fortune Wheel",
+        "wheel.wheel_subtitle": "Spin the wheel and discover your prize!",
+        "wheel.bet_amount": "Your bet amount",
+        "wheel.min_bet": "Minimum bet: 50 FCFA",
+        "wheel.spin_button": "Spin the wheel",
+        "wheel.result": "Result",
+        "wheel.how_to_play": "How to play",
+        "wheel.rules_subtitle": "Game rules and important information",
+        "wheel.possible_prizes": "Possible prizes on the wheel",
+        "wheel.bankrupt": "Bankrupt",
+        "wheel.pass": "Pass",
+        "wheel.rules_title": "Game rules:",
+        "wheel.rule1": "Each user is entitled to <strong>1 free spin</strong> per day",
+        "wheel.rule2": "After the free spin, you must bet to continue playing",
+        "wheel.rule3": "The minimum bet is <strong>50 FCFA</strong>",
+        "wheel.rule4": "Your winnings are calculated by multiplying your bet by the value the wheel stops on",
+        "wheel.rule5": "If the wheel stops on <strong>Bankrupt</strong>, you lose your bet",
+        "wheel.rule6": "If the wheel stops on <strong>Pass</strong>, you keep your bet but win nothing",
+        "wheel.rule7": "If the wheel stops on <strong>0</strong>, you win nothing but don't lose your bet",
+        "wheel.examples_title": "Winning examples:",
+        "wheel.example1": "Bet of 100 FCFA + win of 500 FCFA = <strong>500 FCFA</strong> (500 × 100)",
+        "wheel.example2": "Bet of 200 FCFA + win of 1000 FCFA = <strong>2000 FCFA</strong> (1000 × 200)",
+        "wheel.example3": "Bet of 50 FCFA + Bankrupt = <strong>Loss of 50 FCFA</strong>",
+        "wheel.history_title": "Your Spin History",
+        "wheel.history_subtitle": "Track your wins and losses history",
+        "wheel.history_date": "Date",
+        "wheel.history_bet": "Bet",
+        "wheel.history_result": "Result",
+        "wheel.history_gain": "Gain/Loss",
+        "wheel.no_history": "No history yet",
+        
+        // Menu
+        "menu.main": "MAIN",
+        "menu.dashboard": "Dashboard",
+        "menu.deposit": "Deposit 💵",
+        "menu.welcome_bonus": "Welcome Bonus",
+        "menu.accounts": "ACCOUNTS",
+        "menu.withdrawal": "Withdrawal",
+        "menu.team": "Team",
+        "menu.special": "SPECIAL",
+        "menu.love_earn": "LoveEarn",
+        "menu.sbh": "SBH",
+        "menu.challenge": "Challenge and Reward",
+        "menu.products": "PRODUCT / TASK",
+        "menu.whatsapp_earn": "Earn via Whatsapp",
+        "menu.movies": "Movies",
+        "menu.fixed_bets": "Fixed bets",
+        "menu.ad_earnings": "Advertising earnings",
+        "menu.fortune_wheel": "Spin wheel 🏆",
+        "menu.tiktok_earn": "TikTok Earn",
+        "menu.youtube_earn": "YouTube Earn",
+        "menu.instagram_earn": "Instagram Earn",
+        "menu.trivia": "TRIVIA challenge",
+        "menu.bonus": "BONUS",
+        "menu.contact_list": "Free contact list 🆓",
+        "menu.visibility_booster": "Boost my visibility",
+        "menu.canva_pro": "Canva Pro",
+        "menu.free_connection": "Free connection",
+        
+        // Footer
+        "footer.rights": "All rights reserved.",
+        
+        // Notifications
+        "notification.success": "Success",
+        "notification.error": "Error",
+        "notification.info": "Information"
+      }
+    };
+
+    let currentLang = 'fr';
+
+    /******** Fonctions de traduction ********/
+    function setLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('preferredLanguage', lang);
+      
+      // Mettre à jour le sélecteur de langue
+      currentLanguage.textContent = lang === 'fr' ? 'French' : 'English';
+      
+      // Traduire tous les éléments avec data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        if (translations[lang] && translations[lang][key]) {
+          if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+            element.placeholder = translations[lang][key];
+          } else {
+            element.innerHTML = translations[lang][key];
+          }
+        }
+      });
+      
+      // Mettre à jour le texte du thème
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      if (themeToggle) {
+        themeToggle.innerHTML = isDarkMode 
+          ? `<i class="fas fa-sun"></i><span>${translations[lang]['header.day_mode']}</span>` 
+          : `<i class="fas fa-moon"></i><span>${translations[lang]['header.night_mode']}</span>`;
+      }
+    }
 
     /******** UI helpers ********/
     function showNotification(type, title, message, duration = 4000) {
@@ -1342,8 +1783,8 @@
         document.body.classList.toggle('dark-mode');
         const isDarkMode = document.body.classList.contains('dark-mode');
         themeToggle.innerHTML = isDarkMode 
-            ? '<i class="fas fa-sun"></i><span>Mode jour</span>' 
-            : '<i class="fas fa-moon"></i><span>Mode nuit</span>';
+            ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+            : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
         if(currentUser) saveUserData('theme', isDarkMode ? 'dark' : 'light');
         
         // Redessiner la roue avec les nouvelles couleurs
@@ -1364,8 +1805,8 @@
         { text: "2000", value: 2000, color: "#18FFFF" },
         { text: "3000", value: 3000, color: "#64FFDA" },
         { text: "5000", value: 5000, color: "#69F0AE" },
-        { text: "Banqueroute", value: -1, color: "#FF1744" }, // -1 signifie perdre la mise
-        { text: "Passe", value: 0, color: "#FF9100" }, // 0 signifie garder la mise mais ne rien gagner
+        { text: "Banqueroute", value: -1, color: "#FF1744" },
+        { text: "Passe", value: 0, color: "#FF9100" },
         { text: "100", value: 100, color: "#FF5252" },
         { text: "200", value: 200, color: "#FF4081" },
         { text: "350", value: 350, color: "#E040FB" },
@@ -1377,7 +1818,7 @@
         { text: "3000", value: 3000, color: "#64FFDA" },
         { text: "5000", value: 5000, color: "#69F0AE" },
         { text: "Banqueroute", value: -1, color: "#FF1744" },
-        { text: "0", value: 0, color: "#9E9E9E" }, // 0 signifie ne rien gagner mais ne pas perdre la mise
+        { text: "0", value: 0, color: "#9E9E9E" },
         { text: "100", value: 100, color: "#FF5252" },
         { text: "200", value: 200, color: "#FF4081" },
         { text: "350", value: 350, color: "#E040FB" },
@@ -1423,19 +1864,25 @@
         ctx.textAlign = 'right';
         ctx.textBaseline = 'middle';
         ctx.fillStyle = '#000';
-        ctx.font = '12px Arial';
-        ctx.fillText(wheelSections[i].text, radius - 10, 0);
+        ctx.font = 'bold 14px Arial';
+        ctx.fillText(wheelSections[i].text, radius - 15, 0);
         ctx.restore();
       }
       
       // Dessiner le centre de la roue
       ctx.beginPath();
-      ctx.arc(centerX, centerY, 10, 0, 2 * Math.PI);
+      ctx.arc(centerX, centerY, 15, 0, 2 * Math.PI);
       ctx.fillStyle = '#FFF';
       ctx.fill();
       ctx.strokeStyle = '#000';
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 3;
       ctx.stroke();
+      
+      // Dessiner un cercle décoratif au centre
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 8, 0, 2 * Math.PI);
+      ctx.fillStyle = var('--wheel-color');
+      ctx.fill();
     }
 
     function spinWheel() {
@@ -1445,18 +1892,22 @@
       
       // Validation de la mise
       if (isNaN(bet) || bet < 50) {
-        showNotification('error', 'Erreur', 'La mise minimale est de 50 FCFA');
+        showNotification('error', translations[currentLang]['notification.error'], 'La mise minimale est de 50 FCFA');
         return;
       }
       
       // Vérifier si l'utilisateur a assez d'argent
       if (!freeSpinUsed && userData.solde < bet) {
-        showNotification('error', 'Erreur', 'Solde insuffisant pour cette mise');
+        showNotification('error', translations[currentLang]['notification.error'], 'Solde insuffisant pour cette mise');
         return;
       }
       
       isSpinning = true;
       spinBtn.disabled = true;
+      spinBtn.classList.remove('btn-spin');
+      
+      // Ajouter un effet visuel à la roue
+      wheel.classList.add('wheel-spin-effect');
       
       // Générer un angle d'arrêt aléatoire (entre 5 et 10 tours + section aléatoire)
       const sectionIndex = Math.floor(Math.random() * wheelSections.length);
@@ -1465,14 +1916,14 @@
       
       // Animation de la roue
       const startTime = Date.now();
-      const duration = 4000; // 4 secondes
+      const duration = 5000; // 5 secondes
       
       function animate() {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / duration, 1);
         
-        // Fonction d'accélération/décélération
-        const easing = progress < 0.5 
+        // Fonction d'accélération/décélération plus réaliste
+        const easing = progress < 0.7 
           ? 2 * progress * progress 
           : -1 + (4 - 2 * progress) * progress;
         
@@ -1485,7 +1936,11 @@
           // Animation terminée
           isSpinning = false;
           spinBtn.disabled = false;
+          spinBtn.classList.add('btn-spin');
           lastRotation = rotation % (2 * Math.PI);
+          
+          // Retirer l'effet visuel
+          wheel.classList.remove('wheel-spin-effect');
           
           // Traiter le résultat
           processResult(sectionIndex, bet);
@@ -1504,18 +1959,22 @@
         // Banqueroute - perte de la mise
         gain = -bet;
         message = `Banqueroute! Vous avez perdu votre mise de ${bet} FCFA.`;
+        resultContainer.className = 'result-container result-lose';
       } else if (section.value === 0 && section.text === "Passe") {
         // Passe - garde la mise mais ne gagne rien
         gain = 0;
         message = `Passe! Vous conservez votre mise de ${bet} FCFA.`;
+        resultContainer.className = 'result-container';
       } else if (section.value === 0) {
         // 0 - ne gagne rien et ne perd rien
         gain = 0;
         message = `La roue s'est arrêtée sur 0. Vous ne gagnez rien mais conservez votre mise.`;
+        resultContainer.className = 'result-container';
       } else {
         // Gain normal
         gain = section.value * bet;
         message = `Félicitations! Vous avez gagné ${gain} FCFA (${section.value} × ${bet} FCFA).`;
+        resultContainer.className = 'result-container result-win';
       }
       
       // Afficher le résultat
@@ -1537,11 +1996,11 @@
       
       // Afficher une notification
       if (gain > 0) {
-        showNotification('success', 'Félicitations!', `Vous avez gagné ${gain} FCFA!`);
+        showNotification('success', translations[currentLang]['notification.success'], `Vous avez gagné ${gain} FCFA!`);
       } else if (gain < 0) {
-        showNotification('error', 'Banqueroute!', `Vous avez perdu ${Math.abs(gain)} FCFA.`);
+        showNotification('error', translations[currentLang]['notification.error'], `Vous avez perdu ${Math.abs(gain)} FCFA.`);
       } else {
-        showNotification('info', 'Résultat neutre', message);
+        showNotification('info', translations[currentLang]['notification.info'], message);
       }
     }
 
@@ -1604,7 +2063,7 @@
         spinHistoryBody.innerHTML = `
           <tr>
             <td colspan="4" style="text-align: center; padding: 20px;">
-              Aucun historique pour le moment
+              ${translations[currentLang]['wheel.no_history']}
             </td>
           </tr>
         `;
@@ -1657,7 +2116,7 @@
         console.log('Données utilisateur enregistrées avec succès.');
       } catch (error) {
         console.error("Erreur lors de la sauvegarde des données :", error);
-        showNotification('error', 'Erreur de sauvegarde', 'Impossible de sauvegarder vos données.');
+        showNotification('error', translations[currentLang]['notification.error'], 'Impossible de sauvegarder vos données.');
       }
     }
 
@@ -1708,8 +2167,8 @@
         const isDarkMode = userData.theme === 'dark';
         document.body.classList.toggle('dark-mode', isDarkMode);
         themeToggle.innerHTML = isDarkMode 
-            ? '<i class="fas fa-sun"></i><span>Mode jour</span>' 
-            : '<i class="fas fa-moon"></i><span>Mode nuit</span>';
+            ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+            : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
     }
 
     auth.onAuthStateChanged(async (user) => {
@@ -1719,6 +2178,10 @@
                 await loadUserData();
                 updateUserInfoUI(user, userData);
                 applyTheme();
+                
+                // Charger la langue sauvegardée
+                const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
+                setLanguage(savedLang);
                 
                 initWheel();
                 updateHistoryUI();
@@ -1731,13 +2194,20 @@
                 
             } catch (error) {
                 console.error("Erreur critique lors de l'initialisation :", error);
-                showNotification('error', 'Erreur Critique', "Impossible de charger vos données. Veuillez vous reconnecter.");
+                showNotification('error', translations[currentLang]['notification.error'], "Impossible de charger vos données. Veuillez vous reconnecter.");
                 auth.signOut();
                 setTimeout(() => { window.location.href = 'login.html'; }, 3000);
             }
         } else {
             window.location.href = 'login.html';
         }
+    });
+
+    /******** Gestion du sélecteur de langue ********/
+    languageSelector.addEventListener('click', () => {
+      // Basculer entre français et anglais
+      const newLang = currentLang === 'fr' ? 'en' : 'fr';
+      setLanguage(newLang);
     });
 
     /******** Initialisation au chargement de la page ********/
