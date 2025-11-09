@@ -709,6 +709,23 @@
       opacity: 0.7;
     }
 
+    .balance-info {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 240, 240, 0.9) 100%);
+      border-radius: 12px;
+      padding: 15px;
+      margin-top: 15px;
+      text-align: center;
+      font-weight: 600;
+      color: var(--color-text-dark);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .balance-amount {
+      font-size: 1.3rem;
+      color: var(--color-primary);
+      margin-top: 5px;
+    }
+
     /* -------------------------------------------------------------------------- */
     /* --- BOUTONS AMÉLIORÉS --- */
     /* -------------------------------------------------------------------------- */
@@ -786,6 +803,13 @@
 
     .btn-spin {
       animation: pulse 2s infinite;
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
     }
 
     @keyframes pulse {
@@ -916,19 +940,19 @@
       box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
     }
 
-    .prize-bankrupt {
+    .prize-positive {
+      background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%);
+      color: white;
+      border-color: #2AB32A;
+    }
+
+    .prize-negative {
       background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%);
       color: white;
       border-color: #c0392b;
     }
 
-    .prize-pass {
-      background: linear-gradient(135deg, var(--warning-color) 0%, #FF6B00 100%);
-      color: white;
-      border-color: #FF6B00;
-    }
-
-    .prize-zero {
+    .prize-neutral {
       background: linear-gradient(135deg, #9E9E9E 0%, #616161 100%);
       color: white;
       border-color: #616161;
@@ -1385,7 +1409,7 @@
       <div class="wheel-banner">
         <h2 class="banner-title" data-i18n="wheel.banner_title">Tentez votre chance à la Roue de la Fortune!</h2>
         <div class="banner-text" data-i18n="wheel.banner_text">
-          Faites tourner la roue et gagnez jusqu'à 5000 FCFA! Misez un montant, faites tourner la roue et multipliez vos gains. Attention à la banqueroute qui vous fait tout perdre! Une fois gratuit par jour pour tous les utilisateurs, puis misez pour continuer à jouer.
+          Faites tourner la roue et gagnez jusqu'à 250 FCFA! Misez un montant, faites tourner la roue et découvrez votre gain. Attention aux cases négatives qui réduisent votre solde! Mise minimale de 50 FCFA obligatoire.
         </div>
       </div>
       
@@ -1400,6 +1424,11 @@
           </div>
           
           <div class="bet-form">
+            <div class="balance-info">
+              <div data-i18n="wheel.your_balance">Votre solde</div>
+              <div class="balance-amount" id="balanceAmount">0 FCFA</div>
+            </div>
+            
             <div class="form-group">
               <label for="betAmount" class="form-label" data-i18n="wheel.bet_amount">Montant de votre mise <span class="form-required">*</span></label>
               <input type="number" id="betAmount" class="form-input" min="50" value="50" required>
@@ -1426,39 +1455,36 @@
         <div class="prizes-info">
           <div class="prizes-title" data-i18n="wheel.possible_prizes">Gains possibles sur la roue</div>
           <div class="prizes-grid">
-            <div class="prize-item">100 FCFA</div>
-            <div class="prize-item">200 FCFA</div>
-            <div class="prize-item">350 FCFA</div>
-            <div class="prize-item">500 FCFA</div>
-            <div class="prize-item">750 FCFA</div>
-            <div class="prize-item">1000 FCFA</div>
-            <div class="prize-item">1500 FCFA</div>
-            <div class="prize-item">2000 FCFA</div>
-            <div class="prize-item">3000 FCFA</div>
-            <div class="prize-item">5000 FCFA</div>
-            <div class="prize-item prize-bankrupt" data-i18n="wheel.bankrupt">Banqueroute</div>
-            <div class="prize-item prize-pass" data-i18n="wheel.pass">Passe</div>
-            <div class="prize-item prize-zero">0</div>
+            <div class="prize-item prize-positive">+50 FCFA</div>
+            <div class="prize-item prize-positive">+75 FCFA</div>
+            <div class="prize-item prize-positive">+10 FCFA</div>
+            <div class="prize-item prize-positive">+15 FCFA</div>
+            <div class="prize-item prize-positive">+150 FCFA</div>
+            <div class="prize-item prize-positive">+250 FCFA</div>
+            <div class="prize-item prize-negative">-200 FCFA</div>
+            <div class="prize-item prize-negative">-150 FCFA</div>
+            <div class="prize-item prize-negative">-600 FCFA</div>
+            <div class="prize-item prize-neutral">0 FCFA</div>
           </div>
         </div>
         
         <div style="margin-top: 25px;">
           <h4 data-i18n="wheel.rules_title">Règles du jeu:</h4>
           <ul style="margin-left: 20px; margin-bottom: 20px; color: var(--color-text-dark);">
-            <li data-i18n="wheel.rule1">Chaque utilisateur a droit à <strong>1 tour gratuit</strong> par jour</li>
-            <li data-i18n="wheel.rule2">Après le tour gratuit, vous devez miser pour continuer à jouer</li>
-            <li data-i18n="wheel.rule3">La mise minimale est de <strong>50 FCFA</strong></li>
-            <li data-i18n="wheel.rule4">Vos gains sont calculés en multipliant votre mise par la valeur sur laquelle la roue s'arrête</li>
-            <li data-i18n="wheel.rule5">Si la roue s'arrête sur <strong>Banqueroute</strong>, vous perdez votre mise</li>
-            <li data-i18n="wheel.rule6">Si la roue s'arrête sur <strong>Passe</strong>, vous conservez votre mise mais ne gagnez rien</li>
-            <li data-i18n="wheel.rule7">Si la roue s'arrête sur <strong>0</strong>, vous ne gagnez rien mais ne perdez pas votre mise</li>
+            <li data-i18n="wheel.rule1">La mise est <strong>obligatoire</strong> pour jouer</li>
+            <li data-i18n="wheel.rule2">La mise minimale est de <strong>50 FCFA</strong></li>
+            <li data-i18n="wheel.rule3">Vous devez avoir suffisamment de solde pour miser</li>
+            <li data-i18n="wheel.rule4">Les gains et pertes s'appliquent directement à votre solde</li>
+            <li data-i18n="wheel.rule5">Les cases positives <strong>ajoutent</strong> des FCFA à votre solde</li>
+            <li data-i18n="wheel.rule6">Les cases négatives <strong>retirent</strong> des FCFA de votre solde</li>
+            <li data-i18n="wheel.rule7">La case 0 FCFA ne modifie pas votre solde</li>
           </ul>
           
           <h4 data-i18n="wheel.examples_title">Exemples de gains:</h4>
           <ul style="margin-left: 20px; color: var(--color-text-dark);">
-            <li data-i18n="wheel.example1">Mise de 100 FCFA + gain de 500 FCFA = <strong>500 FCFA</strong> (500 × 100)</li>
-            <li data-i18n="wheel.example2">Mise de 200 FCFA + gain de 1000 FCFA = <strong>2000 FCFA</strong> (1000 × 200)</li>
-            <li data-i18n="wheel.example3">Mise de 50 FCFA + Banqueroute = <strong>Perte de 50 FCFA</strong></li>
+            <li data-i18n="wheel.example1">Mise de 100 FCFA + case +50 FCFA = <strong>+50 FCFA</strong> ajoutés à votre solde</li>
+            <li data-i18n="wheel.example2">Mise de 200 FCFA + case +250 FCFA = <strong>+250 FCFA</strong> ajoutés à votre solde</li>
+            <li data-i18n="wheel.example3">Mise de 50 FCFA + case -200 FCFA = <strong>-200 FCFA</strong> retirés de votre solde</li>
           </ul>
         </div>
       </div>
@@ -1536,16 +1562,15 @@
     const resultValue = document.getElementById('resultValue');
     const resultMessage = document.getElementById('resultMessage');
     const spinHistoryBody = document.getElementById('spinHistoryBody');
+    const balanceAmount = document.getElementById('balanceAmount');
 
     /******** Variables d'état ********/
     let currentUser = null;
     let userData = {};
     let wheelSections = [];
     let isSpinning = false;
-    let freeSpinUsed = false;
     let ctx = null;
     let lastRotation = 0;
-    let dailyFreeSpinReset = null;
 
     /******** Système de traduction ********/
     const translations = {
@@ -1557,9 +1582,10 @@
         // Wheel
         "wheel.title": "Spin Wheel - Roue de la Fortune",
         "wheel.banner_title": "Tentez votre chance à la Roue de la Fortune!",
-        "wheel.banner_text": "Faites tourner la roue et gagnez jusqu'à 5000 FCFA! Misez un montant, faites tourner la roue et multipliez vos gains. Attention à la banqueroute qui vous fait tout perdre! Une fois gratuit par jour pour tous les utilisateurs, puis misez pour continuer à jouer.",
+        "wheel.banner_text": "Faites tourner la roue et gagnez jusqu'à 250 FCFA! Misez un montant, faites tourner la roue et découvrez votre gain. Attention aux cases négatives qui réduisent votre solde! Mise minimale de 50 FCFA obligatoire.",
         "wheel.wheel_title": "La Roue de la Fortune",
         "wheel.wheel_subtitle": "Faites tourner la roue et découvrez votre gain!",
+        "wheel.your_balance": "Votre solde",
         "wheel.bet_amount": "Montant de votre mise",
         "wheel.min_bet": "Mise minimale: 50 FCFA",
         "wheel.spin_button": "Tourner la roue",
@@ -1567,20 +1593,18 @@
         "wheel.how_to_play": "Comment jouer",
         "wheel.rules_subtitle": "Règles du jeu et informations importantes",
         "wheel.possible_prizes": "Gains possibles sur la roue",
-        "wheel.bankrupt": "Banqueroute",
-        "wheel.pass": "Passe",
         "wheel.rules_title": "Règles du jeu:",
-        "wheel.rule1": "Chaque utilisateur a droit à <strong>1 tour gratuit</strong> par jour",
-        "wheel.rule2": "Après le tour gratuit, vous devez miser pour continuer à jouer",
-        "wheel.rule3": "La mise minimale est de <strong>50 FCFA</strong>",
-        "wheel.rule4": "Vos gains sont calculés en multipliant votre mise par la valeur sur laquelle la roue s'arrête",
-        "wheel.rule5": "Si la roue s'arrête sur <strong>Banqueroute</strong>, vous perdez votre mise",
-        "wheel.rule6": "Si la roue s'arrête sur <strong>Passe</strong>, vous conservez votre mise mais ne gagnez rien",
-        "wheel.rule7": "Si la roue s'arrête sur <strong>0</strong>, vous ne gagnez rien mais ne perdez pas votre mise",
+        "wheel.rule1": "La mise est <strong>obligatoire</strong> pour jouer",
+        "wheel.rule2": "La mise minimale est de <strong>50 FCFA</strong>",
+        "wheel.rule3": "Vous devez avoir suffisamment de solde pour miser",
+        "wheel.rule4": "Les gains et pertes s'appliquent directement à votre solde",
+        "wheel.rule5": "Les cases positives <strong>ajoutent</strong> des FCFA à votre solde",
+        "wheel.rule6": "Les cases négatives <strong>retirent</strong> des FCFA de votre solde",
+        "wheel.rule7": "La case 0 FCFA ne modifie pas votre solde",
         "wheel.examples_title": "Exemples de gains:",
-        "wheel.example1": "Mise de 100 FCFA + gain de 500 FCFA = <strong>500 FCFA</strong> (500 × 100)",
-        "wheel.example2": "Mise de 200 FCFA + gain de 1000 FCFA = <strong>2000 FCFA</strong> (1000 × 200)",
-        "wheel.example3": "Mise de 50 FCFA + Banqueroute = <strong>Perte de 50 FCFA</strong>",
+        "wheel.example1": "Mise de 100 FCFA + case +50 FCFA = <strong>+50 FCFA</strong> ajoutés à votre solde",
+        "wheel.example2": "Mise de 200 FCFA + case +250 FCFA = <strong>+250 FCFA</strong> ajoutés à votre solde",
+        "wheel.example3": "Mise de 50 FCFA + case -200 FCFA = <strong>-200 FCFA</strong> retirés de votre solde",
         "wheel.history_title": "Historique de vos Tours",
         "wheel.history_subtitle": "Suivez l'historique de vos gains et pertes",
         "wheel.history_date": "Date",
@@ -1633,9 +1657,10 @@
         // Wheel
         "wheel.title": "Spin Wheel - Fortune Wheel",
         "wheel.banner_title": "Try your luck at the Fortune Wheel!",
-        "wheel.banner_text": "Spin the wheel and win up to 5000 FCFA! Place a bet, spin the wheel and multiply your winnings. Watch out for bankruptcy which makes you lose everything! Once free per day for all users, then bet to continue playing.",
+        "wheel.banner_text": "Spin the wheel and win up to 250 FCFA! Place a bet, spin the wheel and discover your prize. Watch out for negative spaces that reduce your balance! Minimum bet of 50 FCFA required.",
         "wheel.wheel_title": "The Fortune Wheel",
         "wheel.wheel_subtitle": "Spin the wheel and discover your prize!",
+        "wheel.your_balance": "Your balance",
         "wheel.bet_amount": "Your bet amount",
         "wheel.min_bet": "Minimum bet: 50 FCFA",
         "wheel.spin_button": "Spin the wheel",
@@ -1643,20 +1668,18 @@
         "wheel.how_to_play": "How to play",
         "wheel.rules_subtitle": "Game rules and important information",
         "wheel.possible_prizes": "Possible prizes on the wheel",
-        "wheel.bankrupt": "Bankrupt",
-        "wheel.pass": "Pass",
         "wheel.rules_title": "Game rules:",
-        "wheel.rule1": "Each user is entitled to <strong>1 free spin</strong> per day",
-        "wheel.rule2": "After the free spin, you must bet to continue playing",
-        "wheel.rule3": "The minimum bet is <strong>50 FCFA</strong>",
-        "wheel.rule4": "Your winnings are calculated by multiplying your bet by the value the wheel stops on",
-        "wheel.rule5": "If the wheel stops on <strong>Bankrupt</strong>, you lose your bet",
-        "wheel.rule6": "If the wheel stops on <strong>Pass</strong>, you keep your bet but win nothing",
-        "wheel.rule7": "If the wheel stops on <strong>0</strong>, you win nothing but don't lose your bet",
+        "wheel.rule1": "Bet is <strong>required</strong> to play",
+        "wheel.rule2": "Minimum bet is <strong>50 FCFA</strong>",
+        "wheel.rule3": "You must have sufficient balance to bet",
+        "wheel.rule4": "Wins and losses apply directly to your balance",
+        "wheel.rule5": "Positive spaces <strong>add</strong> FCFA to your balance",
+        "wheel.rule6": "Negative spaces <strong>remove</strong> FCFA from your balance",
+        "wheel.rule7": "The 0 FCFA space does not change your balance",
         "wheel.examples_title": "Winning examples:",
-        "wheel.example1": "Bet of 100 FCFA + win of 500 FCFA = <strong>500 FCFA</strong> (500 × 100)",
-        "wheel.example2": "Bet of 200 FCFA + win of 1000 FCFA = <strong>2000 FCFA</strong> (1000 × 200)",
-        "wheel.example3": "Bet of 50 FCFA + Bankrupt = <strong>Loss of 50 FCFA</strong>",
+        "wheel.example1": "Bet of 100 FCFA + +50 FCFA space = <strong>+50 FCFA</strong> added to your balance",
+        "wheel.example2": "Bet of 200 FCFA + +250 FCFA space = <strong>+250 FCFA</strong> added to your balance",
+        "wheel.example3": "Bet of 50 FCFA + -200 FCFA space = <strong>-200 FCFA</strong> removed from your balance",
         "wheel.history_title": "Your Spin History",
         "wheel.history_subtitle": "Track your wins and losses history",
         "wheel.history_date": "Date",
@@ -1791,40 +1814,20 @@
         drawWheel();
     });
 
-    /******** Configuration de la roue ********/
+    /******** Configuration de la roue - 10 TRANCHES ********/
     function initWheel() {
-      // Définir les sections de la roue
+      // Définir les 10 sections de la roue avec les récompenses données
       wheelSections = [
-        { text: "100", value: 100, color: "#FF5252" },
-        { text: "200", value: 200, color: "#FF4081" },
-        { text: "350", value: 350, color: "#E040FB" },
-        { text: "500", value: 500, color: "#7C4DFF" },
-        { text: "750", value: 750, color: "#536DFE" },
-        { text: "1000", value: 1000, color: "#448AFF" },
-        { text: "1500", value: 1500, color: "#40C4FF" },
-        { text: "2000", value: 2000, color: "#18FFFF" },
-        { text: "3000", value: 3000, color: "#64FFDA" },
-        { text: "5000", value: 5000, color: "#69F0AE" },
-        { text: "Banqueroute", value: -1, color: "#FF1744" },
-        { text: "Passe", value: 0, color: "#FF9100" },
-        { text: "100", value: 100, color: "#FF5252" },
-        { text: "200", value: 200, color: "#FF4081" },
-        { text: "350", value: 350, color: "#E040FB" },
-        { text: "500", value: 500, color: "#7C4DFF" },
-        { text: "750", value: 750, color: "#536DFE" },
-        { text: "1000", value: 1000, color: "#448AFF" },
-        { text: "1500", value: 1500, color: "#40C4FF" },
-        { text: "2000", value: 2000, color: "#18FFFF" },
-        { text: "3000", value: 3000, color: "#64FFDA" },
-        { text: "5000", value: 5000, color: "#69F0AE" },
-        { text: "Banqueroute", value: -1, color: "#FF1744" },
-        { text: "0", value: 0, color: "#9E9E9E" },
-        { text: "100", value: 100, color: "#FF5252" },
-        { text: "200", value: 200, color: "#FF4081" },
-        { text: "350", value: 350, color: "#E040FB" },
-        { text: "500", value: 500, color: "#7C4DFF" },
-        { text: "750", value: 750, color: "#536DFE" },
-        { text: "1000", value: 1000, color: "#448AFF" }
+        { text: "+50", value: 50, color: "#4CD964" },
+        { text: "+75", value: 75, color: "#5AC8FA" },
+        { text: "+10", value: 10, color: "#34C759" },
+        { text: "+15", value: 15, color: "#30D158" },
+        { text: "+150", value: 150, color: "#32D74B" },
+        { text: "+250", value: 250, color: "#64D2FF" },
+        { text: "-200", value: -200, color: "#FF453A" },
+        { text: "-150", value: -150, color: "#FF375F" },
+        { text: "-600", value: -600, color: "#FF3B30" },
+        { text: "0", value: 0, color: "#8E8E93" }
       ];
       
       // Initialiser le contexte canvas
@@ -1863,9 +1866,9 @@
         ctx.rotate(startAngle + anglePerSection / 2);
         ctx.textAlign = 'right';
         ctx.textBaseline = 'middle';
-        ctx.fillStyle = '#000';
-        ctx.font = 'bold 14px Arial';
-        ctx.fillText(wheelSections[i].text, radius - 15, 0);
+        ctx.fillStyle = '#FFF';
+        ctx.font = 'bold 16px Arial';
+        ctx.fillText(wheelSections[i].text, radius - 20, 0);
         ctx.restore();
       }
       
@@ -1881,10 +1884,37 @@
       // Dessiner un cercle décoratif au centre
       ctx.beginPath();
       ctx.arc(centerX, centerY, 8, 0, 2 * Math.PI);
-      ctx.fillStyle = var('--wheel-color');
+      ctx.fillStyle = '#FF9500';
       ctx.fill();
     }
 
+    /******** Mise à jour de l'interface utilisateur ********/
+    function updateBalanceUI() {
+      if (balanceAmount) {
+        balanceAmount.textContent = `${userData.solde || 0} FCFA`;
+      }
+      
+      // Mettre à jour l'état du bouton de spin
+      updateSpinButtonState();
+    }
+
+    function updateSpinButtonState() {
+      const bet = parseInt(betAmount.value) || 0;
+      const hasEnoughBalance = userData.solde >= bet;
+      const isValidBet = bet >= 50;
+      
+      if (spinBtn) {
+        if (!hasEnoughBalance || !isValidBet) {
+          spinBtn.disabled = true;
+          spinBtn.classList.remove('btn-spin');
+        } else {
+          spinBtn.disabled = false;
+          spinBtn.classList.add('btn-spin');
+        }
+      }
+    }
+
+    /******** Logique du jeu ********/
     function spinWheel() {
       if (isSpinning) return;
       
@@ -1897,10 +1927,15 @@
       }
       
       // Vérifier si l'utilisateur a assez d'argent
-      if (!freeSpinUsed && userData.solde < bet) {
+      if (userData.solde < bet) {
         showNotification('error', translations[currentLang]['notification.error'], 'Solde insuffisant pour cette mise');
         return;
       }
+      
+      // Déduire la mise du solde immédiatement
+      userData.solde -= bet;
+      updateBalanceUI();
+      saveUserData();
       
       isSpinning = true;
       spinBtn.disabled = true;
@@ -1936,7 +1971,7 @@
           // Animation terminée
           isSpinning = false;
           spinBtn.disabled = false;
-          spinBtn.classList.add('btn-spin');
+          updateSpinButtonState();
           lastRotation = rotation % (2 * Math.PI);
           
           // Retirer l'effet visuel
@@ -1952,29 +1987,24 @@
 
     function processResult(sectionIndex, bet) {
       const section = wheelSections[sectionIndex];
-      let gain = 0;
+      let gain = section.value;
       let message = '';
       
-      if (section.value === -1) {
-        // Banqueroute - perte de la mise
-        gain = -bet;
-        message = `Banqueroute! Vous avez perdu votre mise de ${bet} FCFA.`;
-        resultContainer.className = 'result-container result-lose';
-      } else if (section.value === 0 && section.text === "Passe") {
-        // Passe - garde la mise mais ne gagne rien
-        gain = 0;
-        message = `Passe! Vous conservez votre mise de ${bet} FCFA.`;
-        resultContainer.className = 'result-container';
-      } else if (section.value === 0) {
-        // 0 - ne gagne rien et ne perd rien
-        gain = 0;
-        message = `La roue s'est arrêtée sur 0. Vous ne gagnez rien mais conservez votre mise.`;
-        resultContainer.className = 'result-container';
-      } else {
-        // Gain normal
-        gain = section.value * bet;
-        message = `Félicitations! Vous avez gagné ${gain} FCFA (${section.value} × ${bet} FCFA).`;
+      // Appliquer le gain/perte au solde
+      userData.solde += gain;
+      updateBalanceUI();
+      saveUserData();
+      
+      // Déterminer le message et l'apparence du résultat
+      if (gain > 0) {
+        message = `Félicitations! Vous avez gagné ${gain} FCFA.`;
         resultContainer.className = 'result-container result-win';
+      } else if (gain < 0) {
+        message = `Dommage! Vous avez perdu ${Math.abs(gain)} FCFA.`;
+        resultContainer.className = 'result-container result-lose';
+      } else {
+        message = `Case neutre. Votre solde reste inchangé.`;
+        resultContainer.className = 'result-container';
       }
       
       // Afficher le résultat
@@ -1982,17 +2012,8 @@
       resultMessage.textContent = message;
       resultContainer.style.display = 'block';
       
-      // Mettre à jour le solde de l'utilisateur
-      updateUserBalance(gain, bet);
-      
       // Enregistrer dans l'historique
       addToHistory(bet, section.text, gain);
-      
-      // Marquer le tour gratuit comme utilisé
-      if (!freeSpinUsed) {
-        freeSpinUsed = true;
-        saveUserData('freeSpinUsed', true);
-      }
       
       // Afficher une notification
       if (gain > 0) {
@@ -2002,34 +2023,6 @@
       } else {
         showNotification('info', translations[currentLang]['notification.info'], message);
       }
-    }
-
-    function updateUserBalance(gain, bet) {
-      if (!currentUser) return;
-      
-      // Calculer le nouveau solde
-      let newBalance = userData.solde;
-      let newSpinWheelGains = userData.spinWheelGains || 0;
-      
-      if (freeSpinUsed) {
-        // Après le tour gratuit, on déduit la mise
-        newBalance += gain;
-      } else {
-        // Premier tour gratuit - on ne déduit pas la mise
-        newBalance += gain + bet;
-      }
-      
-      // Mettre à jour les gains totaux
-      if (gain > 0) {
-        newSpinWheelGains += gain;
-      }
-      
-      // Mettre à jour l'interface
-      userData.solde = newBalance;
-      userData.spinWheelGains = newSpinWheelGains;
-      
-      // Sauvegarder dans Firebase
-      saveUserData();
     }
 
     function addToHistory(bet, result, gain) {
@@ -2093,19 +2086,6 @@
       spinHistoryBody.innerHTML = html;
     }
 
-    function checkDailyReset() {
-      const now = new Date();
-      const today = now.toDateString();
-      
-      if (!dailyFreeSpinReset || dailyFreeSpinReset !== today) {
-        // Nouveau jour, réinitialiser le tour gratuit
-        freeSpinUsed = false;
-        dailyFreeSpinReset = today;
-        saveUserData('freeSpinUsed', false);
-        saveUserData('dailyFreeSpinReset', today);
-      }
-    }
-
     /******** Fonctions Firestore ********/
     async function saveUserData(key = null, value = null) {
       if (!currentUser) return;
@@ -2133,23 +2113,12 @@
               country: data.country || data.pays || "",
               theme: data.theme || 'light',
               solde: data.solde || 0,
-              spinWheelGains: data.spinWheelGains || 0,
-              freeSpinUsed: data.freeSpinUsed || false,
-              dailyFreeSpinReset: data.dailyFreeSpinReset || null,
               spinHistory: data.spinHistory || []
           };
-          
-          // Vérifier la réinitialisation quotidienne
-          freeSpinUsed = userData.freeSpinUsed;
-          dailyFreeSpinReset = userData.dailyFreeSpinReset;
-          checkDailyReset();
       } else {
         userData = { 
           theme: 'light', 
-          solde: 0, 
-          spinWheelGains: 0,
-          freeSpinUsed: false,
-          dailyFreeSpinReset: new Date().toDateString(),
+          solde: 0,
           spinHistory: []
         };
         await saveUserData();
@@ -2185,9 +2154,13 @@
                 
                 initWheel();
                 updateHistoryUI();
+                updateBalanceUI();
                 
                 // Configurer le bouton de spin
                 spinBtn.addEventListener('click', spinWheel);
+                
+                // Mettre à jour l'état du bouton quand la mise change
+                betAmount.addEventListener('input', updateSpinButtonState);
                 
                 document.body.classList.add('loaded');
                 loader.classList.add('hidden');
