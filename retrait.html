@@ -50,13 +50,6 @@
       flex-direction: column;
       position: relative;
       overflow-x: hidden;
-      visibility: hidden;
-      opacity: 0;
-    }
-
-    body.loaded {
-      visibility: visible;
-      opacity: 1;
     }
 
     /* Effet de bulles animées en arrière-plan */
@@ -1596,6 +1589,9 @@ const translations = {
     "withdrawal.success_note": "Vérifiez attentivement vos informations avant de soumettre. Le traitement peut prendre 24-48 heures.",
     "withdrawal.history_title": "Historique de mes retraits",
     "withdrawal.loading_history": "Chargement de l'historique...",
+    "withdrawal.no_withdrawals": "Aucun retrait effectué pour le moment.",
+    "withdrawal.date": "Date",
+    "withdrawal.status": "Statut",
     
     // User Info
     "user_info.username": "Nom d'utilisateur",
@@ -1666,6 +1662,9 @@ const translations = {
     "withdrawal.success_note": "Please verify your information before submitting. Processing may take 24-48 hours.",
     "withdrawal.history_title": "My Withdrawal History",
     "withdrawal.loading_history": "Loading history...",
+    "withdrawal.no_withdrawals": "No withdrawals made yet.",
+    "withdrawal.date": "Date",
+    "withdrawal.status": "Status",
     
     // User Info
     "user_info.username": "Username",
@@ -2271,15 +2270,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
   setLanguage(savedLang);
 });
-
-// Ajouter les traductions manquantes
-translations.fr["withdrawal.no_withdrawals"] = "Aucun retrait effectué pour le moment.";
-translations.fr["withdrawal.date"] = "Date";
-translations.fr["withdrawal.status"] = "Statut";
-
-translations.en["withdrawal.no_withdrawals"] = "No withdrawals made yet.";
-translations.en["withdrawal.date"] = "Date";
-translations.en["withdrawal.status"] = "Status";
 </script>
 </body>
 </html>
