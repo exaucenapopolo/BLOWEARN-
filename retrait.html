@@ -1460,13 +1460,28 @@
 
       if (doc.exists) {
           const data = doc.data() || {};
+          
+          // SOLDE DISPONIBLE = solde (ou balance) MOINS retraits effectués
+          const soldeBrut = Number(data.solde || data.balance || 0);
+          const retireTotal = Number(data.retire || data.withdrawn || 0);
+          const soldeDisponible = soldeBrut - retireTotal;
+          
+          console.log('💰 SOLDE DISPONIBLE:', {
+            soldeBrut: soldeBrut,
+            retire: retireTotal,
+            soldeDisponible: soldeDisponible,
+            docId: doc.id,
+            email: data.email
+          });
+          
           userData = {
               uid: foundViaEmail ? doc.id : currentUser.uid,
               displayName: data.displayName || currentUser.displayName || currentUser.email,
               username: data.username || data.displayName || currentUser.email.split('@')[0],
               email: data.email || currentUser.email,
-              solde: Number(data.solde || data.balance || 0),
-              retire: Number(data.retire || data.withdrawn || 0),
+              solde: soldeDisponible,  // Solde disponible = soldeBrut - retire
+              soldeBrut: soldeBrut,
+              retire: retireTotal,
               paid: isUserPaidFromDoc(data),
               theme: data.theme || 'light'
           };
@@ -1649,11 +1664,9 @@
 
             // ✅ SUCCÈS - Retrait automatique lancé
             
-            // Mettre à jour les soldes locaux
-            const nouveauSolde = (userData.solde || 0) - montant;
-            const nouveauRetire = (userData.retire || 0) + montant;
-            userData.solde = nouveauSolde;
-            userData.retire = nouveauRetire;
+            // Mettre à jour les soldes locaux (le solde diminue car retire augmente)
+            userData.retire = (userData.retire || 0) + montant;
+            userData.solde = userData.solde - montant;  // Le solde disponible diminue
             updateUI();
             
             // Enregistrer aussi dans Firestore pour l'historique (collection retraits)
