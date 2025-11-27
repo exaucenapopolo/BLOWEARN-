@@ -438,8 +438,7 @@
               setLoading(false);
               
               if (!paid) {
-                showMessage('Le paiement est en cours de traitement. Vous pouvez essayer d\'acceder au tableau de bord.', 'info');
-                messageEl.innerHTML += '<div style="margin-top:10px"><a href="dashboard.html" style="color:var(--color-primary);font-weight:600">Aller au tableau de bord →</a></div>';
+                showMessage('Le paiement est en cours de traitement. Veuillez patienter ou reessayer plus tard.', 'info');
               }
             }
           }, 2000);
