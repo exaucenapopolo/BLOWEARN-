@@ -80,7 +80,7 @@
 
           <div class="center" style="margin-bottom:14px">
             <div><span class="muted">Utilisateur connecte :</span> <strong id="displayName">—</strong></div>
-            <div class="amount" id="activationAmount">100 FCFA</div>
+            <div class="amount" id="activationAmount">3 600 FCFA</div>
             <div class="small">Montant unique d'activation. Une fois paye, vous aurez acces a votre tableau de bord.</div>
           </div>
 
@@ -115,7 +115,7 @@
         <div class="card">
           <h3 style="margin-bottom:8px;color:var(--color-text-dark)">Resume</h3>
           <div style="display:flex;flex-direction:column;gap:10px">
-            <div><span class="muted">Montant</span><div style="font-weight:800;font-size:18px">100 FCFA</div></div>
+            <div><span class="muted">Montant</span><div style="font-weight:800;font-size:18px">3 600 FCFA</div></div>
             <div><span class="muted">Statut du compte</span><div id="accountStatus" style="font-weight:700;color:#b76b00" data-testid="status-account">En attente de paiement</div></div>
             <div id="paymentInfo" class="muted">Methode : Non selectionnee</div>
             <div style="margin-top:8px"><button id="logoutBtn" class="btn secondary" data-testid="button-logout">Me deconnecter</button></div>
@@ -371,7 +371,7 @@
           userId, 
           email,
           username,
-          amount: 100, 
+          amount: 3600, 
           currency: 'XAF', 
           country, 
           method: selectedMethod 
@@ -425,11 +425,11 @@
         
         if (!isPaid) {
           let attempts = 0;
-          const maxAttempts = 5;
+          const maxAttempts = 10;
           
           const pollInterval = setInterval(async () => {
             attempts++;
-            console.log(`Tentative de verification ${attempts}/${maxAttempts}`);
+            showMessage(`Verification du paiement... (${attempts}/${maxAttempts})`, 'info');
             
             const paid = await checkAndRedirectIfPaid(transactionId);
             
@@ -438,16 +438,41 @@
               setLoading(false);
               
               if (!paid) {
-                showMessage('Le paiement est en cours de traitement. Si le statut ne change pas dans quelques minutes, contactez le support.', 'info');
+                showMessage('Le paiement est en cours de traitement. Vous pouvez essayer d\'acceder au tableau de bord.', 'info');
+                messageEl.innerHTML += '<div style="margin-top:10px"><a href="dashboard.html" style="color:var(--color-primary);font-weight:600">Aller au tableau de bord →</a></div>';
               }
             }
-          }, 3000);
+          }, 2000);
         }
       } catch (e) {
         console.error('Erreur verification retour:', e);
         setLoading(false);
       }
     })();
+
+    // ========== VERIFICATION CONTINUE EN ARRIERE-PLAN ==========
+    // Vérifie périodiquement si le paiement a été effectué (utile si l'utilisateur revient sans paramètres)
+    let backgroundCheckInterval = null;
+    
+    function startBackgroundCheck() {
+      const transactionId = localStorage.getItem('blowearn_payment_id');
+      if (!transactionId || backgroundCheckInterval) return;
+      
+      backgroundCheckInterval = setInterval(async () => {
+        const result = await confirmPayment(transactionId);
+        if (result && (result.isPaid === true || result.status === 'paid' || result.status === 'success')) {
+          clearInterval(backgroundCheckInterval);
+          localStorage.removeItem('blowearn_payment_id');
+          showMessage('Paiement confirme ! Redirection...', 'success');
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1500);
+        }
+      }, 5000);
+    }
+    
+    // Démarrer la vérification en arrière-plan si un paiement est en attente
+    setTimeout(startBackgroundCheck, 2000);
   </script>
 </body>
 </html>
