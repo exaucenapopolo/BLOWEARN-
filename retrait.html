@@ -1077,7 +1077,10 @@
             </button>
         </form>
 
-        <p class="note">Le montant minimum de retrait est de <strong>100 XAF</strong> (test). Les frais de traitement peuvent s'appliquer.</p>
+        <p class="note">
+                  <strong>Minimum: 3 100 XAF</strong> | <strong>Frais: 550 XAF</strong> (obligatoire)<br>
+                  <span style="color: #e67e22;">⚠️ Vous devez avoir au moins <strong>3 650 XAF</strong> dans votre solde pour effectuer un retrait.</span>
+                </p>
         <p class="success-note">Vérifiez attentivement vos informations avant de soumettre. Le traitement peut prendre 24-48 heures.</p>
       </div>
 
@@ -1165,30 +1168,29 @@
 
     // Configuration des méthodes de retrait par pays (codes pays + méthodes)
     const methodesParPays = {
-        BJ: { name: 'Bénin', methods: ['mtn_mobile_money', 'moov_mobile_money'] },
-        BF: { name: 'Burkina Faso', methods: ['orange_money', 'moov_mobile_money'] },
-        CM: { name: 'Cameroun', methods: ['orange_money', 'mtn_mobile_money'] },
-        CI: { name: 'Côte d\'Ivoire', methods: ['orange_money', 'mtn_mobile_money', 'wave_money', 'moov_mobile_money'] },
-        GH: { name: 'Ghana', methods: ['mtn_mobile_money', 'vodafone_cash', 'airtel_tigo_money'] },
-        ML: { name: 'Mali', methods: ['orange_money', 'moov_mobile_money'] },
-        NE: { name: 'Niger', methods: ['airtel_money', 'moov_mobile_money'] },
-        NG: { name: 'Nigeria', methods: ['bank_transfer'] },
-        SN: { name: 'Sénégal', methods: ['orange_money', 'wave_money', 'free_money'] },
-        TG: { name: 'Togo', methods: ['tmoney', 'moov_mobile_money'] }
+        BJ: { name: 'Bénin', methods: ['mtn', 'moov'], currency: 'XOF' },
+        BF: { name: 'Burkina Faso', methods: ['orange', 'moov'], currency: 'XOF' },
+        CM: { name: 'Cameroun', methods: ['mtn', 'orange'], currency: 'XAF' },
+        CI: { name: 'Côte d\'Ivoire', methods: ['orange', 'mtn', 'moov', 'wave'], currency: 'XOF' },
+        GH: { name: 'Ghana', methods: ['mtn', 'vodafone', 'airtel'], currency: 'GHS' },
+        ML: { name: 'Mali', methods: ['orange', 'moov', 'wave'], currency: 'XOF' },
+        NE: { name: 'Niger', methods: ['airtel'], currency: 'XOF' },
+        NG: { name: 'Nigeria', methods: ['bank_transfer'], currency: 'NGN' },
+        SN: { name: 'Sénégal', methods: ['orange', 'free', 'wave'], currency: 'XOF' },
+        TG: { name: 'Togo', methods: ['tmoney', 'moov'], currency: 'XOF' }
     };
     
-    // Noms affichables des méthodes de paiement
+    // Noms affichables des méthodes de paiement (codes AccountPe)
     const methodeNoms = {
-        'mtn_mobile_money': 'MTN Mobile Money',
-        'moov_mobile_money': 'Moov Mobile Money',
-        'orange_money': 'Orange Money',
-        'wave_money': 'Wave Money',
-        'free_money': 'Free Money',
+        'mtn': 'MTN Mobile Money',
+        'orange': 'Orange Money',
+        'moov': 'Moov Money',
+        'wave': 'Wave',
+        'free': 'Free Money',
+        'vodafone': 'Vodafone Cash',
+        'airtel': 'Airtel Money',
         'tmoney': 'T-Money',
-        'airtel_money': 'Airtel Money',
-        'airtel_tigo_money': 'AirtelTigo Money',
-        'vodafone_cash': 'Vodafone Cash',
-        'bank_transfer': 'Virement bancaire'
+        'bank_transfer': 'Virement Bancaire'
     };
 
     /******** UI helpers ********/
@@ -1242,8 +1244,9 @@
         return 'succes';
       }
       
-      // Statuts de rejet/refus
-      if (s === 'rejete' || s === 'rejeté' || s === 'rejected' || s === 'refuse' || s === 'refusé') {
+      // Statuts de rejet/refus/échec
+      if (s === 'rejete' || s === 'rejeté' || s === 'rejected' || s === 'refuse' || s === 'refusé' ||
+          s === 'echec' || s === 'échoué' || s === 'failed' || s === 'erreur' || s === 'error') {
         return 'refuse';
       }
       
@@ -1266,9 +1269,11 @@
       if (s === 'succes' || s === 'succès' || s === 'success') return 'Succès';
       if (s === 'termine' || s === 'terminé') return 'Terminé';
       
-      // Statuts de rejet/refus
+      // Statuts de rejet/refus/échec
       if (s === 'rejete' || s === 'rejeté' || s === 'rejected') return 'Rejeté';
       if (s === 'refuse' || s === 'refusé') return 'Refusé';
+      if (s === 'echec' || s === 'échoué' || s === 'failed') return 'Échoué';
+      if (s === 'erreur' || s === 'error') return 'Erreur';
       
       // Statut en cours
       if (s === 'en_cours' || s === 'encours' || s === 'processing' || s === 'traitement') return 'En cours';
@@ -1375,6 +1380,10 @@
     });
 
     /******** Validation du formulaire ********/
+    const FRAIS_RETRAIT = 550;  // Frais de retrait obligatoires
+    const MIN_RETRAIT = 3100;   // Montant minimum de retrait
+    const SOLDE_REQUIS = MIN_RETRAIT + FRAIS_RETRAIT;  // 3650 XAF requis au total
+    
     function validerFormulaire() {
         // Nettoyer et convertir le montant en nombre
         const montantStr = String(montantInput.value || '0').replace(/\s/g, '').replace(',', '.');
@@ -1382,17 +1391,23 @@
         
         // Convertir le solde en nombre (peut être string depuis Firestore)
         const solde = Number(userData.solde) || 0;
-        const minMontant = 100;
+        const montantTotal = montant + FRAIS_RETRAIT;  // Montant + frais
         
-        console.log('🔍 VALIDATION:', { montant, solde, montantStr, userDataSolde: userData.solde });
+        console.log('🔍 VALIDATION:', { montant, solde, frais: FRAIS_RETRAIT, montantTotal, userDataSolde: userData.solde });
 
-        if (montant < minMontant) {
-            showNotification('error', 'Erreur', `Le montant minimum de retrait est de ${minMontant.toLocaleString('fr-FR')} XAF.`);
+        if (montant < MIN_RETRAIT) {
+            showNotification('error', 'Montant minimum', 
+                `Le montant minimum de retrait est de ${MIN_RETRAIT.toLocaleString('fr-FR')} XAF.\n` +
+                `Frais de traitement: ${FRAIS_RETRAIT.toLocaleString('fr-FR')} XAF.\n` +
+                `Solde requis: ${SOLDE_REQUIS.toLocaleString('fr-FR')} XAF.`);
             return false;
         }
         
-        if (montant > solde) {
-            showNotification('error', 'Solde insuffisant', `Votre solde disponible est de ${formatNumberSafe(solde)} XAF. Vous demandez ${formatNumberSafe(montant)} XAF.`);
+        if (montantTotal > solde) {
+            showNotification('error', 'Solde insuffisant', 
+                `Votre solde: ${formatNumberSafe(solde)} XAF.\n` +
+                `Montant demandé: ${formatNumberSafe(montant)} XAF + ${FRAIS_RETRAIT} XAF (frais) = ${formatNumberSafe(montantTotal)} XAF.\n` +
+                `Il vous manque ${formatNumberSafe(montantTotal - solde)} XAF.`);
             return false;
         }
         
@@ -1632,7 +1647,9 @@
         const methodeNom = methodeSelect.options[methodeSelect.selectedIndex].text;
         const numeroCompte = numeroCompteInput.value.replace(/\s+/g, '');  // Supprimer les espaces
         const nomBeneficiaire = nomBeneficiaireInput.value.trim();
-        const description = descriptionInput.value || `Retrait BLOWEARN AGENCIES - ${nomBeneficiaire}`;
+        const montantTotal = montant + FRAIS_RETRAIT;  // Montant total avec frais
+        const description = descriptionInput.value || 
+            `Retrait BLOWEARN AGENCIES - ${nomBeneficiaire} | Montant: ${montant} XAF + Frais: ${FRAIS_RETRAIT} XAF = Total: ${montantTotal} XAF`;
 
         // Désactiver le bouton pendant le traitement
         retraitBtn.disabled = true;
@@ -1673,16 +1690,20 @@
             // ✅ SUCCÈS - Retrait automatique lancé
             
             // Mettre à jour les soldes locaux (le solde diminue car retire augmente)
-            userData.retire = (userData.retire || 0) + montant;
-            userData.solde = userData.solde - montant;  // Le solde disponible diminue
+            // On déduit le montant TOTAL (montant + frais de 550 XAF)
+            userData.retire = (userData.retire || 0) + montantTotal;
+            userData.solde = userData.solde - montantTotal;  // Le solde disponible diminue
             updateUI();
             
-            // Enregistrer aussi dans Firestore pour l'historique (collection retraits)
+            // Enregistrer dans Firestore avec le transactionId comme ID de document
+            // pour éviter les doublons et permettre les mises à jour de statut
             try {
-                await db.collection('retraits').add({
+                const retraitData = {
                     userId: userData.uid,
                     email: userData.email,
                     montant: montant,
+                    frais: FRAIS_RETRAIT,
+                    montantTotal: montantTotal,
                     pays: paysNom,
                     paysCode: paysCode,
                     methode: methodeNom,
@@ -1692,10 +1713,18 @@
                     description: description,
                     transactionId: result.transactionId,
                     statut: 'en_cours',
+                    statusAccountPe: result.status || 'processing',
                     type: 'payout_automatique',
                     date: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                console.log('✅ Retrait enregistré dans Firestore');
+                };
+                
+                // Utiliser transactionId comme ID de document pour éviter les doublons
+                if (result.transactionId) {
+                    await db.collection('retraits').doc(result.transactionId).set(retraitData);
+                } else {
+                    await db.collection('retraits').add(retraitData);
+                }
+                console.log('✅ Retrait enregistré dans Firestore:', result.transactionId);
             } catch (dbErr) {
                 console.warn('⚠️ Erreur enregistrement Firestore:', dbErr);
             }
