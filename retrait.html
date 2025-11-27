@@ -1376,9 +1376,15 @@
 
     /******** Validation du formulaire ********/
     function validerFormulaire() {
-        const montant = parseFloat(montantInput.value);
-        const solde = userData.solde || 0;
+        // Nettoyer et convertir le montant en nombre
+        const montantStr = String(montantInput.value || '0').replace(/\s/g, '').replace(',', '.');
+        const montant = parseFloat(montantStr) || 0;
+        
+        // Convertir le solde en nombre (peut être string depuis Firestore)
+        const solde = Number(userData.solde) || 0;
         const minMontant = 100;
+        
+        console.log('🔍 VALIDATION:', { montant, solde, montantStr, userDataSolde: userData.solde });
 
         if (montant < minMontant) {
             showNotification('error', 'Erreur', `Le montant minimum de retrait est de ${minMontant.toLocaleString('fr-FR')} XAF.`);
@@ -1386,7 +1392,7 @@
         }
         
         if (montant > solde) {
-            showNotification('error', 'Solde insuffisant', `Votre solde actuel est de ${formatNumberSafe(solde)} XAF.`);
+            showNotification('error', 'Solde insuffisant', `Votre solde disponible est de ${formatNumberSafe(solde)} XAF. Vous demandez ${formatNumberSafe(montant)} XAF.`);
             return false;
         }
         
@@ -1617,7 +1623,9 @@
             return;
         }
 
-        const montant = parseFloat(montantInput.value);
+        // Nettoyer et convertir le montant en nombre
+        const montantStr = String(montantInput.value || '0').replace(/\s/g, '').replace(',', '.');
+        const montant = parseFloat(montantStr) || 0;
         const paysCode = paysSelect.value;  // Code pays (ex: CM, CI, SN)
         const paysNom = paysSelect.options[paysSelect.selectedIndex].text;
         const methodeCode = methodeSelect.value;  // Code méthode (ex: orange_money, mtn_mobile_money)
