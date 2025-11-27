@@ -1059,7 +1059,7 @@
 
             <div class="form-group">
                 <label for="montant">Montant du retrait (XAF) *</label>
-                <input type="number" id="montant" name="montant" placeholder="Entrez le montant" min="3000" required>
+                <input type="number" id="montant" name="montant" placeholder="Entrez le montant" min="100" required>
             </div>
 
             <div class="form-group full-width">
@@ -1077,7 +1077,7 @@
             </button>
         </form>
 
-        <p class="note">Le montant minimum de retrait est de <strong>3000 XAF</strong>. Les frais de traitement peuvent s'appliquer.</p>
+        <p class="note">Le montant minimum de retrait est de <strong>100 XAF</strong> (test). Les frais de traitement peuvent s'appliquer.</p>
         <p class="success-note">Vérifiez attentivement vos informations avant de soumettre. Le traitement peut prendre 24-48 heures.</p>
       </div>
 
@@ -1378,7 +1378,7 @@
     function validerFormulaire() {
         const montant = parseFloat(montantInput.value);
         const solde = userData.solde || 0;
-        const minMontant = 3000;
+        const minMontant = 100;
 
         if (montant < minMontant) {
             showNotification('error', 'Erreur', `Le montant minimum de retrait est de ${minMontant.toLocaleString('fr-FR')} XAF.`);
