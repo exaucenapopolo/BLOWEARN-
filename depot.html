@@ -3,1752 +3,457 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BLOWEARN AGENCIES - Dépôt</title>
+  <title>BLOWEARN AGENCIES - Depot</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  
   <style>
-    /* -------------------------------------------------------------------------- */
-    /* --- VARIABLES CSS COHÉRENTES AVEC LA PAGE DASHBOARD --- */
-    /* -------------------------------------------------------------------------- */
-    :root {
-      --color-primary: #4A90E2; /* Bleu Énergique */
-      --color-secondary: #FFC107; /* Jaune Vif/Or pour l'accent */
-      --color-text-dark: #2C3E50; /* Texte Sombre (lisible) */
-      --color-text-light: #ECF0F1; /* Texte Clair */
-      --color-bg-light: #FFFFFF; /* Fond de Carte */
-      --color-bg-gradient-1: #6DD5FA; /* Dégradé Fond 1 */
-      --color-bg-gradient-2: #FF7582; /* Dégradé Fond 2 */
-      --success-color: #4CD964;
-      --warning-color: #FF9500;
-      --danger-color: #FF3B30;
-      --shadow: 0 15px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.8);
-      --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- STYLES GÉNÉRAUX COHÉRENTS --- */
-    /* -------------------------------------------------------------------------- */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Montserrat', sans-serif;
-      transition: var(--transition);
-    }
-
-    body {
-      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
-      color: var(--color-text-dark);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow-x: hidden;
-    }
-
-    /* Effet de bulles animées en arrière-plan */
-    body::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 25%),
-        radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
-        radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
-        radial-gradient(circle at 90% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 25%);
-      animation: float 20s ease-in-out infinite;
-      z-index: -1;
-    }
-    
-    @keyframes float {
-      0%, 100% { transform: translateY(0) scale(1); }
-      50% { transform: translateY(-15px) scale(1.02); }
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- LOADER --- */
-    /* -------------------------------------------------------------------------- */
-    .loader-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
-    }
-
-    .loader-container.hidden {
-      opacity: 0;
-      visibility: hidden;
-    }
-
-    .loader {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: conic-gradient(#0000 10%, var(--color-primary));
-      -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
-      animation: spin 1s infinite linear;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(1turn); }
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- HEADER --- */
-    /* -------------------------------------------------------------------------- */
-    .header {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(15px);
-      box-shadow: var(--shadow);
-      padding: 15px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      border-bottom: 1px solid rgba(255,255,255,0.7);
-    }
-
-    .logo {
-      font-size: 1.8rem;
-      font-weight: 800; /* Plus épais pour plus de visibilité */
-      color: var(--color-text-dark); /* Changé pour plus de contraste */
-      display: flex;
-      align-items: center;
-      font-family: 'Poppins', sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Ombre plus prononcée */
-      background: linear-gradient(45deg, var(--color-primary) 0%, var(--color-secondary) 100%); /* Dégradé plus contrasté */
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: logoGlow 3s ease-in-out infinite alternate;
-    }
-    
-    @keyframes logoGlow {
-      from { filter: drop-shadow(0 0 5px rgba(74, 144, 226, 0.5)); }
-      to { filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.7)); }
-    }
-
-    .header-controls {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .language-selector {
-      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
-      color: white;
-      border: none;
-      border-radius: 20px;
-      padding: 8px 15px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 500;
-      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
-      position: relative;
-    }
-
-    .language-dropdown {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(15px);
-      box-shadow: var(--shadow);
-      border-radius: 12px;
-      padding: 8px;
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      min-width: 140px;
-      z-index: 200;
-      transform-origin: top right;
-      animation: scaleIn 0.2s ease-out forwards;
-      border: 1px solid rgba(255,255,255,0.7);
-      margin-top: 5px;
-    }
-
-    .language-dropdown.active {
-      display: flex;
-    }
-
-    .language-option {
-      padding: 8px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: background-color 0.2s ease;
-    }
-
-    .language-option:hover {
-      background-color: rgba(0, 0, 0, 0.05);
-    }
-
-    .language-option.active {
-      background-color: rgba(74, 144, 226, 0.1);
-      color: var(--color-primary);
-      font-weight: 600;
-    }
-
-    .theme-toggle {
-      background-color: transparent;
-      border: none;
-      color: var(--color-text-dark);
-      cursor: pointer;
-      padding: 5px;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background-color 0.3s ease;
-    }
-
-    .theme-toggle:hover {
-      background-color: rgba(0, 0, 0, 0.05);
-    }
-
-    .theme-toggle i {
-      font-size: 1.2rem;
-    }
-
-    .user-profile {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-      position: relative;
-    }
-    
-    .user-profile .avatar {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      background-color: var(--color-primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.2rem;
-      font-weight: bold;
-      border: 2px solid var(--color-secondary);
-      box-shadow: var(--shadow);
-    }
-
-    .profile-dropdown {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(15px);
-      box-shadow: var(--shadow);
-      border-radius: 18px;
-      padding: 10px;
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      min-width: 150px;
-      z-index: 200;
-      transform-origin: top right;
-      animation: scaleIn 0.2s ease-out forwards;
-      border: 1px solid rgba(255,255,255,0.7);
-    }
-
-    .profile-dropdown.active {
-      display: flex;
-    }
-    
-    @keyframes scaleIn {
-      from { transform: scale(0.9); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-
-    .profile-dropdown .theme-toggle {
-      width: 100%;
-      border-radius: 8px;
-      background-color: rgba(0, 0, 0, 0.05);
-      color: var(--text-color);
-      justify-content: flex-start;
-      padding: 10px;
-      transition: background-color 0.2s ease, transform 0.2s ease;
-      text-align: left;
-      gap: 10px;
-    }
-
-    .profile-dropdown .theme-toggle:hover {
-      background-color: rgba(0, 0, 0, 0.1);
-      transform: translateY(-2px);
-    }
-    
-    .profile-dropdown .theme-toggle span {
-      flex-grow: 1;
-      text-align: left;
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- BOUTON HAMBURGER (DÉPLACÉ À DROITE) --- */
-    /* -------------------------------------------------------------------------- */
-    .hamburger-btn {
-      display: none;
-      background: none;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-around;
-      width: 30px;
-      height: 25px;
-      padding: 0;
-      order: 2; /* Pour le placer à droite dans le header */
-    }
-    
-    .hamburger-btn .bar {
-      width: 100%;
-      height: 3px;
-      background-color: var(--color-text-dark);
-      transition: transform 0.3s ease, opacity 0.3s ease;
-    }
-    
-    .hamburger-btn.open .bar:nth-child(2) {
-      opacity: 0;
-    }
-    
-    .hamburger-btn.open .bar:nth-child(1) {
-      transform: translateY(11px) rotate(45deg);
-    }
-    
-    .hamburger-btn.open .bar:nth-child(3) {
-      transform: translateY(-11px) rotate(-45deg);
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- STRUCTURE PRINCIPALE --- */
-    /* -------------------------------------------------------------------------- */
-    .main-container {
-      display: flex;
-      flex: 1;
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- SIDEBAR (MENU) AMÉLIORÉ AVEC NOUVEAU FOND ET POLICE --- */
-    /* -------------------------------------------------------------------------- */
-    .sidebar {
-      width: 280px;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.95) 100%);
-      backdrop-filter: blur(15px);
-      border-right: 1px solid rgba(255,255,255,0.7);
-      box-shadow: var(--shadow);
-      height: calc(100vh - 80px);
-      position: sticky;
-      top: 80px;
-      padding: 25px 0;
-      overflow-y: auto;
-      transition: transform 0.4s ease-in-out; 
-    }
-    
-    .sidebar.open {
-      transform: translateX(0);
-    }
-
-    .welcome-section {
-      padding: 0 25px 25px;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
-    }
-
-    .welcome-text {
-      color: var(--color-text-dark);
-      font-size: 0.9rem;
-      margin-bottom: 5px;
-      font-weight: 500;
-      font-family: 'Quicksand', sans-serif;
-    }
-
-    .username {
-      font-weight: 600;
-      font-size: 1.2rem;
-      color: var(--color-primary);
-      font-family: 'Quicksand', sans-serif;
-    }
-
-    .menu-category {
-      padding: 15px 25px 5px;
-      font-size: 0.85rem;
-      color: var(--color-text-dark);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-weight: 600;
-      font-family: 'Quicksand', sans-serif;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .menu-item {
-      padding: 12px 25px 12px 35px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      color: var(--color-text-dark);
-      text-decoration: none;
-      font-weight: 500;
-      border-left: 4px solid transparent;
-      position: relative;
-      overflow: hidden;
-      animation: fadeIn 0.5s ease-out;
-      font-family: 'Quicksand', sans-serif;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateX(-20px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-    
-    .menu-item::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
-      transition: all 0.5s ease;
-    }
-    
-    .menu-item:hover::before {
-      left: 100%;
-    }
-
-    .menu-item:hover, .menu-item.active {
-      background-color: rgba(0, 0, 0, 0.05);
-      border-left-color: var(--color-primary);
-      color: var(--color-primary);
-    }
-
-    .menu-item i {
-      width: 20px;
-      text-align: center;
-      font-size: 1.1rem;
-      transition: transform 0.3s ease;
-    }
-
-    .menu-item:hover i {
-      transform: scale(1.1) rotate(5deg);
-    }
-
-    .menu-badge {
-      position: absolute;
-      right: 25px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 10px;
-      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-      animation: popIn 0.5s ease-out;
-    }
-    
-    @keyframes popIn {
-      from { transform: scale(0); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-    
-    .menu-badge.active {
-      background-color: var(--success-color);
-      color: white;
-    }
-    
-    .menu-badge.inactive {
-      background-color: var(--danger-color);
-      color: white;
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- CONTENU PRINCIPAL --- */
-    /* -------------------------------------------------------------------------- */
-    .content {
-      flex: 1;
-      padding: 30px;
-    }
-
-    .page-title {
-      font-size: 1.5rem;
-      margin-bottom: 25px;
-      color: var(--color-text-dark);
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-family: 'Poppins', sans-serif;
-    }
-
-    .page-title i {
-      color: var(--color-primary);
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- SECTION DÉPÔT AMÉLIORÉE --- */
-    /* -------------------------------------------------------------------------- */
-    .depot-container {
-      display: flex;
-      gap: 30px;
-      flex-wrap: wrap;
-    }
-
-    .depot-form-container {
-      flex: 1;
-      min-width: 300px;
-    }
-
-    .depot-info-container {
-      flex: 1;
-      min-width: 300px;
-    }
-
-    .depot-card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(15px);
-      border-radius: 18px;
-      padding: 25px;
-      box-shadow: var(--shadow);
-      margin-bottom: 30px;
-      position: relative;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.7);
-      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(40px) scale(0.95); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    .depot-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 5px;
-      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
-      border-radius: 18px 18px 0 0;
-    }
-
-    .depot-form {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .form-label {
-      font-weight: 500;
-      color: var(--color-text-dark);
-    }
-
-    .form-input, .form-select {
-      padding: 12px 15px;
-      border-radius: 10px;
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      background-color: rgba(255, 255, 255, 0.7);
-      color: var(--color-text-dark);
-      font-size: 1rem;
-      transition: var(--transition);
-    }
-
-    .form-input:focus, .form-select:focus {
-      outline: none;
-      border-color: var(--color-primary);
-      box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
-      transform: translateY(-2px);
-    }
-
-    .submit-btn {
-      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      padding: 15px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      box-shadow: 0 6px 20px rgba(74, 144, 226, 0.3);
-    }
-
-    .submit-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 25px rgba(74, 144, 226, 0.4);
-    }
-
-    .payment-methods {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      margin-top: 15px;
-    }
-
-    .payment-method {
-      flex: 1;
-      min-width: 120px;
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      border-radius: 12px;
-      padding: 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      background: rgba(255, 255, 255, 0.5);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .payment-method:hover {
-      border-color: var(--color-primary);
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .payment-method.selected {
-      border-color: var(--color-primary);
-      background: linear-gradient(135deg, rgba(74, 144, 226, 0.1) 0%, rgba(255, 193, 7, 0.1) 100%);
-      box-shadow: 0 5px 15px rgba(74, 144, 226, 0.2);
-    }
-
-    .payment-method i {
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-      color: var(--color-primary);
-    }
-
-    .payment-method .method-name {
-      font-weight: 600;
-      color: var(--color-text-dark);
-    }
-
-    .depot-history {
-      margin-top: 30px;
-    }
-
-    .history-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .history-table th, .history-table td {
-      padding: 12px 15px;
-      text-align: left;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    }
-
-    .history-table th {
-      background-color: rgba(0, 0, 0, 0.05);
-      font-weight: 600;
-      color: var(--color-text-dark);
-    }
-
-    .history-table tr {
-      transition: background-color 0.2s ease;
-    }
-
-    .history-table tr:hover {
-      background-color: rgba(0, 0, 0, 0.03);
-      transform: scale(1.01);
-    }
-
-    .status-badge {
-      display: inline-block;
-      padding: 5px 10px;
-      border-radius: 10px;
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-
-    .status-success {
-      background-color: var(--success-color);
-      color: white;
-    }
-
-    .status-pending {
-      background-color: var(--warning-color);
-      color: white;
-    }
-
-    .status-failed {
-      background-color: var(--danger-color);
-      color: white;
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- SECTION INFORMATION DÉPÔT --- */
-    /* -------------------------------------------------------------------------- */
-    .info-item {
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      z-index: 1;
-      padding: 15px;
-      background: rgba(255, 255, 255, 0.5);
-      border-radius: 12px;
-      transition: transform 0.3s ease;
-      margin-bottom: 15px;
-    }
-
-    .info-item:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .info-label {
-      font-size: 0.85rem;
-      color: var(--color-text-dark);
-      margin-bottom: 5px;
-      font-weight: 500;
-    }
-
-    .info-value {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--color-primary);
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- FOOTER AMÉLIORÉ --- */
-    /* -------------------------------------------------------------------------- */
-    .footer {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(15px);
-      padding: 20px 30px;
-      text-align: center;
-      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
-      margin-top: auto;
-      border-top: 1px solid rgba(255,255,255,0.7);
-    }
-
-    .footer-content {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .footer-link {
-      color: var(--color-primary);
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.2s ease;
-    }
-
-    .footer-link:hover {
-      text-decoration: underline;
-      color: var(--color-secondary);
-    }
-
-    .footer-text {
-      color: var(--color-text-dark);
-      font-size: 0.9rem;
-    }
-
-    /* Bouton de support */
-    .support-btn {
-      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      padding: 10px 20px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
-      margin-top: 10px;
-    }
-
-    .support-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(74, 144, 226, 0.4);
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- NOTIFICATIONS --- */
-    /* -------------------------------------------------------------------------- */
-    .notification-container {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      pointer-events: none;
-    }
-
-    .notification {
-      padding: 15px 20px;
-      border-radius: 10px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      max-width: 350px;
-      animation: slideIn 0.3s ease forwards;
-      position: relative;
-      overflow: hidden;
-      color: white;
-      pointer-events: auto;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.2);
-    }
-
-    .notification.success {
-      background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%);
-    }
-
-    .notification.error {
-      background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%);
-    }
-
-    .notification.info { 
-      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); 
-    }
-
-    @keyframes slideIn {
-      from {
-        transform: translateX(110%);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- OVERLAY --- */
-    /* -------------------------------------------------------------------------- */
-    .overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 98;
-    }
-    
-    .overlay.active {
-      display: block;
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- MODE NUIT --- */
-    /* -------------------------------------------------------------------------- */
-    .dark-mode {
-      --color-primary: #5e81ac;
-      --color-secondary: #d08770;
-      --color-text-dark: #eceff4;
-      --color-text-light: #2e3440;
-      --color-bg-light: #3b4252;
-      --color-bg-gradient-1: #2e3440;
-      --color-bg-gradient-2: #4c566a;
-      --success-color: #a3be8c;
-      --warning-color: #ebcb8b;
-      --danger-color: #bf616a;
-      --shadow: 0 15px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
-    }
-
-    .dark-mode body::before {
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(76, 86, 106, 0.4) 0%, transparent 25%),
-        radial-gradient(circle at 80% 10%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
-        radial-gradient(circle at 40% 80%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
-        radial-gradient(circle at 90% 90%, rgba(76, 86, 106, 0.2) 0%, transparent 25%);
-    }
-
-    .dark-mode .header,
-    .dark-mode .sidebar,
-    .dark-mode .depot-card,
-    .dark-mode .footer {
-      background: rgba(59, 66, 82, 0.95);
-      color: var(--color-text-dark);
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- RESPONSIVE --- */
-    /* -------------------------------------------------------------------------- */
-    @media (max-width: 992px) {
-      .sidebar {
-        width: 230px;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .main-container {
-        flex-direction: column;
-      }
-      
-      .hamburger-btn {
-        display: flex;
-        position: static; /* Position normale dans le flux */
-        order: 2; /* Pour le placer à droite */
-      }
-
-      .sidebar {
-        width: 85%;
-        max-width: 320px;
-        height: 100vh;
-        position: fixed;
-        top: 0;
-        left: -100%;
-        z-index: 99;
-        transition: left 0.4s ease-in-out;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.97) 100%);
-      }
-      
-      .sidebar.open {
-        left: 0;
-      }
-      
-      .header {
-        padding: 15px;
-      }
-      
-      .logo {
-        font-size: 1.5rem;
-        margin-left: 0; /* Supprimé le décalage précédent */
-      }
-      
-      .content {
-        padding: 20px;
-      }
-      
-      .depot-container {
-        flex-direction: column;
-      }
-
-      .footer-links {
-        flex-direction: column;
-        gap: 10px;
-      }
-
-      .payment-methods {
-        flex-direction: column;
-      }
-    }
-
-    @media (max-width: 576px) {
-      .history-table {
-        display: block;
-        overflow-x: auto;
-      }
-      
-      .user-name {
-        display: none;
-      }
-      
-      .language-selector span {
-        display: none;
-      }
-      
-      .language-selector {
-        padding: 8px;
-      }
-    }
+    :root{
+      --color-primary:#4A90E2;
+      --color-secondary:#FFC107;
+      --color-text-dark:#2C3E50;
+      --color-text-light:#ECF0F1;
+      --color-bg-gradient-1:#6DD5FA;
+      --color-bg-gradient-2:#FF7582;
+      --success-color:#4CD964;
+      --danger-color:#FF3B30;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Montserrat',sans-serif}
+    body{
+      background: linear-gradient(135deg,var(--color-bg-gradient-1) 0%,var(--color-bg-gradient-2) 100%);
+      color:var(--color-text-dark);
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:20px;
+    }
+    .container{width:100%;max-width:500px;margin:0 auto}
+    .card{
+      background: rgba(255,255,255,0.95);
+      border-radius:20px;
+      padding:30px;
+      box-shadow:0 20px 60px rgba(0,0,0,0.15);
+      border:1px solid rgba(255,255,255,0.7);
+    }
+    .logo{
+      font-size:2rem;
+      font-weight:700;
+      text-align:center;
+      margin-bottom:10px;
+      font-family:'Poppins',sans-serif;
+      background:linear-gradient(45deg,var(--color-primary),var(--color-secondary));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    .subtitle{text-align:center;color:#607d8b;margin-bottom:25px;font-size:0.95rem}
+    h2{color:var(--color-text-dark);font-size:1.5rem;margin-bottom:20px;text-align:center}
+    .user-info{
+      background:rgba(74,144,226,0.1);
+      padding:12px 15px;
+      border-radius:10px;
+      margin-bottom:20px;
+      text-align:center;
+    }
+    .user-info span{color:#607d8b;font-size:0.9rem}
+    .user-info strong{color:var(--color-primary);display:block;font-size:1.1rem;margin-top:3px}
+    .form-group{margin-bottom:20px}
+    .form-label{display:block;font-weight:600;margin-bottom:8px;color:var(--color-text-dark)}
+    .form-input,.form-select{
+      width:100%;
+      padding:14px 16px;
+      border-radius:12px;
+      border:2px solid #e0e0e0;
+      font-size:1rem;
+      transition:all 0.3s;
+      background:#fff;
+    }
+    .form-input:focus,.form-select:focus{
+      outline:none;
+      border-color:var(--color-primary);
+      box-shadow:0 0 0 4px rgba(74,144,226,0.15);
+    }
+    .amount-presets{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}
+    .preset-btn{
+      flex:1;
+      min-width:80px;
+      padding:12px 8px;
+      border:2px solid #e0e0e0;
+      border-radius:10px;
+      background:#fff;
+      cursor:pointer;
+      font-weight:600;
+      font-size:0.9rem;
+      transition:all 0.3s;
+    }
+    .preset-btn:hover{border-color:var(--color-primary);background:rgba(74,144,226,0.05)}
+    .preset-btn.selected{border-color:var(--color-primary);background:rgba(74,144,226,0.1);color:var(--color-primary)}
+    .methods{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+    .method{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:14px;
+      border-radius:12px;
+      border:2px solid #e0e0e0;
+      background:#fff;
+      cursor:pointer;
+      transition:all 0.3s;
+    }
+    .method:hover{border-color:var(--color-primary);background:rgba(74,144,226,0.03)}
+    .method.selected{border-color:var(--color-primary);background:rgba(74,144,226,0.1)}
+    .method i{font-size:22px;color:var(--color-primary);width:30px;text-align:center}
+    .method-info{flex:1}
+    .method-name{font-weight:700;color:var(--color-text-dark)}
+    .method-desc{font-size:0.85rem;color:#607d8b}
+    .btn{
+      display:block;
+      width:100%;
+      padding:16px;
+      background:linear-gradient(135deg,var(--color-primary) 0%,#79C3F8 100%);
+      color:white;
+      border:none;
+      border-radius:12px;
+      font-size:1.1rem;
+      font-weight:700;
+      cursor:pointer;
+      transition:all 0.3s;
+    }
+    .btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(74,144,226,0.4)}
+    .btn:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+    .btn.secondary{background:#f5f5f5;color:var(--color-text-dark);margin-top:10px}
+    .btn.secondary:hover{background:#e8e8e8}
+    .spinner{display:inline-block;width:18px;height:18px;border:3px solid rgba(255,255,255,0.3);border-radius:50%;border-top-color:#fff;animation:spin 1s linear infinite;margin-right:10px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .message{margin-top:15px;padding:12px;border-radius:10px;text-align:center}
+    .message.error{background:rgba(255,59,48,0.1);border:1px solid rgba(255,59,48,0.3);color:#C62828}
+    .message.success{background:rgba(76,205,100,0.1);border:1px solid rgba(76,205,100,0.3);color:#2E7D32}
+    .message.info{background:rgba(74,144,226,0.1);border:1px solid rgba(74,144,226,0.3);color:#1565C0}
+    .back-link{display:block;text-align:center;margin-top:20px;color:var(--color-primary);text-decoration:none;font-weight:500}
+    .back-link:hover{text-decoration:underline}
+    .min-info{font-size:0.85rem;color:#607d8b;text-align:center;margin-top:10px}
+    @media (max-width:500px){.container{padding:10px}.card{padding:20px}.preset-btn{min-width:70px;font-size:0.8rem}}
   </style>
 </head>
 <body>
-  <div class="loader-container" id="loader">
-    <div class="loader"></div>
-  </div>
-
-  <div class="notification-container" id="notificationContainer"></div>
-
-  <header class="header">
-    <div class="logo">
-      <span>BLOWEARN</span>
-    </div>
-    
-    <div class="header-controls">
-      <div class="language-selector-container">
-        <button class="language-selector" id="languageSelector">
-          <i class="fas fa-globe"></i>
-          <span id="currentLanguage">French</span>
-          <i class="fas fa-chevron-down"></i>
-        </button>
-        <div class="language-dropdown" id="languageDropdown">
-          <div class="language-option active" data-lang="fr">
-            <i class="fas fa-check"></i>
-            <span>Français</span>
+  <div class="container">
+    <div class="card">
+      <div class="logo"><i class="fas fa-crown"></i> BLOWEARN</div>
+      <p class="subtitle">Deposez de l'argent sur votre compte</p>
+      
+      <h2><i class="fas fa-wallet" style="color:var(--color-primary);margin-right:8px"></i>Faire un depot</h2>
+      
+      <div class="user-info">
+        <span>Compte connecte :</span>
+        <strong id="displayName">Chargement...</strong>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Montant a deposer (FCFA)</label>
+        <div class="amount-presets">
+          <button type="button" class="preset-btn" data-amount="1000">1 000</button>
+          <button type="button" class="preset-btn" data-amount="2000">2 000</button>
+          <button type="button" class="preset-btn" data-amount="5000">5 000</button>
+          <button type="button" class="preset-btn" data-amount="10000">10 000</button>
+        </div>
+        <input type="number" id="amount" class="form-input" placeholder="Entrez un montant" min="500" data-testid="input-amount">
+        <p class="min-info">Montant minimum : 500 FCFA</p>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Methode de paiement</label>
+        <div class="methods">
+          <div class="method" id="mobileMoneyMethod" data-testid="method-mobile-money">
+            <i class="fas fa-mobile-screen-button"></i>
+            <div class="method-info">
+              <div class="method-name">Mobile Money</div>
+              <div class="method-desc">MTN MoMo / Orange Money</div>
+            </div>
           </div>
-          <div class="language-option" data-lang="en">
-            <i class="fas fa-check" style="opacity: 0;"></i>
-            <span>English</span>
+          <div class="method" id="cardMethod" data-testid="method-card">
+            <i class="fas fa-credit-card"></i>
+            <div class="method-info">
+              <div class="method-name">Carte bancaire</div>
+              <div class="method-desc">Visa / Mastercard</div>
+            </div>
           </div>
         </div>
       </div>
       
-      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
+      <button id="depositBtn" class="btn" data-testid="button-deposit">
+        <i class="fas fa-arrow-up"></i> DEPOSER MAINTENANT
       </button>
       
-      <div class="user-profile" id="userProfile">
-          <div class="avatar" id="userAvatar">U</div>
-          <div class="profile-dropdown" id="profileDropdown">
-              <button class="theme-toggle" id="themeToggle">
-                  <i class="fas fa-moon"></i>
-                  <span>Mode nuit</span>
-              </button>
-          </div>
-      </div>
+      <button id="backBtn" class="btn secondary">
+        <i class="fas fa-arrow-left"></i> Retour au tableau de bord
+      </button>
+      
+      <div id="message"></div>
     </div>
-  </header>
-
-  <div class="overlay" id="overlay"></div>
-
-  <div class="main-container">
-    <aside class="sidebar" id="sidebar">
-      <div class="welcome-section">
-        <div class="welcome-text" data-i18n="dashboard.title">Dashboard >> BLOWEARN AGENCIES</div>
-        <div class="username" id="sidebarUsername">Utilisateur</div>
-      </div>
-      
-      <div class="menu-category" data-i18n="menu.main">PRINCIPAL</div>
-      <a href="dashboard.html" class="menu-item">
-        <i class="fas fa-home"></i>
-        <span data-i18n="menu.dashboard">Tableau de bord</span>
-        <span class="menu-badge inactive">☑</span>
-      </a>
-      
-      <a href="depot.html" class="menu-item active">
-        <i class="fas fa-wallet"></i>
-        <span data-i18n="menu.deposit">Dépôt 💵</span>
-        <span class="menu-badge active">☐</span>
-      </a>
-      
-      <a href="bonus_bienvenue.html" class="menu-item">
-        <i class="fas fa-gift"></i>
-        <span data-i18n="menu.welcome_bonus">Bonus de bienvenue</span>
-        <span class="menu-badge inactive">☒</span>
-      </a>
-      
-      <div class="menu-category" data-i18n="menu.accounts">COMPTES</div>
-      <a href="retrait.html" class="menu-item">
-        <i class="fas fa-money-bill-wave"></i>
-        <span data-i18n="menu.withdrawal">Retrait</span>
-        <span class="menu-badge inactive">☐</span>
-      </a>
-      
-      <a href="equipe.html" class="menu-item">
-        <i class="fas fa-users"></i>
-        <span data-i18n="menu.team">Équipe</span>
-        <span class="menu-badge inactive">☒</span>
-      </a>
-
-      <div class="menu-category" data-i18n="menu.special">SPÉCIAL</div>
-      
-      <a href="social_boost.html" class="menu-item">
-        <i class="fas fa-rocket"></i>
-        <span data-i18n="menu.sbh">SBH</span>
-        <span class="menu-badge inactive">☐</span>
-      </a>
-      
-      <a href="challenge_reward.html" class="menu-item">
-        <i class="fas fa-medal"></i>
-        <span data-i18n="menu.challenge">Challenge and Reward</span>
-        <span class="menu-badge inactive">☐</span>
-      </a>
-      
-      <div class="menu-category" data-i18n="menu.products">PRODUIT / TÂCHE</div>
-      <a href="whatsapp_earn.html" class="menu-item">
-        <i class="fab fa-whatsapp"></i>
-        <span data-i18n="menu.whatsapp_earn">Gagner via Whatsapp</span>
-        <span class="menu-badge inactive">☐</span>
-      </a>
-      
-      <a href="gains_publicitaires.html" class="menu-item">
-        <i class="fas fa-ad"></i>
-        <span data-i18n="menu.ad_earnings">Gains publicitaires</span>
-        <span class="menu-badge inactive">☐</span>
-      </a>
-      
-      <a href="spin_wheel.html" class="menu-item">
-        <i class="fas fa-trophy"></i>
-        <span data-i18n="menu.fortune_wheel">Roue de la fortune 🏆</span>
-        <span class="menu-badge inactive">☐</span>
-      </a>
-      
-      <a href="tiktok_earn.html" class="menu-item">
-        <i class="fab fa-tiktok"></i>
-        <span data-i18n="menu.tiktok_earn">TikTok Earn</span>
-        <span class="menu-badge inactive">☐</span>
-      </a>
-      
-      <a href="youtube_earn.html" class="menu-item">
-        <i class="fab fa-youtube"></i>
-        <span data-i18n="menu.youtube_earn">YouTube Earn</span>
-        <span class="menu-badge inactive">☐</span>
-      </a>
-      
-      <a href="instagram_earn.html" class="menu-item">
-        <i class="fab fa-instagram"></i>
-        <span data-i18n="menu.instagram_earn">Instagram Earn</span>
-        <span class="menu-badge inactive">☐</span>
-      </a>
-      
-      <a href="trivia_challenge.html" class="menu-item">
-        <i class="fas fa-brain"></i>
-        <span data-i18n="menu.trivia">TRIVIA challenge</span>
-        <span class="menu-badge inactive">☐</span>
-      </a>
-      
-      <div class="menu-category" data-i18n="menu.bonus">BONUS</div>
-      <a href="liste_contacts.html" class="menu-item">
-        <i class="fas fa-address-book"></i>
-        <span data-i18n="menu.contact_list">Liste de contacts gratuit 🆓</span>
-        <span class="menu-badge inactive">☐</span>
-      </a>
-      
-      <a href="booster_visibilite.html" class="menu-item">
-        <i class="fas fa-rocket"></i>
-        <span data-i18n="menu.visibility_booster">Booster ma visibilité</span>
-        <span class="menu-badge inactive">☐</span>
-      </a>
-
-      <a href="canva_pro.html" class="menu-item">
-        <i class="fas fa-palette"></i>
-        <span data-i18n="menu.canva_pro">Canva Pro</span>
-        <span class="menu-badge inactive">☐</span>
-      </a>
-      
-      <a href="connexion_gratuite.html" class="menu-item">
-        <i class="fas fa-shield-alt"></i>
-        <span data-i18n="menu.free_connection">Connexion gratuite</span>
-        <span class="menu-badge inactive">☐</span>
-      </a>
-    </aside>
-
-    <main class="content">
-      <h1 class="page-title">
-        <i class="fas fa-wallet"></i>
-        <span data-i18n="deposit.title">Dépôt d'argent</span>
-      </h1>
-      
-      <div class="depot-container">
-        <div class="depot-form-container">
-          <div class="depot-card">
-            <h2 data-i18n="deposit.form_title">Effectuer un dépôt</h2>
-            <form class="depot-form" id="depotForm">
-              <div class="form-group">
-                <label class="form-label" for="phone" data-i18n="deposit.phone">Numéro de téléphone</label>
-                <input type="tel" id="phone" class="form-input" placeholder="Votre numéro de téléphone" required>
-              </div>
-              
-              <div class="form-group">
-                <label class="form-label" for="amount" data-i18n="deposit.amount">Montant à déposer (XAF)</label>
-                <input type="number" id="amount" class="form-input" placeholder="Montant en XAF" min="1000" required>
-              </div>
-              
-              <div class="form-group">
-                <label class="form-label" data-i18n="deposit.method">Méthode de paiement</label>
-                <div class="payment-methods">
-                  <div class="payment-method" data-method="mtn">
-                    <i class="fas fa-mobile-alt"></i>
-                    <div class="method-name">MTN Mobile Money</div>
-                  </div>
-                  <div class="payment-method" data-method="orange">
-                    <i class="fas fa-mobile-alt"></i>
-                    <div class="method-name">Orange Money</div>
-                  </div>
-                </div>
-                <input type="hidden" id="paymentMethod" required>
-              </div>
-              
-              <button type="submit" class="submit-btn" data-i18n="deposit.submit">Effectuer le dépôt</button>
-            </form>
-          </div>
-        </div>
-        
-        <div class="depot-info-container">
-          <div class="depot-card">
-            <h2 data-i18n="deposit.info_title">Informations de dépôt</h2>
-            <div class="info-item">
-              <div class="info-label" data-i18n="deposit.min_amount">Montant minimum</div>
-              <div class="info-value">1000 XAF</div>
-            </div>
-            <div class="info-item">
-              <div class="info-label" data-i18n="deposit.processing">Traitement</div>
-              <div class="info-value" data-i18n="deposit.instant">Instantané</div>
-            </div>
-            <div class="info-item">
-              <div class="info-label" data-i18n="deposit.fees">Frais de transaction</div>
-              <div class="info-value" data-i18n="deposit.no_fees">Aucun frais</div>
-            </div>
-          </div>
-          
-          <div class="depot-card depot-history">
-            <h2 data-i18n="deposit.history">Historique des dépôts</h2>
-            <table class="history-table">
-              <thead>
-                <tr>
-                  <th data-i18n="deposit.date">Date</th>
-                  <th data-i18n="deposit.amount">Montant</th>
-                  <th data-i18n="deposit.status">Statut</th>
-                </tr>
-              </thead>
-              <tbody id="depotHistory">
-                <tr>
-                  <td colspan="3" style="text-align: center;" data-i18n="deposit.no_history">Aucun dépôt effectué</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </main>
   </div>
 
-  <footer class="footer">
-    <div class="footer-content">
-      <div class="footer-links">
-        <a href="terms.html" class="footer-link" data-i18n="footer.terms">Conditions d'utilisation</a>
-        <a href="privacy.html" class="footer-link" data-i18n="footer.privacy">Politique de confidentialité</a>
-        <button class="support-btn" id="supportBtn" data-i18n="footer.support">Support</button>
-        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Propulsé par SBH</a>
-        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Boost Text Management</a>
-      </div>
-      <div class="footer-text">
-        © 2025 BLOWEARN AGENCIES. <span data-i18n="footer.rights">Tous droits réservés.</span>
-      </div>
-    </div>
-  </footer>
-  
-<script>
-/******** CONFIG FIREBASE ********/
-const firebaseConfig = {
-  apiKey: "AIzaSyCjGisjgbFc2ZE0BFgdhlUao8bCCeuKP1k",
-  authDomain: "cash-flowr.firebaseapp.com",
-  projectId: "cash-flowr",
-  storageBucket: "cash-flowr.appspot.com",
-  messagingSenderId: "1091928501310",
-  appId: "1:1091928501310:web:4f4de306cde36f378ff56f",
-  measurementId: "G-5SF6VDLZCB"
-};
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const auth = firebase.auth();
+    const firebaseConfig = {
+      apiKey: "AIzaSyCjGisjgbFc2ZE0BFgdhlUao8bCCeuKP1k",
+      authDomain: "cash-flowr.firebaseapp.com",
+      projectId: "cash-flowr",
+      storageBucket: "cash-flowr.firebasestorage.app",
+      messagingSenderId: "1091928501310",
+      appId: "1:1091928501310:web:4f4de306cde36f378ff56f"
+    };
 
-/******** DOM Elements ********/
-const hamburgerBtn = document.getElementById('hamburgerBtn');
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('overlay');
-const themeToggle = document.getElementById('themeToggle');
-const userProfile = document.getElementById('userProfile');
-const profileDropdown = document.getElementById('profileDropdown');
-const languageSelector = document.getElementById('languageSelector');
-const languageDropdown = document.getElementById('languageDropdown');
-const currentLanguage = document.getElementById('currentLanguage');
-const depotForm = document.getElementById('depotForm');
-const phoneInput = document.getElementById('phone');
-const amountInput = document.getElementById('amount');
-const paymentMethodInput = document.getElementById('paymentMethod');
-const paymentMethods = document.querySelectorAll('.payment-method');
-const depotHistory = document.getElementById('depotHistory');
-const sidebarUsername = document.getElementById('sidebarUsername');
-const userAvatar = document.getElementById('userAvatar');
-const loader = document.getElementById('loader');
-const supportBtn = document.getElementById('supportBtn');
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const SERVER_URL = "https://mulaflowr-exaucenapopolo2.replit.app";
 
-/******** Variables d'état ********/
-let currentUser = null;
-let userData = {};
-let currentLang = 'fr'; // Langue par défaut
+    const displayNameEl = document.getElementById('displayName');
+    const amountInput = document.getElementById('amount');
+    const messageEl = document.getElementById('message');
+    const depositBtn = document.getElementById('depositBtn');
+    const backBtn = document.getElementById('backBtn');
+    const mobileMoneyMethod = document.getElementById('mobileMoneyMethod');
+    const cardMethod = document.getElementById('cardMethod');
+    const presetBtns = document.querySelectorAll('.preset-btn');
 
-/******** Système de traduction ********/
-const translations = {
-  fr: {
-    // Header
-    "header.language": "French",
-    "header.night_mode": "Mode nuit",
-    "header.day_mode": "Mode jour",
-    
-    // Dashboard
-    "dashboard.title": "Dashboard >> BLOWEARN AGENCIES",
-    
-    // Menu
-    "menu.main": "PRINCIPAL",
-    "menu.dashboard": "Tableau de bord",
-    "menu.deposit": "Dépôt 💵",
-    "menu.welcome_bonus": "Bonus de bienvenue",
-    "menu.accounts": "COMPTES",
-    "menu.withdrawal": "Retrait",
-    "menu.team": "Équipe",
-    "menu.special": "SPÉCIAL",
-    "menu.sbh": "SBH",
-    "menu.challenge": "Challenge and Reward",
-    "menu.products": "PRODUIT / TÂCHE",
-    "menu.whatsapp_earn": "Gagner via Whatsapp",
-    "menu.ad_earnings": "Gains publicitaires",
-    "menu.fortune_wheel": "Roue de la fortune 🏆",
-    "menu.tiktok_earn": "TikTok Earn",
-    "menu.youtube_earn": "YouTube Earn",
-    "menu.instagram_earn": "Instagram Earn",
-    "menu.trivia": "TRIVIA challenge",
-    "menu.bonus": "BONUS",
-    "menu.contact_list": "Liste de contacts gratuit 🆓",
-    "menu.visibility_booster": "Booster ma visibilité",
-    "menu.canva_pro": "Canva Pro",
-    "menu.free_connection": "Connexion gratuite",
-    
-    // Deposit
-    "deposit.title": "Dépôt d'argent",
-    "deposit.form_title": "Effectuer un dépôt",
-    "deposit.phone": "Numéro de téléphone",
-    "deposit.amount": "Montant à déposer (XAF)",
-    "deposit.method": "Méthode de paiement",
-    "deposit.submit": "Effectuer le dépôt",
-    "deposit.info_title": "Informations de dépôt",
-    "deposit.min_amount": "Montant minimum",
-    "deposit.processing": "Traitement",
-    "deposit.instant": "Instantané",
-    "deposit.fees": "Frais de transaction",
-    "deposit.no_fees": "Aucun frais",
-    "deposit.history": "Historique des dépôts",
-    "deposit.date": "Date",
-    "deposit.status": "Statut",
-    "deposit.no_history": "Aucun dépôt effectué",
-    
-    // Footer
-    "footer.terms": "Conditions d'utilisation",
-    "footer.privacy": "Politique de confidentialité",
-    "footer.support": "Support",
-    "footer.rights": "Tous droits réservés.",
-    
-    // Notifications
-    "notification.success": "Succès",
-    "notification.error": "Erreur",
-    "notification.info": "Information"
-  },
-  en: {
-    // Header
-    "header.language": "English",
-    "header.night_mode": "Night mode",
-    "header.day_mode": "Day mode",
-    
-    // Dashboard
-    "dashboard.title": "Dashboard >> BLOWEARN AGENCIES",
-    
-    // Menu
-    "menu.main": "MAIN",
-    "menu.dashboard": "Dashboard",
-    "menu.deposit": "Deposit 💵",
-    "menu.welcome_bonus": "Welcome Bonus",
-    "menu.accounts": "ACCOUNTS",
-    "menu.withdrawal": "Withdrawal",
-    "menu.team": "Team",
-    "menu.special": "SPECIAL",
-    "menu.sbh": "SBH",
-    "menu.challenge": "Challenge and Reward",
-    "menu.products": "PRODUCT / TASK",
-    "menu.whatsapp_earn": "Earn via Whatsapp",
-    "menu.ad_earnings": "Advertising earnings",
-    "menu.fortune_wheel": "Fortune Wheel 🏆",
-    "menu.tiktok_earn": "TikTok Earn",
-    "menu.youtube_earn": "YouTube Earn",
-    "menu.instagram_earn": "Instagram Earn",
-    "menu.trivia": "TRIVIA challenge",
-    "menu.bonus": "BONUS",
-    "menu.contact_list": "Free contact list 🆓",
-    "menu.visibility_booster": "Boost my visibility",
-    "menu.canva_pro": "Canva Pro",
-    "menu.free_connection": "Free connection",
-    
-    // Deposit
-    "deposit.title": "Money Deposit",
-    "deposit.form_title": "Make a Deposit",
-    "deposit.phone": "Phone number",
-    "deposit.amount": "Amount to deposit (XAF)",
-    "deposit.method": "Payment method",
-    "deposit.submit": "Make deposit",
-    "deposit.info_title": "Deposit Information",
-    "deposit.min_amount": "Minimum amount",
-    "deposit.processing": "Processing",
-    "deposit.instant": "Instant",
-    "deposit.fees": "Transaction fees",
-    "deposit.no_fees": "No fees",
-    "deposit.history": "Deposit history",
-    "deposit.date": "Date",
-    "deposit.status": "Status",
-    "deposit.no_history": "No deposit made",
-    
-    // Footer
-    "footer.terms": "Terms of Use",
-    "footer.privacy": "Privacy Policy",
-    "footer.support": "Support",
-    "footer.rights": "All rights reserved.",
-    
-    // Notifications
-    "notification.success": "Success",
-    "notification.error": "Error",
-    "notification.info": "Information"
-  }
-};
+    let currentUser = null;
+    let selectedMethod = null;
+    let userCountryCode = 'CM';
+    let isProcessing = false;
 
-/******** Fonctions de traduction ********/
-function setLanguage(lang) {
-  currentLang = lang;
-  localStorage.setItem('preferredLanguage', lang);
-  
-  // Mettre à jour le sélecteur de langue
-  currentLanguage.textContent = lang === 'fr' ? 'French' : 'English';
-  
-  // Mettre à jour les options de langue
-  document.querySelectorAll('.language-option').forEach(option => {
-    const icon = option.querySelector('i');
-    if (option.dataset.lang === lang) {
-      option.classList.add('active');
-      icon.style.opacity = '1';
-    } else {
-      option.classList.remove('active');
-      icon.style.opacity = '0';
+    function showMessage(text, type = 'info') {
+      messageEl.innerHTML = `<div class="message ${type}">${text}</div>`;
     }
-  });
-  
-  // Traduire tous les éléments avec data-i18n
-  document.querySelectorAll('[data-i18n]').forEach(element => {
-    const key = element.getAttribute('data-i18n');
-    if (translations[lang] && translations[lang][key]) {
-      if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-        element.placeholder = translations[lang][key];
+
+    function clearMessage() {
+      messageEl.innerHTML = '';
+    }
+
+    function setLoading(loading) {
+      isProcessing = loading;
+      depositBtn.disabled = loading;
+      if (loading) {
+        depositBtn.innerHTML = '<span class="spinner"></span> Traitement...';
       } else {
-        element.textContent = translations[lang][key];
+        depositBtn.innerHTML = '<i class="fas fa-arrow-up"></i> DEPOSER MAINTENANT';
       }
     }
-  });
-  
-  // Mettre à jour le texte du thème
-  const isDarkMode = document.body.classList.contains('dark-mode');
-  if (themeToggle) {
-    themeToggle.innerHTML = isDarkMode 
-      ? `<i class="fas fa-sun"></i><span>${translations[lang]['header.day_mode']}</span>` 
-      : `<i class="fas fa-moon"></i><span>${translations[lang]['header.night_mode']}</span>`;
-  }
-}
 
-/******** UI helpers ********/
-function showNotification(type, title, message, duration = 4000) {
-  const container = document.getElementById('notificationContainer');
-  if (!container) return;
-  const notification = document.createElement('div');
-  notification.className = `notification ${type}`;
-  const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle');
-  notification.innerHTML = `
-    <i class="fas ${icon}" style="font-size: 1.5rem;"></i>
-    <div>
-      <strong style="display: block; margin-bottom: 5px;">${title}</strong>
-      <span>${message}</span>
-    </div>
-  `;
-  container.appendChild(notification);
-  setTimeout(() => {
-    notification.style.animation = 'slideIn 0.3s ease reverse forwards';
-    setTimeout(() => { if (container.contains(notification)) container.removeChild(notification); }, 300);
-  }, duration);
-}
+    presetBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        presetBtns.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        amountInput.value = btn.dataset.amount;
+        clearMessage();
+      });
+    });
 
-/******** UI events ********/
-if (hamburgerBtn) {
-  hamburgerBtn.addEventListener('click', () => {
-      sidebar.classList.toggle('open');
-      overlay.classList.toggle('active');
-      hamburgerBtn.classList.toggle('open');
-  });
-}
-if (overlay) {
-  overlay.addEventListener('click', () => {
-      sidebar.classList.remove('open');
-      overlay.classList.remove('active');
-      hamburgerBtn.classList.remove('open');
-  });
-}
-if (userProfile) {
-  userProfile.addEventListener('click', (event) => {
-      event.stopPropagation();
-      profileDropdown.classList.toggle('active');
-  });
-}
-document.addEventListener('click', (event) => {
-  if (!userProfile || !userProfile.contains(event.target)) {
-    if (profileDropdown) profileDropdown.classList.remove('active');
-  }
-});
+    amountInput.addEventListener('input', () => {
+      presetBtns.forEach(b => b.classList.remove('selected'));
+      clearMessage();
+    });
 
-// Gestion du sélecteur de langue
-if (languageSelector) {
-  languageSelector.addEventListener('click', (event) => {
-    event.stopPropagation();
-    languageDropdown.classList.toggle('active');
-  });
-}
+    mobileMoneyMethod.addEventListener('click', () => {
+      mobileMoneyMethod.classList.add('selected');
+      cardMethod.classList.remove('selected');
+      selectedMethod = 'mobile_money';
+      clearMessage();
+    });
 
-// Fermer le dropdown de langue quand on clique ailleurs
-document.addEventListener('click', () => {
-  if (languageDropdown) languageDropdown.classList.remove('active');
-});
+    cardMethod.addEventListener('click', () => {
+      cardMethod.classList.add('selected');
+      mobileMoneyMethod.classList.remove('selected');
+      selectedMethod = 'card';
+      clearMessage();
+    });
 
-// Changer de langue
-document.querySelectorAll('.language-option').forEach(option => {
-  option.addEventListener('click', () => {
-    const lang = option.dataset.lang;
-    setLanguage(lang);
-    languageDropdown.classList.remove('active');
-  });
-});
+    backBtn.addEventListener('click', () => {
+      window.location.href = 'dashboard.html';
+    });
 
-if (themeToggle) {
-  themeToggle.addEventListener('click', (event) => {
-      event.stopPropagation();
-      document.body.classList.toggle('dark-mode');
-      const isDarkMode = document.body.classList.contains('dark-mode');
-      themeToggle.innerHTML = isDarkMode 
-          ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
-          : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
-      if(currentUser) saveUserData('theme', isDarkMode ? 'dark' : 'light');
-  });
-}
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+      currentUser = user;
+      displayNameEl.textContent = user.displayName || user.email || user.uid;
 
-/******** Bouton Support ********/
-if (supportBtn) {
-  supportBtn.addEventListener('click', () => {
-    window.open('https://wa.me/681144638', '_blank');
-  });
-}
+      try {
+        const userRef = doc(db, 'users', user.uid);
+        const snap = await getDoc(userRef);
+        if (snap.exists()) {
+          const data = snap.data();
+          if (data.country) userCountryCode = data.country.toUpperCase();
+          if (data.displayName || data.username) {
+            displayNameEl.textContent = data.displayName || data.username;
+          }
+        }
+      } catch (err) {
+        console.error('Erreur chargement donnees:', err);
+      }
+    });
 
-/******** Méthodes de paiement ********/
-paymentMethods.forEach(method => {
-  method.addEventListener('click', () => {
-    paymentMethods.forEach(m => m.classList.remove('selected'));
-    method.classList.add('selected');
-    paymentMethodInput.value = method.dataset.method;
-  });
-});
+    async function createDeposit({ userId, email, username, amount, currency, country, method }) {
+      const idToken = currentUser ? await currentUser.getIdToken() : null;
+      const payload = { userId, email, username, amount, currency, country, method, type: 'deposit' };
+      const headers = { 'Content-Type': 'application/json' };
+      if (idToken) headers['Authorization'] = `Bearer ${idToken}`;
 
-/******** Formulaire de dépôt ********/
-depotForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  
-  if (!paymentMethodInput.value) {
-    showNotification('error', translations[currentLang]['notification.error'], 'Veuillez sélectionner une méthode de paiement');
-    return;
-  }
-  
-  const amount = parseInt(amountInput.value);
-  const phone = phoneInput.value;
-  const method = paymentMethodInput.value;
-  
-  if (amount < 1000) {
-    showNotification('error', translations[currentLang]['notification.error'], 'Le montant minimum est de 1000 XAF');
-    return;
-  }
-  
-  try {
-    // Simulation de dépôt
-    showNotification('info', translations[currentLang]['notification.info'], 'Votre dépôt est en cours de traitement...');
-    
-    // Simulation d'un délai de traitement
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Mise à jour des données utilisateur
-    userData.depotSolde = (userData.depotSolde || 0) + amount;
-    userData.solde = (userData.solde || 0) + amount;
-    
-    // Sauvegarde des données
-    await saveUserData();
-    
-    // Ajout à l'historique
-    addToHistory(new Date(), amount, 'success');
-    
-    showNotification('success', translations[currentLang]['notification.success'], `Votre dépôt de ${amount} XAF a été effectué avec succès!`);
-    
-    // Réinitialisation du formulaire
-    depotForm.reset();
-    paymentMethods.forEach(m => m.classList.remove('selected'));
-    paymentMethodInput.value = '';
-    
-  } catch (error) {
-    console.error('Erreur lors du dépôt:', error);
-    showNotification('error', translations[currentLang]['notification.error'], 'Une erreur est survenue lors du dépôt');
-    addToHistory(new Date(), amount, 'failed');
-  }
-});
+      const resp = await fetch(`${SERVER_URL}/create-deposit`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(payload)
+      });
 
-function addToHistory(date, amount, status) {
-  const row = document.createElement('tr');
-  
-  const dateCell = document.createElement('td');
-  dateCell.textContent = date.toLocaleDateString('fr-FR');
-  
-  const amountCell = document.createElement('td');
-  amountCell.textContent = `${amount} XAF`;
-  
-  const statusCell = document.createElement('td');
-  const statusBadge = document.createElement('span');
-  statusBadge.className = `status-badge status-${status}`;
-  statusBadge.textContent = status === 'success' ? 'Réussi' : (status === 'pending' ? 'En attente' : 'Échoué');
-  statusCell.appendChild(statusBadge);
-  
-  row.appendChild(dateCell);
-  row.appendChild(amountCell);
-  row.appendChild(statusCell);
-  
-  // Si c'est le premier élément (message vide), on le remplace
-  if (depotHistory.firstChild && depotHistory.firstChild.textContent.includes('Aucun')) {
-    depotHistory.innerHTML = '';
-  }
-  
-  depotHistory.prepend(row);
-}
-
-/******** Fonctions de gestion des données utilisateur ********/
-async function saveUserData(key = null, value = null) {
-  if (!currentUser) return;
-  try {
-    const userRef = db.collection('users').doc(currentUser.uid);
-    const dataToSave = key ? { [key]: value } : userData;
-    await userRef.set({ ...dataToSave, lastUpdate: new Date() }, { merge: true });
-    console.log('Données utilisateur enregistrées avec succès.');
-  } catch (error) {
-    console.error("Erreur lors de la sauvegarde des données :", error);
-    showNotification('error', translations[currentLang]['notification.error'], 'Impossible de sauvegarder vos données.');
-  }
-}
-
-async function loadUserData() {
-  if (!currentUser) throw new Error("Aucun utilisateur connecté pour charger les données.");
-  
-  // CORRECTION BOUCLE INFINIE: Chercher par UID puis par email (comme dashboard.html)
-  let userRef = db.collection('users').doc(currentUser.uid);
-  let doc = await userRef.get();
-  let foundViaEmail = false;
-
-  // 🔧 FALLBACK: Si pas trouvé par UID, chercher par email
-  if (!doc.exists && currentUser.email) {
-    console.log('⚠️ Document non trouvé par UID, recherche par email...');
-    const emailQuery = await db.collection('users').where('email', '==', currentUser.email).limit(1).get();
-    if (!emailQuery.empty) {
-      doc = emailQuery.docs[0];
-      userRef = doc.ref;
-      foundViaEmail = true;
-      console.log('✅ Utilisateur trouvé par email:', currentUser.email);
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.error || 'Erreur creation depot');
+      return data;
     }
-  }
 
-  if (doc.exists) {
-    const data = doc.data() || {};
-    userData = {
-      depotSolde: Number(data.depotSolde || data.depositBalance || 0),
-      solde: Number(data.solde || data.balance || 0),
-      displayName: data.displayName || currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'Utilisateur'),
-      theme: data.theme || 'light',
-      email: data.email || currentUser.email,
-      phoneNumber: data.phoneNumber || data.phone || "",
-      country: data.country || data.pays || "",
-      username: data.username || data.userName || null
-    };
-  } else {
-    userData = { 
-      depotSolde: 0, 
-      solde: 0, 
-      theme: 'light',
-      displayName: currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'Utilisateur'),
-      email: currentUser.email,
-      phoneNumber: "",
-      country: "",
-      username: null
-    };
-    await saveUserData();
-  }
-}
-
-function applyTheme() {
-  const isDarkMode = userData.theme === 'dark';
-  document.body.classList.toggle('dark-mode', isDarkMode);
-  if (themeToggle) {
-    themeToggle.innerHTML = isDarkMode 
-      ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
-      : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
-  }
-}
-
-function updateUserInfoUI(user, dbData = {}) {
-  const displayName = dbData.displayName || user.displayName || (user.email ? user.email.split('@')[0] : 'Utilisateur');
-  if (sidebarUsername) sidebarUsername.textContent = displayName;
-  if (userAvatar) userAvatar.textContent = displayName.charAt(0).toUpperCase();
-}
-
-/******** Point d'entrée principal de l'application ********/
-auth.onAuthStateChanged(async (user) => {
-  if (user) {
-    currentUser = user;
-    try {
-      await loadUserData();
-      updateUserInfoUI(user, userData);
-      applyTheme();
-      
-      document.body.classList.add('loaded');
-      loader.classList.add('hidden');
-      
-      showNotification('success', translations[currentLang]['notification.success'], `Bienvenue sur la page de dépôt, ${userData.displayName}!`);
-    } catch (error) {
-      console.error("Erreur critique lors de l'initialisation :", error);
-      showNotification('error', translations[currentLang]['notification.error'], "Impossible de charger vos données. Veuillez vous reconnecter.");
-      auth.signOut();
-      setTimeout(() => { window.location.href = 'login.html'; }, 3000);
+    async function confirmDeposit(transactionId) {
+      try {
+        const resp = await fetch(`${SERVER_URL}/confirm-deposit/${encodeURIComponent(transactionId)}`);
+        if (!resp.ok) return null;
+        return await resp.json();
+      } catch (err) {
+        console.error('Erreur confirmation:', err);
+        return null;
+      }
     }
-  } else {
-    window.location.href = 'login.html';
-  }
-});
 
-/******** Initialisation au chargement de la page ********/
-document.addEventListener('DOMContentLoaded', () => {
-  // Charger la langue sauvegardée ou utiliser le français par défaut
-  const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
-  setLanguage(savedLang);
-});
-</script>
+    async function checkAndRedirect(transactionId) {
+      const result = await confirmDeposit(transactionId);
+      if (result && (result.isPaid === true || result.status === 'paid' || result.status === 'success')) {
+        showMessage('Depot confirme ! Redirection vers votre tableau de bord...', 'success');
+        localStorage.removeItem('blowearn_deposit_id');
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 1500);
+        return true;
+      }
+      return false;
+    }
+
+    depositBtn.addEventListener('click', async () => {
+      if (isProcessing) return;
+
+      const amount = parseInt(amountInput.value);
+
+      if (!amount || amount < 500) {
+        showMessage('Veuillez entrer un montant minimum de 500 FCFA.', 'error');
+        return;
+      }
+
+      if (!selectedMethod) {
+        showMessage('Veuillez selectionner une methode de paiement.', 'error');
+        return;
+      }
+
+      if (!currentUser) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        setLoading(true);
+        showMessage('Creation de la session de depot...', 'info');
+
+        const result = await createDeposit({
+          userId: currentUser.uid,
+          email: currentUser.email,
+          username: currentUser.displayName || currentUser.email.split('@')[0],
+          amount: amount,
+          currency: 'XAF',
+          country: userCountryCode,
+          method: selectedMethod
+        });
+
+        if (!result || !result.ok) {
+          throw new Error(result?.error || 'Erreur creation depot');
+        }
+
+        const checkoutUrl = result.checkoutUrl;
+        const transactionId = result.transactionId;
+
+        if (!checkoutUrl) {
+          throw new Error('URL de paiement non recue');
+        }
+
+        if (transactionId) {
+          localStorage.setItem('blowearn_deposit_id', transactionId);
+        }
+
+        showMessage('Redirection vers la page de paiement...', 'success');
+        setTimeout(() => {
+          window.location.href = checkoutUrl;
+        }, 500);
+
+      } catch (err) {
+        console.error('Erreur depot:', err);
+        showMessage('Erreur: ' + err.message, 'error');
+        setLoading(false);
+      }
+    });
+
+    (async function handleReturnFromProvider() {
+      const params = new URLSearchParams(window.location.search);
+      const transactionId = params.get('tx_id') || 
+                            params.get('transaction_id') ||
+                            params.get('transactionId') ||
+                            localStorage.getItem('blowearn_deposit_id');
+      
+      if (!transactionId) return;
+
+      showMessage('Verification du depot en cours...', 'info');
+      setLoading(true);
+
+      const isPaid = await checkAndRedirect(transactionId);
+      
+      if (!isPaid) {
+        let attempts = 0;
+        const maxAttempts = 10;
+        
+        const pollInterval = setInterval(async () => {
+          attempts++;
+          showMessage(`Verification du depot... (${attempts}/${maxAttempts})`, 'info');
+          
+          const paid = await checkAndRedirect(transactionId);
+          
+          if (paid || attempts >= maxAttempts) {
+            clearInterval(pollInterval);
+            setLoading(false);
+            
+            if (!paid) {
+              showMessage('Le depot est en cours de traitement. Vous pouvez retourner au tableau de bord.', 'info');
+            }
+          }
+        }, 2000);
+      }
+    })();
+
+    let backgroundCheckInterval = null;
+    function startBackgroundCheck() {
+      const transactionId = localStorage.getItem('blowearn_deposit_id');
+      if (!transactionId || backgroundCheckInterval) return;
+      
+      backgroundCheckInterval = setInterval(async () => {
+        const result = await confirmDeposit(transactionId);
+        if (result && (result.isPaid === true || result.status === 'paid' || result.status === 'success')) {
+          clearInterval(backgroundCheckInterval);
+          localStorage.removeItem('blowearn_deposit_id');
+          showMessage('Depot confirme ! Redirection...', 'success');
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1500);
+        }
+      }, 5000);
+    }
+    
+    setTimeout(startBackgroundCheck, 2000);
+  </script>
 </body>
 </html>
