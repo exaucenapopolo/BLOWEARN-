@@ -161,6 +161,65 @@
       gap: 15px;
     }
 
+    .language-selector {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      position: relative;
+    }
+
+    .language-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      border-radius: 12px;
+      padding: 8px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 140px;
+      z-index: 200;
+      transform-origin: top right;
+      animation: scaleIn 0.2s ease-out forwards;
+      border: 1px solid rgba(255,255,255,0.7);
+      margin-top: 5px;
+    }
+
+    .language-dropdown.active {
+      display: flex;
+    }
+
+    .language-option {
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s ease;
+    }
+
+    .language-option:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .language-option.active {
+      background-color: rgba(74, 144, 226, 0.1);
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
     .theme-toggle {
       background-color: transparent;
       border: none;
@@ -1056,6 +1115,24 @@
     </div>
     
     <div class="header-controls">
+      <div class="language-selector-container">
+        <button class="language-selector" id="languageSelector">
+          <i class="fas fa-globe"></i>
+          <span id="currentLanguage">French</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="language-dropdown" id="languageDropdown">
+          <div class="language-option active" data-lang="fr">
+            <i class="fas fa-check"></i>
+            <span>Français</span>
+          </div>
+          <div class="language-option" data-lang="en">
+            <i class="fas fa-check" style="opacity: 0;"></i>
+            <span>English</span>
+          </div>
+        </div>
+      </div>
+      
       <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
         <div class="bar"></div>
         <div class="bar"></div>
@@ -1067,7 +1144,7 @@
           <div class="profile-dropdown" id="profileDropdown">
               <button class="theme-toggle" id="themeToggle">
                   <i class="fas fa-moon"></i>
-                  <span>Mode nuit</span>
+                  <span data-i18n="header.night_mode">Mode nuit</span>
               </button>
           </div>
       </div>
@@ -1079,121 +1156,121 @@
   <div class="main-container">
     <aside class="sidebar" id="sidebar">
       <div class="welcome-section">
-        <div class="welcome-text">Dashboard >> BLOWEARN AGENCIES</div>
+        <div class="welcome-text" data-i18n="dashboard.title">Dashboard >> BLOWEARN AGENCIES</div>
         <div class="username" id="sidebarUsername">Utilisateur</div>
       </div>
       
-      <div class="menu-category">PRINCIPAL</div>
+      <div class="menu-category" data-i18n="menu.main">PRINCIPAL</div>
       <a href="dashboard.html" class="menu-item">
         <i class="fas fa-home"></i>
-        <span>Tableau de bord</span>
+        <span data-i18n="menu.dashboard">Tableau de bord</span>
         <span class="menu-badge active">☑</span>
       </a>
       
       <a href="depot.html" class="menu-item">
         <i class="fas fa-wallet"></i>
-        <span>Dépôt 💵</span>
+        <span data-i18n="menu.deposit">Dépôt 💵</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="bonus_bienvenue.html" class="menu-item">
         <i class="fas fa-gift"></i>
-        <span>Bonus de bienvenue</span>
+        <span data-i18n="menu.welcome_bonus">Bonus de bienvenue</span>
         <span class="menu-badge inactive">☒</span>
       </a>
       
-      <div class="menu-category">COMPTES</div>
+      <div class="menu-category" data-i18n="menu.accounts">COMPTES</div>
       <a href="retrait.html" class="menu-item active">
         <i class="fas fa-money-bill-wave"></i>
-        <span>Retrait</span>
+        <span data-i18n="menu.withdrawal">Retrait</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="equipe.html" class="menu-item">
         <i class="fas fa-users"></i>
-        <span>Équipe</span>
+        <span data-i18n="menu.team">Équipe</span>
         <span class="menu-badge inactive">☒</span>
       </a>
 
-      <div class="menu-category">SPÉCIAL</div>
+      <div class="menu-category" data-i18n="menu.special">SPÉCIAL</div>
       
       <a href="social_boost.html" class="menu-item">
         <i class="fas fa-rocket"></i>
-        <span>SBH</span>
+        <span data-i18n="menu.sbh">SBH</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="challenge_reward.html" class="menu-item">
         <i class="fas fa-medal"></i>
-        <span>Challenge and Reward</span>
+        <span data-i18n="menu.challenge">Challenge and Reward</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
-      <div class="menu-category">PRODUIT / TÂCHE</div>
+      <div class="menu-category" data-i18n="menu.products">PRODUIT / TÂCHE</div>
       <a href="whatsapp_earn.html" class="menu-item">
         <i class="fab fa-whatsapp"></i>
-        <span>Gagner via Whatsapp</span>
+        <span data-i18n="menu.whatsapp_earn">Gagner via Whatsapp</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="gains_publicitaires.html" class="menu-item">
         <i class="fas fa-ad"></i>
-        <span>Gains publicitaires</span>
+        <span data-i18n="menu.ad_earnings">Gains publicitaires</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="spin_wheel.html" class="menu-item">
         <i class="fas fa-trophy"></i>
-        <span>Roue de la fortune 🏆</span>
+        <span data-i18n="menu.fortune_wheel">Roue de la fortune 🏆</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="tiktok_earn.html" class="menu-item">
         <i class="fab fa-tiktok"></i>
-        <span>TikTok Earn</span>
+        <span data-i18n="menu.tiktok_earn">TikTok Earn</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="youtube_earn.html" class="menu-item">
         <i class="fab fa-youtube"></i>
-        <span>YouTube Earn</span>
+        <span data-i18n="menu.youtube_earn">YouTube Earn</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="instagram_earn.html" class="menu-item">
         <i class="fab fa-instagram"></i>
-        <span>Instagram Earn</span>
+        <span data-i18n="menu.instagram_earn">Instagram Earn</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="trivia_challenge.html" class="menu-item">
         <i class="fas fa-brain"></i>
-        <span>TRIVIA challenge</span>
+        <span data-i18n="menu.trivia">TRIVIA challenge</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
-      <div class="menu-category">BONUS</div>
+      <div class="menu-category" data-i18n="menu.bonus">BONUS</div>
       <a href="liste_contacts.html" class="menu-item">
         <i class="fas fa-address-book"></i>
-        <span>Liste de contacts gratuit 🆓</span>
+        <span data-i18n="menu.contact_list">Liste de contacts gratuit 🆓</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="booster_visibilite.html" class="menu-item">
         <i class="fas fa-rocket"></i>
-        <span>Booster ma visibilité</span>
+        <span data-i18n="menu.visibility_booster">Booster ma visibilité</span>
         <span class="menu-badge inactive">☐</span>
       </a>
 
       <a href="canva_pro.html" class="menu-item">
         <i class="fas fa-palette"></i>
-        <span>Canva Pro</span>
+        <span data-i18n="menu.canva_pro">Canva Pro</span>
         <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="connexion_gratuite.html" class="menu-item">
         <i class="fas fa-shield-alt"></i>
-        <span>Connexion gratuite</span>
+        <span data-i18n="menu.free_connection">Connexion gratuite</span>
         <span class="menu-badge inactive">☐</span>
       </a>
     </aside>
@@ -1201,37 +1278,37 @@
     <main class="content">
       <h1 class="page-title">
         <i class="fas fa-money-bill-wave"></i>
-        Demande de retrait
+        <span data-i18n="withdrawal.title">Demande de retrait</span>
       </h1>
 
       <div class="retrait-card">
-        <h2>🏦 Formulaire de retrait</h2>
-        <p>Remplissez le formulaire ci-dessous pour effectuer un retrait de vos fonds.</p>
+        <h2 data-i18n="withdrawal.form_title">🏦 Formulaire de retrait</h2>
+        <p data-i18n="withdrawal.form_description">Remplissez le formulaire ci-dessous pour effectuer un retrait de vos fonds.</p>
 
         <div class="user-info-grid">
             <div class="info-item">
-                <span class="info-label">Nom d'utilisateur</span>
+                <span class="info-label" data-i18n="user_info.username">Nom d'utilisateur</span>
                 <span class="info-value" id="infoUsername">Chargement...</span>
             </div>
             <div class="info-item">
-                <span class="info-label">Email</span>
+                <span class="info-label" data-i18n="user_info.email">Email</span>
                 <span class="info-value" id="infoEmail">Chargement...</span>
             </div>
             <div class="info-item">
-                <span class="info-label">Statut de paiement</span>
+                <span class="info-label" data-i18n="withdrawal.payment_status">Statut de paiement</span>
                 <span class="info-value" id="infoPaymentStatus">Chargement...</span>
             </div>
         </div>
 
         <div class="solde-actuel">
-            Solde actuel: <span id="currentBalance">0</span> XAF
+            <span data-i18n="withdrawal.current_balance">Solde actuel:</span> <span id="currentBalance">0</span> XAF
         </div>
 
         <form id="retraitForm" class="form-grid">
             <div class="form-group">
-                <label for="pays">Pays de retrait *</label>
+                <label for="pays" data-i18n="withdrawal.country">Pays de retrait *</label>
                 <select id="pays" name="pays" required>
-                    <option value="">Sélectionnez votre pays</option>
+                    <option value="" data-i18n="withdrawal.select_country">Sélectionnez votre pays</option>
                     <option value="BJ">Bénin</option>
                     <option value="BF">Burkina Faso</option>
                     <option value="CM">Cameroun</option>
@@ -1246,55 +1323,55 @@
             </div>
 
             <div class="form-group">
-                <label for="methode">Méthode de retrait *</label>
+                <label for="methode" data-i18n="withdrawal.method">Méthode de retrait *</label>
                 <select id="methode" name="methode" required disabled>
-                    <option value="">Sélectionnez d'abord le pays</option>
+                    <option value="" data-i18n="withdrawal.select_method_first">Sélectionnez d'abord le pays</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="numeroCompte">Numéro de compte/téléphone *</label>
+                <label for="numeroCompte" data-i18n="withdrawal.account_number">Numéro de compte/téléphone *</label>
                 <input type="text" id="numeroCompte" name="numeroCompte" placeholder="Ex: 237670123456" required>
             </div>
 
             <div class="form-group">
-                <label for="montant">Montant du retrait (XAF) *</label>
-                <input type="number" id="montant" name="montant" placeholder="Entrez le montant" min="100" required>
+                <label for="montant" data-i18n="withdrawal.amount">Montant du retrait (XAF) *</label>
+                <input type="number" id="montant" name="montant" placeholder="Entrez le montant" min="3650" required>
             </div>
 
             <div class="form-group full-width">
-                <label for="nomBeneficiaire">Nom du bénéficiaire *</label>
+                <label for="nomBeneficiaire" data-i18n="withdrawal.beneficiary_name">Nom du bénéficiaire *</label>
                 <input type="text" id="nomBeneficiaire" name="nomBeneficiaire" placeholder="Ex: Jean KONAN" required>
             </div>
 
             <div class="form-group full-width">
-                <label for="description">Description du retrait</label>
+                <label for="description" data-i18n="withdrawal.description">Description du retrait</label>
                 <input type="text" id="description" name="description" placeholder="Ex: Retrait pour besoins personnels" value="Retrait de fonds BLOWEARN AGENCIES">
             </div>
 
             <button type="submit" class="submit-btn" id="retraitBtn">
-                <i class="fas fa-paper-plane"></i> Soumettre la demande
+                <i class="fas fa-paper-plane"></i> <span data-i18n="withdrawal.submit">Soumettre la demande</span>
             </button>
         </form>
 
         <p class="note">
-          <strong>Minimum: 3 100 XAF</strong> | <strong>Frais: 550 XAF</strong> (obligatoire)<br>
-          <span style="color: var(--warning-color);">⚠️ Vous devez avoir au moins <strong>3 650 XAF</strong> dans votre solde pour effectuer un retrait.</span>
+          <strong data-i18n="withdrawal.minimum">Minimum: 3 100 XAF</strong> | <strong data-i18n="withdrawal.fees">Frais: 550 XAF</strong> (obligatoire)<br>
+          <span style="color: var(--warning-color);" data-i18n="withdrawal.required_balance">⚠️ Vous devez avoir au moins <strong>3 650 XAF</strong> dans votre solde pour effectuer un retrait.</span>
         </p>
-        <p class="success-note">Vérifiez attentivement vos informations avant de soumettre. Le traitement prend généralement entre 1 minute et 1 heure maximum.</p>
+        <p class="success-note" data-i18n="withdrawal.processing_time">Vérifiez attentivement vos informations avant de soumettre. Le traitement prend généralement entre 1 minute et 1 heure maximum.</p>
       </div>
 
       <!-- HISTORIQUE DES RETRAITS -->
       <div class="historique-card">
         <h2>
           <i class="fas fa-history"></i>
-          Historique de mes retraits
+          <span data-i18n="withdrawal.history_title">Historique de mes retraits</span>
         </h2>
         
         <div class="historique-table-container" id="historiqueContainer">
           <div class="empty-state">
             <i class="fas fa-spinner fa-spin"></i>
-            <p>Chargement de l'historique...</p>
+            <p data-i18n="withdrawal.loading_history">Chargement de l'historique...</p>
           </div>
         </div>
       </div>
@@ -1304,18 +1381,17 @@
   <footer class="footer">
     <div class="footer-content">
       <div class="footer-links">
-        <a href="terms.html" class="footer-link">Conditions d'utilisation</a>
-        <a href="privacy.html" class="footer-link">Politique de confidentialité</a>
+        <a href="terms.html" class="footer-link" data-i18n="footer.terms">Conditions d'utilisation</a>
+        <a href="privacy.html" class="footer-link" data-i18n="footer.privacy">Politique de confidentialité</a>
         <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Propulsé par SBH</a>
         <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Boost Tech Management</a>
       </div>
       <div class="footer-text">
-        © 2025 BLOWEARN AGENCIES. Tous droits réservés.
+        © 2025 BLOWEARN AGENCIES. <span data-i18n="footer.rights">Tous droits réservés.</span>
       </div>
     </div>
   </footer>
 
-  <!-- TOUT LE JAVASCRIPT EXISTANT EST CONSERVÉ INTACT CI-DESSOUS -->
   <script>
     /******** CONFIG FIREBASE ********/
     const firebaseConfig = {
@@ -1345,6 +1421,9 @@
     const sidebarUsername = document.getElementById('sidebarUsername');
     const userAvatar = document.getElementById('userAvatar');
     const loader = document.getElementById('loader');
+    const languageSelector = document.getElementById('languageSelector');
+    const languageDropdown = document.getElementById('languageDropdown');
+    const currentLanguage = document.getElementById('currentLanguage');
 
     const currentBalanceEl = document.getElementById('currentBalance');
     const retraitForm = document.getElementById('retraitForm');
@@ -1352,7 +1431,7 @@
     const notificationContainer = document.getElementById('notificationContainer');
     const historiqueContainer = document.getElementById('historiqueContainer');
     
-    // Éléments d'information (UID retiré)
+    // Éléments d'information
     const infoUsername = document.getElementById('infoUsername');
     const infoEmail = document.getElementById('infoEmail');
     const infoPaymentStatus = document.getElementById('infoPaymentStatus');
@@ -1368,36 +1447,197 @@
     /******** Variables d'état ********/
     let currentUser = null;
     let userData = {};
+    let currentLang = 'fr'; // Langue par défaut
 
-    // Configuration des méthodes de retrait par pays (codes pays + méthodes)
-    const methodesParPays = {
-        BJ: { name: 'Bénin', methods: ['mtn', 'moov'], currency: 'XOF' },
-        BF: { name: 'Burkina Faso', methods: ['orange', 'moov'], currency: 'XOF' },
-        CM: { name: 'Cameroun', methods: ['mtn', 'orange'], currency: 'XAF' },
-        CI: { name: 'Côte d\'Ivoire', methods: ['orange', 'mtn', 'moov', 'wave'], currency: 'XOF' },
-        GH: { name: 'Ghana', methods: ['mtn', 'vodafone', 'airtel'], currency: 'GHS' },
-        ML: { name: 'Mali', methods: ['orange', 'moov', 'wave'], currency: 'XOF' },
-        NE: { name: 'Niger', methods: ['airtel'], currency: 'XOF' },
-        NG: { name: 'Nigeria', methods: ['bank_transfer'], currency: 'NGN' },
-        SN: { name: 'Sénégal', methods: ['orange', 'free', 'wave'], currency: 'XOF' },
-        TG: { name: 'Togo', methods: ['tmoney', 'moov'], currency: 'XOF' }
+    /******** Système de traduction ********/
+    const translations = {
+      fr: {
+        // Header
+        "header.language": "French",
+        "header.night_mode": "Mode nuit",
+        "header.day_mode": "Mode jour",
+        
+        // Dashboard
+        "dashboard.title": "Dashboard >> BLOWEARN AGENCIES",
+        
+        // Menu
+        "menu.main": "PRINCIPAL",
+        "menu.dashboard": "Tableau de bord",
+        "menu.deposit": "Dépôt 💵",
+        "menu.welcome_bonus": "Bonus de bienvenue",
+        "menu.accounts": "COMPTES",
+        "menu.withdrawal": "Retrait",
+        "menu.team": "Équipe",
+        "menu.special": "SPÉCIAL",
+        "menu.sbh": "SBH",
+        "menu.challenge": "Challenge and Reward",
+        "menu.products": "PRODUIT / TÂCHE",
+        "menu.whatsapp_earn": "Gagner via Whatsapp",
+        "menu.ad_earnings": "Gains publicitaires",
+        "menu.fortune_wheel": "Roue de la fortune 🏆",
+        "menu.tiktok_earn": "TikTok Earn",
+        "menu.youtube_earn": "YouTube Earn",
+        "menu.instagram_earn": "Instagram Earn",
+        "menu.trivia": "TRIVIA challenge",
+        "menu.bonus": "BONUS",
+        "menu.contact_list": "Liste de contacts gratuit 🆓",
+        "menu.visibility_booster": "Booster ma visibilité",
+        "menu.canva_pro": "Canva Pro",
+        "menu.free_connection": "Connexion gratuite",
+        
+        // Withdrawal Page
+        "withdrawal.title": "Demande de retrait",
+        "withdrawal.form_title": "🏦 Formulaire de retrait",
+        "withdrawal.form_description": "Remplissez le formulaire ci-dessous pour effectuer un retrait de vos fonds.",
+        "withdrawal.current_balance": "Solde actuel:",
+        "withdrawal.country": "Pays de retrait *",
+        "withdrawal.select_country": "Sélectionnez votre pays",
+        "withdrawal.method": "Méthode de retrait *",
+        "withdrawal.select_method_first": "Sélectionnez d'abord le pays",
+        "withdrawal.account_number": "Numéro de compte/téléphone *",
+        "withdrawal.amount": "Montant du retrait (XAF) *",
+        "withdrawal.beneficiary_name": "Nom du bénéficiaire *",
+        "withdrawal.description": "Description du retrait",
+        "withdrawal.submit": "Soumettre la demande",
+        "withdrawal.minimum": "Minimum: 3 100 XAF",
+        "withdrawal.fees": "Frais: 550 XAF",
+        "withdrawal.required_balance": "⚠️ Vous devez avoir au moins 3 650 XAF dans votre solde pour effectuer un retrait.",
+        "withdrawal.processing_time": "Vérifiez attentivement vos informations avant de soumettre. Le traitement prend généralement entre 1 minute et 1 heure maximum.",
+        "withdrawal.history_title": "Historique de mes retraits",
+        "withdrawal.loading_history": "Chargement de l'historique...",
+        "withdrawal.payment_status": "Statut de paiement",
+        
+        // User Info
+        "user_info.username": "Nom d'utilisateur",
+        "user_info.email": "Email",
+        
+        // Footer
+        "footer.terms": "Conditions d'utilisation",
+        "footer.privacy": "Politique de confidentialité",
+        "footer.rights": "Tous droits réservés.",
+        
+        // Notifications
+        "notification.success": "Succès",
+        "notification.error": "Erreur",
+        "notification.info": "Information"
+      },
+      en: {
+        // Header
+        "header.language": "English",
+        "header.night_mode": "Night mode",
+        "header.day_mode": "Day mode",
+        
+        // Dashboard
+        "dashboard.title": "Dashboard >> BLOWEARN AGENCIES",
+        
+        // Menu
+        "menu.main": "MAIN",
+        "menu.dashboard": "Dashboard",
+        "menu.deposit": "Deposit 💵",
+        "menu.welcome_bonus": "Welcome Bonus",
+        "menu.accounts": "ACCOUNTS",
+        "menu.withdrawal": "Withdrawal",
+        "menu.team": "Team",
+        "menu.special": "SPECIAL",
+        "menu.sbh": "SBH",
+        "menu.challenge": "Challenge and Reward",
+        "menu.products": "PRODUCT / TASK",
+        "menu.whatsapp_earn": "Earn via Whatsapp",
+        "menu.ad_earnings": "Advertising earnings",
+        "menu.fortune_wheel": "Fortune Wheel 🏆",
+        "menu.tiktok_earn": "TikTok Earn",
+        "menu.youtube_earn": "YouTube Earn",
+        "menu.instagram_earn": "Instagram Earn",
+        "menu.trivia": "TRIVIA challenge",
+        "menu.bonus": "BONUS",
+        "menu.contact_list": "Free contact list 🆓",
+        "menu.visibility_booster": "Boost my visibility",
+        "menu.canva_pro": "Canva Pro",
+        "menu.free_connection": "Free connection",
+        
+        // Withdrawal Page
+        "withdrawal.title": "Withdrawal Request",
+        "withdrawal.form_title": "🏦 Withdrawal Form",
+        "withdrawal.form_description": "Fill out the form below to withdraw your funds.",
+        "withdrawal.current_balance": "Current balance:",
+        "withdrawal.country": "Withdrawal country *",
+        "withdrawal.select_country": "Select your country",
+        "withdrawal.method": "Withdrawal method *",
+        "withdrawal.select_method_first": "Select country first",
+        "withdrawal.account_number": "Account/phone number *",
+        "withdrawal.amount": "Withdrawal amount (XAF) *",
+        "withdrawal.beneficiary_name": "Beneficiary name *",
+        "withdrawal.description": "Withdrawal description",
+        "withdrawal.submit": "Submit request",
+        "withdrawal.minimum": "Minimum: 3,100 XAF",
+        "withdrawal.fees": "Fees: 550 XAF",
+        "withdrawal.required_balance": "⚠️ You must have at least 3,650 XAF in your balance to make a withdrawal.",
+        "withdrawal.processing_time": "Check your information carefully before submitting. Processing usually takes between 1 minute and 1 hour maximum.",
+        "withdrawal.history_title": "My Withdrawal History",
+        "withdrawal.loading_history": "Loading history...",
+        "withdrawal.payment_status": "Payment status",
+        
+        // User Info
+        "user_info.username": "Username",
+        "user_info.email": "Email",
+        
+        // Footer
+        "footer.terms": "Terms of Use",
+        "footer.privacy": "Privacy Policy",
+        "footer.rights": "All rights reserved.",
+        
+        // Notifications
+        "notification.success": "Success",
+        "notification.error": "Error",
+        "notification.info": "Information"
+      }
     };
-    
-    // Noms affichables des méthodes de paiement (codes AccountPe)
-    const methodeNoms = {
-        'mtn': 'MTN Mobile Money',
-        'orange': 'Orange Money',
-        'moov': 'Moov Money',
-        'wave': 'Wave',
-        'free': 'Free Money',
-        'vodafone': 'Vodafone Cash',
-        'airtel': 'Airtel Money',
-        'tmoney': 'T-Money',
-        'bank_transfer': 'Virement Bancaire'
-    };
+
+    /******** Fonctions de traduction ********/
+    function setLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('preferredLanguage', lang);
+      
+      // Mettre à jour le sélecteur de langue
+      currentLanguage.textContent = lang === 'fr' ? 'French' : 'English';
+      
+      // Mettre à jour les options de langue
+      document.querySelectorAll('.language-option').forEach(option => {
+        const icon = option.querySelector('i');
+        if (option.dataset.lang === lang) {
+          option.classList.add('active');
+          icon.style.opacity = '1';
+        } else {
+          option.classList.remove('active');
+          icon.style.opacity = '0';
+        }
+      });
+      
+      // Traduire tous les éléments avec data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        if (translations[lang] && translations[lang][key]) {
+          if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+            element.placeholder = translations[lang][key];
+          } else {
+            element.textContent = translations[lang][key];
+          }
+        }
+      });
+      
+      // Mettre à jour le texte du thème
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      if (themeToggle) {
+        themeToggle.innerHTML = isDarkMode 
+          ? `<i class="fas fa-sun"></i><span>${translations[lang]['header.day_mode']}</span>` 
+          : `<i class="fas fa-moon"></i><span>${translations[lang]['header.night_mode']}</span>`;
+      }
+    }
 
     /******** UI helpers ********/
     function showNotification(type, title, message, duration = 4000) {
+      const container = document.getElementById('notificationContainer');
+      if (!container) return;
       const notification = document.createElement('div');
       notification.className = `notification ${type}`;
       const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle');
@@ -1408,10 +1648,10 @@
           <span>${message}</span>
         </div>
       `;
-      notificationContainer.appendChild(notification);
+      container.appendChild(notification);
       setTimeout(() => {
         notification.style.animation = 'slideIn 0.3s ease reverse forwards';
-        setTimeout(() => { if (notificationContainer.contains(notification)) notificationContainer.removeChild(notification); }, 300);
+        setTimeout(() => { if (container.contains(notification)) container.removeChild(notification); }, 300);
       }, duration);
     }
     
@@ -1512,13 +1752,35 @@
         }
     });
 
+    // Gestion du sélecteur de langue
+    if (languageSelector) {
+      languageSelector.addEventListener('click', (event) => {
+        event.stopPropagation();
+        languageDropdown.classList.toggle('active');
+      });
+    }
+
+    // Fermer le dropdown de langue quand on clique ailleurs
+    document.addEventListener('click', () => {
+      if (languageDropdown) languageDropdown.classList.remove('active');
+    });
+
+    // Changer de langue
+    document.querySelectorAll('.language-option').forEach(option => {
+      option.addEventListener('click', () => {
+        const lang = option.dataset.lang;
+        setLanguage(lang);
+        languageDropdown.classList.remove('active');
+      });
+    });
+
     themeToggle.addEventListener('click', (event) => {
         event.stopPropagation();
         document.body.classList.toggle('dark-mode');
         const isDarkMode = document.body.classList.contains('dark-mode');
         themeToggle.innerHTML = isDarkMode 
-            ? '<i class="fas fa-sun"></i><span>Mode jour</span>' 
-            : '<i class="fas fa-moon"></i><span>Mode nuit</span>';
+            ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+            : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
         if(currentUser) saveUserData('theme', isDarkMode ? 'dark' : 'light');
     });
 
@@ -1526,9 +1788,36 @@
         const isDarkMode = userData.theme === 'dark';
         document.body.classList.toggle('dark-mode', isDarkMode);
         themeToggle.innerHTML = isDarkMode 
-            ? '<i class="fas fa-sun"></i><span>Mode jour</span>' 
-            : '<i class="fas fa-moon"></i><span>Mode nuit</span>';
+            ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+            : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
     }
+
+    /******** Configuration des méthodes de retrait ********/
+    const methodesParPays = {
+        BJ: { name: 'Bénin', methods: ['mtn', 'moov'], currency: 'XOF' },
+        BF: { name: 'Burkina Faso', methods: ['orange', 'moov'], currency: 'XOF' },
+        CM: { name: 'Cameroun', methods: ['mtn', 'orange'], currency: 'XAF' },
+        CI: { name: 'Côte d\'Ivoire', methods: ['orange', 'mtn', 'moov', 'wave'], currency: 'XOF' },
+        GH: { name: 'Ghana', methods: ['mtn', 'vodafone', 'airtel'], currency: 'GHS' },
+        ML: { name: 'Mali', methods: ['orange', 'moov', 'wave'], currency: 'XOF' },
+        NE: { name: 'Niger', methods: ['airtel'], currency: 'XOF' },
+        NG: { name: 'Nigeria', methods: ['bank_transfer'], currency: 'NGN' },
+        SN: { name: 'Sénégal', methods: ['orange', 'free', 'wave'], currency: 'XOF' },
+        TG: { name: 'Togo', methods: ['tmoney', 'moov'], currency: 'XOF' }
+    };
+    
+    // Noms affichables des méthodes de paiement (codes AccountPe)
+    const methodeNoms = {
+        'mtn': 'MTN Mobile Money',
+        'orange': 'Orange Money',
+        'moov': 'Moov Money',
+        'wave': 'Wave',
+        'free': 'Free Money',
+        'vodafone': 'Vodafone Cash',
+        'airtel': 'Airtel Money',
+        'tmoney': 'T-Money',
+        'bank_transfer': 'Virement Bancaire'
+    };
 
     /******** Gestion des méthodes de retrait ********/
     paysSelect.addEventListener('change', async function() {
@@ -1582,10 +1871,10 @@
         }
     });
 
-    /******** Validation du formulaire ********/
+    /******** Validation du formulaire RENFORCÉE ********/
     const FRAIS_RETRAIT = 550;  // Frais de retrait obligatoires
-    const MIN_RETRAIT = 3100;   // Montant minimum de retrait
-    const SOLDE_REQUIS = MIN_RETRAIT + FRAIS_RETRAIT;  // 3650 XAF requis au total
+    const MIN_RETRAIT = 3650;   // NOUVEAU: Montant minimum de retrait (3100 + 550)
+    const SOLDE_REQUIS = MIN_RETRAIT;  // 3650 XAF requis au total
     
     function validerFormulaire() {
         // Nettoyer et convertir le montant en nombre
@@ -1596,18 +1885,26 @@
         const solde = Number(userData.solde) || 0;
         const montantTotal = montant + FRAIS_RETRAIT;  // Montant + frais
         
-        console.log('🔍 VALIDATION:', { montant, solde, frais: FRAIS_RETRAIT, montantTotal, userDataSolde: userData.solde });
+        console.log('🔍 VALIDATION RENFORCÉE:', { 
+          montant, 
+          solde, 
+          frais: FRAIS_RETRAIT, 
+          montantTotal, 
+          minimumRequis: MIN_RETRAIT,
+          userDataSolde: userData.solde 
+        });
 
+        // NOUVELLE VALIDATION: Le montant doit être au moins 3650 XAF
         if (montant < MIN_RETRAIT) {
-            showNotification('error', 'Montant minimum', 
+            showNotification('error', translations[currentLang]['notification.error'], 
                 `Le montant minimum de retrait est de ${MIN_RETRAIT.toLocaleString('fr-FR')} XAF.\n` +
-                `Frais de traitement: ${FRAIS_RETRAIT.toLocaleString('fr-FR')} XAF.\n` +
-                `Solde requis: ${SOLDE_REQUIS.toLocaleString('fr-FR')} XAF.`);
+                `Frais de traitement: ${FRAIS_RETRAIT.toLocaleString('fr-FR')} XAF inclus.`);
             return false;
         }
         
+        // Validation du solde
         if (montantTotal > solde) {
-            showNotification('error', 'Solde insuffisant', 
+            showNotification('error', translations[currentLang]['notification.error'], 
                 `Votre solde: ${formatNumberSafe(solde)} XAF.\n` +
                 `Montant demandé: ${formatNumberSafe(montant)} XAF + ${FRAIS_RETRAIT} XAF (frais) = ${formatNumberSafe(montantTotal)} XAF.\n` +
                 `Il vous manque ${formatNumberSafe(montantTotal - solde)} XAF.`);
@@ -1615,12 +1912,12 @@
         }
         
         if (!numeroCompteInput.checkValidity()) {
-            showNotification('error', 'Numéro invalide', 'Veuillez entrer un numéro de compte/téléphone valide.');
+            showNotification('error', translations[currentLang]['notification.error'], 'Veuillez entrer un numéro de compte/téléphone valide.');
             return false;
         }
         
         if (!nomBeneficiaireInput.value || nomBeneficiaireInput.value.trim().length < 3) {
-            showNotification('error', 'Nom invalide', 'Veuillez entrer le nom complet du bénéficiaire (min. 3 caractères).');
+            showNotification('error', translations[currentLang]['notification.error'], 'Veuillez entrer le nom complet du bénéficiaire (min. 3 caractères).');
             return false;
         }
         
@@ -1637,7 +1934,7 @@
         console.log('Données utilisateur enregistrées avec succès.');
       } catch (error) {
         console.error("Erreur lors de la sauvegarde des données :", error);
-        showNotification('error', 'Erreur de sauvegarde', 'Impossible de sauvegarder vos données.');
+        showNotification('error', translations[currentLang]['notification.error'], 'Impossible de sauvegarder vos données.');
       }
     }
 
@@ -1728,7 +2025,7 @@
         if (userAvatar) userAvatar.textContent = userData.username.charAt(0).toUpperCase();
         if (currentBalanceEl) currentBalanceEl.textContent = formatNumberSafe(userData.solde);
         
-        // Mettre à jour les informations utilisateur (UID RETIRÉ)
+        // Mettre à jour les informations utilisateur
         infoUsername.textContent = userData.username;
         infoEmail.textContent = userData.email;
         infoPaymentStatus.textContent = userData.paid ? '✅ Payé' : '❌ Non payé';
@@ -1767,7 +2064,7 @@
             historiqueContainer.innerHTML = `
               <div class="empty-state">
                 <i class="fas fa-inbox"></i>
-                <p>Aucun retrait effectué pour le moment.</p>
+                <p data-i18n="withdrawal.no_withdrawals">Aucun retrait effectué pour le moment.</p>
               </div>
             `;
             return;
@@ -1778,13 +2075,13 @@
             <table class="historique-table">
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Montant</th>
-                  <th>Pays</th>
-                  <th>Méthode</th>
-                  <th>Numéro</th>
-                  <th>Description</th>
-                  <th>Statut</th>
+                  <th data-i18n="withdrawal.date">Date</th>
+                  <th data-i18n="withdrawal.amount">Montant</th>
+                  <th data-i18n="withdrawal.country">Pays</th>
+                  <th data-i18n="withdrawal.method">Méthode</th>
+                  <th data-i18n="withdrawal.account_number">Numéro</th>
+                  <th data-i18n="withdrawal.description">Description</th>
+                  <th data-i18n="withdrawal.status">Statut</th>
                 </tr>
               </thead>
               <tbody>
@@ -1821,7 +2118,7 @@
           historiqueContainer.innerHTML = `
             <div class="empty-state">
               <i class="fas fa-exclamation-triangle"></i>
-              <p>Erreur lors du chargement de l'historique.</p>
+              <p data-i18n="withdrawal.history_error">Erreur lors du chargement de l'historique.</p>
             </div>
           `;
         }
@@ -1833,7 +2130,7 @@
         e.preventDefault();
         
         if (!currentUser) {
-            showNotification('error', 'Erreur', 'Veuillez vous connecter pour effectuer un retrait.');
+            showNotification('error', translations[currentLang]['notification.error'], 'Veuillez vous connecter pour effectuer un retrait.');
             return;
         }
 
@@ -1858,7 +2155,7 @@
         retraitBtn.disabled = true;
         retraitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement en cours...';
         
-        showNotification('info', 'Traitement', 'Votre retrait automatique est en cours de traitement via Mobile Money...');
+        showNotification('info', translations[currentLang]['notification.info'], 'Votre retrait automatique est en cours de traitement via Mobile Money...');
 
         try {
             console.log('💸 Envoi demande de retrait automatique:', {
@@ -1932,7 +2229,7 @@
                 console.warn('⚠️ Erreur enregistrement Firestore:', dbErr);
             }
             
-            showNotification('success', '🎉 Retrait initié !', 
+            showNotification('success', translations[currentLang]['notification.success'], 
                 `Votre retrait de ${formatNumberSafe(montant)} XAF vers ${methodeNom} (${numeroCompte}) est en cours de traitement.\n` +
                 `ID Transaction: ${result.transactionId || 'N/A'}`);
             
@@ -1958,10 +2255,10 @@
                 errorMessage = 'Le service de paiement est temporairement indisponible. Réessayez dans quelques minutes.';
             }
             
-            showNotification('error', 'Erreur de retrait', errorMessage);
+            showNotification('error', translations[currentLang]['notification.error'], errorMessage);
         } finally {
             retraitBtn.disabled = false;
-            retraitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Soumettre la demande';
+            retraitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> ${translations[currentLang]['withdrawal.submit']}`;
         }
     });
 
@@ -1970,11 +2267,15 @@
         if (user) {
             currentUser = user;
             try {
+                // Charger la langue sauvegardée
+                const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
+                setLanguage(savedLang);
+                
                 await loadUserData();
                 
                 // Vérification du statut de paiement
                 if (!userData.paid) {
-                    showNotification('info', 'Action requise', 'Veuillez finaliser votre inscription pour continuer.');
+                    showNotification('info', translations[currentLang]['notification.info'], 'Veuillez finaliser votre inscription pour continuer.');
                     setTimeout(() => { window.location.href = 'paiement.html'; }, 2500);
                     return;
                 }
@@ -1988,17 +2289,24 @@
                 document.body.classList.add('loaded');
                 loader.classList.add('hidden');
                 
-                showNotification('success', 'Bienvenue !', `Solde actuel: ${formatNumberSafe(userData.solde)} XAF`);
+                showNotification('success', translations[currentLang]['notification.success'], `Solde actuel: ${formatNumberSafe(userData.solde)} XAF`);
                 
             } catch (error) {
                 console.error("Erreur critique lors de l'initialisation :", error);
-                showNotification('error', 'Erreur Critique', "Impossible de charger vos données. Veuillez vous reconnecter.");
+                showNotification('error', translations[currentLang]['notification.error'], "Impossible de charger vos données. Veuillez vous reconnecter.");
                 auth.signOut();
                 setTimeout(() => { window.location.href = 'login.html'; }, 3000);
             }
         } else {
             window.location.href = 'login.html';
         }
+    });
+
+    /******** Initialisation de la traduction au chargement ********/
+    document.addEventListener('DOMContentLoaded', () => {
+      // Charger la langue sauvegardée ou utiliser le français par défaut
+      const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
+      setLanguage(savedLang);
     });
   </script>
 </body>
