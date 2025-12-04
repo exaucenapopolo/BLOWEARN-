@@ -1850,7 +1850,7 @@ async function fetchReferralsByLevel(referralIds, level) {
   
   const actifs = [];
   const inactifs = [];
-  const gainsByLevel = { 1: 1500, 2: 700, 3: 300 };
+  const gainsByLevel = { 1: 1700, 2: 750, 3: 350 };
   
   for (const refId of referralIds) {
     try {
@@ -1947,17 +1947,17 @@ async function updateTeamUI() {
     const level3Actifs = level3Refs.actifs;
 
     const level1Count = level1Actifs.length;
-    const level1Gains = level1Count * 1500;
+    const level1Gains = level1Count * 1700;  // NOUVEAU: 1700 FCFA par filleul niveau 1
     level1CountEl.textContent = level1Count;
     level1GainsEl.textContent = `${translations[currentLang]['team.gains']} ${formatNumberSafe(level1Gains)}`;
 
     const level2Count = level2Actifs.length;
-    const level2Gains = level2Count * 700;
+    const level2Gains = level2Count * 750;   // NOUVEAU: 750 FCFA par filleul niveau 2
     level2CountEl.textContent = level2Count;
     level2GainsEl.textContent = `${translations[currentLang]['team.gains']} ${formatNumberSafe(level2Gains)}`;
 
     const level3Count = level3Actifs.length;
-    const level3Gains = level3Count * 300;
+    const level3Gains = level3Count * 350;   // NOUVEAU: 350 FCFA par filleul niveau 3
     level3CountEl.textContent = level3Count;
     level3GainsEl.textContent = `${translations[currentLang]['team.gains']} ${formatNumberSafe(level3Gains)}`;
 
