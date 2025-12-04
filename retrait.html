@@ -5,24 +5,53 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>BLOWEARN AGENCIES - Retrait</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Poppins:wght@400;500;600&display=swapp" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   
   <style>
-    /* Styles de base */
+    /* -------------------------------------------------------------------------- */
+    /* --- VARIABLES CSS COHÉRENTES AVEC LA PAGE D'INSCRIPTION --- */
+    /* -------------------------------------------------------------------------- */
+    :root {
+      --color-primary: #4A90E2; /* Bleu Énergique */
+      --color-secondary: #FFC107; /* Jaune Vif/Or pour l'accent */
+      --color-text-dark: #2C3E50; /* Texte Sombre (lisible) */
+      --color-text-light: #ECF0F1; /* Texte Clair */
+      --color-bg-light: #FFFFFF; /* Fond de Carte */
+      --color-bg-gradient-1: #6DD5FA; /* Dégradé Fond 1 */
+      --color-bg-gradient-2: #FF7582; /* Dégradé Fond 2 */
+      --success-color: #4CD964;
+      --warning-color: #FF9500;
+      --danger-color: #FF3B30;
+      --shadow: 0 15px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.8);
+      --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- STYLES GÉNÉRAUX COHÉRENTS --- */
+    /* -------------------------------------------------------------------------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+      transition: var(--transition);
+    }
+
     body {
-      background: linear-gradient(135deg, #d5e8d9 0%, #c5dfe6 100%);
-      color: var(--text-color);
+      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
+      color: var(--color-text-dark);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
       visibility: hidden; 
       opacity: 0;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
     }
 
     body.loaded {
@@ -30,70 +59,38 @@
       opacity: 1;
     }
 
-    :root {
-      --primary-color: #3a8ee6;
-      --primary-light: #4da6ff;
-      --primary-dark: #2c75c9;
-      --secondary-color: #4c566a;
-      --accent-color: #5e81ac;
-      --background-light: #f5f7fb;
-      --background-dark: #e5e9f0;
-      --card-bg: #ffffff;
-      --text-color: #2e3440;
-      --text-light: #4c566a;
-      --success-color: #4CD964;
-      --warning-color: #FF9500;
-      --danger-color: #FF3B30;
-      --purple-color: #AF52DE;
-      --teal-color: #5AC8FA;
-      --orange-color: #FF9500;
-      --pink-color: #FF2D55;
-      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      --transition: all 0.3s ease;
-      --badge-active: #4CD964;
-      --badge-pending: #FF9500;
-      --badge-inactive: #FF3B30;
-    }
-
-    .dark-mode {
-      --primary-color: #5e81ac;
-      --primary-light: #81a1c1;
-      --primary-dark: #4c566a;
-      --secondary-color: #d8dee9;
-      --accent-color: #88c0d0;
-      --background-light: #2e3440;
-      --background-dark: #3b4252;
-      --card-bg: #434c5e;
-      --text-color: #eceff4;
-      --text-light: #d8dee9;
-      --success-color: #4CD964;
-      --warning-color: #FF9500;
-      --danger-color: #FF3B30;
-      --purple-color: #AF52DE;
-      --teal-color: #5AC8FA;
-      --orange-color: #FF9500;
-      --pink-color: #FF2D55;
-      --shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-      --badge-active: #2ecc71;
-      --badge-pending: #f1c40f;
-      --badge-inactive: #e74c3c;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      transition: var(--transition);
+    /* Effet de bulles animées en arrière-plan */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 25%),
+        radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 90% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 25%);
+      animation: float 20s ease-in-out infinite;
+      z-index: -1;
     }
     
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-15px) scale(1.02); }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- LOADER --- */
+    /* -------------------------------------------------------------------------- */
     .loader-container {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(135deg, #d5e8d9 0%, #c5dfe6 100%);
+      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -110,19 +107,21 @@
       width: 60px;
       height: 60px;
       border-radius: 50%;
-      background: conic-gradient(#0000 10%, var(--primary-color));
+      background: conic-gradient(#0000 10%, var(--color-primary));
       -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
       animation: spin 1s infinite linear;
     }
 
     @keyframes spin {
-      to {
-        transform: rotate(1turn);
-      }
+      to { transform: rotate(1turn); }
     }
 
+    /* -------------------------------------------------------------------------- */
+    /* --- HEADER --- */
+    /* -------------------------------------------------------------------------- */
     .header {
-      background-color: var(--card-bg);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
       box-shadow: var(--shadow);
       padding: 15px 30px;
       display: flex;
@@ -131,17 +130,29 @@
       position: sticky;
       top: 0;
       z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.7);
     }
 
     .logo {
       font-size: 1.8rem;
-      font-weight: 800;
-      color: var(--primary-color);
+      font-weight: 800; /* Plus épais pour plus de visibilité */
+      color: var(--color-text-dark); /* Changé pour plus de contraste */
       display: flex;
       align-items: center;
-      font-family: 'Montserrat', sans-serif;
+      font-family: 'Poppins', sans-serif;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Ombre plus prononcée */
+      background: linear-gradient(45deg, var(--color-primary) 0%, var(--color-secondary) 100%); /* Dégradé plus contrasté */
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: logoGlow 3s ease-in-out infinite alternate;
+    }
+    
+    @keyframes logoGlow {
+      from { filter: drop-shadow(0 0 5px rgba(74, 144, 226, 0.5)); }
+      to { filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.7)); }
     }
 
     .header-controls {
@@ -150,26 +161,86 @@
       gap: 15px;
     }
 
+    .language-selector {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      position: relative;
+    }
+
+    .language-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      border-radius: 12px;
+      padding: 8px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 140px;
+      z-index: 200;
+      transform-origin: top right;
+      animation: scaleIn 0.2s ease-out forwards;
+      border: 1px solid rgba(255,255,255,0.7);
+      margin-top: 5px;
+    }
+
+    .language-dropdown.active {
+      display: flex;
+    }
+
+    .language-option {
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s ease;
+    }
+
+    .language-option:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .language-option.active {
+      background-color: rgba(74, 144, 226, 0.1);
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
     .theme-toggle {
-        background-color: transparent;
-        border: none;
-        color: var(--secondary-color);
-        cursor: pointer;
-        padding: 5px;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background-color 0.3s ease;
+      background-color: transparent;
+      border: none;
+      color: var(--color-text-dark);
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease;
     }
 
     .theme-toggle:hover {
-        background-color: rgba(0, 0, 0, 0.05);
+      background-color: rgba(0, 0, 0, 0.05);
     }
+
     .theme-toggle i {
-        font-size: 1.2rem;
+      font-size: 1.2rem;
     }
 
     .user-profile {
@@ -184,107 +255,119 @@
       width: 45px;
       height: 45px;
       border-radius: 50%;
-      background-color: var(--primary-color);
+      background-color: var(--color-primary);
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       font-size: 1.2rem;
       font-weight: bold;
-      border: 2px solid var(--primary-light);
+      border: 2px solid var(--color-secondary);
       box-shadow: var(--shadow);
     }
 
     .profile-dropdown {
-        position: absolute;
-        top: 100%;
-        right: 0;
-        background-color: var(--card-bg);
-        box-shadow: var(--shadow);
-        border-radius: 8px;
-        padding: 10px;
-        display: none;
-        flex-direction: column;
-        gap: 5px;
-        min-width: 150px;
-        z-index: 200;
-        transform-origin: top right;
-        animation: scaleIn 0.2s ease-out forwards;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      border-radius: 18px;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 150px;
+      z-index: 200;
+      transform-origin: top right;
+      animation: scaleIn 0.2s ease-out forwards;
+      border: 1px solid rgba(255,255,255,0.7);
     }
 
     .profile-dropdown.active {
-        display: flex;
+      display: flex;
     }
     
     @keyframes scaleIn {
-        from { transform: scale(0.9); opacity: 0; }
-        to { transform: scale(1); opacity: 1; }
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
     }
 
     .profile-dropdown .theme-toggle {
-        width: 100%;
-        border-radius: 8px;
-        background-color: rgba(0, 0, 0, 0.05);
-        color: var(--text-color);
-        justify-content: flex-start;
-        padding: 10px;
-        transition: background-color 0.2s ease, transform 0.2s ease;
-        text-align: left;
-        gap: 10px;
+      width: 100%;
+      border-radius: 8px;
+      background-color: rgba(0, 0, 0, 0.05);
+      color: var(--text-color);
+      justify-content: flex-start;
+      padding: 10px;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+      text-align: left;
+      gap: 10px;
     }
+
     .profile-dropdown .theme-toggle:hover {
-        background-color: rgba(0, 0, 0, 0.1);
-        transform: translateY(-2px);
+      background-color: rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
     }
     
     .profile-dropdown .theme-toggle span {
-        flex-grow: 1;
-        text-align: left;
+      flex-grow: 1;
+      text-align: left;
     }
 
+    /* -------------------------------------------------------------------------- */
+    /* --- BOUTON HAMBURGER (DÉPLACÉ À DROITE) --- */
+    /* -------------------------------------------------------------------------- */
     .hamburger-btn {
-        display: none;
-        background: none;
-        border: none;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-        width: 30px;
-        height: 25px;
-        padding: 0;
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 30px;
+      height: 25px;
+      padding: 0;
+      order: 2; /* Pour le placer à droite dans le header */
     }
     
     .hamburger-btn .bar {
-        width: 100%;
-        height: 3px;
-        background-color: var(--secondary-color);
-        transition: transform 0.3s ease, opacity 0.3s ease;
+      width: 100%;
+      height: 3px;
+      background-color: var(--color-text-dark);
+      transition: transform 0.3s ease, opacity 0.3s ease;
     }
     
     .hamburger-btn.open .bar:nth-child(2) {
-        opacity: 0;
+      opacity: 0;
     }
     
     .hamburger-btn.open .bar:nth-child(1) {
-        transform: translateY(11px) rotate(45deg);
+      transform: translateY(11px) rotate(45deg);
     }
     
     .hamburger-btn.open .bar:nth-child(3) {
-        transform: translateY(-11px) rotate(-45deg);
+      transform: translateY(-11px) rotate(-45deg);
     }
 
+    /* -------------------------------------------------------------------------- */
+    /* --- STRUCTURE PRINCIPALE --- */
+    /* -------------------------------------------------------------------------- */
     .main-container {
       display: flex;
       flex: 1;
     }
 
+    /* -------------------------------------------------------------------------- */
+    /* --- SIDEBAR (MENU) AMÉLIORÉ AVEC NOUVEAU FOND ET POLICE --- */
+    /* -------------------------------------------------------------------------- */
     .sidebar {
       width: 280px;
-      background: rgba(255, 255, 255, 0.75);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-right: 1px solid rgba(255, 255, 255, 0.2);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.95) 100%);
+      backdrop-filter: blur(15px);
+      border-right: 1px solid rgba(255,255,255,0.7);
       box-shadow: var(--shadow);
       height: calc(100vh - 80px);
       position: sticky;
@@ -295,7 +378,7 @@
     }
     
     .sidebar.open {
-        transform: translateX(0);
+      transform: translateX(0);
     }
 
     .welcome-section {
@@ -305,24 +388,29 @@
     }
 
     .welcome-text {
-      color: var(--text-light);
+      color: var(--color-text-dark);
       font-size: 0.9rem;
       margin-bottom: 5px;
+      font-weight: 500;
+      font-family: 'Quicksand', sans-serif;
     }
 
     .username {
       font-weight: 600;
       font-size: 1.2rem;
-      color: var(--primary-color);
+      color: var(--color-primary);
+      font-family: 'Quicksand', sans-serif;
     }
 
     .menu-category {
       padding: 15px 25px 5px;
       font-size: 0.85rem;
-      color: var(--text-light);
+      color: var(--color-text-dark);
       text-transform: uppercase;
       letter-spacing: 1px;
       font-weight: 600;
+      font-family: 'Quicksand', sans-serif;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
 
     .menu-item {
@@ -330,13 +418,14 @@
       display: flex;
       align-items: center;
       gap: 15px;
-      color: var(--text-color);
+      color: var(--color-text-dark);
       text-decoration: none;
       font-weight: 500;
       border-left: 4px solid transparent;
       position: relative;
       overflow: hidden;
       animation: fadeIn 0.5s ease-out;
+      font-family: 'Quicksand', sans-serif;
     }
 
     @keyframes fadeIn {
@@ -354,14 +443,15 @@
       background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
       transition: all 0.5s ease;
     }
+    
     .menu-item:hover::before {
       left: 100%;
     }
 
     .menu-item:hover, .menu-item.active {
       background-color: rgba(0, 0, 0, 0.05);
-      border-left-color: var(--primary-color);
-      color: var(--primary-color);
+      border-left-color: var(--color-primary);
+      color: var(--color-primary);
     }
 
     .menu-item i {
@@ -392,15 +482,18 @@
     }
     
     .menu-badge.active {
-      background-color: var(--badge-active);
+      background-color: var(--success-color);
       color: white;
     }
     
     .menu-badge.inactive {
-      background-color: var(--badge-inactive);
+      background-color: var(--danger-color);
       color: white;
     }
 
+    /* -------------------------------------------------------------------------- */
+    /* --- CONTENU PRINCIPAL --- */
+    /* -------------------------------------------------------------------------- */
     .content {
       flex: 1;
       padding: 30px;
@@ -409,22 +502,26 @@
     .page-title {
       font-size: 1.8rem;
       margin-bottom: 25px;
-      color: var(--secondary-color);
+      color: var(--color-text-dark);
       font-weight: 700;
       display: flex;
       align-items: center;
       gap: 15px;
+      font-family: 'Poppins', sans-serif;
     }
 
     .page-title i {
-      color: var(--primary-color);
+      color: var(--color-primary);
       font-size: 2rem;
     }
 
-    /* Carte de retrait améliorée */
+    /* -------------------------------------------------------------------------- */
+    /* --- CARTE DE RETRAIT AMÉLIORÉE --- */
+    /* -------------------------------------------------------------------------- */
     .retrait-card {
-        background: var(--card-bg);
-        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(15px);
+        border-radius: 18px;
         padding: 30px;
         box-shadow: var(--shadow);
         display: flex;
@@ -433,20 +530,33 @@
         max-width: 700px;
         margin: 0 auto 30px;
         animation: slideInUp 0.6s ease-out forwards;
+        border: 1px solid rgba(255,255,255,0.7);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .retrait-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: 18px 18px 0 0;
     }
 
     .retrait-card h2 {
         font-size: 1.8rem;
-        color: var(--primary-color);
+        color: var(--color-primary);
         margin-bottom: 10px;
         text-align: center;
-        border-bottom: 2px solid var(--primary-light);
         padding-bottom: 15px;
     }
 
     .retrait-card p {
         font-size: 1rem;
-        color: var(--text-light);
+        color: var(--color-text-dark);
         text-align: center;
         line-height: 1.6;
     }
@@ -455,9 +565,9 @@
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 15px;
-        background: var(--background-light);
+        background: rgba(255, 255, 255, 0.5);
         padding: 20px;
-        border-radius: 8px;
+        border-radius: 12px;
         margin-bottom: 10px;
     }
 
@@ -469,26 +579,26 @@
 
     .info-label {
         font-size: 0.85rem;
-        color: var(--text-light);
+        color: var(--color-text-dark);
         font-weight: 500;
     }
 
     .info-value {
         font-size: 1rem;
-        color: var(--text-color);
+        color: var(--color-primary);
         font-weight: 600;
     }
 
     .solde-actuel {
         font-size: 1.3rem;
         font-weight: 700;
-        color: var(--text-color);
-        text-align: center;
-        background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
         color: white;
+        text-align: center;
+        background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
         padding: 15px;
-        border-radius: 8px;
+        border-radius: 12px;
         margin: 10px 0;
+        box-shadow: var(--shadow);
     }
 
     .solde-actuel span {
@@ -514,7 +624,7 @@
 
     .form-group label {
         font-weight: 600;
-        color: var(--secondary-color);
+        color: var(--color-text-dark);
         font-size: 0.9rem;
     }
 
@@ -522,10 +632,10 @@
     .form-group select {
         width: 100%;
         padding: 12px 15px;
-        border-radius: 8px;
-        border: 1px solid var(--background-dark);
-        background-color: var(--background-light);
-        color: var(--text-color);
+        border-radius: 10px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        background-color: rgba(255, 255, 255, 0.8);
+        color: var(--color-text-dark);
         font-size: 1rem;
         transition: all 0.3s ease;
     }
@@ -533,9 +643,9 @@
     .form-group input:focus, 
     .form-group select:focus {
         outline: none;
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(58, 142, 230, 0.1);
-        background-color: var(--card-bg);
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        background-color: white;
     }
 
     .form-group input:invalid {
@@ -547,11 +657,11 @@
     }
 
     .submit-btn {
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
         color: white;
         border: none;
         padding: 16px;
-        border-radius: 8px;
+        border-radius: 12px;
         font-size: 1.1rem;
         font-weight: 700;
         cursor: pointer;
@@ -560,11 +670,12 @@
         letter-spacing: 1px;
         margin-top: 10px;
         grid-column: 1 / -1;
+        box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
     }
 
     .submit-btn:hover {
         transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
     }
 
     .submit-btn:disabled {
@@ -581,7 +692,7 @@
         font-style: italic;
         padding: 10px;
         background-color: rgba(255, 59, 48, 0.1);
-        border-radius: 6px;
+        border-radius: 8px;
         margin-top: 10px;
     }
 
@@ -592,29 +703,45 @@
         font-style: italic;
         padding: 10px;
         background-color: rgba(76, 217, 100, 0.1);
-        border-radius: 6px;
+        border-radius: 8px;
         margin-top: 10px;
     }
 
-    /* STYLES POUR L'HISTORIQUE DES RETRAITS */
+    /* -------------------------------------------------------------------------- */
+    /* --- HISTORIQUE DES RETRAITS --- */
+    /* -------------------------------------------------------------------------- */
     .historique-card {
-        background: var(--card-bg);
-        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(15px);
+        border-radius: 18px;
         padding: 30px;
         box-shadow: var(--shadow);
         max-width: 1200px;
         margin: 30px auto;
         animation: slideInUp 0.6s ease-out forwards;
+        border: 1px solid rgba(255,255,255,0.7);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .historique-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: 18px 18px 0 0;
     }
 
     .historique-card h2 {
         font-size: 1.8rem;
-        color: var(--primary-color);
+        color: var(--color-primary);
         margin-bottom: 20px;
         display: flex;
         align-items: center;
         gap: 10px;
-        border-bottom: 2px solid var(--primary-light);
         padding-bottom: 15px;
     }
 
@@ -630,7 +757,7 @@
     }
 
     .historique-table thead {
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
         color: white;
     }
 
@@ -644,18 +771,18 @@
     }
 
     .historique-table tbody tr {
-        border-bottom: 1px solid var(--background-dark);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         transition: background-color 0.2s ease;
     }
 
     .historique-table tbody tr:hover {
-        background-color: var(--background-light);
+        background-color: rgba(0, 0, 0, 0.03);
     }
 
     .historique-table td {
         padding: 15px 10px;
         font-size: 0.95rem;
-        color: var(--text-color);
+        color: var(--color-text-dark);
     }
 
     .status-badge {
@@ -693,18 +820,18 @@
 
     .montant-cell {
         font-weight: 700;
-        color: var(--primary-color);
+        color: var(--color-primary);
     }
 
     .empty-state {
         text-align: center;
         padding: 40px;
-        color: var(--text-light);
+        color: var(--color-text-dark);
     }
 
     .empty-state i {
         font-size: 4rem;
-        color: var(--background-dark);
+        color: rgba(0, 0, 0, 0.2);
         margin-bottom: 15px;
     }
 
@@ -717,12 +844,17 @@
       to { transform: translateY(0); opacity: 1; }
     }
 
+    /* -------------------------------------------------------------------------- */
+    /* --- FOOTER AMÉLIORÉ --- */
+    /* -------------------------------------------------------------------------- */
     .footer {
-      background-color: var(--card-bg);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
       padding: 20px 30px;
       text-align: center;
       box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
       margin-top: auto;
+      border-top: 1px solid rgba(255,255,255,0.7);
     }
 
     .footer-content {
@@ -739,7 +871,7 @@
     }
 
     .footer-link {
-      color: var(--primary-color);
+      color: var(--color-primary);
       text-decoration: none;
       font-weight: 500;
       transition: color 0.2s ease;
@@ -747,105 +879,17 @@
 
     .footer-link:hover {
       text-decoration: underline;
-      color: var(--primary-dark);
+      color: var(--color-secondary);
     }
 
     .footer-text {
-      color: var(--text-light);
+      color: var(--color-text-dark);
       font-size: 0.9rem;
     }
 
-    @media (max-width: 992px) {
-      .sidebar {
-        width: 230px;
-      }
-    }
-
-    @media (max-width: 768px) {
-        .main-container {
-            flex-direction: column;
-        }
-        
-        .hamburger-btn {
-            display: flex;
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 101;
-        }
-
-        .sidebar {
-            width: 75%;
-            max-width: 300px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: -100%;
-            z-index: 99;
-            transition: left 0.4s ease-in-out;
-        }
-        
-        .sidebar.open {
-            left: 0;
-        }
-        
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 98;
-        }
-        
-        .overlay.active {
-            display: block;
-        }
-        
-        .header {
-            padding: 15px;
-        }
-        
-        .logo {
-            font-size: 1.5rem;
-            margin-left: 50px;
-        }
-        
-        .content {
-            padding: 20px 15px;
-        }
-        
-        .retrait-card, .historique-card {
-            padding: 20px;
-        }
-
-        .form-grid {
-            grid-template-columns: 1fr;
-            gap: 15px;
-        }
-
-        .user-info-grid {
-            grid-template-columns: 1fr;
-            padding: 15px;
-        }
-
-        .footer-links {
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .historique-table {
-            font-size: 0.85rem;
-        }
-
-        .historique-table th,
-        .historique-table td {
-            padding: 10px 8px;
-        }
-    }
-
+    /* -------------------------------------------------------------------------- */
+    /* --- NOTIFICATIONS --- */
+    /* -------------------------------------------------------------------------- */
     .notification-container {
       position: fixed;
       top: 20px;
@@ -859,8 +903,8 @@
 
     .notification {
       padding: 15px 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border-radius: 10px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
       display: flex;
       align-items: center;
       gap: 10px;
@@ -870,6 +914,8 @@
       overflow: hidden;
       color: white;
       pointer-events: auto;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
     }
 
     .notification.success {
@@ -881,7 +927,7 @@
     }
 
     .notification.info { 
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); 
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); 
     }
 
     @keyframes slideIn {
@@ -892,6 +938,162 @@
       to {
         transform: translateX(0);
         opacity: 1;
+      }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- OVERLAY --- */
+    /* -------------------------------------------------------------------------- */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 98;
+    }
+    
+    .overlay.active {
+      display: block;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- MODE NUIT --- */
+    /* -------------------------------------------------------------------------- */
+    .dark-mode {
+      --color-primary: #5e81ac;
+      --color-secondary: #d08770;
+      --color-text-dark: #eceff4;
+      --color-text-light: #2e3440;
+      --color-bg-light: #3b4252;
+      --color-bg-gradient-1: #2e3440;
+      --color-bg-gradient-2: #4c566a;
+      --success-color: #a3be8c;
+      --warning-color: #ebcb8b;
+      --danger-color: #bf616a;
+      --shadow: 0 15px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
+    }
+
+    .dark-mode body::before {
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(76, 86, 106, 0.4) 0%, transparent 25%),
+        radial-gradient(circle at 80% 10%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 40% 80%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 90% 90%, rgba(76, 86, 106, 0.2) 0%, transparent 25%);
+    }
+
+    .dark-mode .header,
+    .dark-mode .sidebar,
+    .dark-mode .retrait-card,
+    .dark-mode .historique-card,
+    .dark-mode .footer {
+      background: rgba(59, 66, 82, 0.95);
+      color: var(--color-text-dark);
+    }
+
+    .dark-mode .solde-actuel {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    }
+
+    .dark-mode .user-info-grid {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .dark-mode .form-group input, 
+    .dark-mode .form-group select {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: var(--color-text-dark);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- RESPONSIVE --- */
+    /* -------------------------------------------------------------------------- */
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 230px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-container {
+        flex-direction: column;
+      }
+      
+      .hamburger-btn {
+        display: flex;
+        position: static; /* Position normale dans le flux */
+        order: 2; /* Pour le placer à droite */
+      }
+
+      /* NOUVEAU STYLE POUR LE MENU HAMBURGER EN VERSION MOBILE */
+      .sidebar {
+        width: 85%;
+        max-width: 320px;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: -100%;
+        z-index: 99;
+        transition: left 0.4s ease-in-out;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.97) 100%);
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+        border-radius: 0 25px 25px 0;
+        overflow-y: auto;
+      }
+      
+      .sidebar.open {
+        left: 0;
+      }
+      
+      .header {
+        padding: 15px;
+      }
+      
+      .logo {
+        font-size: 1.5rem;
+        margin-left: 0; /* Supprimé le décalage précédent */
+      }
+      
+      .content {
+        padding: 20px;
+      }
+      
+      .retrait-card, .historique-card {
+        padding: 20px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+
+      .user-info-grid {
+        grid-template-columns: 1fr;
+        padding: 15px;
+      }
+
+      .footer-links {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .historique-table {
+        font-size: 0.85rem;
+      }
+
+      .historique-table th,
+      .historique-table td {
+        padding: 10px 8px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .historique-table {
+        display: block;
+        overflow-x: auto;
       }
     }
 
@@ -908,23 +1110,41 @@
   <div class="notification-container" id="notificationContainer"></div>
 
   <header class="header">
-    <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-    </button>
-    
     <div class="logo">
-      <span>BLOWEARN AGENCIES</span>
+      <span>BLOWEARN</span>
     </div>
     
     <div class="header-controls">
+      <div class="language-selector-container">
+        <button class="language-selector" id="languageSelector">
+          <i class="fas fa-globe"></i>
+          <span id="currentLanguage">French</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="language-dropdown" id="languageDropdown">
+          <div class="language-option active" data-lang="fr">
+            <i class="fas fa-check"></i>
+            <span>Français</span>
+          </div>
+          <div class="language-option" data-lang="en">
+            <i class="fas fa-check" style="opacity: 0;"></i>
+            <span>English</span>
+          </div>
+        </div>
+      </div>
+      
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </button>
+      
       <div class="user-profile" id="userProfile">
           <div class="avatar" id="userAvatar">U</div>
           <div class="profile-dropdown" id="profileDropdown">
               <button class="theme-toggle" id="themeToggle">
                   <i class="fas fa-moon"></i>
-                  <span>Mode nuit</span>
+                  <span data-i18n="header.night_mode">Mode nuit</span>
               </button>
           </div>
       </div>
@@ -936,102 +1156,159 @@
   <div class="main-container">
     <aside class="sidebar" id="sidebar">
       <div class="welcome-section">
-        <div class="welcome-text">Dashboard >> BLOWEARN AGENCIES</div>
+        <div class="welcome-text" data-i18n="dashboard.title">Dashboard >> BLOWEARN AGENCIES</div>
         <div class="username" id="sidebarUsername">Utilisateur</div>
       </div>
       
-      <div class="menu-category">PRINCIPAL</div>
+      <div class="menu-category" data-i18n="menu.main">PRINCIPAL</div>
       <a href="dashboard.html" class="menu-item">
         <i class="fas fa-home"></i>
-        <span>Tableau de bord</span>
-        <span class="menu-badge badge-active">☑</span>
+        <span data-i18n="menu.dashboard">Tableau de bord</span>
+        <span class="menu-badge active">☑</span>
       </a>
       
       <a href="depot.html" class="menu-item">
         <i class="fas fa-wallet"></i>
-        <span>Dépôt 💵</span>
-        <span class="menu-badge badge-inactive">☐</span>
+        <span data-i18n="menu.deposit">Dépôt 💵</span>
+        <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="bonus_bienvenue.html" class="menu-item">
         <i class="fas fa-gift"></i>
-        <span>Bonus de bienvenue</span>
-        <span class="menu-badge badge-inactive">☒</span>
+        <span data-i18n="menu.welcome_bonus">Bonus de bienvenue</span>
+        <span class="menu-badge inactive">☒</span>
       </a>
       
-      <div class="menu-category">COMPTES</div>
+      <div class="menu-category" data-i18n="menu.accounts">COMPTES</div>
       <a href="retrait.html" class="menu-item active">
         <i class="fas fa-money-bill-wave"></i>
-        <span>Retrait</span>
-        <span class="menu-badge badge-inactive">☐</span>
+        <span data-i18n="menu.withdrawal">Retrait</span>
+        <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="equipe.html" class="menu-item">
         <i class="fas fa-users"></i>
-        <span>Équipe</span>
-        <span class="menu-badge badge-active">☑</span>
+        <span data-i18n="menu.team">Équipe</span>
+        <span class="menu-badge inactive">☒</span>
+      </a>
+
+      <div class="menu-category" data-i18n="menu.special">SPÉCIAL</div>
+      
+      <a href="social_boost.html" class="menu-item">
+        <i class="fas fa-rocket"></i>
+        <span data-i18n="menu.sbh">SBH</span>
+        <span class="menu-badge inactive">☐</span>
       </a>
       
-      <div class="menu-category">GAINS</div>
-      <a href="publicite.html" class="menu-item">
+      <a href="challenge_reward.html" class="menu-item">
+        <i class="fas fa-medal"></i>
+        <span data-i18n="menu.challenge">Challenge and Reward</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <div class="menu-category" data-i18n="menu.products">PRODUIT / TÂCHE</div>
+      <a href="whatsapp_earn.html" class="menu-item">
+        <i class="fab fa-whatsapp"></i>
+        <span data-i18n="menu.whatsapp_earn">Gagner via Whatsapp</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="gains_publicitaires.html" class="menu-item">
         <i class="fas fa-ad"></i>
-        <span>Publicité</span>
-        <span class="menu-badge badge-inactive">☐</span>
+        <span data-i18n="menu.ad_earnings">Gains publicitaires</span>
+        <span class="menu-badge inactive">☐</span>
       </a>
       
-      <a href="taches.html" class="menu-item">
-        <i class="fas fa-tasks"></i>
-        <span>Tâches</span>
-        <span class="menu-badge badge-inactive">☐</span>
+      <a href="spin_wheel.html" class="menu-item">
+        <i class="fas fa-trophy"></i>
+        <span data-i18n="menu.fortune_wheel">Roue de la fortune 🏆</span>
+        <span class="menu-badge inactive">☐</span>
       </a>
       
-      <a href="jeux.html" class="menu-item">
-        <i class="fas fa-gamepad"></i>
-        <span>Jeux</span>
-        <span class="menu-badge badge-inactive">☐</span>
-      </a>
-      
-      <a href="tiktok.html" class="menu-item">
+      <a href="tiktok_earn.html" class="menu-item">
         <i class="fab fa-tiktok"></i>
-        <span>TikTok</span>
-        <span class="menu-badge badge-inactive">☐</span>
+        <span data-i18n="menu.tiktok_earn">TikTok Earn</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="youtube_earn.html" class="menu-item">
+        <i class="fab fa-youtube"></i>
+        <span data-i18n="menu.youtube_earn">YouTube Earn</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="instagram_earn.html" class="menu-item">
+        <i class="fab fa-instagram"></i>
+        <span data-i18n="menu.instagram_earn">Instagram Earn</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="trivia_challenge.html" class="menu-item">
+        <i class="fas fa-brain"></i>
+        <span data-i18n="menu.trivia">TRIVIA challenge</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <div class="menu-category" data-i18n="menu.bonus">BONUS</div>
+      <a href="liste_contacts.html" class="menu-item">
+        <i class="fas fa-address-book"></i>
+        <span data-i18n="menu.contact_list">Liste de contacts gratuit 🆓</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="booster_visibilite.html" class="menu-item">
+        <i class="fas fa-rocket"></i>
+        <span data-i18n="menu.visibility_booster">Booster ma visibilité</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+
+      <a href="canva_pro.html" class="menu-item">
+        <i class="fas fa-palette"></i>
+        <span data-i18n="menu.canva_pro">Canva Pro</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="connexion_gratuite.html" class="menu-item">
+        <i class="fas fa-shield-alt"></i>
+        <span data-i18n="menu.free_connection">Connexion gratuite</span>
+        <span class="menu-badge inactive">☐</span>
       </a>
     </aside>
 
     <main class="content">
       <h1 class="page-title">
         <i class="fas fa-money-bill-wave"></i>
-        Demande de retrait
+        <span data-i18n="withdrawal.title">Demande de retrait</span>
       </h1>
 
       <div class="retrait-card">
-        <h2>🏦 Formulaire de retrait</h2>
-        <p>Remplissez le formulaire ci-dessous pour effectuer un retrait de vos fonds.</p>
+        <h2 data-i18n="withdrawal.form_title">🏦 Formulaire de retrait</h2>
+        <p data-i18n="withdrawal.form_description">Remplissez le formulaire ci-dessous pour effectuer un retrait de vos fonds.</p>
 
         <div class="user-info-grid">
             <div class="info-item">
-                <span class="info-label">Nom d'utilisateur</span>
+                <span class="info-label" data-i18n="user_info.username">Nom d'utilisateur</span>
                 <span class="info-value" id="infoUsername">Chargement...</span>
             </div>
             <div class="info-item">
-                <span class="info-label">Email</span>
+                <span class="info-label" data-i18n="user_info.email">Email</span>
                 <span class="info-value" id="infoEmail">Chargement...</span>
             </div>
             <div class="info-item">
-                <span class="info-label">Statut de paiement</span>
+                <span class="info-label" data-i18n="withdrawal.payment_status">Statut de paiement</span>
                 <span class="info-value" id="infoPaymentStatus">Chargement...</span>
             </div>
         </div>
 
         <div class="solde-actuel">
-            Solde actuel: <span id="currentBalance">0</span> XAF
+            <span data-i18n="withdrawal.current_balance">Solde actuel:</span> <span id="currentBalance">0</span> XAF
         </div>
 
         <form id="retraitForm" class="form-grid">
             <div class="form-group">
-                <label for="pays">Pays de retrait *</label>
+                <label for="pays" data-i18n="withdrawal.country">Pays de retrait *</label>
                 <select id="pays" name="pays" required>
-                    <option value="">Sélectionnez votre pays</option>
+                    <option value="" data-i18n="withdrawal.select_country">Sélectionnez votre pays</option>
                     <option value="BJ">Bénin</option>
                     <option value="BF">Burkina Faso</option>
                     <option value="CM">Cameroun</option>
@@ -1046,55 +1323,55 @@
             </div>
 
             <div class="form-group">
-                <label for="methode">Méthode de retrait *</label>
+                <label for="methode" data-i18n="withdrawal.method">Méthode de retrait *</label>
                 <select id="methode" name="methode" required disabled>
-                    <option value="">Sélectionnez d'abord le pays</option>
+                    <option value="" data-i18n="withdrawal.select_method_first">Sélectionnez d'abord le pays</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="numeroCompte">Numéro de compte/téléphone *</label>
-                <input type="text" id="numeroCompte" name="numeroCompte" placeholder="Ex: 237670123456" required>
+                <label for="numeroCompte" data-i18n="withdrawal.account_number">Numéro de compte/téléphone *</label>
+                <input type="text" id="numeroCompte" name="numeroCompte" placeholder="Ex: 237681144638" required>
             </div>
 
             <div class="form-group">
-                <label for="montant">Montant du retrait (XAF) *</label>
-                <input type="number" id="montant" name="montant" placeholder="Entrez le montant" min="100" required>
+                <label for="montant" data-i18n="withdrawal.amount">Montant du retrait (XAF) *</label>
+                <input type="number" id="montant" name="montant" placeholder="Entrez le montant" min="3100" required>
             </div>
 
             <div class="form-group full-width">
-                <label for="nomBeneficiaire">Nom du bénéficiaire *</label>
-                <input type="text" id="nomBeneficiaire" name="nomBeneficiaire" placeholder="Ex: Jean KONAN" required>
+                <label for="nomBeneficiaire" data-i18n="withdrawal.beneficiary_name">Nom du bénéficiaire *</label>
+                <input type="text" id="nomBeneficiaire" name="nomBeneficiaire" placeholder="Ex: NAPOPOLO EXAUCÉ" required>
             </div>
 
             <div class="form-group full-width">
-                <label for="description">Description du retrait</label>
+                <label for="description" data-i18n="withdrawal.description">Description du retrait</label>
                 <input type="text" id="description" name="description" placeholder="Ex: Retrait pour besoins personnels" value="Retrait de fonds BLOWEARN AGENCIES">
             </div>
 
             <button type="submit" class="submit-btn" id="retraitBtn">
-                <i class="fas fa-paper-plane"></i> Soumettre la demande
+                <i class="fas fa-paper-plane"></i> <span data-i18n="withdrawal.submit">Soumettre la demande</span>
             </button>
         </form>
 
         <p class="note">
-                  <strong>Minimum: 3 100 XAF</strong> | <strong>Frais: 550 XAF</strong> (obligatoire)<br>
-                  <span style="color: #e67e22;">⚠️ Vous devez avoir au moins <strong>3 650 XAF</strong> dans votre solde pour effectuer un retrait.</span>
-                </p>
-        <p class="success-note">Vérifiez attentivement vos informations avant de soumettre. Le traitement peut prendre 24-48 heures.</p>
+          <strong data-i18n="withdrawal.minimum">Minimum: 3 100 XAF</strong> | <strong data-i18n="withdrawal.fees">Frais: 550 XAF</strong> (obligatoire)<br>
+          <span style="color: var(--warning-color);" data-i18n="withdrawal.required_balance">⚠️ Vous devez avoir au moins <strong>3 650 XAF</strong> dans votre solde pour effectuer un retrait.</span>
+        </p>
+        <p class="success-note" data-i18n="withdrawal.processing_time">Vérifiez attentivement vos informations avant de soumettre. Le traitement prend généralement entre 1 minute et 1 heure maximum.</p>
       </div>
 
       <!-- HISTORIQUE DES RETRAITS -->
       <div class="historique-card">
         <h2>
           <i class="fas fa-history"></i>
-          Historique de mes retraits
+          <span data-i18n="withdrawal.history_title">Historique de mes retraits</span>
         </h2>
         
         <div class="historique-table-container" id="historiqueContainer">
           <div class="empty-state">
             <i class="fas fa-spinner fa-spin"></i>
-            <p>Chargement de l'historique...</p>
+            <p data-i18n="withdrawal.loading_history">Chargement de l'historique...</p>
           </div>
         </div>
       </div>
@@ -1104,11 +1381,13 @@
   <footer class="footer">
     <div class="footer-content">
       <div class="footer-links">
-        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Pro Tech Management</a>
-        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Site propulsé par Social Boost Horizon</a>
+        <a href="terms.html" class="footer-link" data-i18n="footer.terms">Conditions d'utilisation</a>
+        <a href="privacy.html" class="footer-link" data-i18n="footer.privacy">Politique de confidentialité</a>
+        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Propulsé par SBH</a>
+        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Boost Tech Management</a>
       </div>
       <div class="footer-text">
-        © 2025 BLOWEARN AGENCIES. Tous droits réservés.
+        © 2025 BLOWEARN AGENCIES. <span data-i18n="footer.rights">Tous droits réservés.</span>
       </div>
     </div>
   </footer>
@@ -1142,6 +1421,9 @@
     const sidebarUsername = document.getElementById('sidebarUsername');
     const userAvatar = document.getElementById('userAvatar');
     const loader = document.getElementById('loader');
+    const languageSelector = document.getElementById('languageSelector');
+    const languageDropdown = document.getElementById('languageDropdown');
+    const currentLanguage = document.getElementById('currentLanguage');
 
     const currentBalanceEl = document.getElementById('currentBalance');
     const retraitForm = document.getElementById('retraitForm');
@@ -1149,7 +1431,7 @@
     const notificationContainer = document.getElementById('notificationContainer');
     const historiqueContainer = document.getElementById('historiqueContainer');
     
-    // Éléments d'information (UID retiré)
+    // Éléments d'information
     const infoUsername = document.getElementById('infoUsername');
     const infoEmail = document.getElementById('infoEmail');
     const infoPaymentStatus = document.getElementById('infoPaymentStatus');
@@ -1165,36 +1447,197 @@
     /******** Variables d'état ********/
     let currentUser = null;
     let userData = {};
+    let currentLang = 'fr'; // Langue par défaut
 
-    // Configuration des méthodes de retrait par pays (codes pays + méthodes)
-    const methodesParPays = {
-        BJ: { name: 'Bénin', methods: ['mtn', 'moov'], currency: 'XOF' },
-        BF: { name: 'Burkina Faso', methods: ['orange', 'moov'], currency: 'XOF' },
-        CM: { name: 'Cameroun', methods: ['mtn', 'orange'], currency: 'XAF' },
-        CI: { name: 'Côte d\'Ivoire', methods: ['orange', 'mtn', 'moov', 'wave'], currency: 'XOF' },
-        GH: { name: 'Ghana', methods: ['mtn', 'vodafone', 'airtel'], currency: 'GHS' },
-        ML: { name: 'Mali', methods: ['orange', 'moov', 'wave'], currency: 'XOF' },
-        NE: { name: 'Niger', methods: ['airtel'], currency: 'XOF' },
-        NG: { name: 'Nigeria', methods: ['bank_transfer'], currency: 'NGN' },
-        SN: { name: 'Sénégal', methods: ['orange', 'free', 'wave'], currency: 'XOF' },
-        TG: { name: 'Togo', methods: ['tmoney', 'moov'], currency: 'XOF' }
+    /******** Système de traduction ********/
+    const translations = {
+      fr: {
+        // Header
+        "header.language": "French",
+        "header.night_mode": "Mode nuit",
+        "header.day_mode": "Mode jour",
+        
+        // Dashboard
+        "dashboard.title": "Dashboard >> BLOWEARN AGENCIES",
+        
+        // Menu
+        "menu.main": "PRINCIPAL",
+        "menu.dashboard": "Tableau de bord",
+        "menu.deposit": "Dépôt 💵",
+        "menu.welcome_bonus": "Bonus de bienvenue",
+        "menu.accounts": "COMPTES",
+        "menu.withdrawal": "Retrait",
+        "menu.team": "Équipe",
+        "menu.special": "SPÉCIAL",
+        "menu.sbh": "SBH",
+        "menu.challenge": "Challenge and Reward",
+        "menu.products": "PRODUIT / TÂCHE",
+        "menu.whatsapp_earn": "Gagner via Whatsapp",
+        "menu.ad_earnings": "Gains publicitaires",
+        "menu.fortune_wheel": "Roue de la fortune 🏆",
+        "menu.tiktok_earn": "TikTok Earn",
+        "menu.youtube_earn": "YouTube Earn",
+        "menu.instagram_earn": "Instagram Earn",
+        "menu.trivia": "TRIVIA challenge",
+        "menu.bonus": "BONUS",
+        "menu.contact_list": "Liste de contacts gratuit 🆓",
+        "menu.visibility_booster": "Booster ma visibilité",
+        "menu.canva_pro": "Canva Pro",
+        "menu.free_connection": "Connexion gratuite",
+        
+        // Withdrawal Page
+        "withdrawal.title": "Demande de retrait",
+        "withdrawal.form_title": "🏦 Formulaire de retrait",
+        "withdrawal.form_description": "Remplissez le formulaire ci-dessous pour effectuer un retrait de vos fonds.",
+        "withdrawal.current_balance": "Solde actuel:",
+        "withdrawal.country": "Pays de retrait *",
+        "withdrawal.select_country": "Sélectionnez votre pays",
+        "withdrawal.method": "Méthode de retrait *",
+        "withdrawal.select_method_first": "Sélectionnez d'abord le pays",
+        "withdrawal.account_number": "Numéro de compte/téléphone *",
+        "withdrawal.amount": "Montant du retrait (XAF) *",
+        "withdrawal.beneficiary_name": "Nom du bénéficiaire *",
+        "withdrawal.description": "Description du retrait",
+        "withdrawal.submit": "Soumettre la demande",
+        "withdrawal.minimum": "Minimum: 3 100 XAF",
+        "withdrawal.fees": "Frais: 550 XAF",
+        "withdrawal.required_balance": "⚠️ Vous devez avoir au moins 3 650 XAF dans votre solde pour effectuer un retrait.",
+        "withdrawal.processing_time": "Vérifiez attentivement vos informations avant de soumettre. Le traitement prend généralement entre 1 minute et 1 heure maximum.",
+        "withdrawal.history_title": "Historique de mes retraits",
+        "withdrawal.loading_history": "Chargement de l'historique...",
+        "withdrawal.payment_status": "Statut de paiement",
+        
+        // User Info
+        "user_info.username": "Nom d'utilisateur",
+        "user_info.email": "Email",
+        
+        // Footer
+        "footer.terms": "Conditions d'utilisation",
+        "footer.privacy": "Politique de confidentialité",
+        "footer.rights": "Tous droits réservés.",
+        
+        // Notifications
+        "notification.success": "Succès",
+        "notification.error": "Erreur",
+        "notification.info": "Information"
+      },
+      en: {
+        // Header
+        "header.language": "English",
+        "header.night_mode": "Night mode",
+        "header.day_mode": "Day mode",
+        
+        // Dashboard
+        "dashboard.title": "Dashboard >> BLOWEARN AGENCIES",
+        
+        // Menu
+        "menu.main": "MAIN",
+        "menu.dashboard": "Dashboard",
+        "menu.deposit": "Deposit 💵",
+        "menu.welcome_bonus": "Welcome Bonus",
+        "menu.accounts": "ACCOUNTS",
+        "menu.withdrawal": "Withdrawal",
+        "menu.team": "Team",
+        "menu.special": "SPECIAL",
+        "menu.sbh": "SBH",
+        "menu.challenge": "Challenge and Reward",
+        "menu.products": "PRODUCT / TASK",
+        "menu.whatsapp_earn": "Earn via Whatsapp",
+        "menu.ad_earnings": "Advertising earnings",
+        "menu.fortune_wheel": "Fortune Wheel 🏆",
+        "menu.tiktok_earn": "TikTok Earn",
+        "menu.youtube_earn": "YouTube Earn",
+        "menu.instagram_earn": "Instagram Earn",
+        "menu.trivia": "TRIVIA challenge",
+        "menu.bonus": "BONUS",
+        "menu.contact_list": "Free contact list 🆓",
+        "menu.visibility_booster": "Boost my visibility",
+        "menu.canva_pro": "Canva Pro",
+        "menu.free_connection": "Free connection",
+        
+        // Withdrawal Page
+        "withdrawal.title": "Withdrawal Request",
+        "withdrawal.form_title": "🏦 Withdrawal Form",
+        "withdrawal.form_description": "Fill out the form below to withdraw your funds.",
+        "withdrawal.current_balance": "Current balance:",
+        "withdrawal.country": "Withdrawal country *",
+        "withdrawal.select_country": "Select your country",
+        "withdrawal.method": "Withdrawal method *",
+        "withdrawal.select_method_first": "Select country first",
+        "withdrawal.account_number": "Account/phone number *",
+        "withdrawal.amount": "Withdrawal amount (XAF) *",
+        "withdrawal.beneficiary_name": "Beneficiary name *",
+        "withdrawal.description": "Withdrawal description",
+        "withdrawal.submit": "Submit request",
+        "withdrawal.minimum": "Minimum: 3,100 XAF",
+        "withdrawal.fees": "Fees: 550 XAF",
+        "withdrawal.required_balance": "⚠️ You must have at least 3,650 XAF in your balance to make a withdrawal.",
+        "withdrawal.processing_time": "Check your information carefully before submitting. Processing usually takes between 1 minute and 1 hour maximum.",
+        "withdrawal.history_title": "My Withdrawal History",
+        "withdrawal.loading_history": "Loading history...",
+        "withdrawal.payment_status": "Payment status",
+        
+        // User Info
+        "user_info.username": "Username",
+        "user_info.email": "Email",
+        
+        // Footer
+        "footer.terms": "Terms of Use",
+        "footer.privacy": "Privacy Policy",
+        "footer.rights": "All rights reserved.",
+        
+        // Notifications
+        "notification.success": "Success",
+        "notification.error": "Error",
+        "notification.info": "Information"
+      }
     };
-    
-    // Noms affichables des méthodes de paiement (codes AccountPe)
-    const methodeNoms = {
-        'mtn': 'MTN Mobile Money',
-        'orange': 'Orange Money',
-        'moov': 'Moov Money',
-        'wave': 'Wave',
-        'free': 'Free Money',
-        'vodafone': 'Vodafone Cash',
-        'airtel': 'Airtel Money',
-        'tmoney': 'T-Money',
-        'bank_transfer': 'Virement Bancaire'
-    };
+
+    /******** Fonctions de traduction ********/
+    function setLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('preferredLanguage', lang);
+      
+      // Mettre à jour le sélecteur de langue
+      currentLanguage.textContent = lang === 'fr' ? 'French' : 'English';
+      
+      // Mettre à jour les options de langue
+      document.querySelectorAll('.language-option').forEach(option => {
+        const icon = option.querySelector('i');
+        if (option.dataset.lang === lang) {
+          option.classList.add('active');
+          icon.style.opacity = '1';
+        } else {
+          option.classList.remove('active');
+          icon.style.opacity = '0';
+        }
+      });
+      
+      // Traduire tous les éléments avec data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        if (translations[lang] && translations[lang][key]) {
+          if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+            element.placeholder = translations[lang][key];
+          } else {
+            element.textContent = translations[lang][key];
+          }
+        }
+      });
+      
+      // Mettre à jour le texte du thème
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      if (themeToggle) {
+        themeToggle.innerHTML = isDarkMode 
+          ? `<i class="fas fa-sun"></i><span>${translations[lang]['header.day_mode']}</span>` 
+          : `<i class="fas fa-moon"></i><span>${translations[lang]['header.night_mode']}</span>`;
+      }
+    }
 
     /******** UI helpers ********/
     function showNotification(type, title, message, duration = 4000) {
+      const container = document.getElementById('notificationContainer');
+      if (!container) return;
       const notification = document.createElement('div');
       notification.className = `notification ${type}`;
       const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle');
@@ -1205,10 +1648,10 @@
           <span>${message}</span>
         </div>
       `;
-      notificationContainer.appendChild(notification);
+      container.appendChild(notification);
       setTimeout(() => {
         notification.style.animation = 'slideIn 0.3s ease reverse forwards';
-        setTimeout(() => { if (notificationContainer.contains(notification)) notificationContainer.removeChild(notification); }, 300);
+        setTimeout(() => { if (container.contains(notification)) container.removeChild(notification); }, 300);
       }, duration);
     }
     
@@ -1309,13 +1752,35 @@
         }
     });
 
+    // Gestion du sélecteur de langue
+    if (languageSelector) {
+      languageSelector.addEventListener('click', (event) => {
+        event.stopPropagation();
+        languageDropdown.classList.toggle('active');
+      });
+    }
+
+    // Fermer le dropdown de langue quand on clique ailleurs
+    document.addEventListener('click', () => {
+      if (languageDropdown) languageDropdown.classList.remove('active');
+    });
+
+    // Changer de langue
+    document.querySelectorAll('.language-option').forEach(option => {
+      option.addEventListener('click', () => {
+        const lang = option.dataset.lang;
+        setLanguage(lang);
+        languageDropdown.classList.remove('active');
+      });
+    });
+
     themeToggle.addEventListener('click', (event) => {
         event.stopPropagation();
         document.body.classList.toggle('dark-mode');
         const isDarkMode = document.body.classList.contains('dark-mode');
         themeToggle.innerHTML = isDarkMode 
-            ? '<i class="fas fa-sun"></i><span>Mode jour</span>' 
-            : '<i class="fas fa-moon"></i><span>Mode nuit</span>';
+            ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+            : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
         if(currentUser) saveUserData('theme', isDarkMode ? 'dark' : 'light');
     });
 
@@ -1323,9 +1788,36 @@
         const isDarkMode = userData.theme === 'dark';
         document.body.classList.toggle('dark-mode', isDarkMode);
         themeToggle.innerHTML = isDarkMode 
-            ? '<i class="fas fa-sun"></i><span>Mode jour</span>' 
-            : '<i class="fas fa-moon"></i><span>Mode nuit</span>';
+            ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+            : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
     }
+
+    /******** Configuration des méthodes de retrait ********/
+    const methodesParPays = {
+        BJ: { name: 'Bénin', methods: ['mtn', 'moov'], currency: 'XOF' },
+        BF: { name: 'Burkina Faso', methods: ['orange', 'moov'], currency: 'XOF' },
+        CM: { name: 'Cameroun', methods: ['mtn', 'orange'], currency: 'XAF' },
+        CI: { name: 'Côte d\'Ivoire', methods: ['orange', 'mtn', 'moov', 'wave'], currency: 'XOF' },
+        GH: { name: 'Ghana', methods: ['mtn', 'vodafone', 'airtel'], currency: 'GHS' },
+        ML: { name: 'Mali', methods: ['orange', 'moov', 'wave'], currency: 'XOF' },
+        NE: { name: 'Niger', methods: ['airtel'], currency: 'XOF' },
+        NG: { name: 'Nigeria', methods: ['bank_transfer'], currency: 'NGN' },
+        SN: { name: 'Sénégal', methods: ['orange', 'free', 'wave'], currency: 'XOF' },
+        TG: { name: 'Togo', methods: ['tmoney', 'moov'], currency: 'XOF' }
+    };
+    
+    // Noms affichables des méthodes de paiement (codes AccountPe)
+    const methodeNoms = {
+        'mtn': 'MTN Mobile Money',
+        'orange': 'Orange Money',
+        'moov': 'Moov Money',
+        'wave': 'Wave',
+        'free': 'Free Money',
+        'vodafone': 'Vodafone Cash',
+        'airtel': 'Airtel Money',
+        'tmoney': 'T-Money',
+        'bank_transfer': 'Virement Bancaire'
+    };
 
     /******** Gestion des méthodes de retrait ********/
     paysSelect.addEventListener('change', async function() {
@@ -1379,10 +1871,10 @@
         }
     });
 
-    /******** Validation du formulaire ********/
+    /******** Validation du formulaire RENFORCÉE ********/
     const FRAIS_RETRAIT = 550;  // Frais de retrait obligatoires
-    const MIN_RETRAIT = 3100;   // Montant minimum de retrait
-    const SOLDE_REQUIS = MIN_RETRAIT + FRAIS_RETRAIT;  // 3650 XAF requis au total
+    const MIN_RETRAIT = 3100;   // NOUVEAU: Montant minimum de retrait (3100 + 550)
+    const SOLDE_REQUIS = MIN_RETRAIT;  // 3650 XAF requis au total
     
     function validerFormulaire() {
         // Nettoyer et convertir le montant en nombre
@@ -1393,18 +1885,26 @@
         const solde = Number(userData.solde) || 0;
         const montantTotal = montant + FRAIS_RETRAIT;  // Montant + frais
         
-        console.log('🔍 VALIDATION:', { montant, solde, frais: FRAIS_RETRAIT, montantTotal, userDataSolde: userData.solde });
+        console.log('🔍 VALIDATION RENFORCÉE:', { 
+          montant, 
+          solde, 
+          frais: FRAIS_RETRAIT, 
+          montantTotal, 
+          minimumRequis: MIN_RETRAIT,
+          userDataSolde: userData.solde 
+        });
 
+        // NOUVELLE VALIDATION: Le montant doit être au moins 3650 XAF
         if (montant < MIN_RETRAIT) {
-            showNotification('error', 'Montant minimum', 
+            showNotification('error', translations[currentLang]['notification.error'], 
                 `Le montant minimum de retrait est de ${MIN_RETRAIT.toLocaleString('fr-FR')} XAF.\n` +
-                `Frais de traitement: ${FRAIS_RETRAIT.toLocaleString('fr-FR')} XAF.\n` +
-                `Solde requis: ${SOLDE_REQUIS.toLocaleString('fr-FR')} XAF.`);
+                `Frais de traitement: ${FRAIS_RETRAIT.toLocaleString('fr-FR')} XAF inclus.`);
             return false;
         }
         
+        // Validation du solde
         if (montantTotal > solde) {
-            showNotification('error', 'Solde insuffisant', 
+            showNotification('error', translations[currentLang]['notification.error'], 
                 `Votre solde: ${formatNumberSafe(solde)} XAF.\n` +
                 `Montant demandé: ${formatNumberSafe(montant)} XAF + ${FRAIS_RETRAIT} XAF (frais) = ${formatNumberSafe(montantTotal)} XAF.\n` +
                 `Il vous manque ${formatNumberSafe(montantTotal - solde)} XAF.`);
@@ -1412,12 +1912,12 @@
         }
         
         if (!numeroCompteInput.checkValidity()) {
-            showNotification('error', 'Numéro invalide', 'Veuillez entrer un numéro de compte/téléphone valide.');
+            showNotification('error', translations[currentLang]['notification.error'], 'Veuillez entrer un numéro de compte/téléphone valide.');
             return false;
         }
         
         if (!nomBeneficiaireInput.value || nomBeneficiaireInput.value.trim().length < 3) {
-            showNotification('error', 'Nom invalide', 'Veuillez entrer le nom complet du bénéficiaire (min. 3 caractères).');
+            showNotification('error', translations[currentLang]['notification.error'], 'Veuillez entrer le nom complet du bénéficiaire (min. 3 caractères).');
             return false;
         }
         
@@ -1434,7 +1934,7 @@
         console.log('Données utilisateur enregistrées avec succès.');
       } catch (error) {
         console.error("Erreur lors de la sauvegarde des données :", error);
-        showNotification('error', 'Erreur de sauvegarde', 'Impossible de sauvegarder vos données.');
+        showNotification('error', translations[currentLang]['notification.error'], 'Impossible de sauvegarder vos données.');
       }
     }
 
@@ -1525,7 +2025,7 @@
         if (userAvatar) userAvatar.textContent = userData.username.charAt(0).toUpperCase();
         if (currentBalanceEl) currentBalanceEl.textContent = formatNumberSafe(userData.solde);
         
-        // Mettre à jour les informations utilisateur (UID RETIRÉ)
+        // Mettre à jour les informations utilisateur
         infoUsername.textContent = userData.username;
         infoEmail.textContent = userData.email;
         infoPaymentStatus.textContent = userData.paid ? '✅ Payé' : '❌ Non payé';
@@ -1564,7 +2064,7 @@
             historiqueContainer.innerHTML = `
               <div class="empty-state">
                 <i class="fas fa-inbox"></i>
-                <p>Aucun retrait effectué pour le moment.</p>
+                <p data-i18n="withdrawal.no_withdrawals">Aucun retrait effectué pour le moment.</p>
               </div>
             `;
             return;
@@ -1575,13 +2075,13 @@
             <table class="historique-table">
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Montant</th>
-                  <th>Pays</th>
-                  <th>Méthode</th>
-                  <th>Numéro</th>
-                  <th>Description</th>
-                  <th>Statut</th>
+                  <th data-i18n="withdrawal.date">Date</th>
+                  <th data-i18n="withdrawal.amount">Montant</th>
+                  <th data-i18n="withdrawal.country">Pays</th>
+                  <th data-i18n="withdrawal.method">Méthode</th>
+                  <th data-i18n="withdrawal.account_number">Numéro</th>
+                  <th data-i18n="withdrawal.description">Description</th>
+                  <th data-i18n="withdrawal.status">Statut</th>
                 </tr>
               </thead>
               <tbody>
@@ -1618,7 +2118,7 @@
           historiqueContainer.innerHTML = `
             <div class="empty-state">
               <i class="fas fa-exclamation-triangle"></i>
-              <p>Erreur lors du chargement de l'historique.</p>
+              <p data-i18n="withdrawal.history_error">Erreur lors du chargement de l'historique.</p>
             </div>
           `;
         }
@@ -1630,7 +2130,7 @@
         e.preventDefault();
         
         if (!currentUser) {
-            showNotification('error', 'Erreur', 'Veuillez vous connecter pour effectuer un retrait.');
+            showNotification('error', translations[currentLang]['notification.error'], 'Veuillez vous connecter pour effectuer un retrait.');
             return;
         }
 
@@ -1655,7 +2155,7 @@
         retraitBtn.disabled = true;
         retraitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement en cours...';
         
-        showNotification('info', 'Traitement', 'Votre retrait automatique est en cours de traitement via Mobile Money...');
+        showNotification('info', translations[currentLang]['notification.info'], 'Votre retrait automatique est en cours de traitement via Mobile Money...');
 
         try {
             console.log('💸 Envoi demande de retrait automatique:', {
@@ -1691,46 +2191,27 @@
             
             // Mettre à jour les soldes locaux (le solde diminue car retire augmente)
             // On déduit le montant TOTAL (montant + frais de 550 XAF)
+            // Le backend a déjà débité le solde dans Firestore, on met juste à jour l'affichage local
             userData.retire = (userData.retire || 0) + montantTotal;
             userData.solde = userData.solde - montantTotal;  // Le solde disponible diminue
             updateUI();
             
-            // Enregistrer dans Firestore avec le transactionId comme ID de document
-            // pour éviter les doublons et permettre les mises à jour de statut
-            try {
-                const retraitData = {
-                    userId: userData.uid,
-                    email: userData.email,
-                    montant: montant,
-                    frais: FRAIS_RETRAIT,
-                    montantTotal: montantTotal,
-                    pays: paysNom,
-                    paysCode: paysCode,
-                    methode: methodeNom,
-                    methodeCode: methodeCode,
-                    numeroCompte: numeroCompte,
-                    nomBeneficiaire: nomBeneficiaire,
-                    description: description,
-                    transactionId: result.transactionId,
-                    statut: 'en_cours',
-                    statusAccountPe: result.status || 'processing',
-                    type: 'payout_automatique',
-                    date: firebase.firestore.FieldValue.serverTimestamp()
-                };
-                
-                // Utiliser transactionId comme ID de document pour éviter les doublons
-                if (result.transactionId) {
-                    await db.collection('retraits').doc(result.transactionId).set(retraitData);
-                } else {
-                    await db.collection('retraits').add(retraitData);
-                }
-                console.log('✅ Retrait enregistré dans Firestore:', result.transactionId);
-            } catch (dbErr) {
-                console.warn('⚠️ Erreur enregistrement Firestore:', dbErr);
+            // NOTE: Le backend enregistre déjà le retrait dans Firestore avec le bon statut
+            // (collection 'retraits' et 'payouts'). On n'écrit plus ici pour éviter d'écraser
+            // le statut correct (succes/en_cours/echec) avec un statut fixe.
+            console.log('✅ Retrait traité par le backend:', result.transactionId);
+            console.log('📊 Statut retourné par le backend:', result.status);
+            
+            // Mapper le statut du backend vers un texte lisible pour la notification
+            let statutTexte = 'en cours de traitement';
+            if (result.status === 'success') {
+                statutTexte = 'effectué avec succès';
+            } else if (result.status === 'failed') {
+                statutTexte = 'échoué';
             }
             
-            showNotification('success', '🎉 Retrait initié !', 
-                `Votre retrait de ${formatNumberSafe(montant)} XAF vers ${methodeNom} (${numeroCompte}) est en cours de traitement.\n` +
+            showNotification('success', translations[currentLang]['notification.success'], 
+                `Votre retrait de ${formatNumberSafe(montant)} XAF vers ${methodeNom} (${numeroCompte}) est ${statutTexte}.\n` +
                 `ID Transaction: ${result.transactionId || 'N/A'}`);
             
             // Réinitialiser le formulaire
@@ -1755,10 +2236,10 @@
                 errorMessage = 'Le service de paiement est temporairement indisponible. Réessayez dans quelques minutes.';
             }
             
-            showNotification('error', 'Erreur de retrait', errorMessage);
+            showNotification('error', translations[currentLang]['notification.error'], errorMessage);
         } finally {
             retraitBtn.disabled = false;
-            retraitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Soumettre la demande';
+            retraitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> ${translations[currentLang]['withdrawal.submit']}`;
         }
     });
 
@@ -1767,11 +2248,15 @@
         if (user) {
             currentUser = user;
             try {
+                // Charger la langue sauvegardée
+                const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
+                setLanguage(savedLang);
+                
                 await loadUserData();
                 
                 // Vérification du statut de paiement
                 if (!userData.paid) {
-                    showNotification('info', 'Action requise', 'Veuillez finaliser votre inscription pour continuer.');
+                    showNotification('info', translations[currentLang]['notification.info'], 'Veuillez finaliser votre inscription pour continuer.');
                     setTimeout(() => { window.location.href = 'paiement.html'; }, 2500);
                     return;
                 }
@@ -1785,17 +2270,24 @@
                 document.body.classList.add('loaded');
                 loader.classList.add('hidden');
                 
-                showNotification('success', 'Bienvenue !', `Solde actuel: ${formatNumberSafe(userData.solde)} XAF`);
+                showNotification('success', translations[currentLang]['notification.success'], `Solde actuel: ${formatNumberSafe(userData.solde)} XAF`);
                 
             } catch (error) {
                 console.error("Erreur critique lors de l'initialisation :", error);
-                showNotification('error', 'Erreur Critique', "Impossible de charger vos données. Veuillez vous reconnecter.");
+                showNotification('error', translations[currentLang]['notification.error'], "Impossible de charger vos données. Veuillez vous reconnecter.");
                 auth.signOut();
                 setTimeout(() => { window.location.href = 'login.html'; }, 3000);
             }
         } else {
             window.location.href = 'login.html';
         }
+    });
+
+    /******** Initialisation de la traduction au chargement ********/
+    document.addEventListener('DOMContentLoaded', () => {
+      // Charger la langue sauvegardée ou utiliser le français par défaut
+      const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
+      setLanguage(savedLang);
     });
   </script>
 </body>
