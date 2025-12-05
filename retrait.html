@@ -2186,28 +2186,14 @@
 
             // ✅ SUCCÈS - Retrait automatique lancé
             
-            // MODIFICATION 2: MISE À JOUR DU SOLDE DANS FIREBASE APRÈS RETRAIT
-            // Calculer le nouveau solde après retrait (montant + frais 550 XAF)
-            const nouveauSolde = (userData.solde || 0) - montantTotal;
+            // NOTE: NE PAS mettre à jour Firebase ici!
+            // Le backend (server.js handlePayoutResponse) met déjà à jour le champ 'retire'.
+            // Mettre à jour ici causerait une DOUBLE DÉDUCTION.
+            // Le solde disponible = soldeBrut - retire (calculé dynamiquement)
+            
+            // Mettre à jour uniquement les données locales pour l'affichage UI immédiat
             const nouveauRetire = (userData.retire || 0) + montantTotal;
-            
-            // Écrire le nouveau solde directement dans Firebase
-            try {
-                const userRef = db.collection('users').doc(userData.uid);
-                await userRef.update({
-                    solde: nouveauSolde,
-                    retire: nouveauRetire,
-                    lastWithdrawal: new Date(),
-                    lastWithdrawalAmount: montantTotal
-                });
-                console.log('✅ Solde mis à jour dans Firebase:', nouveauSolde, 'XAF');
-            } catch (firebaseError) {
-                console.error('⚠️ Erreur mise à jour Firebase:', firebaseError);
-            }
-            
-            // Mettre à jour les données locales
             userData.retire = nouveauRetire;
-            userData.solde = nouveauSolde;
             updateUI();
             
             // NOTE: Le backend enregistre déjà le retrait dans Firestore avec le bon statut
