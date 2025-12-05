@@ -663,7 +663,9 @@
     }
 
     .status-pending { background-color: var(--warning-color); color: white; }
+    .status-inprogress { background-color: #3498db; color: white; }
     .status-approved { background-color: var(--success-color); color: white; }
+    .status-success { background-color: var(--success-color); color: white; }
     .status-rejected { background-color: var(--danger-color); color: white; }
 
     .footer {
@@ -841,7 +843,6 @@
       <a href="equipe.html" class="menu-item"><i class="fas fa-users"></i><span>Équipe</span></a>
 
       <div class="menu-category">SPÉCIAL</div>
-      <a href="love_earn.html" class="menu-item"><i class="fas fa-heart"></i><span>LoveEarn</span></a>
       <a href="social_boost.html" class="menu-item"><i class="fas fa-rocket"></i><span>SBH</span></a>
       <a href="challenge_reward.html" class="menu-item"><i class="fas fa-medal"></i><span>Challenge and Reward</span></a>
       
@@ -1338,8 +1339,24 @@ BLOWEARN AGENCIES te permet de:
           const formattedDate = dateObj.toLocaleDateString('fr-FR');
           
           let statusClass = 'status-pending', statusText = 'En attente';
-          if (data.status === 'approved') { statusClass = 'status-approved'; statusText = 'Approuvé'; }
-          else if (data.status === 'rejected') { statusClass = 'status-rejected'; statusText = 'Rejeté'; }
+          const statusValue = (data.status || 'pending').toString().toLowerCase().trim();
+          
+          // Succès / Approuvé (vert)
+          if (['approved', 'success', 'succes', 'succès', 'validé', 'valide'].includes(statusValue)) {
+            statusClass = 'status-success';
+            statusText = 'Succès ✓';
+          }
+          // En cours (bleu)
+          else if (['in_progress', 'en_cours', 'encours', 'processing', 'traitement'].includes(statusValue)) {
+            statusClass = 'status-inprogress';
+            statusText = 'En cours';
+          }
+          // Rejeté (rouge)
+          else if (['rejected', 'refuse', 'refusé', 'echec', 'échoué', 'failed'].includes(statusValue)) {
+            statusClass = 'status-rejected';
+            statusText = 'Rejeté';
+          }
+          // Sinon: En attente (orange) - valeur par défaut
           
           html += `<tr>
             <td>${formattedDate}</td>
