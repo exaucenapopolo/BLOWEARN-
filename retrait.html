@@ -2187,12 +2187,13 @@
             // ✅ SUCCÈS - Retrait automatique lancé
             
             // NOTE: NE PAS mettre à jour Firebase ici!
-            // Le backend (server.js handlePayoutResponse) met déjà à jour le champ 'retire'.
+            // Le backend (server.js handlePayoutResponse) met déjà à jour les champs 'solde' et 'retire'.
             // Mettre à jour ici causerait une DOUBLE DÉDUCTION.
-            // Le solde disponible = soldeBrut - retire (calculé dynamiquement)
             
             // Mettre à jour uniquement les données locales pour l'affichage UI immédiat
+            const nouveauSolde = (userData.solde || 0) - montantTotal;
             const nouveauRetire = (userData.retire || 0) + montantTotal;
+            userData.solde = nouveauSolde;
             userData.retire = nouveauRetire;
             updateUI();
             
