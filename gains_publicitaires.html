@@ -6,24 +6,20 @@
   <title>BLOWEARN AGENCIES - Gains Publicitaires</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   
   <style>
-    /* -------------------------------------------------------------------------- */
-    /* --- VARIABLES CSS COHÉRENTES AVEC LE DASHBOARD --- */
-    /* -------------------------------------------------------------------------- */
     :root {
-      --color-primary: #4A90E2; /* Bleu Énergique */
-      --color-secondary: #FFC107; /* Jaune Vif/Or pour l'accent */
-      --color-text-dark: #2C3E50; /* Texte Sombre (lisible) */
-      --color-text-light: #ECF0F1; /* Texte Clair */
-      --color-bg-light: #FFFFFF; /* Fond de Carte */
-      --color-bg-gradient-1: #6DD5FA; /* Dégradé Fond 1 */
-      --color-bg-gradient-2: #FF7582; /* Dégradé Fond 2 */
+      --color-primary: #4A90E2;
+      --color-secondary: #FFC107;
+      --color-text-dark: #2C3E50;
+      --color-text-light: #ECF0F1;
+      --color-bg-light: #FFFFFF;
+      --color-bg-gradient-1: #6DD5FA;
+      --color-bg-gradient-2: #FF7582;
       --success-color: #4CD964;
       --warning-color: #FF9500;
       --danger-color: #FF3B30;
@@ -31,9 +27,20 @@
       --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- STYLES GÉNÉRAUX COHÉRENTS --- */
-    /* -------------------------------------------------------------------------- */
+    .dark-mode {
+      --color-primary: #5e81ac;
+      --color-secondary: #d08770;
+      --color-text-dark: #eceff4;
+      --color-text-light: #2e3440;
+      --color-bg-light: #3b4252;
+      --color-bg-gradient-1: #2e3440;
+      --color-bg-gradient-2: #4c566a;
+      --success-color: #a3be8c;
+      --warning-color: #ebcb8b;
+      --danger-color: #bf616a;
+      --shadow: 0 15px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -55,24 +62,16 @@
       transition: opacity 0.5s ease, visibility 0.5s ease;
     }
 
-    body.loaded {
-      visibility: visible;
-      opacity: 1;
-    }
+    body.loaded { visibility: visible; opacity: 1; }
 
-    /* Effet de bulles animées en arrière-plan */
     body::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      top: 0; left: 0; right: 0; bottom: 0;
       background-image: 
         radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 25%),
         radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
-        radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
-        radial-gradient(circle at 90% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 25%);
+        radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 25%);
       animation: float 20s ease-in-out infinite;
       z-index: -1;
     }
@@ -82,15 +81,9 @@
       50% { transform: translateY(-15px) scale(1.02); }
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- LOADER --- */
-    /* -------------------------------------------------------------------------- */
     .loader-container {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0; width: 100%; height: 100%;
       background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
       display: flex;
       justify-content: center;
@@ -99,27 +92,18 @@
       transition: opacity 0.5s ease, visibility 0.5s ease;
     }
 
-    .loader-container.hidden {
-      opacity: 0;
-      visibility: hidden;
-    }
+    .loader-container.hidden { opacity: 0; visibility: hidden; }
 
     .loader {
-      width: 60px;
-      height: 60px;
+      width: 60px; height: 60px;
       border-radius: 50%;
       background: conic-gradient(#0000 10%, var(--color-primary));
       -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
       animation: spin 1s infinite linear;
     }
 
-    @keyframes spin {
-      to { transform: rotate(1turn); }
-    }
+    @keyframes spin { to { transform: rotate(1turn); } }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- HEADER --- */
-    /* -------------------------------------------------------------------------- */
     .header {
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(15px);
@@ -137,13 +121,9 @@
     .logo {
       font-size: 1.8rem;
       font-weight: 800;
-      color: var(--color-text-dark);
-      display: flex;
-      align-items: center;
       font-family: 'Poppins', sans-serif;
       text-transform: uppercase;
       letter-spacing: 2px;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
       background: linear-gradient(45deg, var(--color-primary) 0%, var(--color-secondary) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -191,15 +171,10 @@
       gap: 5px;
       min-width: 140px;
       z-index: 200;
-      transform-origin: top right;
-      animation: scaleIn 0.2s ease-out forwards;
-      border: 1px solid rgba(255,255,255,0.7);
       margin-top: 5px;
     }
 
-    .language-dropdown.active {
-      display: flex;
-    }
+    .language-dropdown.active { display: flex; }
 
     .language-option {
       padding: 8px 12px;
@@ -208,18 +183,11 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      transition: background-color 0.2s ease;
+      color: var(--color-text-dark);
     }
 
-    .language-option:hover {
-      background-color: rgba(0, 0, 0, 0.05);
-    }
-
-    .language-option.active {
-      background-color: rgba(74, 144, 226, 0.1);
-      color: var(--color-primary);
-      font-weight: 600;
-    }
+    .language-option:hover { background-color: rgba(0, 0, 0, 0.05); }
+    .language-option.active { background-color: rgba(74, 144, 226, 0.1); color: var(--color-primary); font-weight: 600; }
 
     .theme-toggle {
       background-color: transparent;
@@ -228,21 +196,14 @@
       cursor: pointer;
       padding: 5px;
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
+      width: 40px; height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background-color 0.3s ease;
     }
 
-    .theme-toggle:hover {
-      background-color: rgba(0, 0, 0, 0.05);
-    }
-
-    .theme-toggle i {
-      font-size: 1.2rem;
-    }
+    .theme-toggle:hover { background-color: rgba(0, 0, 0, 0.05); }
+    .theme-toggle i { font-size: 1.2rem; }
 
     .user-profile {
       display: flex;
@@ -253,8 +214,7 @@
     }
     
     .user-profile .avatar {
-      width: 45px;
-      height: 45px;
+      width: 45px; height: 45px;
       border-radius: 50%;
       background-color: var(--color-primary);
       display: flex;
@@ -281,14 +241,10 @@
       gap: 5px;
       min-width: 150px;
       z-index: 200;
-      transform-origin: top right;
       animation: scaleIn 0.2s ease-out forwards;
-      border: 1px solid rgba(255,255,255,0.7);
     }
 
-    .profile-dropdown.active {
-      display: flex;
-    }
+    .profile-dropdown.active { display: flex; }
     
     @keyframes scaleIn {
       from { transform: scale(0.9); opacity: 0; }
@@ -299,71 +255,34 @@
       width: 100%;
       border-radius: 8px;
       background-color: rgba(0, 0, 0, 0.05);
-      color: var(--text-color);
       justify-content: flex-start;
       padding: 10px;
-      transition: background-color 0.2s ease, transform 0.2s ease;
-      text-align: left;
       gap: 10px;
     }
 
-    .profile-dropdown .theme-toggle:hover {
-      background-color: rgba(0, 0, 0, 0.1);
-      transform: translateY(-2px);
-    }
-    
-    .profile-dropdown .theme-toggle span {
-      flex-grow: 1;
-      text-align: left;
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- BOUTON HAMBURGER (DÉPLACÉ À DROITE) --- */
-    /* -------------------------------------------------------------------------- */
     .hamburger-btn {
       display: none;
       background: none;
       border: none;
       cursor: pointer;
-      display: flex;
       flex-direction: column;
       justify-content: space-around;
-      width: 30px;
-      height: 25px;
+      width: 30px; height: 25px;
       padding: 0;
-      order: 2; /* Pour le placer à droite dans le header */
     }
     
     .hamburger-btn .bar {
-      width: 100%;
-      height: 3px;
+      width: 100%; height: 3px;
       background-color: var(--color-text-dark);
       transition: transform 0.3s ease, opacity 0.3s ease;
     }
     
-    .hamburger-btn.open .bar:nth-child(2) {
-      opacity: 0;
-    }
-    
-    .hamburger-btn.open .bar:nth-child(1) {
-      transform: translateY(11px) rotate(45deg);
-    }
-    
-    .hamburger-btn.open .bar:nth-child(3) {
-      transform: translateY(-11px) rotate(-45deg);
-    }
+    .hamburger-btn.open .bar:nth-child(2) { opacity: 0; }
+    .hamburger-btn.open .bar:nth-child(1) { transform: translateY(11px) rotate(45deg); }
+    .hamburger-btn.open .bar:nth-child(3) { transform: translateY(-11px) rotate(-45deg); }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- STRUCTURE PRINCIPALE --- */
-    /* -------------------------------------------------------------------------- */
-    .main-container {
-      display: flex;
-      flex: 1;
-    }
+    .main-container { display: flex; flex: 1; }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- SIDEBAR (MENU) AMÉLIORÉ AVEC NOUVEAU FOND ET POLICE --- */
-    /* -------------------------------------------------------------------------- */
     .sidebar {
       width: 280px;
       background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.95) 100%);
@@ -375,12 +294,9 @@
       top: 80px;
       padding: 25px 0;
       overflow-y: auto;
-      transition: transform 0.4s ease-in-out; 
     }
     
-    .sidebar.open {
-      transform: translateX(0);
-    }
+    .sidebar.open { transform: translateX(0); }
 
     .welcome-section {
       padding: 0 25px 25px;
@@ -424,29 +340,7 @@
       font-weight: 500;
       border-left: 4px solid transparent;
       position: relative;
-      overflow: hidden;
-      animation: fadeIn 0.5s ease-out;
       font-family: 'Quicksand', sans-serif;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateX(-20px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-    
-    .menu-item::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
-      transition: all 0.5s ease;
-    }
-    
-    .menu-item:hover::before {
-      left: 100%;
     }
 
     .menu-item:hover, .menu-item.active {
@@ -455,16 +349,7 @@
       color: var(--color-primary);
     }
 
-    .menu-item i {
-      width: 20px;
-      text-align: center;
-      font-size: 1.1rem;
-      transition: transform 0.3s ease;
-    }
-
-    .menu-item:hover i {
-      transform: scale(1.1) rotate(5deg);
-    }
+    .menu-item i { width: 20px; text-align: center; font-size: 1.1rem; }
 
     .menu-badge {
       position: absolute;
@@ -473,32 +358,11 @@
       font-weight: 700;
       padding: 2px 8px;
       border-radius: 10px;
-      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-      animation: popIn 0.5s ease-out;
-    }
-    
-    @keyframes popIn {
-      from { transform: scale(0); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-    
-    .menu-badge.active {
       background-color: var(--success-color);
       color: white;
     }
-    
-    .menu-badge.inactive {
-      background-color: var(--danger-color);
-      color: white;
-    }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- CONTENU PRINCIPAL --- */
-    /* -------------------------------------------------------------------------- */
-    .content {
-      flex: 1;
-      padding: 30px;
-    }
+    .content { flex: 1; padding: 30px; }
 
     .page-title {
       font-size: 1.5rem;
@@ -511,13 +375,43 @@
       font-family: 'Poppins', sans-serif;
     }
 
-    .page-title i {
-      color: var(--color-primary);
+    .page-title i { color: var(--color-primary); }
+
+    /* Saturday Alert Banner */
+    .saturday-alert {
+      background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%);
+      border-radius: 18px;
+      padding: 25px;
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
+      color: white;
+      text-align: center;
+      display: none;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- BANNIÈRE PUBLICITÉ --- */
-    /* -------------------------------------------------------------------------- */
+    .saturday-alert.active { display: block; }
+
+    .saturday-alert h2 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .saturday-alert p {
+      font-size: 1rem;
+      margin-bottom: 15px;
+      opacity: 0.9;
+    }
+
+    .countdown-display {
+      font-size: 1.3rem;
+      font-weight: 700;
+      background: rgba(255,255,255,0.2);
+      padding: 15px 25px;
+      border-radius: 12px;
+      display: inline-block;
+    }
+
     .ad-banner {
       background: linear-gradient(135deg, var(--warning-color) 0%, #F57C00 100%);
       border-radius: 18px;
@@ -538,10 +432,8 @@
     .ad-banner::before {
       content: '';
       position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
       background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
       transform: rotate(45deg);
       animation: shimmer 3s infinite;
@@ -562,16 +454,12 @@
 
     .banner-text {
       font-size: 1rem;
-      margin-bottom: 20px;
       opacity: 0.9;
       position: relative;
       z-index: 1;
       line-height: 1.6;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- SECTIONS PUBLICITÉ --- */
-    /* -------------------------------------------------------------------------- */
     .ad-section {
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(15px);
@@ -582,15 +470,12 @@
       position: relative;
       overflow: hidden;
       border: 1px solid rgba(255,255,255,0.7);
-      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .ad-section::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
+      top: 0; left: 0; right: 0;
       height: 5px;
       background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
       border-radius: 18px 18px 0 0;
@@ -604,14 +489,10 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      position: relative;
-      z-index: 1;
       font-family: 'Poppins', sans-serif;
     }
 
-    .section-title i {
-      color: var(--warning-color);
-    }
+    .section-title i { color: var(--warning-color); }
 
     .section-subtitle {
       font-size: 1rem;
@@ -620,9 +501,6 @@
       opacity: 0.8;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- ARTICLES --- */
-    /* -------------------------------------------------------------------------- */
     .articles-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -638,17 +516,16 @@
       box-shadow: var(--shadow);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       border: 1px solid rgba(255,255,255,0.7);
-      animation: slideInFromLeft 0.6s ease-out;
-    }
-
-    @keyframes slideInFromLeft {
-      from { transform: translateX(-50px); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
     }
 
     .article-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 20px 45px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.8);
+      box-shadow: 0 20px 45px rgba(0,0,0,0.15);
+    }
+
+    .article-card.disabled {
+      opacity: 0.6;
+      pointer-events: none;
     }
 
     .article-image {
@@ -657,9 +534,7 @@
       object-fit: cover;
     }
 
-    .article-content {
-      padding: 20px;
-    }
+    .article-content { padding: 20px; }
 
     .article-title {
       font-size: 1.1rem;
@@ -721,17 +596,9 @@
 
     .read-article-btn.completed {
       background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%);
-    }
-
-    .read-article-btn.completed:hover {
       cursor: not-allowed;
-      transform: none;
-      box-shadow: 0 4px 15px rgba(76, 217, 100, 0.3);
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- STATISTIQUES --- */
-    /* -------------------------------------------------------------------------- */
     .stats-cards {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -747,7 +614,6 @@
       box-shadow: var(--shadow);
       text-align: center;
       border: 1px solid rgba(255,255,255,0.7);
-      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       position: relative;
       overflow: hidden;
     }
@@ -755,9 +621,7 @@
     .stat-card::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
+      top: 0; left: 0; right: 0;
       height: 5px;
       background: linear-gradient(90deg, var(--warning-color), #F57C00);
       border-radius: 15px 15px 0 0;
@@ -782,25 +646,17 @@
       opacity: 0.8;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- MODAL DE LECTURE --- */
-    /* -------------------------------------------------------------------------- */
     .modal-overlay {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      top: 0; left: 0; right: 0; bottom: 0;
       background-color: rgba(0, 0, 0, 0.7);
       z-index: 1000;
       align-items: center;
       justify-content: center;
     }
 
-    .modal-overlay.active {
-      display: flex;
-    }
+    .modal-overlay.active { display: flex; }
 
     .article-modal {
       background: rgba(255, 255, 255, 0.95);
@@ -836,16 +692,11 @@
       color: var(--color-text-dark);
       opacity: 0.7;
       cursor: pointer;
-      transition: opacity 0.2s ease;
     }
 
-    .close-modal:hover {
-      opacity: 1;
-    }
+    .close-modal:hover { opacity: 1; }
 
-    .modal-content {
-      padding: 20px;
-    }
+    .modal-content { padding: 20px; }
 
     .modal-image {
       width: 100%;
@@ -858,9 +709,7 @@
       color: var(--color-text-dark);
     }
 
-    .modal-body p {
-      margin-bottom: 15px;
-    }
+    .modal-body p { margin-bottom: 15px; }
 
     .modal-footer {
       padding: 20px;
@@ -891,9 +740,33 @@
       transition: width 1s linear;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- FOOTER --- */
-    /* -------------------------------------------------------------------------- */
+    .claim-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 15px 30px;
+      background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(76, 217, 100, 0.4);
+    }
+
+    .claim-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      background: linear-gradient(135deg, #999 0%, #777 100%);
+    }
+
+    .claim-btn:not(:disabled):hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(76, 217, 100, 0.5);
+    }
+
     .footer {
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(15px);
@@ -901,64 +774,35 @@
       text-align: center;
       box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
       margin-top: auto;
-      border-top: 1px solid rgba(255,255,255,0.7);
     }
 
-    .footer-content {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+    .footer-content { display: flex; flex-direction: column; gap: 10px; }
 
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
+    .footer-links { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
 
     .footer-link {
       color: var(--color-primary);
       text-decoration: none;
       font-weight: 500;
-      transition: color 0.2s ease;
     }
 
-    .footer-link:hover {
-      text-decoration: underline;
-      color: var(--color-secondary);
-    }
+    .footer-link:hover { text-decoration: underline; color: var(--color-secondary); }
 
-    .footer-text {
-      color: var(--color-text-dark);
-      font-size: 0.9rem;
-    }
+    .footer-text { color: var(--color-text-dark); font-size: 0.9rem; }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- OVERLAY --- */
-    /* -------------------------------------------------------------------------- */
     .overlay {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      top: 0; left: 0; right: 0; bottom: 0;
       background-color: rgba(0, 0, 0, 0.5);
       z-index: 98;
     }
     
-    .overlay.active {
-      display: block;
-    }
+    .overlay.active { display: block; }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- NOTIFICATIONS --- */
-    /* -------------------------------------------------------------------------- */
     .notification-container {
       position: fixed;
-      top: 20px;
-      right: 20px;
+      top: 20px; right: 20px;
       z-index: 9999;
       display: flex;
       flex-direction: column;
@@ -968,67 +812,25 @@
 
     .notification {
       padding: 15px 20px;
-      border-radius: 10px;
+      border-radius: 12px;
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
       display: flex;
       align-items: center;
       gap: 10px;
       max-width: 350px;
       animation: slideIn 0.3s ease forwards;
-      position: relative;
-      overflow: hidden;
       color: white;
       pointer-events: auto;
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.2);
     }
 
-    .notification.success {
-      background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%);
-    }
-
-    .notification.error {
-      background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%);
-    }
-
-    .notification.info { 
-      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); 
-    }
+    .notification.success { background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%); }
+    .notification.error { background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%); }
+    .notification.info { background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); }
 
     @keyframes slideIn {
-      from {
-        transform: translateX(110%);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- MODE NUIT --- */
-    /* -------------------------------------------------------------------------- */
-    .dark-mode {
-      --color-primary: #5e81ac;
-      --color-secondary: #d08770;
-      --color-text-dark: #eceff4;
-      --color-text-light: #2e3440;
-      --color-bg-light: #3b4252;
-      --color-bg-gradient-1: #2e3440;
-      --color-bg-gradient-2: #4c566a;
-      --success-color: #a3be8c;
-      --warning-color: #ebcb8b;
-      --danger-color: #bf616a;
-      --shadow: 0 15px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
-    }
-
-    .dark-mode body::before {
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(76, 86, 106, 0.4) 0%, transparent 25%),
-        radial-gradient(circle at 80% 10%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
-        radial-gradient(circle at 40% 80%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
-        radial-gradient(circle at 90% 90%, rgba(76, 86, 106, 0.2) 0%, transparent 25%);
+      from { transform: translateX(110%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
     }
 
     .dark-mode .header,
@@ -1042,81 +844,38 @@
       color: var(--color-text-dark);
     }
 
-    .dark-mode .ad-banner {
-      background: linear-gradient(135deg, var(--warning-color) 0%, #d08770 100%);
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- RESPONSIVE --- */
-    /* -------------------------------------------------------------------------- */
-    @media (max-width: 992px) {
-      .sidebar {
-        width: 230px;
-      }
-      
-      .articles-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      }
-    }
-
     @media (max-width: 768px) {
-      .main-container {
-        flex-direction: column;
-      }
+      .main-container { flex-direction: column; }
       
       .hamburger-btn {
         display: flex;
-        position: static;
-        order: 2;
+        position: absolute;
+        top: 20px; left: 20px;
+        z-index: 101;
       }
 
       .sidebar {
-        width: 85%;
-        max-width: 320px;
+        width: 75%;
+        max-width: 300px;
         height: 100vh;
         position: fixed;
         top: 0;
         left: -100%;
         z-index: 99;
         transition: left 0.4s ease-in-out;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.97) 100%);
       }
       
-      .sidebar.open {
-        left: 0;
-      }
-      
-      .header {
-        padding: 15px;
-      }
-      
-      .logo {
-        font-size: 1.5rem;
-        margin-left: 0;
-      }
-      
-      .content {
-        padding: 20px;
-      }
-      
-      .articles-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .stats-cards {
-        grid-template-columns: 1fr;
-      }
+      .sidebar.open { left: 0; }
+      .header { padding: 15px; }
+      .logo { font-size: 1.5rem; margin-left: 50px; }
+      .content { padding: 20px; }
+      .articles-grid { grid-template-columns: 1fr; }
+      .stats-cards { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 576px) {
-      .footer-links {
-        flex-direction: column;
-        gap: 10px;
-      }
-      
-      .article-modal {
-        width: 95%;
-      }
+      .footer-links { flex-direction: column; gap: 10px; }
+      .article-modal { width: 95%; }
     }
   </style>
 </head>
@@ -1128,43 +887,39 @@
   <div class="notification-container" id="notificationContainer"></div>
 
   <header class="header">
-    <div class="logo">
-      <span>BLOWEARN</span>
-    </div>
+    <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </button>
+    
+    <div class="logo"><span>BLOWEARN</span></div>
     
     <div class="header-controls">
-      <div class="language-selector-container">
+      <div style="position: relative;">
         <button class="language-selector" id="languageSelector">
           <i class="fas fa-globe"></i>
-          <span id="currentLanguage">French</span>
+          <span id="currentLanguage">FR</span>
           <i class="fas fa-chevron-down"></i>
         </button>
         <div class="language-dropdown" id="languageDropdown">
           <div class="language-option active" data-lang="fr">
-            <i class="fas fa-check"></i>
-            <span>Français</span>
+            <i class="fas fa-check"></i> Francais
           </div>
           <div class="language-option" data-lang="en">
-            <i class="fas fa-check" style="opacity: 0;"></i>
-            <span>English</span>
+            <i class="fas fa-check" style="opacity: 0;"></i> English
           </div>
         </div>
       </div>
       
-      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-      </button>
-      
       <div class="user-profile" id="userProfile">
-          <div class="avatar" id="userAvatar">U</div>
-          <div class="profile-dropdown" id="profileDropdown">
-              <button class="theme-toggle" id="themeToggle">
-                  <i class="fas fa-moon"></i>
-                  <span>Mode nuit</span>
-              </button>
-          </div>
+        <div class="avatar" id="userAvatar">U</div>
+        <div class="profile-dropdown" id="profileDropdown">
+          <button class="theme-toggle" id="themeToggle">
+            <i class="fas fa-moon"></i>
+            <span data-i18n="header.night_mode">Mode nuit</span>
+          </button>
+        </div>
       </div>
     </div>
   </header>
@@ -1174,7 +929,7 @@
   <div class="main-container">
     <aside class="sidebar" id="sidebar">
       <div class="welcome-section">
-        <div class="welcome-text" data-i18n="ad_earnings.title">Gains Publicitaires >> BLOWEARN AGENCIES</div>
+        <div class="welcome-text">Gains Publicitaires >> BLOWEARN</div>
         <div class="username" id="sidebarUsername">Utilisateur</div>
       </div>
       
@@ -1183,12 +938,10 @@
         <i class="fas fa-home"></i>
         <span data-i18n="menu.dashboard">Tableau de bord</span>
       </a>
-      
       <a href="depot.html" class="menu-item">
         <i class="fas fa-wallet"></i>
-        <span data-i18n="menu.deposit">Dépôt 💵</span>
+        <span data-i18n="menu.deposit">Depot</span>
       </a>
-      
       <a href="bonus_bienvenue.html" class="menu-item">
         <i class="fas fa-gift"></i>
         <span data-i18n="menu.welcome_bonus">Bonus de bienvenue</span>
@@ -1199,56 +952,47 @@
         <i class="fas fa-money-bill-wave"></i>
         <span data-i18n="menu.withdrawal">Retrait</span>
       </a>
-      
       <a href="equipe.html" class="menu-item">
         <i class="fas fa-users"></i>
-        <span data-i18n="menu.team">Équipe</span>
+        <span data-i18n="menu.team">Equipe</span>
       </a>
 
-      <div class="menu-category" data-i18n="menu.special">SPÉCIAL</div>
-      
+      <div class="menu-category" data-i18n="menu.special">SPECIAL</div>
       <a href="social_boost.html" class="menu-item">
         <i class="fas fa-rocket"></i>
         <span data-i18n="menu.sbh">SBH</span>
       </a>
-      
       <a href="challenge_reward.html" class="menu-item">
         <i class="fas fa-medal"></i>
         <span data-i18n="menu.challenge">Challenge and Reward</span>
       </a>
       
-      <div class="menu-category" data-i18n="menu.products">PRODUIT / TÂCHE</div>
+      <div class="menu-category" data-i18n="menu.products">PRODUIT / TACHE</div>
       <a href="whatsapp_earn.html" class="menu-item">
         <i class="fab fa-whatsapp"></i>
         <span data-i18n="menu.whatsapp_earn">Gagner via Whatsapp</span>
       </a>
-      
       <a href="gains_publicitaires.html" class="menu-item active">
         <i class="fas fa-ad"></i>
         <span data-i18n="menu.ad_earnings">Gains publicitaires</span>
-        <span class="menu-badge active">☑</span>
+        <span class="menu-badge">SAM</span>
       </a>
-      
       <a href="spin_wheel.html" class="menu-item">
         <i class="fas fa-trophy"></i>
-        <span data-i18n="menu.fortune_wheel">Roue de la fortune 🏆</span>
+        <span data-i18n="menu.fortune_wheel">Roue de la fortune</span>
       </a>
-      
       <a href="tiktok_earn.html" class="menu-item">
         <i class="fab fa-tiktok"></i>
         <span data-i18n="menu.tiktok_earn">TikTok Earn</span>
       </a>
-      
       <a href="youtube_earn.html" class="menu-item">
         <i class="fab fa-youtube"></i>
         <span data-i18n="menu.youtube_earn">YouTube Earn</span>
       </a>
-      
       <a href="instagram_earn.html" class="menu-item">
         <i class="fab fa-instagram"></i>
         <span data-i18n="menu.instagram_earn">Instagram Earn</span>
       </a>
-      
       <a href="trivia_challenge.html" class="menu-item">
         <i class="fas fa-brain"></i>
         <span data-i18n="menu.trivia">TRIVIA challenge</span>
@@ -1257,19 +1001,16 @@
       <div class="menu-category" data-i18n="menu.bonus">BONUS</div>
       <a href="liste_contacts.html" class="menu-item">
         <i class="fas fa-address-book"></i>
-        <span data-i18n="menu.contact_list">Liste de contacts gratuit 🆓</span>
+        <span data-i18n="menu.contact_list">Liste de contacts</span>
       </a>
-      
       <a href="booster_visibilite.html" class="menu-item">
         <i class="fas fa-rocket"></i>
-        <span data-i18n="menu.visibility_booster">Booster ma visibilité</span>
+        <span data-i18n="menu.visibility_booster">Booster ma visibilite</span>
       </a>
-
       <a href="canva_pro.html" class="menu-item">
         <i class="fas fa-palette"></i>
         <span data-i18n="menu.canva_pro">Canva Pro</span>
       </a>
-      
       <a href="connexion_gratuite.html" class="menu-item">
         <i class="fas fa-shield-alt"></i>
         <span data-i18n="menu.free_connection">Connexion gratuite</span>
@@ -1281,21 +1022,28 @@
         <i class="fas fa-ad"></i>
         <span data-i18n="ad_earnings.title">Gains Publicitaires</span>
       </h1>
-      
-      <div class="ad-banner">
-        <h2 class="banner-title" data-i18n="ad_earnings.banner.title">Gagnez de l'argent en lisant des articles!</h2>
-        <div class="banner-text" data-i18n="ad_earnings.banner.text">
-          Lisez des articles publicitaires et gagnez 50 FCFA par article! Vous pouvez lire jusqu'à 5 articles par jour. Il suffit de cliquer sur un article, de rester 10 secondes sur la page de lecture, et vous recevrez automatiquement votre récompense. Simple et efficace!
+
+      <!-- Bannière d'alerte si ce n'est pas samedi -->
+      <div class="saturday-alert" id="saturdayAlert">
+        <h2><i class="fas fa-calendar-times"></i> Disponible le SAMEDI uniquement</h2>
+        <p data-i18n="ad_earnings.not_saturday">Les gains publicitaires sont disponibles uniquement le samedi. Revenez samedi pour lire des articles et gagner 50 FCFA par article!</p>
+        <div class="countdown-display" id="countdownDisplay">
+          <i class="fas fa-clock"></i> <span id="countdownText">Prochain samedi dans...</span>
         </div>
       </div>
       
-      <div class="ad-section">
+      <div class="ad-banner" id="adBanner">
+        <h2 class="banner-title" data-i18n="ad_earnings.banner.title">Gagnez de l'argent en lisant des articles!</h2>
+        <div class="banner-text" data-i18n="ad_earnings.banner.text">
+          Lisez des articles publicitaires et gagnez 50 FCFA par article! Vous pouvez lire jusqu'a 5 articles par jour. Il suffit de cliquer sur un article, de rester 10 secondes sur la page de lecture, et vous recevrez automatiquement votre recompense. Simple et efficace!
+        </div>
+      </div>
+      
+      <div class="ad-section" id="articlesSection">
         <h2 class="section-title"><i class="fas fa-newspaper"></i> <span data-i18n="ad_earnings.articles.title">Articles Disponibles Aujourd'hui</span></h2>
         <p class="section-subtitle" data-i18n="ad_earnings.articles.subtitle">Cliquez sur un article, lisez-le pendant 10 secondes et gagnez 50 FCFA!</p>
         
-        <div class="articles-grid" id="articlesGrid">
-          <!-- Les articles seront chargés dynamiquement -->
-        </div>
+        <div class="articles-grid" id="articlesGrid"></div>
       </div>
       
       <div class="ad-section">
@@ -1303,27 +1051,21 @@
         
         <div class="stats-cards">
           <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-book-open"></i>
-            </div>
+            <div class="stat-icon"><i class="fas fa-book-open"></i></div>
             <div class="stat-value" id="articlesReadToday">0/5</div>
             <div class="stat-label" data-i18n="ad_earnings.stats.articles_read">Articles lus aujourd'hui</div>
           </div>
           
           <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-coins"></i>
-            </div>
+            <div class="stat-icon"><i class="fas fa-coins"></i></div>
             <div class="stat-value" id="earnedToday">0 FCFA</div>
-            <div class="stat-label" data-i18n="ad_earnings.stats.earned_today">Gagné aujourd'hui</div>
+            <div class="stat-label" data-i18n="ad_earnings.stats.earned_today">Gagne aujourd'hui</div>
           </div>
           
           <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-money-bill-wave"></i>
-            </div>
+            <div class="stat-icon"><i class="fas fa-money-bill-wave"></i></div>
             <div class="stat-value" id="totalEarned">0 FCFA</div>
-            <div class="stat-label" data-i18n="ad_earnings.stats.total_earned">Total gagné</div>
+            <div class="stat-label" data-i18n="ad_earnings.stats.total_earned">Total gagne</div>
           </div>
         </div>
       </div>
@@ -1338,17 +1080,17 @@
         <button class="close-modal" id="closeModal">&times;</button>
       </div>
       <div class="modal-content">
-        <img src="" id="modalArticleImage" class="modal-image">
-        <div class="modal-body" id="modalArticleContent">
-          <!-- Contenu de l'article -->
-        </div>
+        <img src="" id="modalArticleImage" class="modal-image" alt="Article image">
+        <div class="modal-body" id="modalArticleContent"></div>
       </div>
       <div class="modal-footer">
         <div class="timer-display" id="timerDisplay">10 secondes restantes</div>
         <div class="timer-progress">
           <div class="timer-progress-bar" id="timerProgressBar"></div>
         </div>
-        <button class="read-article-btn" id="claimEarningBtn" disabled data-i18n="ad_earnings.modal.reading">En cours de lecture...</button>
+        <button class="claim-btn" id="claimEarningBtn" disabled>
+          <i class="fas fa-spinner fa-spin"></i> <span>En cours de lecture...</span>
+        </button>
       </div>
     </div>
   </div>
@@ -1357,31 +1099,31 @@
     <div class="footer-content">
       <div class="footer-links">
         <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Pro Tech Management</a>
-        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Site propulsé par Social Boost Horizon</a>
+        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Social Boost Horizon</a>
       </div>
       <div class="footer-text">
-        © 2025 BLOWEARN AGENCIES. <span data-i18n="footer.rights">Tous droits réservés.</span>
+        2025 BLOWEARN AGENCIES. <span data-i18n="footer.rights">Tous droits reserves.</span>
       </div>
     </div>
   </footer>
 
   <script>
-    /******** CONFIG FIREBASE ********/
     const firebaseConfig = {
       apiKey: "AIzaSyCjGisjgbFc2ZE0BFgdhlUao8bCCeuKP1k",
       authDomain: "cash-flowr.firebaseapp.com",
       projectId: "cash-flowr",
       storageBucket: "cash-flowr.appspot.com",
       messagingSenderId: "1091928501310",
-      appId: "1:1091928501310:web:4f4de306cde36f378ff56f",
-      measurementId: "G-5SF6VDLZCB"
+      appId: "1:1091928501310:web:4f4de306cde36f378ff56f"
     };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
 
-    /******** DOM Elements ********/
+    const SERVER_URL = 'https://mulaflowr-exaucenapopolo2.replit.app';
+    const ENFORCE_SATURDAY = true;
+
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
@@ -1390,14 +1132,13 @@
     const profileDropdown = document.getElementById('profileDropdown');
     const languageSelector = document.getElementById('languageSelector');
     const languageDropdown = document.getElementById('languageDropdown');
-    const currentLanguage = document.getElementById('currentLanguage');
     const sidebarUsername = document.getElementById('sidebarUsername');
     const userAvatar = document.getElementById('userAvatar');
     const loader = document.getElementById('loader');
     const articlesGrid = document.getElementById('articlesGrid');
-    const articlesReadToday = document.getElementById('articlesReadToday');
-    const earnedToday = document.getElementById('earnedToday');
-    const totalEarned = document.getElementById('totalEarned');
+    const articlesReadTodayEl = document.getElementById('articlesReadToday');
+    const earnedTodayEl = document.getElementById('earnedToday');
+    const totalEarnedEl = document.getElementById('totalEarned');
     const articleModal = document.getElementById('articleModal');
     const modalArticleTitle = document.getElementById('modalArticleTitle');
     const modalArticleImage = document.getElementById('modalArticleImage');
@@ -1406,82 +1147,77 @@
     const timerProgressBar = document.getElementById('timerProgressBar');
     const claimEarningBtn = document.getElementById('claimEarningBtn');
     const closeModal = document.getElementById('closeModal');
+    const saturdayAlert = document.getElementById('saturdayAlert');
+    const adBanner = document.getElementById('adBanner');
+    const articlesSection = document.getElementById('articlesSection');
+    const countdownText = document.getElementById('countdownText');
 
-    /******** Variables d'état ********/
     let currentUser = null;
     let userData = {};
     let articles = [];
     let currentArticle = null;
-    let readArticlesToday = 0;
-    let earnedTodayAmount = 0;
-    let totalEarnedAmount = 0;
+    let readArticleIds = [];
+    let articlesReadToday = 0;
     let countdownTimer = null;
     let timeLeft = 10;
-    let currentLang = 'fr'; // Langue par défaut
+    let currentLang = 'fr';
+    let isClaiming = false;
 
-    /******** Système de traduction ********/
     const translations = {
       fr: {
-        // Header
-        "header.language": "French",
         "header.night_mode": "Mode nuit",
         "header.day_mode": "Mode jour",
-        
-        // Menu
+        "ad_earnings.title": "Gains Publicitaires",
+        "ad_earnings.not_saturday": "Les gains publicitaires sont disponibles uniquement le samedi. Revenez samedi pour lire des articles et gagner 50 FCFA par article!",
+        "ad_earnings.banner.title": "Gagnez de l'argent en lisant des articles!",
+        "ad_earnings.banner.text": "Lisez des articles publicitaires et gagnez 50 FCFA par article! Vous pouvez lire jusqu'a 5 articles par jour.",
+        "ad_earnings.articles.title": "Articles Disponibles Aujourd'hui",
+        "ad_earnings.articles.subtitle": "Cliquez sur un article, lisez-le pendant 10 secondes et gagnez 50 FCFA!",
+        "ad_earnings.stats.title": "Vos Statistiques",
+        "ad_earnings.stats.articles_read": "Articles lus aujourd'hui",
+        "ad_earnings.stats.earned_today": "Gagne aujourd'hui",
+        "ad_earnings.stats.total_earned": "Total gagne",
         "menu.main": "PRINCIPAL",
         "menu.dashboard": "Tableau de bord",
-        "menu.deposit": "Dépôt 💵",
+        "menu.deposit": "Depot",
         "menu.welcome_bonus": "Bonus de bienvenue",
         "menu.accounts": "COMPTES",
         "menu.withdrawal": "Retrait",
-        "menu.team": "Équipe",
-        "menu.special": "SPÉCIAL",
+        "menu.team": "Equipe",
+        "menu.special": "SPECIAL",
         "menu.sbh": "SBH",
         "menu.challenge": "Challenge and Reward",
-        "menu.products": "PRODUIT / TÂCHE",
+        "menu.products": "PRODUIT / TACHE",
         "menu.whatsapp_earn": "Gagner via Whatsapp",
         "menu.ad_earnings": "Gains publicitaires",
-        "menu.fortune_wheel": "Roue de la fortune 🏆",
+        "menu.fortune_wheel": "Roue de la fortune",
         "menu.tiktok_earn": "TikTok Earn",
         "menu.youtube_earn": "YouTube Earn",
         "menu.instagram_earn": "Instagram Earn",
         "menu.trivia": "TRIVIA challenge",
         "menu.bonus": "BONUS",
-        "menu.contact_list": "Liste de contacts gratuit 🆓",
-        "menu.visibility_booster": "Booster ma visibilité",
+        "menu.contact_list": "Liste de contacts",
+        "menu.visibility_booster": "Booster ma visibilite",
         "menu.canva_pro": "Canva Pro",
         "menu.free_connection": "Connexion gratuite",
-        
-        // Page des gains publicitaires
-        "ad_earnings.title": "Gains Publicitaires",
-        "ad_earnings.banner.title": "Gagnez de l'argent en lisant des articles!",
-        "ad_earnings.banner.text": "Lisez des articles publicitaires et gagnez 50 FCFA par article! Vous pouvez lire jusqu'à 5 articles par jour. Il suffit de cliquer sur un article, de rester 10 secondes sur la page de lecture, et vous recevrez automatiquement votre récompense. Simple et efficace!",
-        "ad_earnings.articles.title": "Articles Disponibles Aujourd'hui",
-        "ad_earnings.articles.subtitle": "Cliquez sur un article, lisez-le pendant 10 secondes et gagnez 50 FCFA!",
-        "ad_earnings.stats.title": "Vos Statistiques",
-        "ad_earnings.stats.articles_read": "Articles lus aujourd'hui",
-        "ad_earnings.stats.earned_today": "Gagné aujourd'hui",
-        "ad_earnings.stats.total_earned": "Total gagné",
-        "ad_earnings.modal.reading": "En cours de lecture...",
-        
-        // Footer
-        "footer.rights": "Tous droits réservés.",
-        
-        // Notifications
-        "notification.success": "Succès",
-        "notification.error": "Erreur",
-        "notification.info": "Information"
+        "footer.rights": "Tous droits reserves."
       },
       en: {
-        // Header
-        "header.language": "English",
         "header.night_mode": "Night mode",
         "header.day_mode": "Day mode",
-        
-        // Menu
+        "ad_earnings.title": "Advertising Earnings",
+        "ad_earnings.not_saturday": "Advertising earnings are available only on Saturday. Come back Saturday to read articles and earn 50 FCFA per article!",
+        "ad_earnings.banner.title": "Earn money by reading articles!",
+        "ad_earnings.banner.text": "Read advertising articles and earn 50 FCFA per article! You can read up to 5 articles per day.",
+        "ad_earnings.articles.title": "Available Articles Today",
+        "ad_earnings.articles.subtitle": "Click on an article, read it for 10 seconds and earn 50 FCFA!",
+        "ad_earnings.stats.title": "Your Statistics",
+        "ad_earnings.stats.articles_read": "Articles read today",
+        "ad_earnings.stats.earned_today": "Earned today",
+        "ad_earnings.stats.total_earned": "Total earned",
         "menu.main": "MAIN",
         "menu.dashboard": "Dashboard",
-        "menu.deposit": "Deposit 💵",
+        "menu.deposit": "Deposit",
         "menu.welcome_bonus": "Welcome Bonus",
         "menu.accounts": "ACCOUNTS",
         "menu.withdrawal": "Withdrawal",
@@ -1492,72 +1228,37 @@
         "menu.products": "PRODUCT / TASK",
         "menu.whatsapp_earn": "Earn via Whatsapp",
         "menu.ad_earnings": "Advertising earnings",
-        "menu.fortune_wheel": "Fortune Wheel 🏆",
+        "menu.fortune_wheel": "Fortune Wheel",
         "menu.tiktok_earn": "TikTok Earn",
         "menu.youtube_earn": "YouTube Earn",
         "menu.instagram_earn": "Instagram Earn",
         "menu.trivia": "TRIVIA challenge",
         "menu.bonus": "BONUS",
-        "menu.contact_list": "Free contact list 🆓",
+        "menu.contact_list": "Contact list",
         "menu.visibility_booster": "Boost my visibility",
         "menu.canva_pro": "Canva Pro",
         "menu.free_connection": "Free connection",
-        
-        // Page des gains publicitaires
-        "ad_earnings.title": "Advertising Earnings",
-        "ad_earnings.banner.title": "Earn money by reading articles!",
-        "ad_earnings.banner.text": "Read advertising articles and earn 50 FCFA per article! You can read up to 5 articles per day. Just click on an article, stay 10 seconds on the reading page, and you will automatically receive your reward. Simple and effective!",
-        "ad_earnings.articles.title": "Available Articles Today",
-        "ad_earnings.articles.subtitle": "Click on an article, read it for 10 seconds and earn 50 FCFA!",
-        "ad_earnings.stats.title": "Your Statistics",
-        "ad_earnings.stats.articles_read": "Articles read today",
-        "ad_earnings.stats.earned_today": "Earned today",
-        "ad_earnings.stats.total_earned": "Total earned",
-        "ad_earnings.modal.reading": "Reading in progress...",
-        
-        // Footer
-        "footer.rights": "All rights reserved.",
-        
-        // Notifications
-        "notification.success": "Success",
-        "notification.error": "Error",
-        "notification.info": "Information"
+        "footer.rights": "All rights reserved."
       }
     };
 
-    /******** Fonctions de traduction ********/
     function setLanguage(lang) {
       currentLang = lang;
       localStorage.setItem('preferredLanguage', lang);
+      document.getElementById('currentLanguage').textContent = lang.toUpperCase();
       
-      // Mettre à jour le sélecteur de langue
-      currentLanguage.textContent = lang === 'fr' ? 'French' : 'English';
-      
-      // Mettre à jour les options de langue
-      document.querySelectorAll('.language-option').forEach(option => {
-        const icon = option.querySelector('i');
-        if (option.dataset.lang === lang) {
-          option.classList.add('active');
-          icon.style.opacity = '1';
-        } else {
-          option.classList.remove('active');
-          icon.style.opacity = '0';
-        }
-      });
-      
-      // Traduire tous les éléments avec data-i18n
       document.querySelectorAll('[data-i18n]').forEach(element => {
         const key = element.getAttribute('data-i18n');
         if (translations[lang] && translations[lang][key]) {
-          if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-            element.placeholder = translations[lang][key];
-          } else {
-            element.textContent = translations[lang][key];
-          }
+          element.innerHTML = translations[lang][key];
         }
       });
       
-      // Mettre à jour le texte du thème
+      document.querySelectorAll('.language-option').forEach(opt => {
+        opt.classList.toggle('active', opt.dataset.lang === lang);
+        opt.querySelector('i').style.opacity = opt.dataset.lang === lang ? '1' : '0';
+      });
+      
       const isDarkMode = document.body.classList.contains('dark-mode');
       if (themeToggle) {
         themeToggle.innerHTML = isDarkMode 
@@ -1566,7 +1267,6 @@
       }
     }
 
-    /******** UI helpers ********/
     function showNotification(type, title, message, duration = 4000) {
       const container = document.getElementById('notificationContainer');
       const notification = document.createElement('div');
@@ -1586,128 +1286,168 @@
       }, duration);
     }
 
-    /******** Gestion du menu ********/
     hamburgerBtn.addEventListener('click', () => {
-        sidebar.classList.toggle('open');
-        overlay.classList.toggle('active');
-        hamburgerBtn.classList.toggle('open');
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('active');
+      hamburgerBtn.classList.toggle('open');
     });
+    
     overlay.addEventListener('click', () => {
-        sidebar.classList.remove('open');
-        overlay.classList.remove('active');
-        hamburgerBtn.classList.remove('open');
+      sidebar.classList.remove('open');
+      overlay.classList.remove('active');
+      hamburgerBtn.classList.remove('open');
     });
 
-    /******** Gestion du profil utilisateur ********/
-    userProfile.addEventListener('click', (event) => {
-        event.stopPropagation();
-        profileDropdown.classList.toggle('active');
+    userProfile.addEventListener('click', (e) => {
+      e.stopPropagation();
+      profileDropdown.classList.toggle('active');
     });
-    document.addEventListener('click', (event) => {
-        if (!userProfile.contains(event.target)) {
-            profileDropdown.classList.remove('active');
-        }
-    });
-
-    // Gestion du sélecteur de langue
-    languageSelector.addEventListener('click', (event) => {
-      event.stopPropagation();
+    
+    languageSelector.addEventListener('click', (e) => {
+      e.stopPropagation();
       languageDropdown.classList.toggle('active');
     });
-
-    // Fermer le dropdown de langue quand on clique ailleurs
-    document.addEventListener('click', () => {
-      languageDropdown.classList.remove('active');
-    });
-
-    // Changer de langue
-    document.querySelectorAll('.language-option').forEach(option => {
-      option.addEventListener('click', () => {
-        const lang = option.dataset.lang;
-        setLanguage(lang);
+    
+    document.querySelectorAll('.language-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        setLanguage(opt.dataset.lang);
         languageDropdown.classList.remove('active');
       });
     });
-
-    /******** Gestion du thème ********/
-    themeToggle.addEventListener('click', (event) => {
-        event.stopPropagation();
-        document.body.classList.toggle('dark-mode');
-        const isDarkMode = document.body.classList.contains('dark-mode');
-        themeToggle.innerHTML = isDarkMode 
-            ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
-            : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
-        if(currentUser) saveUserData('theme', isDarkMode ? 'dark' : 'light');
+    
+    document.addEventListener('click', (e) => {
+      if (!userProfile.contains(e.target)) profileDropdown.classList.remove('active');
+      if (!languageSelector.parentElement.contains(e.target)) languageDropdown.classList.remove('active');
     });
 
-    /******** Articles ********/
+    themeToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      document.body.classList.toggle('dark-mode');
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      themeToggle.innerHTML = isDarkMode 
+        ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+        : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
+      if(currentUser) saveTheme(isDarkMode ? 'dark' : 'light');
+    });
+
+    function isTodaySaturday() {
+      try {
+        const formatter = new Intl.DateTimeFormat('en-US', {
+          weekday: 'long',
+          timeZone: 'Africa/Douala'
+        });
+        const dayName = formatter.format(new Date());
+        return dayName === 'Saturday';
+      } catch (e) {
+        const d = new Date();
+        return d.getDay() === 6;
+      }
+    }
+
+    function getNextSaturdayCountdown() {
+      const now = new Date();
+      const currentDay = now.getDay();
+      
+      let daysUntilSaturday = (6 - currentDay + 7) % 7;
+      if (daysUntilSaturday === 0) daysUntilSaturday = 7;
+      
+      const nextSaturday = new Date(now);
+      nextSaturday.setDate(now.getDate() + daysUntilSaturday);
+      nextSaturday.setHours(0, 0, 0, 0);
+      
+      const diff = nextSaturday - now;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      
+      if (days > 0) {
+        return `${days}j ${hours}h ${minutes}m`;
+      } else {
+        return `${hours}h ${minutes}m`;
+      }
+    }
+
+    function updateSaturdayUI() {
+      const isSaturday = isTodaySaturday();
+      
+      if (ENFORCE_SATURDAY && !isSaturday) {
+        saturdayAlert.classList.add('active');
+        adBanner.style.display = 'none';
+        articlesSection.style.display = 'none';
+        
+        countdownText.textContent = `Prochain samedi dans ${getNextSaturdayCountdown()}`;
+        
+        setInterval(() => {
+          countdownText.textContent = `Prochain samedi dans ${getNextSaturdayCountdown()}`;
+        }, 60000);
+      } else {
+        saturdayAlert.classList.remove('active');
+        adBanner.style.display = 'block';
+        articlesSection.style.display = 'block';
+      }
+    }
+
     function loadArticles() {
-      // Articles factices pour la démonstration
       articles = [
         {
-          id: 1,
+          id: 'art1',
           title: "Les tendances du marketing digital en 2025",
           image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-          excerpt: "Découvrez les nouvelles tendances qui vont révolutionner le marketing digital l'année prochaine.",
-          content: `<p>Le marketing digital évolue à une vitesse fulgurante. En 2025, nous nous attendons à voir plusieurs tendances émergentes qui vont transformer la façon dont les marques interagissent avec leurs audiences.</p>
-                    <p>L'intelligence artificielle continuera de jouer un rôle crucial, avec des chatbots plus sophistiqués et une personnalisation accrue des expériences client.</p>
-                    <p>La réalité augmentée et virtuelle deviendront plus accessibles, permettant aux marques de créer des expériences d'achat immersives.</p>
-                    <p>Le content marketing évoluera vers des formats plus interactifs et engaging, avec une emphasis sur la valeur ajoutée plutôt que la promotion pure.</p>
-                    <p>Enfin, la privacy et la transparence deviendront des éléments différenciateurs clés, alors que les consommateurs deviennent de plus en plus conscients de l'utilisation de leurs données.</p>`,
-          read: false
+          excerpt: "Decouvrez les nouvelles tendances qui vont revolutionner le marketing digital l'annee prochaine.",
+          content: `<p>Le marketing digital evolue a une vitesse fulgurante. En 2025, nous nous attendons a voir plusieurs tendances emergentes qui vont transformer la facon dont les marques interagissent avec leurs audiences.</p>
+                    <p>L'intelligence artificielle continuera de jouer un role crucial, avec des chatbots plus sophistiques et une personnalisation accrue des experiences client.</p>
+                    <p>La realite augmentee et virtuelle deviendront plus accessibles, permettant aux marques de creer des experiences d'achat immersives.</p>
+                    <p>Le content marketing evoluera vers des formats plus interactifs et engaging, avec une emphasis sur la valeur ajoutee plutot que la promotion pure.</p>
+                    <p>Enfin, la privacy et la transparence deviendront des elements differenciateurs cles, alors que les consommateurs deviennent de plus en plus conscients de l'utilisation de leurs donnees.</p>`
         },
         {
-          id: 2,
-          title: "Comment optimiser votre présence sur les réseaux sociaux",
+          id: 'art2',
+          title: "Comment optimiser votre presence sur les reseaux sociaux",
           image: "https://images.unsplash.com/photo-1432888622747-4eb9a8f5a07a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-          excerpt: "Des conseils pratiques pour améliorer votre stratégie sur les plateformes sociales.",
-          content: `<p>Une présence efficace sur les réseaux sociaux nécessite plus que de simples publications aléatoires. Voici comment optimiser votre stratégie:</p>
-                    <p><strong>1. Connaissez votre audience:</strong> Comprenez qui sont vos followers, leurs intérêts et quand ils sont les plus actifs.</p>
-                    <p><strong>2. Créez un calendrier de contenu:</strong> Planifiez vos publications à l'avance pour maintenir une présence constante.</p>
-                    <p><strong>3. Utilisez des visuels de qualité:</strong> Les images et vidéos attirent beaucoup plus d'engagement que le texte seul.</p>
-                    <p><strong>4. Interagissez avec votre audience:</strong> Répondez aux commentaires et messages pour construire une communauté.</p>
-                    <p><strong>5. Analysez vos performances:</strong> Utilisez les analytics pour comprendre ce qui fonctionne et ajustez votre stratégie en conséquence.</p>`,
-          read: false
+          excerpt: "Des conseils pratiques pour ameliorer votre strategie sur les plateformes sociales.",
+          content: `<p>Une presence efficace sur les reseaux sociaux necessite plus que de simples publications aleatoires. Voici comment optimiser votre strategie:</p>
+                    <p><strong>1. Connaissez votre audience:</strong> Comprenez qui sont vos followers, leurs interets et quand ils sont les plus actifs.</p>
+                    <p><strong>2. Creez un calendrier de contenu:</strong> Planifiez vos publications a l'avance pour maintenir une presence constante.</p>
+                    <p><strong>3. Utilisez des visuels de qualite:</strong> Les images et videos attirent beaucoup plus d'engagement que le texte seul.</p>
+                    <p><strong>4. Interagissez avec votre audience:</strong> Repondez aux commentaires et messages pour construire une communaute.</p>
+                    <p><strong>5. Analysez vos performances:</strong> Utilisez les analytics pour comprendre ce qui fonctionne et ajustez votre strategie en consequence.</p>`
         },
         {
-          id: 3,
-          title: "Les secrets d'un référencement SEO réussi",
+          id: 'art3',
+          title: "Les secrets d'un referencement SEO reussi",
           image: "https://images.unsplash.com/photo-1506784983877-45594efa4cbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-          excerpt: "Découvrez les techniques essentielles pour améliorer votre classement dans les moteurs de recherche.",
-          content: `<p>Le référencement naturel (SEO) est crucial pour la visibilité en ligne. Voici les secrets d'une stratégie SEO réussie:</p>
-                    <p><strong>Recherche de mots-clés:</strong> Identifiez les termes que votre audience cible recherche et intégrez-les naturellement dans votre contenu.</p>
-                    <p><strong>Contenu de qualité:</strong> Créez un contenu valuable, original et bien structuré qui répond aux questions de votre audience.</p>
+          excerpt: "Decouvrez les techniques essentielles pour ameliorer votre classement dans les moteurs de recherche.",
+          content: `<p>Le referencement naturel (SEO) est crucial pour la visibilite en ligne. Voici les secrets d'une strategie SEO reussie:</p>
+                    <p><strong>Recherche de mots-cles:</strong> Identifiez les termes que votre audience cible recherche et integrez-les naturellement dans votre contenu.</p>
+                    <p><strong>Contenu de qualite:</strong> Creez un contenu valuable, original et bien structure qui repond aux questions de votre audience.</p>
                     <p><strong>Optimisation technique:</strong> Assurez-vous que votre site se charge rapidement, soit mobile-friendly et ait une structure claire.</p>
-                    <p><strong>Backlinks de qualité:</strong> Obtenez des liens provenant de sites autoritaires dans votre domaine.</p>
-                    <p><strong>Expérience utilisateur:</strong> Offrez une navigation intuitive et un design agréable pour réduire le taux de rebond.</p>`,
-          read: false
+                    <p><strong>Backlinks de qualite:</strong> Obtenez des liens provenant de sites autoritaires dans votre domaine.</p>
+                    <p><strong>Experience utilisateur:</strong> Offrez une navigation intuitive et un design agreable pour reduire le taux de rebond.</p>`
         },
         {
-          id: 4,
-          title: "L'avenir de la monétisation des contenus en ligne",
+          id: 'art4',
+          title: "L'avenir de la monetisation des contenus en ligne",
           image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-          excerpt: "Comment les créateurs de contenu peuvent-ils tirer profit de leur audience?",
-          content: `<p>La monétisation des contenus en ligne évolue rapidement. Voici les tendances à surveiller:</p>
-                    <p><strong>Abonnements et membreships:</strong> Les plateformes comme Patreon et Substack permettent aux créateurs de monétiser directement leur audience.</p>
+          excerpt: "Comment les createurs de contenu peuvent-ils tirer profit de leur audience?",
+          content: `<p>La monetisation des contenus en ligne evolue rapidement. Voici les tendances a surveiller:</p>
+                    <p><strong>Abonnements et membreships:</strong> Les plateformes comme Patreon et Substack permettent aux createurs de monetiser directement leur audience.</p>
                     <p><strong>Contenu exclusif:</strong> Offrez du contenu premium accessible uniquement aux supporters payants.</p>
-                    <p><strong>Commerce électronique:</strong> Vendez des produits physiques ou digitaux directement à votre audience.</p>
-                    <p><strong>Sponsoring et partenariats:</strong> Collaborez avec des marques alignées avec vos valeurs et votre contenu.</p>
-                    <p><strong>Formations et consulting:</strong> Monétisez votre expertise through des cours en ligne ou des services de consulting.</p>`,
-          read: false
+                    <p><strong>Commerce electronique:</strong> Vendez des produits physiques ou digitaux directement a votre audience.</p>
+                    <p><strong>Sponsoring et partenariats:</strong> Collaborez avec des marques alignees avec vos valeurs et votre contenu.</p>
+                    <p><strong>Formations et consulting:</strong> Monetisez votre expertise through des cours en ligne ou des services de consulting.</p>`
         },
         {
-          id: 5,
+          id: 'art5',
           title: "5 applications indispensables pour les travailleurs distants",
           image: "https://images.unsplash.com/photo-1496171367470-9ed9a91ea931?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-          excerpt: "Optimisez votre productivité en télétravail avec ces outils essentiels.",
-          content: `<p>Le travail à distance nécessite les bons outils pour rester productif. Voici 5 applications indispensables:</p>
-                    <p><strong>1. Slack:</strong> Pour la communication d'équipe et la collaboration en temps réel.</p>
-                    <p><strong>2. Trello ou Asana:</strong> Pour la gestion de projets et le suivi des tâches.</p>
-                    <p><strong>3. Zoom ou Google Meet:</strong> Pour les réunions vidéo de qualité professionnelle.</p>
+          excerpt: "Optimisez votre productivite en teletravail avec ces outils essentiels.",
+          content: `<p>Le travail a distance necessite les bons outils pour rester productif. Voici 5 applications indispensables:</p>
+                    <p><strong>1. Slack:</strong> Pour la communication d'equipe et la collaboration en temps reel.</p>
+                    <p><strong>2. Trello ou Asana:</strong> Pour la gestion de projets et le suivi des taches.</p>
+                    <p><strong>3. Zoom ou Google Meet:</strong> Pour les reunions video de qualite professionnelle.</p>
                     <p><strong>4. Google Drive ou Dropbox:</strong> Pour le stockage et le partage de fichiers.</p>
-                    <p><strong>5. Toggl ou Harvest:</strong> Pour le suivi du temps et la gestion de la productivité.</p>
-                    <p>Ces outils vous aideront à maintenir une communication efficace, à rester organisé et à optimiser votre temps lorsque vous travaillez à distance.</p>`,
-          read: false
+                    <p><strong>5. Toggl ou Harvest:</strong> Pour le suivi du temps et la gestion de la productivite.</p>
+                    <p>Ces outils vous aideront a maintenir une communication efficace, a rester organise et a optimiser votre temps lorsque vous travaillez a distance.</p>`
         }
       ];
       
@@ -1715,21 +1455,25 @@
     }
 
     function displayArticles() {
+      const isSaturday = isTodaySaturday();
       let html = '';
       
       articles.forEach(article => {
+        const isRead = readArticleIds.includes(article.id);
+        const isDisabled = !isSaturday || isRead || articlesReadToday >= 5;
+        
         html += `
-          <div class="article-card">
+          <div class="article-card ${isDisabled ? 'disabled' : ''}">
             <img src="${article.image}" alt="${article.title}" class="article-image">
             <div class="article-content">
               <h3 class="article-title">${article.title}</h3>
               <p class="article-excerpt">${article.excerpt}</p>
               <div class="article-meta">
-                <span class="article-time"><i class="fas fa-clock"></i> 2 min de lecture</span>
+                <span class="article-time"><i class="fas fa-clock"></i> 10 sec</span>
                 <span class="article-earning">+50 FCFA</span>
               </div>
-              <button class="read-article-btn ${article.read ? 'completed' : ''}" data-id="${article.id}" ${article.read ? 'disabled' : ''}>
-                ${article.read ? '<i class="fas fa-check-circle"></i> Déjà lu' : '<i class="fas fa-book-open"></i> Lire et gagner'}
+              <button class="read-article-btn ${isRead ? 'completed' : ''}" data-id="${article.id}" ${isDisabled ? 'disabled' : ''}>
+                ${isRead ? '<i class="fas fa-check-circle"></i> Deja lu' : '<i class="fas fa-book-open"></i> Lire et gagner'}
               </button>
             </div>
           </div>
@@ -1738,37 +1482,40 @@
       
       articlesGrid.innerHTML = html;
       
-      // Ajouter les événements aux boutons
-      document.querySelectorAll('.read-article-btn:not(.completed)').forEach(btn => {
+      document.querySelectorAll('.read-article-btn:not(.completed):not(:disabled)').forEach(btn => {
         btn.addEventListener('click', (e) => {
-          const articleId = parseInt(e.target.dataset.id);
+          const articleId = e.target.closest('button').dataset.id;
           openArticle(articleId);
         });
       });
     }
 
     function openArticle(articleId) {
-      currentArticle = articles.find(a => a.id === articleId);
+      if (ENFORCE_SATURDAY && !isTodaySaturday()) {
+        showNotification('error', 'Non disponible', 'Les gains publicitaires sont disponibles uniquement le samedi!');
+        return;
+      }
       
+      if (articlesReadToday >= 5) {
+        showNotification('error', 'Limite atteinte', 'Vous avez atteint la limite de 5 articles par jour!');
+        return;
+      }
+      
+      currentArticle = articles.find(a => a.id === articleId);
       if (!currentArticle) return;
       
-      // Mettre à jour le modal avec le contenu de l'article
       modalArticleTitle.textContent = currentArticle.title;
       modalArticleImage.src = currentArticle.image;
       modalArticleImage.alt = currentArticle.title;
       modalArticleContent.innerHTML = currentArticle.content;
       
-      // Réinitialiser le timer
       timeLeft = 10;
       timerDisplay.textContent = `${timeLeft} secondes restantes`;
       timerProgressBar.style.width = '0%';
       claimEarningBtn.disabled = true;
-      claimEarningBtn.textContent = 'En cours de lecture...';
+      claimEarningBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>En cours de lecture...</span>';
       
-      // Afficher le modal
       articleModal.classList.add('active');
-      
-      // Démarrer le compte à rebours
       startCountdown();
     }
 
@@ -1777,53 +1524,101 @@
       
       countdownTimer = setInterval(() => {
         timeLeft--;
-        
-        // Mettre à jour l'affichage
         timerDisplay.textContent = `${timeLeft} secondes restantes`;
         timerProgressBar.style.width = `${((10 - timeLeft) / 10) * 100}%`;
         
         if (timeLeft <= 0) {
           clearInterval(countdownTimer);
           claimEarningBtn.disabled = false;
-          claimEarningBtn.textContent = 'Cliquer pour gagner 50 FCFA';
+          claimEarningBtn.innerHTML = '<i class="fas fa-gift"></i> <span>Reclamer 50 FCFA</span>';
         }
       }, 1000);
     }
 
-    function claimArticleEarning() {
-      if (!currentArticle) return;
+    async function claimArticleEarning() {
+      if (!currentArticle || isClaiming) return;
       
-      // Marquer l'article comme lu
-      currentArticle.read = true;
+      if (ENFORCE_SATURDAY && !isTodaySaturday()) {
+        showNotification('error', 'Non disponible', 'Les gains publicitaires sont disponibles uniquement le samedi!');
+        articleModal.classList.remove('active');
+        return;
+      }
       
-      // Mettre à jour les statistiques
-      readArticlesToday++;
-      earnedTodayAmount += 50;
-      totalEarnedAmount += 50;
+      isClaiming = true;
+      claimEarningBtn.disabled = true;
+      claimEarningBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Traitement...</span>';
       
-      // Mettre à jour l'UI
-      updateStatsUI();
+      try {
+        const idToken = await currentUser.getIdToken();
+        
+        const response = await fetch(`${SERVER_URL}/api/advertising-claim`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            idToken: idToken,
+            articleId: currentArticle.id,
+            articleTitle: currentArticle.title
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.ok) {
+          readArticleIds.push(currentArticle.id);
+          articlesReadToday = data.articlesReadToday;
+          
+          userData.gainsPublicitaires = data.newGainsPublicitaires;
+          
+          updateStatsUI();
+          displayArticles();
+          
+          articleModal.classList.remove('active');
+          
+          showNotification('success', 'Felicitations!', `+${data.reward} FCFA credites sur votre compte!`);
+        } else {
+          showNotification('error', 'Erreur', data.error || 'Une erreur est survenue');
+        }
+      } catch (error) {
+        console.error('Erreur claim:', error);
+        showNotification('error', 'Erreur', 'Probleme de connexion au serveur');
+      }
       
-      // Mettre à jour l'affichage des articles
-      displayArticles();
+      isClaiming = false;
+      claimEarningBtn.disabled = false;
+      claimEarningBtn.innerHTML = '<i class="fas fa-gift"></i> <span>Reclamer 50 FCFA</span>';
+    }
+
+    async function loadReadArticlesToday() {
+      if (!currentUser) return;
       
-      // Fermer le modal
-      articleModal.classList.remove('active');
-      
-      // Afficher une notification
-      showNotification('success', 'Félicitations!', 'Vous avez gagné 50 FCFA en lisant cet article!');
-      
-      // Sauvegarder les données utilisateur
-      saveUserData();
+      try {
+        const idToken = await currentUser.getIdToken();
+        
+        const response = await fetch(`${SERVER_URL}/api/advertising-claims-today`, {
+          method: 'GET',
+          headers: { 
+            'Authorization': `Bearer ${idToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        const data = await response.json();
+        
+        if (data.ok) {
+          readArticleIds = data.readArticleIds || [];
+          articlesReadToday = data.articlesReadToday || 0;
+        }
+      } catch (error) {
+        console.error('Erreur chargement claims:', error);
+      }
     }
 
     function updateStatsUI() {
-      articlesReadToday.textContent = `${readArticlesToday}/5`;
-      earnedToday.textContent = `${earnedTodayAmount} FCFA`;
-      totalEarned.textContent = `${totalEarnedAmount} FCFA`;
+      articlesReadTodayEl.textContent = `${articlesReadToday}/5`;
+      earnedTodayEl.textContent = `${articlesReadToday * 50} FCFA`;
+      totalEarnedEl.textContent = `${userData.gainsPublicitaires || 0} FCFA`;
     }
 
-    /******** Gestion du modal ********/
     closeModal.addEventListener('click', () => {
       articleModal.classList.remove('active');
       clearInterval(countdownTimer);
@@ -1831,97 +1626,58 @@
 
     claimEarningBtn.addEventListener('click', claimArticleEarning);
 
-    /******** Fonctions Firestore ********/
-    async function saveUserData(key = null, value = null) {
+    async function saveTheme(theme) {
       if (!currentUser) return;
       try {
-        const userRef = db.collection('users').doc(currentUser.uid);
-        const dataToSave = key ? { [key]: value } : userData;
-        await userRef.set({ ...dataToSave, lastUpdate: new Date() }, { merge: true });
-        console.log('Données utilisateur enregistrées avec succès.');
-      } catch (error) {
-        console.error("Erreur lors de la sauvegarde des données :", error);
-        showNotification('error', 'Erreur de sauvegarde', 'Impossible de sauvegarder vos données.');
-      }
+        await db.collection('users').doc(currentUser.uid).update({ theme: theme });
+      } catch (e) { console.error('Erreur sauvegarde theme:', e); }
     }
 
-    async function loadUserData() {
-      if (!currentUser) throw new Error("Aucun utilisateur connecté pour charger les données.");
-      const userRef = db.collection('users').doc(currentUser.uid);
-      const doc = await userRef.get();
-      if (doc.exists) {
-          const data = doc.data() || {};
-          userData = {
-              displayName: data.displayName || currentUser.displayName,
-              email: data.email || currentUser.email,
-              phoneNumber: data.phoneNumber || data.phone || "",
-              country: data.country || data.pays || "",
-              theme: data.theme || 'light',
-              publiciteGains: data.publiciteGains || 0,
-              articlesReadToday: data.articlesReadToday || 0,
-              earnedToday: data.earnedToday || 0
-          };
+    auth.onAuthStateChanged(async function(user) {
+      if (user) {
+        currentUser = user;
+        
+        try {
+          const doc = await db.collection('users').doc(user.uid).get();
+          userData = doc.exists ? doc.data() : {};
           
-          // Initialiser les statistiques
-          readArticlesToday = userData.articlesReadToday;
-          earnedTodayAmount = userData.earnedToday;
-          totalEarnedAmount = userData.publiciteGains;
-      } else {
-        userData = { 
-          theme: 'light', 
-          publiciteGains: 0, 
-          articlesReadToday: 0, 
-          earnedToday: 0 
-        };
-        await saveUserData();
-      }
-    }
-
-    /******** Initialisation de l'application ********/
-    function updateUserInfoUI(user, dbData = {}) {
-        const displayName = dbData.displayName || user.displayName || user.email.split('@')[0];
-        if (sidebarUsername) sidebarUsername.textContent = displayName;
-        if (userAvatar) userAvatar.textContent = displayName.charAt(0).toUpperCase();
-    }
-
-    function applyTheme() {
-        const isDarkMode = userData.theme === 'dark';
-        document.body.classList.toggle('dark-mode', isDarkMode);
-        themeToggle.innerHTML = isDarkMode 
-            ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
-            : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
-    }
-
-    auth.onAuthStateChanged(async (user) => {
-        if (user) {
-            currentUser = user;
-            try {
-                await loadUserData();
-                updateUserInfoUI(user, userData);
-                applyTheme();
-                
-                loadArticles();
-                updateStatsUI();
-                
-                document.body.classList.add('loaded');
-                loader.classList.add('hidden');
-                
-            } catch (error) {
-                console.error("Erreur critique lors de l'initialisation :", error);
-                showNotification('error', 'Erreur Critique', "Impossible de charger vos données. Veuillez vous reconnecter.");
-                auth.signOut();
-                setTimeout(() => { window.location.href = 'login.html'; }, 3000);
-            }
-        } else {
-            window.location.href = 'login.html';
+          const status = (userData.status || '').toString().toLowerCase().trim();
+          if (status !== 'active') {
+            showNotification('info', 'Action requise', 'Veuillez activer votre compte.');
+            setTimeout(() => window.location.href = 'paiement.html', 2000);
+            return;
+          }
+          
+          const displayName = userData.username || userData.displayName || user.email.split('@')[0];
+          sidebarUsername.textContent = displayName;
+          userAvatar.textContent = displayName.charAt(0).toUpperCase();
+          
+          if (userData.theme === 'dark') {
+            document.body.classList.add('dark-mode');
+          }
+          
+          const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
+          setLanguage(savedLang);
+          
+          updateSaturdayUI();
+          
+          await loadReadArticlesToday();
+          
+          loadArticles();
+          updateStatsUI();
+          
+          loader.classList.add('hidden');
+          document.body.classList.add('loaded');
+          
+        } catch (error) {
+          console.error('Erreur init:', error);
+          showNotification('error', 'Erreur', 'Impossible de charger vos donnees.');
+          auth.signOut();
+          setTimeout(() => window.location.href = 'login.html', 2000);
         }
-    });
-
-    /******** Initialisation au chargement de la page ********/
-    document.addEventListener('DOMContentLoaded', () => {
-      // Charger la langue sauvegardée ou utiliser le français par défaut
-      const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
-      setLanguage(savedLang);
+      } else {
+        window.location.href = 'login.html';
+      }
     });
   </script>
 </body>
