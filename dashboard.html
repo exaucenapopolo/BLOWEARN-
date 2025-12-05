@@ -1578,7 +1578,7 @@
     }
 
     /* -------------------------------------------------------------------------- */
-    /* --- BANNIÈRE DEBUG --- */
+    /* --- BANNIÈRE DEBUG (CACHÉE PAR DÉFAUT) --- */
     /* -------------------------------------------------------------------------- */
     #debugBanner {
       position: fixed;
@@ -1602,7 +1602,7 @@
   </style>
 </head>
 <body>
-  <div id="debugBanner" class="show">🔍 DEBUG: Chargement...</div>
+  <div id="debugBanner">Chargement...</div>
 
   <div class="loader-container" id="loader">
     <div class="loader"></div>
@@ -2119,6 +2119,9 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
 
+/******** URL SERVEUR ********/
+const SERVER_URL = 'https://blowearn-agencies.replit.app';
+
 /******** DOM Elements ********/
 const hamburgerBtn = document.getElementById('hamburgerBtn');
 const sidebar = document.getElementById('sidebar');
@@ -2163,15 +2166,10 @@ let currentLang = 'fr'; // Langue par défaut
 /******** Système de traduction ********/
 const translations = {
   fr: {
-    // Header
     "header.language": "French",
     "header.night_mode": "Mode nuit",
     "header.day_mode": "Mode jour",
-    
-    // Dashboard
     "dashboard.title": "Dashboard >> BLOWEARN AGENCIES",
-    
-    // Menu
     "menu.main": "PRINCIPAL",
     "menu.dashboard": "Tableau de bord",
     "menu.deposit": "Dépôt 💵",
@@ -2195,22 +2193,16 @@ const translations = {
     "menu.visibility_booster": "Booster ma visibilité",
     "menu.canva_pro": "Canva Pro",
     "menu.free_connection": "Connexion gratuite",
-    
-    // Banner
     "banner.welcome": "Bienvenue,",
     "banner.message": "BLOWEARN AGENCIES vous offre plus de 10 outils numériques pour maximiser vos revenus en ligne. Des annonces aux promotions YouTube et trivia, spécialement conçus pour VOUS ! Améliorez votre présence en ligne dès maintenant ! 💰 🚀",
     "banner.app_button": "CLIQUEZ ICI pour obtenir l'application Android",
     "banner.expense": "Dépense:",
     "banner.profit": "Profit:",
-    
-    // Stats
     "stats.balance": "SOLDE",
     "stats.withdrawn": "Retiré",
     "stats.referral_earnings": "Gains de parrainage",
     "stats.agent_bonus": "Bonus d'agent",
     "stats.volume": "Vol:(0%)",
-    
-    // Gains
     "gains.whatsapp": "Gains WhatsApp",
     "gains.trivia": "Gains Trivia",
     "gains.advertising": "Gains publicitaires",
@@ -2218,13 +2210,9 @@ const translations = {
     "gains.youtube": "Gains YouTube",
     "gains.instagram": "Gains Instagram",
     "gains.deposit_balance": "Solde du dépôt",
-    
-    // Referral
     "referral.title": "LIEN DE PARRAINAGE",
     "referral.copy": "Copier",
     "referral.description": "Partagez ce lien avec vos amis et gagnez des commissions sur leurs activités.",
-    
-    // User Info
     "user_info.title": "INFORMATIONS UTILISATEUR",
     "user_info.username": "Nom d'utilisateur",
     "user_info.email": "Email",
@@ -2232,8 +2220,6 @@ const translations = {
     "user_info.country": "Pays",
     "user_info.referrer": "Parrain",
     "user_info.active_referrals": "Parrainage actif",
-    
-    // Calendar
     "calendar.title": "CALENDRIER DES TÂCHES",
     "calendar.day": "JOUR",
     "calendar.task": "TÂCHE",
@@ -2266,28 +2252,21 @@ const translations = {
     "calendar.friday_bonus": "Booster, Visibilité, Canva Pro, Connexion gratuite",
     "calendar.saturday_bonus": "Liste de contact gratuite, Booster, Visibilité, Roue de la fortune",
     "calendar.sunday_bonus": "Connexion gratuite, Roue de la fortune",
-    
-    // Footer
     "footer.terms": "Conditions d'utilisation",
     "footer.privacy": "Politique de confidentialité",
     "footer.support": "Support",
     "footer.rights": "Tous droits réservés.",
-    
-    // Notifications
     "notification.success": "Succès",
     "notification.error": "Erreur",
-    "notification.info": "Information"
+    "notification.info": "Information",
+    "security.inactive_account": "Compte inactif",
+    "security.payment_required": "Votre compte n'est pas encore activé. Veuillez effectuer le paiement pour accéder au tableau de bord."
   },
   en: {
-    // Header
     "header.language": "English",
     "header.night_mode": "Night mode",
     "header.day_mode": "Day mode",
-    
-    // Dashboard
     "dashboard.title": "Dashboard >> BLOWEARN AGENCIES",
-    
-    // Menu
     "menu.main": "MAIN",
     "menu.dashboard": "Dashboard",
     "menu.deposit": "Deposit 💵",
@@ -2311,36 +2290,26 @@ const translations = {
     "menu.visibility_booster": "Boost my visibility",
     "menu.canva_pro": "Canva Pro",
     "menu.free_connection": "Free connection",
-    
-    // Banner
     "banner.welcome": "Welcome,",
     "banner.message": "BLOWEARN AGENCIES offers you more than 10 digital tools to maximize your online income. From ads to YouTube promotions and trivia, specially designed for YOU! Improve your online presence now! 💰 🚀",
     "banner.app_button": "CLICK HERE to get the Android app",
     "banner.expense": "Expense:",
     "banner.profit": "Profit:",
-    
-    // Stats
     "stats.balance": "BALANCE",
     "stats.withdrawn": "Withdrawn",
     "stats.referral_earnings": "Referral earnings",
     "stats.agent_bonus": "Agent bonus",
     "stats.volume": "Vol:(0%)",
-    
-    // Gains
     "gains.whatsapp": "WhatsApp Earnings",
     "gains.trivia": "Trivia Earnings",
     "gains.advertising": "Advertising Earnings",
     "gains.tiktok": "TikTok Earnings",
     "gains.youtube": "YouTube Earnings",
     "gains.instagram": "Instagram Earnings",
-    "gains.deposit_balance": "Deposit balance",
-    
-    // Referral
+    "gains.deposit_balance": "Deposit Balance",
     "referral.title": "REFERRAL LINK",
     "referral.copy": "Copy",
     "referral.description": "Share this link with your friends and earn commissions on their activities.",
-    
-    // User Info
     "user_info.title": "USER INFORMATION",
     "user_info.username": "Username",
     "user_info.email": "Email",
@@ -2348,8 +2317,6 @@ const translations = {
     "user_info.country": "Country",
     "user_info.referrer": "Referrer",
     "user_info.active_referrals": "Active referrals",
-    
-    // Calendar
     "calendar.title": "TASK CALENDAR",
     "calendar.day": "DAY",
     "calendar.task": "TASK",
@@ -2382,17 +2349,15 @@ const translations = {
     "calendar.friday_bonus": "Booster, Visibility, Canva Pro, Free connection",
     "calendar.saturday_bonus": "Free contact list, Booster, Visibility, Fortune Wheel",
     "calendar.sunday_bonus": "Free connection, Fortune Wheel",
-    
-    // Footer
     "footer.terms": "Terms of Use",
     "footer.privacy": "Privacy Policy",
     "footer.support": "Support",
     "footer.rights": "All rights reserved.",
-    
-    // Notifications
     "notification.success": "Success",
     "notification.error": "Error",
-    "notification.info": "Information"
+    "notification.info": "Information",
+    "security.inactive_account": "Inactive account",
+    "security.payment_required": "Your account is not yet activated. Please make the payment to access the dashboard."
   }
 };
 
@@ -2400,11 +2365,8 @@ const translations = {
 function setLanguage(lang) {
   currentLang = lang;
   localStorage.setItem('preferredLanguage', lang);
-  
-  // Mettre à jour le sélecteur de langue
   currentLanguage.textContent = lang === 'fr' ? 'French' : 'English';
   
-  // Mettre à jour les options de langue
   document.querySelectorAll('.language-option').forEach(option => {
     const icon = option.querySelector('i');
     if (option.dataset.lang === lang) {
@@ -2416,7 +2378,6 @@ function setLanguage(lang) {
     }
   });
   
-  // Traduire tous les éléments avec data-i18n
   document.querySelectorAll('[data-i18n]').forEach(element => {
     const key = element.getAttribute('data-i18n');
     if (translations[lang] && translations[lang][key]) {
@@ -2428,7 +2389,6 @@ function setLanguage(lang) {
     }
   });
   
-  // Mettre à jour le texte du thème
   const isDarkMode = document.body.classList.contains('dark-mode');
   if (themeToggle) {
     themeToggle.innerHTML = isDarkMode 
@@ -2485,7 +2445,6 @@ document.addEventListener('click', (event) => {
   }
 });
 
-// Gestion du sélecteur de langue
 if (languageSelector) {
   languageSelector.addEventListener('click', (event) => {
     event.stopPropagation();
@@ -2493,12 +2452,10 @@ if (languageSelector) {
   });
 }
 
-// Fermer le dropdown de langue quand on clique ailleurs
 document.addEventListener('click', () => {
   if (languageDropdown) languageDropdown.classList.remove('active');
 });
 
-// Changer de langue
 document.querySelectorAll('.language-option').forEach(option => {
   option.addEventListener('click', () => {
     const lang = option.dataset.lang;
@@ -2561,16 +2518,12 @@ function createRainEffect(containerId, dropCount = 15) {
   for (let i = 0; i < dropCount; i++) {
     const drop = document.createElement('div');
     drop.className = 'rain-drop';
-    
-    // Position aléatoire
     const left = Math.random() * 100;
-    const animationDuration = 1 + Math.random() * 2; // Entre 1 et 3 secondes
-    const animationDelay = Math.random() * 2; // Délai aléatoire
-    
+    const animationDuration = 1 + Math.random() * 2;
+    const animationDelay = Math.random() * 2;
     drop.style.left = `${left}%`;
     drop.style.animationDuration = `${animationDuration}s`;
     drop.style.animationDelay = `${animationDelay}s`;
-    
     container.appendChild(drop);
   }
 }
@@ -2592,7 +2545,7 @@ function updateCalendar() {
   for (let i=0; i < startDay; i++) { calendarGrid.insertAdjacentHTML('beforeend', '<div class="calendar-date"></div>'); }
   
   const today = new Date();
-  const currentDayOfWeek = today.getDay(); // 0 = dimanche, 1 = lundi, etc.
+  const currentDayOfWeek = today.getDay();
   const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
   const currentDayName = dayNames[currentDayOfWeek];
   
@@ -2600,25 +2553,17 @@ function updateCalendar() {
     const dateCell = document.createElement('div');
     dateCell.className = 'calendar-date';
     dateCell.textContent = day;
-    
-    // Ajouter la classe du jour de la semaine
     const date = new Date(year, month, day);
     const dayOfWeek = date.getDay();
     dateCell.classList.add(dayNames[dayOfWeek]);
-    
-    // Vérifier si c'est aujourd'hui
     if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
       dateCell.classList.add('active');
       dateCell.classList.add('today-task');
     }
-    
-    // Ajouter la classe has-task pour certains jours (simulation)
     if (Math.random() > 0.7) dateCell.classList.add('has-task');
-    
     calendarGrid.appendChild(dateCell);
   }
   
-  // Mettre en évidence la tâche du jour dans le tableau
   const taskRows = document.querySelectorAll('.task-table tr');
   taskRows.forEach(row => {
     row.classList.remove('today-task');
@@ -2673,12 +2618,10 @@ async function saveUserData(key = null, value = null) {
 async function loadUserData() {
   if (!currentUser) throw new Error("Aucun utilisateur connecté.");
   
-  // CORRECTION BOUCLE INFINIE: Chercher par UID puis par email (comme paiement.html)
   let userRef = db.collection('users').doc(currentUser.uid);
   let doc = await userRef.get();
   let foundViaEmail = false;
 
-  // 🔧 FALLBACK: Si pas trouvé par UID, chercher par email
   if (!doc.exists && currentUser.email) {
     console.log('⚠️ Document non trouvé par UID, recherche par email...');
     const emailQuery = await db.collection('users').where('email', '==', currentUser.email).limit(1).get();
@@ -2749,7 +2692,6 @@ function formatNumberSafe(n) { return (typeof n === 'number' && !isNaN(n)) ? n.t
 
 function updateDashboardUI() {
   try {
-    // Mettre à jour les cases dans la bannière
     const depenseBanner = document.querySelector('#banner-depense .banner-stat-value');
     const profitBanner = document.querySelector('#banner-profit .banner-stat-value');
     if(depenseBanner) depenseBanner.textContent = `XAF ${formatNumberSafe(userData.depense)}`;
@@ -2799,7 +2741,7 @@ function updateUserInfoUI(user, dbData = {}) {
   if (welcomeMessage) welcomeMessage.innerHTML = `Nous sommes ravis de vous revoir sur <strong>BLOWEARN AGENCIES</strong>. Profitez de nos 10+ outils numériques pour booster vos revenus en ligne ! 💰 🚀`;
 }
 
-/******** CORRIGÉ: Communication serveur pour créer lien avec username ********/
+/******** Communication serveur pour créer lien avec username ********/
 async function requestReferralLinkFromServer(username) {
   try {
     const resp = await fetch(`${SERVER_URL}/api/create-referral-link`, {
@@ -2817,7 +2759,7 @@ async function requestReferralLinkFromServer(username) {
   }
 }
 
-/******** NOUVEAU: Récupérer les statistiques de parrainage depuis le serveur ********/
+/******** Récupérer les statistiques de parrainage depuis le serveur ********/
 async function fetchReferralStats(username) {
   try {
     const resp = await fetch(`${SERVER_URL}/api/referral-stats/${username}`);
@@ -2830,7 +2772,7 @@ async function fetchReferralStats(username) {
   }
 }
 
-/******** NOUVEAU: Récupérer la liste des filleuls depuis le serveur ********/
+/******** Récupérer la liste des filleuls depuis le serveur ********/
 async function fetchMyReferrals(username) {
   try {
     const resp = await fetch(`${SERVER_URL}/api/my-referrals/${username}`);
@@ -2885,133 +2827,116 @@ async function startStatusWatcherAndTriggerProcessing() {
   }
 }
 
-/******** Auth state change (point d'entrée) CORRIGÉ ********/
+/******** ================================================= ********/
+/******** SÉCURITÉ: Vérification du statut "active" ********/
+/******** ================================================= ********/
+function checkUserStatusAndRedirect(userStatus) {
+  // Normaliser le statut
+  const status = (userStatus || '').toString().toLowerCase().trim();
+  
+  // SEUL le statut "active" permet d'accéder au dashboard
+  if (status !== 'active') {
+    console.log('🚫 SÉCURITÉ: Utilisateur NON ACTIF détecté. Status:', status);
+    
+    // Afficher une notification d'erreur
+    showNotification('error', 
+      translations[currentLang]['security.inactive_account'] || 'Compte inactif', 
+      translations[currentLang]['security.payment_required'] || 'Votre compte n\'est pas encore activé. Veuillez effectuer le paiement pour accéder au tableau de bord.',
+      5000
+    );
+    
+    // Déconnecter l'utilisateur et rediriger vers la page de connexion
+    setTimeout(() => {
+      auth.signOut().then(() => {
+        window.location.href = 'login.html';
+      }).catch((err) => {
+        console.error('Erreur déconnexion:', err);
+        // Forcer la redirection même en cas d'erreur
+        window.location.href = 'login.html';
+      });
+    }, 2000); // Attendre 2 secondes pour que l'utilisateur voie la notification
+    
+    return false; // Utilisateur non autorisé
+  }
+  
+  console.log('✅ SÉCURITÉ: Utilisateur ACTIF. Accès autorisé au dashboard.');
+  return true; // Utilisateur autorisé
+}
+
+/******** Auth state change (point d'entrée) AVEC SÉCURITÉ ********/
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     currentUser = user;
     try {
       await loadUserData();
 
-      // 🔧 DEBUG BANNER: Afficher le statut ET les sponsors détectés (visible sur iPhone)
-      const debugBanner = document.getElementById('debugBanner');
-      const userStatus = (userData.status || userData.statut || '').toString().toLowerCase().trim();
+      // ============================================================
+      // SÉCURITÉ CRITIQUE: Vérifier si l'utilisateur est ACTIF
+      // Si le statut n'est PAS "active", rediriger vers login.html
+      // ============================================================
+      const userStatus = userData.status || userData.statut || '';
+      const isAuthorized = checkUserStatusAndRedirect(userStatus);
       
-      const level1 = userData.level1Sponsor || 'AUCUN';
-      const level2 = userData.level2Sponsor || 'AUCUN';
-      const level3 = userData.level3Sponsor || 'AUCUN';
-      const refProcessed = userData.referralProcessed ? 'OUI' : 'NON';
-      
-      if (debugBanner) {
-        debugBanner.innerHTML = `
-          🔍 DEBUG:<br>
-          Status="${userStatus}" | Email="${userData.email}"<br>
-          L1=${level1} | L2=${level2} | L3=${level3}<br>
-          RefProcessed=${refProcessed}
-        `;
-        debugBanner.style.background = 'linear-gradient(135deg, #4CD964 0%, #2AB32A 100%)';
+      if (!isAuthorized) {
+        // L'utilisateur n'est pas autorisé, arrêter le chargement du dashboard
+        return;
       }
+      // ============================================================
 
-      // ✅ CORRECTION: SUPPRIMER LA VÉRIFICATION DU STATUT QUI REDIRIGE VERS PAIEMENT
-      // L'utilisateur connecté doit pouvoir accéder au dashboard sans condition supplémentaire
-      console.log('✅ Accès autorisé au dashboard: utilisateur connecté');
+      // Charger les préférences sauvegardées
+      const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
+      setLanguage(savedLang);
 
-      if (debugBanner) {
-        // Cacher le banner après 10 secondes
-        setTimeout(() => { debugBanner.classList.remove('show'); }, 10000);
-      }
-
+      // Mettre à jour l'interface
       updateDashboardUI();
-      updateUserInfoUI(user, userData);
-      applyTheme();
+      updateUserInfoUI(currentUser, userData);
 
-      // CORRIGÉ: Générer/obtenir le lien de parrainage via serveur avec username
-      try {
-        if (userData.username) {
-          const serverResp = await requestReferralLinkFromServer(userData.username);
-          if (serverResp && serverResp.referralLink) {
-            referralLink.textContent = serverResp.referralLink;
-            
-            // NOUVEAU: Récupérer les statistiques de parrainage depuis le serveur
-            const stats = await fetchReferralStats(userData.username);
-            if (stats) {
-              console.log('Stats de parrainage du serveur:', stats);
-              userData.solde = stats.solde;
-              userData.activeReferrals = stats.totalReferrals;
-              userData.refEarnings = stats.earnings;
-              userData.parrainage = (stats.earnings.level1 || 0) + (stats.earnings.level2 || 0) + (stats.earnings.level3 || 0);
-              updateDashboardUI();
-              updateUserInfoUI(user, userData);
-            }
-          } else {
-            // Fallback si le serveur ne répond pas
-            referralLink.textContent = `${APP_DOMAIN}/index.html?ref=${encodeURIComponent(userData.username)}`;
-          }
-        } else {
-          // Si pas de username, utiliser displayName/uid en fallback
-          const userReferralId = userData.displayName || currentUser.uid;
-          referralLink.textContent = `${APP_DOMAIN}/index.html?ref=${encodeURIComponent(userReferralId)}`;
+      // Appliquer le thème
+      if (userData.theme === 'dark') {
+        document.body.classList.add('dark-mode');
+        if (themeToggle) {
+          themeToggle.innerHTML = `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>`;
         }
-      } catch (err) {
-        console.warn('Erreur génération lien parrainage', err);
-        const userReferralId = userData.username || userData.displayName || currentUser.uid;
-        referralLink.textContent = `${APP_DOMAIN}/index.html?ref=${encodeURIComponent(userReferralId)}`;
       }
 
-      // Démarrer le watcher qui déclenchera la répartition au moment où 'status' devient 'paid'
+      // Générer le lien de parrainage
+      if (userData.username && referralLink) {
+        const linkData = await requestReferralLinkFromServer(userData.username);
+        if (linkData && linkData.referralLink) {
+          referralLink.textContent = linkData.referralLink;
+        } else {
+          referralLink.textContent = `https://blowearn-agencies.vercel.app/inscription.html?ref=${userData.username}`;
+        }
+      } else if (referralLink) {
+        referralLink.textContent = 'Lien non disponible';
+      }
+
+      // Créer les effets de pluie
+      createRainEffect('rain-solde', 20);
+      createRainEffect('rain-retire', 15);
+      createRainEffect('rain-parrainage', 15);
+      createRainEffect('rain-bonus', 15);
+
+      // Mettre à jour le calendrier
+      updateCalendar();
+
+      // Démarrer le watcher de statut
       startStatusWatcherAndTriggerProcessing();
 
-      document.body.classList.add('loaded');
+      // Cacher le loader
       if (loader) loader.classList.add('hidden');
 
-      showNotification('success', translations[currentLang]['notification.success'], `Content de vous revoir, ${userData.displayName || (user.email && user.email.split('@')[0])}!`);
-    } catch (error) {
-      console.error("Erreur critique lors de l'initialisation :", error);
-      showNotification('error', translations[currentLang]['notification.error'], "Impossible de charger vos données. Veuillez vous reconnecter.");
-      auth.signOut();
-      setTimeout(() => { window.location.href = 'login.html'; }, 3000);
+    } catch (err) {
+      console.error('Erreur chargement dashboard:', err);
+      showNotification('error', translations[currentLang]['notification.error'], 'Erreur lors du chargement de vos données.');
+      if (loader) loader.classList.add('hidden');
     }
   } else {
+    // Pas d'utilisateur connecté -> rediriger vers login
+    console.log('🚫 Aucun utilisateur connecté. Redirection vers login.html');
     window.location.href = 'login.html';
   }
 });
-
-/******** Theme helper ********/
-function applyTheme() {
-  const isDarkMode = userData.theme === 'dark';
-  document.body.classList.toggle('dark-mode', isDarkMode);
-  if (themeToggle) themeToggle.innerHTML = isDarkMode 
-      ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
-      : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
-}
-
-/******** Initialisation ********/
-document.addEventListener('DOMContentLoaded', () => {
-  // Charger la langue sauvegardée ou utiliser le français par défaut
-  const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
-  setLanguage(savedLang);
-  
-  updateCalendar();
-  
-  // Créer les effets de pluie pour les cartes du deuxième groupe
-  setTimeout(() => {
-    createRainEffect('rain-solde', 20);
-    createRainEffect('rain-retire', 20);
-    createRainEffect('rain-parrainage', 20);
-    createRainEffect('rain-bonus', 20);
-  }, 500);
-});
-
-/******** Expose quelques utilitaires pour debug dans console ********/
-window._blowearn = {
-  requestReferralLinkFromServer,
-  fetchReferralStats,
-  fetchMyReferrals,
-  setLanguage
-};
-
-/******** Variables globales manquantes ********/
-const APP_DOMAIN = "https://blowearn-agencies.vercel.app";
-const SERVER_URL = "https://mulaflowr-exaucenapopolo2.replit.app";
 </script>
 </body>
 </html>
