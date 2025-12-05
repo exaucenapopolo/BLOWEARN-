@@ -3,15 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BLOWEARN AGENCIES - Roue de la Fortune</title>
+  <title>MULAFLOWR - Spin Wheel</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   
   <style>
+    /* -------------------------------------------------------------------------- */
+    /* --- VARIABLES CSS COHÉRENTES AVEC LE DASHBOARD --- */
+    /* -------------------------------------------------------------------------- */
     :root {
       --color-primary: #4A90E2;
       --color-secondary: #FFC107;
@@ -23,8 +27,17 @@
       --success-color: #4CD964;
       --warning-color: #FF9500;
       --danger-color: #FF3B30;
+      --purple-color: #AF52DE;
+      --teal-color: #5AC8FA;
+      --orange-color: #FF9500;
+      --pink-color: #FF2D55;
       --shadow: 0 15px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.8);
       --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      --badge-active: #4CD964;
+      --badge-pending: #FF9500;
+      --badge-inactive: #FF3B30;
+      --wheel-color: #FF9500;
+      --wheel-light: #FFE0B2;
     }
 
     .dark-mode {
@@ -38,14 +51,27 @@
       --success-color: #a3be8c;
       --warning-color: #ebcb8b;
       --danger-color: #bf616a;
+      --purple-color: #AF52DE;
+      --teal-color: #5AC8FA;
+      --orange-color: #FF9500;
+      --pink-color: #FF2D55;
       --shadow: 0 15px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
+      --badge-active: #2ecc71;
+      --badge-pending: #f1c40f;
+      --badge-inactive: #e74c3c;
+      --wheel-color: #FFB74D;
+      --wheel-light: #5D4037;
     }
 
+    /* -------------------------------------------------------------------------- */
+    /* --- STYLES GÉNÉRAUX COHÉRENTS --- */
+    /* -------------------------------------------------------------------------- */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       font-family: 'Montserrat', sans-serif;
+      transition: var(--transition);
     }
 
     body {
@@ -54,22 +80,43 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      position: relative;
       overflow-x: hidden;
+      visibility: hidden; 
+      opacity: 0;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
     }
 
+    body.loaded {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    /* Effet de bulles animées en arrière-plan */
     body::before {
       content: '';
-      position: fixed;
+      position: absolute;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
       background-image: 
         radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 25%),
-        radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.3) 0%, transparent 25%);
+        radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 90% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 25%);
+      animation: float 20s ease-in-out infinite;
       z-index: -1;
     }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-15px) scale(1.02); }
+    }
 
+    /* -------------------------------------------------------------------------- */
+    /* --- LOADER --- */
+    /* -------------------------------------------------------------------------- */
     .loader-container {
       position: fixed;
       top: 0;
@@ -102,6 +149,9 @@
       to { transform: rotate(1turn); }
     }
 
+    /* -------------------------------------------------------------------------- */
+    /* --- HEADER --- */
+    /* -------------------------------------------------------------------------- */
     .header {
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(15px);
@@ -113,15 +163,29 @@
       position: sticky;
       top: 0;
       z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.7);
     }
 
     .logo {
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       font-weight: 800;
+      color: var(--color-text-dark);
+      display: flex;
+      align-items: center;
+      font-family: 'Poppins', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
       background: linear-gradient(45deg, var(--color-primary) 0%, var(--color-secondary) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      animation: logoGlow 3s ease-in-out infinite alternate;
+    }
+    
+    @keyframes logoGlow {
+      from { filter: drop-shadow(0 0 5px rgba(74, 144, 226, 0.5)); }
+      to { filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.7)); }
     }
 
     .header-controls {
@@ -130,35 +194,51 @@
       gap: 15px;
     }
 
-    .hamburger-btn {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-around;
-      width: 30px;
-      height: 25px;
-      background: none;
+    .language-selector {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
+      color: white;
       border: none;
+      border-radius: 20px;
+      padding: 8px 15px;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      position: relative;
     }
 
-    .hamburger-btn .bar {
-      width: 100%;
-      height: 3px;
-      background-color: var(--color-text-dark);
-      transition: transform 0.3s ease, opacity 0.3s ease;
+    .theme-toggle {
+        background-color: transparent;
+        border: none;
+        color: var(--color-text-dark);
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s ease;
     }
 
-    .hamburger-btn.open .bar:nth-child(2) { opacity: 0; }
-    .hamburger-btn.open .bar:nth-child(1) { transform: translateY(11px) rotate(45deg); }
-    .hamburger-btn.open .bar:nth-child(3) { transform: translateY(-11px) rotate(-45deg); }
+    .theme-toggle:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+    .theme-toggle i {
+        font-size: 1.2rem;
+    }
 
     .user-profile {
       display: flex;
       align-items: center;
       gap: 10px;
       cursor: pointer;
+      position: relative;
     }
-
+    
     .user-profile .avatar {
       width: 45px;
       height: 45px;
@@ -168,18 +248,108 @@
       align-items: center;
       justify-content: center;
       color: white;
+      font-size: 1.2rem;
       font-weight: bold;
       border: 2px solid var(--color-secondary);
+      box-shadow: var(--shadow);
     }
 
+    .profile-dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(15px);
+        box-shadow: var(--shadow);
+        border-radius: 18px;
+        padding: 10px;
+        display: none;
+        flex-direction: column;
+        gap: 5px;
+        min-width: 150px;
+        z-index: 200;
+        transform-origin: top right;
+        animation: scaleIn 0.2s ease-out forwards;
+        border: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .profile-dropdown.active {
+        display: flex;
+    }
+    
+    @keyframes scaleIn {
+        from { transform: scale(0.9); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+
+    .profile-dropdown .theme-toggle {
+        width: 100%;
+        border-radius: 8px;
+        background-color: rgba(0, 0, 0, 0.05);
+        color: var(--text-color);
+        justify-content: flex-start;
+        padding: 10px;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+        text-align: left;
+        gap: 10px;
+    }
+    .profile-dropdown .theme-toggle:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+    
+    .profile-dropdown .theme-toggle span {
+        flex-grow: 1;
+        text-align: left;
+    }
+
+    /* Styles du bouton hamburger animé */
+    .hamburger-btn {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        width: 30px;
+        height: 25px;
+        padding: 0;
+    }
+    
+    .hamburger-btn .bar {
+        width: 100%;
+        height: 3px;
+        background-color: var(--color-text-dark);
+        transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    
+    .hamburger-btn.open .bar:nth-child(2) {
+        opacity: 0;
+    }
+    
+    .hamburger-btn.open .bar:nth-child(1) {
+        transform: translateY(11px) rotate(45deg);
+    }
+    
+    .hamburger-btn.open .bar:nth-child(3) {
+        transform: translateY(-11px) rotate(-45deg);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- STRUCTURE PRINCIPALE --- */
+    /* -------------------------------------------------------------------------- */
     .main-container {
       display: flex;
       flex: 1;
     }
 
+    /* -------------------------------------------------------------------------- */
+    /* --- SIDEBAR (MENU) AMÉLIORÉ --- */
+    /* -------------------------------------------------------------------------- */
     .sidebar {
       width: 280px;
-      background: rgba(255, 255, 255, 0.98);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.95) 100%);
       backdrop-filter: blur(15px);
       border-right: 1px solid rgba(255,255,255,0.7);
       box-shadow: var(--shadow);
@@ -188,20 +358,12 @@
       top: 80px;
       padding: 25px 0;
       overflow-y: auto;
+      transition: transform 0.4s ease-in-out; 
     }
-
-    .overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 90;
+    
+    .sidebar.open {
+        transform: translateX(0);
     }
-
-    .overlay.active { display: block; }
 
     .welcome-section {
       padding: 0 25px 25px;
@@ -212,13 +374,16 @@
     .welcome-text {
       color: var(--color-text-dark);
       font-size: 0.9rem;
+      margin-bottom: 5px;
       font-weight: 500;
+      font-family: 'Quicksand', sans-serif;
     }
 
     .username {
       font-weight: 600;
       font-size: 1.2rem;
       color: var(--color-primary);
+      font-family: 'Quicksand', sans-serif;
     }
 
     .menu-category {
@@ -228,6 +393,8 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       font-weight: 600;
+      font-family: 'Quicksand', sans-serif;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
 
     .menu-item {
@@ -239,411 +406,839 @@
       text-decoration: none;
       font-weight: 500;
       border-left: 4px solid transparent;
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 0.5s ease-out;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .menu-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
+      transition: all 0.5s ease;
+    }
+    .menu-item:hover::before {
+      left: 100%;
     }
 
     .menu-item:hover, .menu-item.active {
-      background: linear-gradient(90deg, rgba(74, 144, 226, 0.15) 0%, transparent 100%);
+      background-color: rgba(0, 0, 0, 0.05);
       border-left-color: var(--color-primary);
       color: var(--color-primary);
     }
 
-    .menu-item i { font-size: 1.1rem; width: 25px; }
+    .menu-item i {
+      width: 20px;
+      text-align: center;
+      font-size: 1.1rem;
+      transition: transform 0.3s ease;
+    }
 
+    .menu-item:hover i {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .menu-badge {
+      position: absolute;
+      right: 25px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+      animation: popIn 0.5s ease-out;
+    }
+    
+    @keyframes popIn {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    
+    .menu-badge.active {
+      background-color: var(--badge-active);
+      color: white;
+    }
+    
+    .menu-badge.inactive {
+      background-color: var(--badge-inactive);
+      color: white;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- CONTENU PRINCIPAL --- */
+    /* -------------------------------------------------------------------------- */
     .content {
       flex: 1;
       padding: 30px;
-      max-width: 900px;
-      margin: 0 auto;
     }
 
     .page-title {
-      font-size: 1.8rem;
-      font-weight: 700;
+      font-size: 1.5rem;
       margin-bottom: 25px;
+      color: var(--color-text-dark);
+      font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 15px;
-      color: var(--color-text-dark);
+      gap: 10px;
+      font-family: 'Poppins', sans-serif;
     }
 
     .page-title i {
-      color: var(--color-secondary);
+      color: var(--color-primary);
     }
 
-    /* Balance Card */
-    .balance-card {
-      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
-      border-radius: 20px;
+    /* -------------------------------------------------------------------------- */
+    /* --- BANNIÈRE SPIN WHEEL AMÉLIORÉE --- */
+    /* -------------------------------------------------------------------------- */
+    .wheel-banner {
+      background: linear-gradient(135deg, var(--wheel-color) 0%, #F57C00 100%);
+      border-radius: 18px;
       padding: 25px;
-      color: white;
-      margin-bottom: 25px;
-      box-shadow: 0 10px 30px rgba(74, 144, 226, 0.3);
-    }
-
-    .balance-label {
-      font-size: 0.9rem;
-      opacity: 0.9;
-      margin-bottom: 5px;
-    }
-
-    .balance-amount {
-      font-size: 2.5rem;
-      font-weight: 800;
-    }
-
-    /* Wheel Section */
-    .wheel-container {
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 25px;
-      padding: 30px;
       box-shadow: var(--shadow);
-      text-align: center;
-      margin-bottom: 25px;
+      margin-bottom: 30px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    .wheel-title {
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .wheel-banner::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transform: rotate(45deg);
+      animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) rotate(45deg); }
+    }
+
+    .banner-title {
       font-size: 1.5rem;
-      font-weight: 700;
+      margin-bottom: 15px;
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+    }
+
+    .banner-text {
+      font-size: 1rem;
+      margin-bottom: 20px;
+      opacity: 0.9;
+      position: relative;
+      z-index: 1;
+      line-height: 1.6;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- SECTIONS SPIN WHEEL AMÉLIORÉES --- */
+    /* -------------------------------------------------------------------------- */
+    .wheel-section {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 18px;
+      padding: 25px;
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.7);
+      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .wheel-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: 18px 18px 0 0;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
       margin-bottom: 20px;
       color: var(--color-text-dark);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .section-title i {
+      color: var(--wheel-color);
+    }
+
+    .section-subtitle {
+      font-size: 1rem;
+      margin-bottom: 20px;
+      color: var(--color-text-dark);
+      opacity: 0.8;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- CONTENEUR DE LA ROUE AMÉLIORÉ --- */
+    /* -------------------------------------------------------------------------- */
+    .wheel-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 30px 0;
+      position: relative;
     }
 
     .wheel-wrapper {
       position: relative;
-      width: 300px;
-      height: 300px;
-      margin: 0 auto 25px;
+      width: 400px;
+      height: 400px;
+      margin-bottom: 30px;
     }
 
-    .wheel {
+    #wheel {
       width: 100%;
       height: 100%;
+      transition: transform 5s cubic-bezier(0.2, 0.8, 0.2, 1);
+      transform-origin: center;
       border-radius: 50%;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3), inset 0 0 30px rgba(0,0,0,0.1);
-      transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+      box-shadow: 
+        0 0 0 8px rgba(255, 255, 255, 0.8),
+        0 0 20px rgba(0, 0, 0, 0.2),
+        inset 0 0 20px rgba(0, 0, 0, 0.1);
     }
-
-    .wheel-segment {
-      position: absolute;
-      width: 50%;
-      height: 50%;
-      top: 0;
-      right: 0;
-      transform-origin: bottom left;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 0.9rem;
-      color: white;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-    }
-
-    .wheel-segment span {
-      transform: rotate(22.5deg) translateY(-30px);
-      display: block;
-    }
-
-    /* 8 segments - chaque segment = 45 degrés */
-    .wheel-segment:nth-child(1) { transform: rotate(0deg) skewY(-45deg); background: linear-gradient(135deg, #e74c3c, #c0392b); }
-    .wheel-segment:nth-child(2) { transform: rotate(45deg) skewY(-45deg); background: linear-gradient(135deg, #e74c3c, #c0392b); }
-    .wheel-segment:nth-child(3) { transform: rotate(90deg) skewY(-45deg); background: linear-gradient(135deg, #e74c3c, #c0392b); }
-    .wheel-segment:nth-child(4) { transform: rotate(135deg) skewY(-45deg); background: linear-gradient(135deg, #e74c3c, #c0392b); }
-    .wheel-segment:nth-child(5) { transform: rotate(180deg) skewY(-45deg); background: linear-gradient(135deg, #27ae60, #2ecc71); }
-    .wheel-segment:nth-child(6) { transform: rotate(225deg) skewY(-45deg); background: linear-gradient(135deg, #f39c12, #f1c40f); }
-    .wheel-segment:nth-child(7) { transform: rotate(270deg) skewY(-45deg); background: linear-gradient(135deg, #3498db, #2980b9); }
-    .wheel-segment:nth-child(8) { transform: rotate(315deg) skewY(-45deg); background: linear-gradient(135deg, #9b59b6, #8e44ad); }
 
     .wheel-pointer {
       position: absolute;
-      top: -15px;
+      top: -25px;
       left: 50%;
       transform: translateX(-50%);
-      width: 0;
-      height: 0;
-      border-left: 20px solid transparent;
-      border-right: 20px solid transparent;
-      border-top: 35px solid var(--color-secondary);
-      filter: drop-shadow(0 3px 5px rgba(0,0,0,0.3));
+      width: 30px;
+      height: 50px;
+      background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%);
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
       z-index: 10;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      border-radius: 2px;
     }
 
-    .wheel-center {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(135deg, var(--color-secondary) 0%, #FFD700 100%);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 1.2rem;
-      color: var(--color-text-dark);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-      z-index: 5;
-    }
-
-    /* Bet Section */
-    .bet-section {
-      background: rgba(255, 255, 255, 0.9);
+    /* -------------------------------------------------------------------------- */
+    /* --- FORMULAIRE DE MISE AMÉLIORÉ --- */
+    /* -------------------------------------------------------------------------- */
+    .bet-form {
+      background: linear-gradient(135deg, rgba(230, 255, 253, 0.9) 0%, rgba(178, 255, 248, 0.9) 100%);
+      backdrop-filter: blur(10px);
       border-radius: 15px;
-      padding: 20px;
+      padding: 25px;
+      margin-bottom: 25px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,0.7);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .form-group {
       margin-bottom: 20px;
     }
 
-    .bet-label {
-      font-weight: 600;
+    .form-label {
+      display: block;
       margin-bottom: 10px;
+      font-weight: 600;
       color: var(--color-text-dark);
+      font-size: 1.1rem;
     }
 
-    .bet-input-group {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .bet-input {
-      flex: 1;
-      padding: 15px;
-      border: 2px solid rgba(74, 144, 226, 0.3);
-      border-radius: 12px;
-      font-size: 1.2rem;
-      font-weight: 600;
-      text-align: center;
-      outline: none;
-    }
-
-    .bet-input:focus {
-      border-color: var(--color-primary);
-    }
-
-    .bet-quick-btn {
-      padding: 12px 20px;
-      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .bet-quick-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
-    }
-
-    .spin-btn {
+    .form-input {
       width: 100%;
-      padding: 18px;
-      background: linear-gradient(135deg, var(--success-color) 0%, #2ecc71 100%);
-      color: white;
-      border: none;
-      border-radius: 15px;
+      max-width: 200px;
+      padding: 15px 20px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      background-color: rgba(255, 255, 255, 0.8);
+      color: var(--color-text-dark);
+      font-size: 1.1rem;
+      text-align: center;
+      margin: 0 auto;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--wheel-color);
+      box-shadow: 0 0 0 3px rgba(255, 149, 0, 0.2), inset 0 2px 5px rgba(0, 0, 0, 0.1);
+      transform: scale(1.05);
+    }
+
+    .form-required {
+      color: var(--danger-color);
+    }
+
+    .form-hint {
+      font-size: 0.85rem;
+      color: var(--color-text-dark);
+      margin-top: 8px;
+      opacity: 0.7;
+    }
+
+    .balance-info {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 240, 240, 0.9) 100%);
+      border-radius: 12px;
+      padding: 15px;
+      margin-top: 15px;
+      text-align: center;
+      font-weight: 600;
+      color: var(--color-text-dark);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .balance-amount {
       font-size: 1.3rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
+      color: var(--color-primary);
+      margin-top: 5px;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- BOUTONS AMÉLIORÉS --- */
+    /* -------------------------------------------------------------------------- */
+    .btn {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      transition: transform 0.2s, box-shadow 0.2s;
-      margin-top: 15px;
+      padding: 15px 25px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
     }
 
-    .spin-btn:hover:not(:disabled) {
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: all 0.5s ease;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--wheel-color) 0%, #F57C00 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(255, 149, 0, 0.4);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%);
+      color: white;
+    }
+
+    .btn-success:hover {
       transform: translateY(-3px);
       box-shadow: 0 10px 25px rgba(76, 217, 100, 0.4);
     }
 
-    .spin-btn:disabled {
-      background: #ccc;
+    .btn-danger {
+      background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(255, 59, 48, 0.4);
+    }
+
+    .btn-large {
+      padding: 18px 30px;
+      font-size: 1.2rem;
+    }
+
+    .btn-full {
+      width: 100%;
+    }
+
+    .btn-spin {
+      animation: pulse 2s infinite;
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
       cursor: not-allowed;
+      transform: none !important;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
     }
 
-    .spin-btn.free-spin {
-      background: linear-gradient(135deg, var(--color-secondary) 0%, #FFD700 100%);
-      color: var(--color-text-dark);
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
     }
 
-    .free-spin-badge {
-      background: linear-gradient(135deg, var(--color-secondary) 0%, #FFD700 100%);
-      color: var(--color-text-dark);
-      padding: 10px 20px;
-      border-radius: 10px;
+    /* -------------------------------------------------------------------------- */
+    /* --- RÉSULTATS AMÉLIORÉS --- */
+    /* -------------------------------------------------------------------------- */
+    .result-container {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+      border-radius: 18px;
+      padding: 25px;
+      color: white;
+      text-align: center;
+      margin-top: 25px;
+      display: none;
+      box-shadow: var(--shadow);
+      animation: bounceIn 0.6s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @keyframes bounceIn {
+      0% { transform: scale(0.3); opacity: 0; }
+      50% { transform: scale(1.05); }
+      70% { transform: scale(0.9); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .result-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 18px 18px 0 0;
+    }
+
+    .result-title {
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+
+    .result-value {
+      font-size: 2.5rem;
       font-weight: 700;
       margin-bottom: 15px;
-      display: inline-block;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     }
 
-    /* History Section */
-    .history-section {
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 20px;
+    .result-message {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    /* Effets spéciaux pour les gains et pertes */
+    .result-win {
+      background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%);
+      animation: winEffect 0.5s ease-out;
+    }
+
+    @keyframes winEffect {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(76, 217, 100, 0.7); }
+      100% { transform: scale(1); }
+    }
+
+    .result-lose {
+      background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%);
+      animation: loseEffect 0.5s ease-out;
+    }
+
+    @keyframes loseEffect {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      50% { transform: translateX(10px); }
+      75% { transform: translateX(-10px); }
+      100% { transform: translateX(0); }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- INFORMATIONS SUR LES GAINS AMÉLIORÉES --- */
+    /* -------------------------------------------------------------------------- */
+    .prizes-info {
+      background: linear-gradient(135deg, rgba(224, 247, 250, 0.9) 0%, rgba(178, 235, 242, 0.9) 100%);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
       padding: 25px;
+      margin-top: 25px;
       box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,0.7);
     }
 
-    .history-title {
-      font-size: 1.3rem;
-      font-weight: 700;
+    .prizes-title {
+      font-size: 1.2rem;
       margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+      text-align: center;
+    }
+
+    .prizes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .prize-item {
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 10px;
+      padding: 15px 10px;
+      text-align: center;
+      font-weight: 600;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .prize-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .prize-positive {
+      background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%);
+      color: white;
+      border-color: #2AB32A;
+    }
+
+    .prize-negative {
+      background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%);
+      color: white;
+      border-color: #c0392b;
+    }
+
+    .prize-neutral {
+      background: linear-gradient(135deg, #9E9E9E 0%, #616161 100%);
+      color: white;
+      border-color: #616161;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- HISTORIQUE DES TOURS AMÉLIORÉ --- */
+    /* -------------------------------------------------------------------------- */
+    .history-section {
+      margin-top: 30px;
     }
 
     .history-table {
       width: 100%;
       border-collapse: collapse;
+      margin-top: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      overflow: hidden;
     }
 
     .history-table th, .history-table td {
-      padding: 12px;
-      text-align: center;
-      border-bottom: 1px solid rgba(0,0,0,0.1);
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     }
 
     .history-table th {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
+      color: white;
       font-weight: 600;
-      color: var(--color-primary);
     }
 
-    .result-positive {
+    .history-table tr {
+      transition: background-color 0.2s ease;
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .history-table tr:hover {
+      background-color: rgba(0, 0, 0, 0.03);
+      transform: scale(1.01);
+    }
+
+    .gain-positive {
       color: var(--success-color);
       font-weight: 700;
     }
 
-    .result-negative {
+    .gain-negative {
       color: var(--danger-color);
       font-weight: 700;
     }
 
-    /* Result Modal */
-    .result-modal {
+    .gain-neutral {
+      color: var(--color-text-dark);
+      font-weight: 700;
+      opacity: 0.7;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- FOOTER AMÉLIORÉ --- */
+    /* -------------------------------------------------------------------------- */
+    .footer {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      padding: 20px 30px;
+      text-align: center;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+      margin-top: auto;
+      border-top: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-link {
+      color: var(--color-primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .footer-link:hover {
+      text-decoration: underline;
+      color: var(--color-secondary);
+    }
+
+    .footer-text {
+      color: var(--color-text-dark);
+      font-size: 0.9rem;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- OVERLAY ET MODAL --- */
+    /* -------------------------------------------------------------------------- */
+    .overlay {
       display: none;
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.7);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 98;
+    }
+    
+    .overlay.active {
+      display: block;
     }
 
-    .result-modal.active {
-      display: flex;
-    }
-
-    .result-content {
-      background: white;
-      border-radius: 25px;
-      padding: 40px;
-      text-align: center;
-      max-width: 400px;
-      animation: popIn 0.5s ease;
-    }
-
-    @keyframes popIn {
-      from { transform: scale(0.5); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-
-    .result-icon {
-      font-size: 4rem;
-      margin-bottom: 20px;
-    }
-
-    .result-icon.win { color: var(--success-color); }
-    .result-icon.lose { color: var(--danger-color); }
-
-    .result-title {
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-
-    .result-amount {
-      font-size: 2.5rem;
-      font-weight: 800;
-      margin-bottom: 20px;
-    }
-
-    .result-btn {
-      padding: 15px 40px;
-      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
+    /* -------------------------------------------------------------------------- */
+    /* --- NOTIFICATIONS AMÉLIORÉES --- */
+    /* -------------------------------------------------------------------------- */
     .notification-container {
       position: fixed;
-      top: 100px;
+      top: 20px;
       right: 20px;
-      z-index: 1000;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
     }
 
     .notification {
-      background: white;
-      border-radius: 12px;
       padding: 15px 20px;
-      margin-bottom: 10px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
       display: flex;
       align-items: center;
-      gap: 12px;
-      animation: slideIn 0.3s ease;
+      gap: 10px;
+      max-width: 350px;
+      animation: slideIn 0.3s ease forwards;
+      position: relative;
+      overflow: hidden;
+      color: white;
+      pointer-events: auto;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .notification.success {
+      background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%);
+    }
+
+    .notification.error {
+      background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%);
+    }
+
+    .notification.info { 
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); 
     }
 
     @keyframes slideIn {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
+      from {
+        transform: translateX(110%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
     }
 
-    .notification.success { border-left: 4px solid var(--success-color); }
-    .notification.error { border-left: 4px solid var(--danger-color); }
-    .notification.info { border-left: 4px solid var(--color-primary); }
+    /* -------------------------------------------------------------------------- */
+    /* --- ANIMATIONS SPÉCIALES POUR LA ROUE --- */
+    /* -------------------------------------------------------------------------- */
+    .wheel-spin-effect {
+      animation: wheelGlow 2s ease-in-out infinite;
+    }
 
-    .footer {
-      background: rgba(255, 255, 255, 0.95);
-      padding: 20px;
-      text-align: center;
-      margin-top: auto;
+    @keyframes wheelGlow {
+      0%, 100% { filter: drop-shadow(0 0 5px rgba(255, 149, 0, 0.5)); }
+      50% { filter: drop-shadow(0 0 20px rgba(255, 149, 0, 0.8)); }
+    }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #f00;
+      opacity: 0;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* --- RESPONSIVE ADJUSTMENTS --- */
+    /* -------------------------------------------------------------------------- */
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 230px;
+      }
+      
+      .wheel-wrapper {
+        width: 350px;
+        height: 350px;
+      }
     }
 
     @media (max-width: 768px) {
-      .sidebar {
-        position: fixed;
-        left: 0;
-        top: 0;
-        height: 100vh;
-        z-index: 100;
-        transform: translateX(-100%);
+        .main-container {
+            flex-direction: column;
+        }
+        
+        .hamburger-btn {
+            display: flex;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 101;
+        }
+
+        .sidebar {
+            width: 75%;
+            max-width: 300px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: -100%;
+            z-index: 99;
+            transition: left 0.4s ease-in-out;
+        }
+        
+        .sidebar.open {
+            left: 0;
+        }
+        
+        .overlay.active {
+            display: block;
+        }
+        
+        .header {
+            padding: 15px;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            margin-left: 50px;
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .wheel-wrapper {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .history-table {
+          display: block;
+          overflow-x: auto;
+        }
+        
+        .prizes-grid {
+          grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        }
+    }
+
+    @media (max-width: 576px) {
+      .footer-links {
+        flex-direction: column;
+        gap: 10px;
       }
-
-      .sidebar.open { transform: translateX(0); }
-
-      .content { padding: 20px; }
-
+      
+      .prizes-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      }
+      
       .wheel-wrapper {
         width: 250px;
         height: 250px;
       }
-
-      .balance-amount { font-size: 2rem; }
+      
+      .bet-form {
+        padding: 20px;
+      }
     }
   </style>
 </head>
@@ -655,15 +1250,31 @@
   <div class="notification-container" id="notificationContainer"></div>
 
   <header class="header">
-    <div class="logo">BLOWEARN</div>
+    <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+    </button>
+    
+    <div class="logo">
+      <span>MULAFLOWR</span>
+    </div>
+    
     <div class="header-controls">
-      <button class="hamburger-btn" id="hamburgerBtn">
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
+      <button class="language-selector" id="languageSelector">
+        <i class="fas fa-globe"></i>
+        <span id="currentLanguage">French</span>
+        <i class="fas fa-chevron-down"></i>
       </button>
+      
       <div class="user-profile" id="userProfile">
-        <div class="avatar" id="userAvatar">U</div>
+          <div class="avatar" id="userAvatar">U</div>
+          <div class="profile-dropdown" id="profileDropdown">
+              <button class="theme-toggle" id="themeToggle">
+                  <i class="fas fa-moon"></i>
+                  <span data-i18n="header.night_mode">Mode nuit</span>
+              </button>
+          </div>
       </div>
     </div>
   </header>
@@ -673,459 +1284,908 @@
   <div class="main-container">
     <aside class="sidebar" id="sidebar">
       <div class="welcome-section">
-        <div class="welcome-text">Roue de la Fortune >> BLOWEARN</div>
+        <div class="welcome-text" data-i18n="wheel.title">Spin Wheel >> MULAFLOWR</div>
         <div class="username" id="sidebarUsername">Utilisateur</div>
       </div>
+      
+      <div class="menu-category" data-i18n="menu.main">PRINCIPAL</div>
+      <a href="dashboard.html" class="menu-item">
+        <i class="fas fa-home"></i>
+        <span data-i18n="menu.dashboard">Tableau de bord</span>
+      </a>
+      
+      <a href="depot.html" class="menu-item">
+        <i class="fas fa-wallet"></i>
+        <span data-i18n="menu.deposit">Dépôt 💵</span>
+      </a>
+      
+      <a href="bonus_bienvenue.html" class="menu-item">
+        <i class="fas fa-gift"></i>
+        <span data-i18n="menu.welcome_bonus">Bonus de bienvenue</span>
+      </a>
+      
+      <div class="menu-category" data-i18n="menu.accounts">COMPTES</div>
+      <a href="retrait.html" class="menu-item">
+        <i class="fas fa-money-bill-wave"></i>
+        <span data-i18n="menu.withdrawal">Retrait</span>
+      </a>
+      
+      <a href="equipe.html" class="menu-item">
+        <i class="fas fa-users"></i>
+        <span data-i18n="menu.team">Équipe</span>
+      </a>
 
-      <div class="menu-category">PRINCIPAL</div>
-      <a href="dashboard.html" class="menu-item"><i class="fas fa-home"></i><span>Tableau de bord</span></a>
-      <a href="depot.html" class="menu-item"><i class="fas fa-wallet"></i><span>Dépôt 💵</span></a>
-      <a href="bonus_bienvenue.html" class="menu-item"><i class="fas fa-gift"></i><span>Bonus de bienvenue</span></a>
+      <div class="menu-category" data-i18n="menu.special">SPÉCIAL</div>
+      <a href="love_earn.html" class="menu-item">
+        <i class="fas fa-heart"></i>
+        <span data-i18n="menu.love_earn">LoveEarn</span>
+      </a>
+      
+      <a href="social_boost.html" class="menu-item">
+        <i class="fas fa-rocket"></i>
+        <span data-i18n="menu.sbh">SBH</span>
+      </a>
+      
+      <a href="challenge_reward.html" class="menu-item">
+        <i class="fas fa-medal"></i>
+        <span data-i18n="menu.challenge">Challenge and Reward</span>
+      </a>
+      
+      <div class="menu-category" data-i18n="menu.products">PRODUIT / TÂCHE</div>
+      <a href="whatsapp_earn.html" class="menu-item">
+        <i class="fab fa-whatsapp"></i>
+        <span data-i18n="menu.whatsapp_earn">Gagner via Whatsapp</span>
+      </a>
+      
+      <a href="movies.html" class="menu-item">
+        <i class="fas fa-film"></i>
+        <span data-i18n="menu.movies">Movies</span>
+      </a>
+      
+      <a href="paris_fixes.html" class="menu-item">
+        <i class="fas fa-chart-line"></i>
+        <span data-i18n="menu.fixed_bets">Paris fixes</span>
+      </a>
+      
+      <a href="gains_publicitaires.html" class="menu-item">
+        <i class="fas fa-ad"></i>
+        <span data-i18n="menu.ad_earnings">Gains publicitaires</span>
+      </a>
+      
+      <a href="spin_wheel.html" class="menu-item active">
+        <i class="fas fa-trophy"></i>
+        <span data-i18n="menu.fortune_wheel">Spin wheel 🏆</span>
+        <span class="menu-badge active">☑</span>
+      </a>
+      
+      <a href="tiktok_earn.html" class="menu-item">
+        <i class="fab fa-tiktok"></i>
+        <span data-i18n="menu.tiktok_earn">TikTok Earn</span>
+      </a>
+      
+      <a href="youtube_earn.html" class="menu-item">
+        <i class="fab fa-youtube"></i>
+        <span data-i18n="menu.youtube_earn">YouTube Earn</span>
+      </a>
+      
+      <a href="instagram_earn.html" class="menu-item">
+        <i class="fab fa-instagram"></i>
+        <span data-i18n="menu.instagram_earn">Instagram Earn</span>
+      </a>
+      
+      <a href="trivia_challenge.html" class="menu-item">
+        <i class="fas fa-brain"></i>
+        <span data-i18n="menu.trivia">TRIVIA challenge</span>
+      </a>
+      
+      <div class="menu-category" data-i18n="menu.bonus">BONUS</div>
+      <a href="liste_contacts.html" class="menu-item">
+        <i class="fas fa-address-book"></i>
+        <span data-i18n="menu.contact_list">Liste de contacts gratuit 🆓</span>
+      </a>
+      
+      <a href="booster_visibilite.html" class="menu-item">
+        <i class="fas fa-rocket"></i>
+        <span data-i18n="menu.visibility_booster">Booster ma visibilité</span>
+      </a>
 
-      <div class="menu-category">COMPTES</div>
-      <a href="retrait.html" class="menu-item"><i class="fas fa-money-bill-wave"></i><span>Retrait</span></a>
-      <a href="equipe.html" class="menu-item"><i class="fas fa-users"></i><span>Équipe</span></a>
-
-      <div class="menu-category">SPÉCIAL</div>
-      <a href="social_boost.html" class="menu-item"><i class="fas fa-rocket"></i><span>SBH</span></a>
-      <a href="challenge_reward.html" class="menu-item"><i class="fas fa-medal"></i><span>Challenge and Reward</span></a>
-
-      <div class="menu-category">PRODUIT / TÂCHE</div>
-      <a href="whatsapp_earn.html" class="menu-item"><i class="fab fa-whatsapp"></i><span>Gagner via Whatsapp</span></a>
-      <a href="gains_publicitaires.html" class="menu-item"><i class="fas fa-ad"></i><span>Gains publicitaires</span></a>
-      <a href="spin_wheel.html" class="menu-item active"><i class="fas fa-trophy"></i><span>Roue de la fortune 🏆</span></a>
-      <a href="tiktok_earn.html" class="menu-item"><i class="fab fa-tiktok"></i><span>TikTok Earn</span></a>
-      <a href="youtube_earn.html" class="menu-item"><i class="fab fa-youtube"></i><span>YouTube Earn</span></a>
-      <a href="instagram_earn.html" class="menu-item"><i class="fab fa-instagram"></i><span>Instagram Earn</span></a>
-      <a href="trivia_challenge.html" class="menu-item"><i class="fas fa-brain"></i><span>TRIVIA challenge</span></a>
-
-      <div class="menu-category">BONUS</div>
-      <a href="liste_contacts.html" class="menu-item"><i class="fas fa-address-book"></i><span>Liste de contacts 🆓</span></a>
-      <a href="booster_visibilite.html" class="menu-item"><i class="fas fa-rocket"></i><span>Booster ma visibilité</span></a>
-      <a href="canva_pro.html" class="menu-item"><i class="fas fa-palette"></i><span>Canva Pro</span></a>
-      <a href="connexion_gratuite.html" class="menu-item"><i class="fas fa-shield-alt"></i><span>Connexion gratuite</span></a>
+      <a href="canva_pro.html" class="menu-item">
+        <i class="fas fa-palette"></i>
+        <span data-i18n="menu.canva_pro">Canva Pro</span>
+      </a>
+      
+      <a href="connexion_gratuite.html" class="menu-item">
+        <i class="fas fa-shield-alt"></i>
+        <span data-i18n="menu.free_connection">Connexion gratuite</span>
+      </a>
     </aside>
 
     <main class="content">
-      <h1 class="page-title"><i class="fas fa-trophy"></i> Roue de la Fortune</h1>
-
-      <!-- Solde -->
-      <div class="balance-card">
-        <div class="balance-label">Votre Solde</div>
-        <div class="balance-amount" id="userBalance">0 FCFA</div>
+      <h1 class="page-title">
+        <i class="fas fa-trophy"></i>
+        <span data-i18n="wheel.title">Spin Wheel - Roue de la Fortune</span>
+      </h1>
+      
+      <div class="wheel-banner">
+        <h2 class="banner-title" data-i18n="wheel.banner_title">Tentez votre chance à la Roue de la Fortune!</h2>
+        <div class="banner-text" data-i18n="wheel.banner_text">
+          Faites tourner la roue et gagnez jusqu'à 250 FCFA! Misez un montant, faites tourner la roue et découvrez votre gain. Attention aux cases négatives qui réduisent votre solde! Mise minimale de 50 FCFA obligatoire.
+        </div>
       </div>
-
-      <!-- Roue -->
-      <div class="wheel-container">
-        <h2 class="wheel-title"><i class="fas fa-star"></i> Tentez votre chance!</h2>
-
-        <!-- Badge tour gratuit -->
-        <div class="free-spin-badge" id="freeSpinBadge" style="display: none;">
-          🎁 TOUR GRATUIT DISPONIBLE! (+10 FCFA garanti)
-        </div>
-
-        <div class="wheel-wrapper">
-          <div class="wheel-pointer"></div>
-          <div class="wheel" id="wheel">
-            <div class="wheel-segment"><span>-200</span></div>
-            <div class="wheel-segment"><span>-150</span></div>
-            <div class="wheel-segment"><span>-100</span></div>
-            <div class="wheel-segment"><span>-50</span></div>
-            <div class="wheel-segment"><span>+10</span></div>
-            <div class="wheel-segment"><span>+15</span></div>
-            <div class="wheel-segment"><span>+50</span></div>
-            <div class="wheel-segment"><span>+75</span></div>
+      
+      <div class="wheel-section">
+        <h2 class="section-title"><i class="fas fa-dice"></i> <span data-i18n="wheel.wheel_title">La Roue de la Fortune</span></h2>
+        <p class="section-subtitle" data-i18n="wheel.wheel_subtitle">Faites tourner la roue et découvrez votre gain!</p>
+        
+        <div class="wheel-container">
+          <div class="wheel-wrapper">
+            <div class="wheel-pointer"></div>
+            <canvas id="wheel" width="400" height="400"></canvas>
           </div>
-          <div class="wheel-center">GO!</div>
-        </div>
-
-        <!-- Mise -->
-        <div class="bet-section" id="betSection">
-          <div class="bet-label">💰 Mise (minimum 50 FCFA):</div>
-          <div class="bet-input-group">
-            <input type="number" class="bet-input" id="betAmount" min="50" step="50" placeholder="50" value="50">
-            <button class="bet-quick-btn" onclick="setBet(50)">50</button>
-            <button class="bet-quick-btn" onclick="setBet(100)">100</button>
-            <button class="bet-quick-btn" onclick="setBet(200)">200</button>
+          
+          <div class="bet-form">
+            <div class="balance-info">
+              <div data-i18n="wheel.your_balance">Votre solde</div>
+              <div class="balance-amount" id="balanceAmount">0 FCFA</div>
+            </div>
+            
+            <div class="form-group">
+              <label for="betAmount" class="form-label" data-i18n="wheel.bet_amount">Montant de votre mise <span class="form-required">*</span></label>
+              <input type="number" id="betAmount" class="form-input" min="50" value="50" required>
+              <p class="form-hint" data-i18n="wheel.min_bet">Mise minimale: 50 FCFA</p>
+            </div>
+            
+            <button id="spinBtn" class="btn btn-primary btn-large btn-spin">
+              <i class="fas fa-redo"></i> <span data-i18n="wheel.spin_button">Tourner la roue</span>
+            </button>
           </div>
-          <p style="font-size: 0.85rem; color: #666; margin-top: 10px;">
-            ⚠️ Misez +100 FCFA pour avoir une chance de gagner jusqu'à 75 FCFA max
-          </p>
+          
+          <div class="result-container" id="resultContainer">
+            <div class="result-title" data-i18n="wheel.result">Résultat</div>
+            <div class="result-value" id="resultValue">0 FCFA</div>
+            <div class="result-message" id="resultMessage"></div>
+          </div>
         </div>
-
-        <!-- Bouton Spin -->
-        <button class="spin-btn" id="spinBtn" onclick="spinWheel()">
-          <i class="fas fa-sync-alt"></i> TOURNER LA ROUE
-        </button>
       </div>
-
-      <!-- Historique -->
-      <div class="history-section">
-        <h3 class="history-title"><i class="fas fa-history"></i> Historique des Tours</h3>
-        <table class="history-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Mise</th>
-              <th>Résultat</th>
-            </tr>
-          </thead>
-          <tbody id="historyBody">
-            <tr><td colspan="3" style="text-align: center; padding: 20px;">Aucun tour pour le moment</td></tr>
-          </tbody>
-        </table>
+      
+      <div class="wheel-section">
+        <h2 class="section-title"><i class="fas fa-info-circle"></i> <span data-i18n="wheel.how_to_play">Comment jouer</span></h2>
+        <p class="section-subtitle" data-i18n="wheel.rules_subtitle">Règles du jeu et informations importantes</p>
+        
+        <div class="prizes-info">
+          <div class="prizes-title" data-i18n="wheel.possible_prizes">Gains possibles sur la roue</div>
+          <div class="prizes-grid">
+            <div class="prize-item prize-positive">+50 FCFA</div>
+            <div class="prize-item prize-positive">+75 FCFA</div>
+            <div class="prize-item prize-positive">+10 FCFA</div>
+            <div class="prize-item prize-positive">+15 FCFA</div>
+            <div class="prize-item prize-positive">+150 FCFA</div>
+            <div class="prize-item prize-positive">+250 FCFA</div>
+            <div class="prize-item prize-negative">-200 FCFA</div>
+            <div class="prize-item prize-negative">-150 FCFA</div>
+            <div class="prize-item prize-negative">-600 FCFA</div>
+            <div class="prize-item prize-neutral">0 FCFA</div>
+          </div>
+        </div>
+        
+        <div style="margin-top: 25px;">
+          <h4 data-i18n="wheel.rules_title">Règles du jeu:</h4>
+          <ul style="margin-left: 20px; margin-bottom: 20px; color: var(--color-text-dark);">
+            <li data-i18n="wheel.rule1">La mise est <strong>obligatoire</strong> pour jouer</li>
+            <li data-i18n="wheel.rule2">La mise minimale est de <strong>50 FCFA</strong></li>
+            <li data-i18n="wheel.rule3">Vous devez avoir suffisamment de solde pour miser</li>
+            <li data-i18n="wheel.rule4">Les gains et pertes s'appliquent directement à votre solde</li>
+            <li data-i18n="wheel.rule5">Les cases positives <strong>ajoutent</strong> des FCFA à votre solde</li>
+            <li data-i18n="wheel.rule6">Les cases négatives <strong>retirent</strong> des FCFA de votre solde</li>
+            <li data-i18n="wheel.rule7">La case 0 FCFA ne modifie pas votre solde</li>
+          </ul>
+          
+          <h4 data-i18n="wheel.examples_title">Exemples de gains:</h4>
+          <ul style="margin-left: 20px; color: var(--color-text-dark);">
+            <li data-i18n="wheel.example1">Mise de 100 FCFA + case +50 FCFA = <strong>+50 FCFA</strong> ajoutés à votre solde</li>
+            <li data-i18n="wheel.example2">Mise de 200 FCFA + case +250 FCFA = <strong>+250 FCFA</strong> ajoutés à votre solde</li>
+            <li data-i18n="wheel.example3">Mise de 50 FCFA + case -200 FCFA = <strong>-200 FCFA</strong> retirés de votre solde</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="wheel-section">
+        <h2 class="section-title"><i class="fas fa-history"></i> <span data-i18n="wheel.history_title">Historique de vos Tours</span></h2>
+        <p class="section-subtitle" data-i18n="wheel.history_subtitle">Suivez l'historique de vos gains et pertes</p>
+        
+        <div class="history-section">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th data-i18n="wheel.history_date">Date</th>
+                <th data-i18n="wheel.history_bet">Mise</th>
+                <th data-i18n="wheel.history_result">Résultat</th>
+                <th data-i18n="wheel.history_gain">Gain/Perte</th>
+              </tr>
+            </thead>
+            <tbody id="spinHistoryBody">
+              <tr>
+                <td colspan="4" style="text-align: center; padding: 20px;" data-i18n="wheel.no_history">
+                  Aucun historique pour le moment
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </main>
   </div>
 
-  <!-- Modal Résultat -->
-  <div class="result-modal" id="resultModal">
-    <div class="result-content">
-      <div class="result-icon" id="resultIcon"><i class="fas fa-coins"></i></div>
-      <h2 class="result-title" id="resultTitle">Résultat</h2>
-      <div class="result-amount" id="resultAmount">+0 FCFA</div>
-      <button class="result-btn" onclick="closeResult()">OK</button>
-    </div>
-  </div>
-
   <footer class="footer">
-    <p>© 2025 BLOWEARN AGENCIES. Tous droits réservés.</p>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Pro Tech Management</a>
+        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Site propulsé par Social Boost Horizon</a>
+      </div>
+      <div class="footer-text">
+        © 2025 MULAFLOWR. <span data-i18n="footer.rights">Tous droits réservés.</span>
+      </div>
+    </div>
   </footer>
 
   <script>
-    // Configuration Firebase
+    /******** CONFIG FIREBASE ********/
     const firebaseConfig = {
-      apiKey: "AIzaSyB5vHi4GwW-p1kT-Nzf-BQF0xfUSwwjVc0",
-      authDomain: "blowearn-8a929.firebaseapp.com",
-      projectId: "blowearn-8a929",
-      storageBucket: "blowearn-8a929.firebasestorage.app",
-      messagingSenderId: "660257380159",
-      appId: "1:660257380159:web:6a8c1ca1cbf0c3e7c5f3fc",
-      measurementId: "G-NXHTCLYNDC"
+      apiKey: "AIzaSyCjGisjgbFc2ZE0BFgdhlUao8bCCeuKP1k",
+      authDomain: "cash-flowr.firebaseapp.com",
+      projectId: "cash-flowr",
+      storageBucket: "cash-flowr.appspot.com",
+      messagingSenderId: "1091928501310",
+      appId: "1:1091928501310:web:4f4de306cde36f378ff56f",
+      measurementId: "G-5SF6VDLZCB"
     };
+
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
 
-    const SERVER_URL = 'https://mulaflowr-exaucenapopolo2.replit.app';
+    /******** DOM Elements ********/
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const themeToggle = document.getElementById('themeToggle');
+    const userProfile = document.getElementById('userProfile');
+    const profileDropdown = document.getElementById('profileDropdown');
+    const languageSelector = document.getElementById('languageSelector');
+    const sidebarUsername = document.getElementById('sidebarUsername');
+    const userAvatar = document.getElementById('userAvatar');
+    const loader = document.getElementById('loader');
+    const wheel = document.getElementById('wheel');
+    const betAmount = document.getElementById('betAmount');
+    const spinBtn = document.getElementById('spinBtn');
+    const resultContainer = document.getElementById('resultContainer');
+    const resultValue = document.getElementById('resultValue');
+    const resultMessage = document.getElementById('resultMessage');
+    const spinHistoryBody = document.getElementById('spinHistoryBody');
+    const balanceAmount = document.getElementById('balanceAmount');
 
+    /******** Variables d'état ********/
     let currentUser = null;
-    let userData = null;
+    let userData = {};
+    let wheelSections = [];
     let isSpinning = false;
-    let hasUsedFreeSpin = false;
-    let userBalance = 0;
+    let ctx = null;
+    let lastRotation = 0;
 
-    // Segments de la roue avec probabilités
-    // Index: 0=-200, 1=-150, 2=-100, 3=-50, 4=+10, 5=+15, 6=+50, 7=+75
-    const segments = [
-      { value: -200, label: '-200' },
-      { value: -150, label: '-150' },
-      { value: -100, label: '-100' },
-      { value: -50, label: '-50' },
-      { value: 10, label: '+10' },
-      { value: 15, label: '+15' },
-      { value: 50, label: '+50' },
-      { value: 75, label: '+75' }
-    ];
+    /******** Système de traduction ********/
+    const translations = {
+      fr: {
+        // Header
+        "header.night_mode": "Mode nuit",
+        "header.day_mode": "Mode jour",
+        
+        // Wheel
+        "wheel.title": "Spin Wheel - Roue de la Fortune",
+        "wheel.banner_title": "Tentez votre chance à la Roue de la Fortune!",
+        "wheel.banner_text": "Faites tourner la roue et gagnez jusqu'à 250 FCFA! Misez un montant, faites tourner la roue et découvrez votre gain. Attention aux cases négatives qui réduisent votre solde! Mise minimale de 50 FCFA obligatoire.",
+        "wheel.wheel_title": "La Roue de la Fortune",
+        "wheel.wheel_subtitle": "Faites tourner la roue et découvrez votre gain!",
+        "wheel.your_balance": "Votre solde",
+        "wheel.bet_amount": "Montant de votre mise",
+        "wheel.min_bet": "Mise minimale: 50 FCFA",
+        "wheel.spin_button": "Tourner la roue",
+        "wheel.result": "Résultat",
+        "wheel.how_to_play": "Comment jouer",
+        "wheel.rules_subtitle": "Règles du jeu et informations importantes",
+        "wheel.possible_prizes": "Gains possibles sur la roue",
+        "wheel.rules_title": "Règles du jeu:",
+        "wheel.rule1": "La mise est <strong>obligatoire</strong> pour jouer",
+        "wheel.rule2": "La mise minimale est de <strong>50 FCFA</strong>",
+        "wheel.rule3": "Vous devez avoir suffisamment de solde pour miser",
+        "wheel.rule4": "Les gains et pertes s'appliquent directement à votre solde",
+        "wheel.rule5": "Les cases positives <strong>ajoutent</strong> des FCFA à votre solde",
+        "wheel.rule6": "Les cases négatives <strong>retirent</strong> des FCFA de votre solde",
+        "wheel.rule7": "La case 0 FCFA ne modifie pas votre solde",
+        "wheel.examples_title": "Exemples de gains:",
+        "wheel.example1": "Mise de 100 FCFA + case +50 FCFA = <strong>+50 FCFA</strong> ajoutés à votre solde",
+        "wheel.example2": "Mise de 200 FCFA + case +250 FCFA = <strong>+250 FCFA</strong> ajoutés à votre solde",
+        "wheel.example3": "Mise de 50 FCFA + case -200 FCFA = <strong>-200 FCFA</strong> retirés de votre solde",
+        "wheel.history_title": "Historique de vos Tours",
+        "wheel.history_subtitle": "Suivez l'historique de vos gains et pertes",
+        "wheel.history_date": "Date",
+        "wheel.history_bet": "Mise",
+        "wheel.history_result": "Résultat",
+        "wheel.history_gain": "Gain/Perte",
+        "wheel.no_history": "Aucun historique pour le moment",
+        
+        // Menu
+        "menu.main": "PRINCIPAL",
+        "menu.dashboard": "Tableau de bord",
+        "menu.deposit": "Dépôt 💵",
+        "menu.welcome_bonus": "Bonus de bienvenue",
+        "menu.accounts": "COMPTES",
+        "menu.withdrawal": "Retrait",
+        "menu.team": "Équipe",
+        "menu.special": "SPÉCIAL",
+        "menu.love_earn": "LoveEarn",
+        "menu.sbh": "SBH",
+        "menu.challenge": "Challenge and Reward",
+        "menu.products": "PRODUIT / TÂCHE",
+        "menu.whatsapp_earn": "Gagner via Whatsapp",
+        "menu.movies": "Movies",
+        "menu.fixed_bets": "Paris fixes",
+        "menu.ad_earnings": "Gains publicitaires",
+        "menu.fortune_wheel": "Spin wheel 🏆",
+        "menu.tiktok_earn": "TikTok Earn",
+        "menu.youtube_earn": "YouTube Earn",
+        "menu.instagram_earn": "Instagram Earn",
+        "menu.trivia": "TRIVIA challenge",
+        "menu.bonus": "BONUS",
+        "menu.contact_list": "Liste de contacts gratuit 🆓",
+        "menu.visibility_booster": "Booster ma visibilité",
+        "menu.canva_pro": "Canva Pro",
+        "menu.free_connection": "Connexion gratuite",
+        
+        // Footer
+        "footer.rights": "Tous droits réservés.",
+        
+        // Notifications
+        "notification.success": "Succès",
+        "notification.error": "Erreur",
+        "notification.info": "Information"
+      },
+      en: {
+        // Header
+        "header.night_mode": "Night mode",
+        "header.day_mode": "Day mode",
+        
+        // Wheel
+        "wheel.title": "Spin Wheel - Fortune Wheel",
+        "wheel.banner_title": "Try your luck at the Fortune Wheel!",
+        "wheel.banner_text": "Spin the wheel and win up to 250 FCFA! Place a bet, spin the wheel and discover your prize. Watch out for negative spaces that reduce your balance! Minimum bet of 50 FCFA required.",
+        "wheel.wheel_title": "The Fortune Wheel",
+        "wheel.wheel_subtitle": "Spin the wheel and discover your prize!",
+        "wheel.your_balance": "Your balance",
+        "wheel.bet_amount": "Your bet amount",
+        "wheel.min_bet": "Minimum bet: 50 FCFA",
+        "wheel.spin_button": "Spin the wheel",
+        "wheel.result": "Result",
+        "wheel.how_to_play": "How to play",
+        "wheel.rules_subtitle": "Game rules and important information",
+        "wheel.possible_prizes": "Possible prizes on the wheel",
+        "wheel.rules_title": "Game rules:",
+        "wheel.rule1": "Bet is <strong>required</strong> to play",
+        "wheel.rule2": "Minimum bet is <strong>50 FCFA</strong>",
+        "wheel.rule3": "You must have sufficient balance to bet",
+        "wheel.rule4": "Wins and losses apply directly to your balance",
+        "wheel.rule5": "Positive spaces <strong>add</strong> FCFA to your balance",
+        "wheel.rule6": "Negative spaces <strong>remove</strong> FCFA from your balance",
+        "wheel.rule7": "The 0 FCFA space does not change your balance",
+        "wheel.examples_title": "Winning examples:",
+        "wheel.example1": "Bet of 100 FCFA + +50 FCFA space = <strong>+50 FCFA</strong> added to your balance",
+        "wheel.example2": "Bet of 200 FCFA + +250 FCFA space = <strong>+250 FCFA</strong> added to your balance",
+        "wheel.example3": "Bet of 50 FCFA + -200 FCFA space = <strong>-200 FCFA</strong> removed from your balance",
+        "wheel.history_title": "Your Spin History",
+        "wheel.history_subtitle": "Track your wins and losses history",
+        "wheel.history_date": "Date",
+        "wheel.history_bet": "Bet",
+        "wheel.history_result": "Result",
+        "wheel.history_gain": "Gain/Loss",
+        "wheel.no_history": "No history yet",
+        
+        // Menu
+        "menu.main": "MAIN",
+        "menu.dashboard": "Dashboard",
+        "menu.deposit": "Deposit 💵",
+        "menu.welcome_bonus": "Welcome Bonus",
+        "menu.accounts": "ACCOUNTS",
+        "menu.withdrawal": "Withdrawal",
+        "menu.team": "Team",
+        "menu.special": "SPECIAL",
+        "menu.love_earn": "LoveEarn",
+        "menu.sbh": "SBH",
+        "menu.challenge": "Challenge and Reward",
+        "menu.products": "PRODUCT / TASK",
+        "menu.whatsapp_earn": "Earn via Whatsapp",
+        "menu.movies": "Movies",
+        "menu.fixed_bets": "Fixed bets",
+        "menu.ad_earnings": "Advertising earnings",
+        "menu.fortune_wheel": "Spin wheel 🏆",
+        "menu.tiktok_earn": "TikTok Earn",
+        "menu.youtube_earn": "YouTube Earn",
+        "menu.instagram_earn": "Instagram Earn",
+        "menu.trivia": "TRIVIA challenge",
+        "menu.bonus": "BONUS",
+        "menu.contact_list": "Free contact list 🆓",
+        "menu.visibility_booster": "Boost my visibility",
+        "menu.canva_pro": "Canva Pro",
+        "menu.free_connection": "Free connection",
+        
+        // Footer
+        "footer.rights": "All rights reserved.",
+        
+        // Notifications
+        "notification.success": "Success",
+        "notification.error": "Error",
+        "notification.info": "Information"
+      }
+    };
 
-    // Probabilités (sur 100) - plus de pertes
-    // -200: 20%, -150: 25%, -100: 25%, -50: 15%, +10: 8%, +15: 4%, +50: 2%, +75: 1%
-    const probabilities = [20, 25, 25, 15, 8, 4, 2, 1];
+    let currentLang = 'fr';
 
-    function setBet(amount) {
-      document.getElementById('betAmount').value = amount;
+    /******** Fonctions de traduction ********/
+    function setLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('preferredLanguage', lang);
+      
+      // Mettre à jour le sélecteur de langue
+      currentLanguage.textContent = lang === 'fr' ? 'French' : 'English';
+      
+      // Traduire tous les éléments avec data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        if (translations[lang] && translations[lang][key]) {
+          if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+            element.placeholder = translations[lang][key];
+          } else {
+            element.innerHTML = translations[lang][key];
+          }
+        }
+      });
+      
+      // Mettre à jour le texte du thème
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      if (themeToggle) {
+        themeToggle.innerHTML = isDarkMode 
+          ? `<i class="fas fa-sun"></i><span>${translations[lang]['header.day_mode']}</span>` 
+          : `<i class="fas fa-moon"></i><span>${translations[lang]['header.night_mode']}</span>`;
+      }
     }
 
-    function showNotification(type, title, message) {
+    /******** UI helpers ********/
+    function showNotification(type, title, message, duration = 4000) {
       const container = document.getElementById('notificationContainer');
-      const notif = document.createElement('div');
-      notif.className = `notification ${type}`;
-      notif.innerHTML = `
-        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'times-circle' : 'info-circle'}"></i>
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle');
+      notification.innerHTML = `
+        <i class="fas ${icon}" style="font-size: 1.5rem;"></i>
         <div>
-          <strong>${title}</strong>
-          <p style="margin: 0; font-size: 0.9rem;">${message}</p>
+          <strong style="display: block; margin-bottom: 5px;">${title}</strong>
+          <span>${message}</span>
         </div>
       `;
-      container.appendChild(notif);
-      setTimeout(() => notif.remove(), 4000);
+      container.appendChild(notification);
+      setTimeout(() => {
+        notification.style.animation = 'slideIn 0.3s ease reverse forwards';
+        setTimeout(() => { if (container.contains(notification)) container.removeChild(notification); }, 300);
+      }, duration);
     }
 
-    function getWeightedRandomSegment() {
-      const total = probabilities.reduce((a, b) => a + b, 0);
-      let random = Math.random() * total;
-      for (let i = 0; i < probabilities.length; i++) {
-        if (random < probabilities[i]) return i;
-        random -= probabilities[i];
-      }
-      return 0; // Par défaut -200
-    }
+    /******** Gestion du menu ********/
+    hamburgerBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('active');
+        hamburgerBtn.classList.toggle('open');
+    });
+    overlay.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+        hamburgerBtn.classList.remove('open');
+    });
 
-    async function spinWheel() {
-      if (isSpinning) return;
-
-      const betInput = document.getElementById('betAmount');
-      const bet = parseInt(betInput.value) || 0;
-      const spinBtn = document.getElementById('spinBtn');
-
-      // Vérifier si c'est le tour gratuit
-      if (!hasUsedFreeSpin) {
-        // Tour gratuit - toujours +10 FCFA
-        isSpinning = true;
-        spinBtn.disabled = true;
-        
-        // Index 4 = +10
-        const targetSegment = 4;
-        const result = 10;
-
-        // Animation de la roue
-        const wheel = document.getElementById('wheel');
-        const segmentAngle = 360 / 8;
-        const rotations = 5 * 360; // 5 tours complets
-        const finalAngle = rotations + (360 - (targetSegment * segmentAngle) - segmentAngle / 2);
-        wheel.style.transform = `rotate(${finalAngle}deg)`;
-
-        // Envoyer au serveur
-        try {
-          const idToken = await currentUser.getIdToken();
-          const response = await fetch(`${SERVER_URL}/api/spin-wheel`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              idToken,
-              bet: 0,
-              isFreeSpin: true,
-              result: result
-            })
-          });
-
-          const data = await response.json();
-          if (data.ok) {
-            userBalance = data.newBalance;
-            document.getElementById('userBalance').textContent = userBalance + ' FCFA';
-            hasUsedFreeSpin = true;
-            
-            // Cacher le badge gratuit et afficher la section mise
-            document.getElementById('freeSpinBadge').style.display = 'none';
-            document.getElementById('betSection').style.display = 'block';
-            spinBtn.classList.remove('free-spin');
-            spinBtn.innerHTML = '<i class="fas fa-sync-alt"></i> TOURNER LA ROUE';
-          }
-        } catch (err) {
-          console.error('Erreur spin:', err);
+    /******** Gestion du profil utilisateur ********/
+    userProfile.addEventListener('click', (event) => {
+        event.stopPropagation();
+        profileDropdown.classList.toggle('active');
+    });
+    document.addEventListener('click', (event) => {
+        if (!userProfile.contains(event.target)) {
+            profileDropdown.classList.remove('active');
         }
+    });
 
-        setTimeout(() => {
-          showResult(result, true);
-          isSpinning = false;
+    /******** Gestion du thème ********/
+    themeToggle.addEventListener('click', (event) => {
+        event.stopPropagation();
+        document.body.classList.toggle('dark-mode');
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        themeToggle.innerHTML = isDarkMode 
+            ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+            : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
+        if(currentUser) saveUserData('theme', isDarkMode ? 'dark' : 'light');
+        
+        // Redessiner la roue avec les nouvelles couleurs
+        drawWheel();
+    });
+
+    /******** Configuration de la roue - 10 TRANCHES ********/
+    function initWheel() {
+      // Définir les 10 sections de la roue avec les récompenses données
+      wheelSections = [
+        { text: "+50", value: 50, color: "#4CD964" },
+        { text: "+75", value: 75, color: "#5AC8FA" },
+        { text: "+10", value: 10, color: "#34C759" },
+        { text: "+15", value: 15, color: "#30D158" },
+        { text: "+150", value: 150, color: "#32D74B" },
+        { text: "+250", value: 250, color: "#64D2FF" },
+        { text: "-200", value: -200, color: "#FF453A" },
+        { text: "-150", value: -150, color: "#FF375F" },
+        { text: "-600", value: -600, color: "#FF3B30" },
+        { text: "0", value: 0, color: "#8E8E93" }
+      ];
+      
+      // Initialiser le contexte canvas
+      ctx = wheel.getContext('2d');
+      
+      // Dessiner la roue initiale
+      drawWheel();
+    }
+
+    function drawWheel() {
+      const centerX = wheel.width / 2;
+      const centerY = wheel.height / 2;
+      const radius = Math.min(centerX, centerY) - 10;
+      const anglePerSection = (2 * Math.PI) / wheelSections.length;
+      
+      // Effacer le canvas
+      ctx.clearRect(0, 0, wheel.width, wheel.height);
+      
+      // Dessiner chaque section
+      for (let i = 0; i < wheelSections.length; i++) {
+        const startAngle = i * anglePerSection;
+        const endAngle = (i + 1) * anglePerSection;
+        
+        // Dessiner la section
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+        ctx.closePath();
+        ctx.fillStyle = wheelSections[i].color;
+        ctx.fill();
+        ctx.stroke();
+        
+        // Dessiner le texte
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(startAngle + anglePerSection / 2);
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#FFF';
+        ctx.font = 'bold 16px Arial';
+        ctx.fillText(wheelSections[i].text, radius - 20, 0);
+        ctx.restore();
+      }
+      
+      // Dessiner le centre de la roue
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 15, 0, 2 * Math.PI);
+      ctx.fillStyle = '#FFF';
+      ctx.fill();
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      
+      // Dessiner un cercle décoratif au centre
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 8, 0, 2 * Math.PI);
+      ctx.fillStyle = '#FF9500';
+      ctx.fill();
+    }
+
+    /******** Mise à jour de l'interface utilisateur ********/
+    function updateBalanceUI() {
+      if (balanceAmount) {
+        balanceAmount.textContent = `${userData.solde || 0} FCFA`;
+      }
+      
+      // Mettre à jour l'état du bouton de spin
+      updateSpinButtonState();
+    }
+
+    function updateSpinButtonState() {
+      const bet = parseInt(betAmount.value) || 0;
+      const hasEnoughBalance = userData.solde >= bet;
+      const isValidBet = bet >= 50;
+      
+      if (spinBtn) {
+        if (!hasEnoughBalance || !isValidBet) {
+          spinBtn.disabled = true;
+          spinBtn.classList.remove('btn-spin');
+        } else {
           spinBtn.disabled = false;
-          loadHistory();
-        }, 4500);
+          spinBtn.classList.add('btn-spin');
+        }
+      }
+    }
 
+    /******** Logique du jeu ********/
+    function spinWheel() {
+      if (isSpinning) return;
+      
+      const bet = parseInt(betAmount.value);
+      
+      // Validation de la mise
+      if (isNaN(bet) || bet < 50) {
+        showNotification('error', translations[currentLang]['notification.error'], 'La mise minimale est de 50 FCFA');
         return;
       }
-
-      // Tour payant
-      if (bet < 50) {
-        showNotification('error', 'Mise insuffisante', 'La mise minimum est de 50 FCFA');
+      
+      // Vérifier si l'utilisateur a assez d'argent
+      if (userData.solde < bet) {
+        showNotification('error', translations[currentLang]['notification.error'], 'Solde insuffisant pour cette mise');
         return;
       }
-
-      if (bet > userBalance) {
-        showNotification('error', 'Solde insuffisant', `Vous avez ${userBalance} FCFA. Faites un dépôt!`);
-        return;
-      }
-
+      
+      // Déduire la mise du solde immédiatement
+      userData.solde -= bet;
+      updateBalanceUI();
+      saveUserData();
+      
       isSpinning = true;
       spinBtn.disabled = true;
-
-      // Déterminer le résultat (pondéré vers les pertes)
-      let targetSegment = getWeightedRandomSegment();
-      let result = segments[targetSegment].value;
-
-      // Si mise < 100, gain max = 15 FCFA
-      if (bet < 100 && result > 15) {
-        // Forcer un résultat inférieur
-        const lowGains = [4, 5]; // +10, +15
-        targetSegment = lowGains[Math.floor(Math.random() * lowGains.length)];
-        result = segments[targetSegment].value;
-      }
-
+      spinBtn.classList.remove('btn-spin');
+      
+      // Ajouter un effet visuel à la roue
+      wheel.classList.add('wheel-spin-effect');
+      
+      // Générer un angle d'arrêt aléatoire (entre 5 et 10 tours + section aléatoire)
+      const sectionIndex = Math.floor(Math.random() * wheelSections.length);
+      const anglePerSection = (2 * Math.PI) / wheelSections.length;
+      const targetAngle = 5 * 2 * Math.PI + sectionIndex * anglePerSection;
+      
       // Animation de la roue
-      const wheel = document.getElementById('wheel');
-      const segmentAngle = 360 / 8;
-      const rotations = 5 * 360;
-      const finalAngle = rotations + (360 - (targetSegment * segmentAngle) - segmentAngle / 2);
-      wheel.style.transform = `rotate(${finalAngle}deg)`;
-
-      // Envoyer au serveur
-      try {
-        const idToken = await currentUser.getIdToken();
-        const response = await fetch(`${SERVER_URL}/api/spin-wheel`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            idToken,
-            bet: bet,
-            isFreeSpin: false,
-            result: result
-          })
-        });
-
-        const data = await response.json();
-        if (data.ok) {
-          userBalance = data.newBalance;
-          document.getElementById('userBalance').textContent = userBalance + ' FCFA';
+      const startTime = Date.now();
+      const duration = 5000; // 5 secondes
+      
+      function animate() {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Fonction d'accélération/décélération plus réaliste
+        const easing = progress < 0.7 
+          ? 2 * progress * progress 
+          : -1 + (4 - 2 * progress) * progress;
+        
+        const rotation = lastRotation + easing * targetAngle;
+        wheel.style.transform = `rotate(${rotation}rad)`;
+        
+        if (progress < 1) {
+          requestAnimationFrame(animate);
         } else {
-          showNotification('error', 'Erreur', data.error || 'Erreur lors du spin');
+          // Animation terminée
+          isSpinning = false;
+          spinBtn.disabled = false;
+          updateSpinButtonState();
+          lastRotation = rotation % (2 * Math.PI);
+          
+          // Retirer l'effet visuel
+          wheel.classList.remove('wheel-spin-effect');
+          
+          // Traiter le résultat
+          processResult(sectionIndex, bet);
         }
-      } catch (err) {
-        console.error('Erreur spin:', err);
-        showNotification('error', 'Erreur', 'Impossible de communiquer avec le serveur');
       }
-
-      setTimeout(() => {
-        showResult(result, false);
-        isSpinning = false;
-        spinBtn.disabled = false;
-        loadHistory();
-      }, 4500);
+      
+      requestAnimationFrame(animate);
     }
 
-    function showResult(amount, isFreeSpin) {
-      const modal = document.getElementById('resultModal');
-      const icon = document.getElementById('resultIcon');
-      const title = document.getElementById('resultTitle');
-      const amountEl = document.getElementById('resultAmount');
-
-      if (isFreeSpin) {
-        icon.innerHTML = '<i class="fas fa-gift"></i>';
-        icon.className = 'result-icon win';
-        title.textContent = '🎁 Tour Gratuit!';
-        amountEl.textContent = '+10 FCFA';
-        amountEl.style.color = 'var(--success-color)';
-      } else if (amount > 0) {
-        icon.innerHTML = '<i class="fas fa-trophy"></i>';
-        icon.className = 'result-icon win';
-        title.textContent = '🎉 Félicitations!';
-        amountEl.textContent = '+' + amount + ' FCFA';
-        amountEl.style.color = 'var(--success-color)';
+    function processResult(sectionIndex, bet) {
+      const section = wheelSections[sectionIndex];
+      let gain = section.value;
+      let message = '';
+      
+      // Appliquer le gain/perte au solde
+      userData.solde += gain;
+      updateBalanceUI();
+      saveUserData();
+      
+      // Déterminer le message et l'apparence du résultat
+      if (gain > 0) {
+        message = `Félicitations! Vous avez gagné ${gain} FCFA.`;
+        resultContainer.className = 'result-container result-win';
+      } else if (gain < 0) {
+        message = `Dommage! Vous avez perdu ${Math.abs(gain)} FCFA.`;
+        resultContainer.className = 'result-container result-lose';
       } else {
-        icon.innerHTML = '<i class="fas fa-times-circle"></i>';
-        icon.className = 'result-icon lose';
-        title.textContent = '😢 Dommage!';
-        amountEl.textContent = amount + ' FCFA';
-        amountEl.style.color = 'var(--danger-color)';
+        message = `Case neutre. Votre solde reste inchangé.`;
+        resultContainer.className = 'result-container';
       }
-
-      modal.classList.add('active');
+      
+      // Afficher le résultat
+      resultValue.textContent = `${gain >= 0 ? '+' : ''}${gain} FCFA`;
+      resultMessage.textContent = message;
+      resultContainer.style.display = 'block';
+      
+      // Enregistrer dans l'historique
+      addToHistory(bet, section.text, gain);
+      
+      // Afficher une notification
+      if (gain > 0) {
+        showNotification('success', translations[currentLang]['notification.success'], `Vous avez gagné ${gain} FCFA!`);
+      } else if (gain < 0) {
+        showNotification('error', translations[currentLang]['notification.error'], `Vous avez perdu ${Math.abs(gain)} FCFA.`);
+      } else {
+        showNotification('info', translations[currentLang]['notification.info'], message);
+      }
     }
 
-    function closeResult() {
-      document.getElementById('resultModal').classList.remove('active');
+    function addToHistory(bet, result, gain) {
+      const historyItem = {
+        date: new Date(),
+        bet: bet,
+        result: result,
+        gain: gain
+      };
+      
+      // Ajouter à l'historique local
+      if (!userData.spinHistory) {
+        userData.spinHistory = [];
+      }
+      userData.spinHistory.unshift(historyItem);
+      
+      // Limiter à 10 entrées
+      if (userData.spinHistory.length > 10) {
+        userData.spinHistory = userData.spinHistory.slice(0, 10);
+      }
+      
+      // Sauvegarder dans Firebase
+      saveUserData();
+      
+      // Mettre à jour l'affichage
+      updateHistoryUI();
     }
 
-    async function loadHistory() {
+    function updateHistoryUI() {
+      if (!userData.spinHistory || userData.spinHistory.length === 0) {
+        spinHistoryBody.innerHTML = `
+          <tr>
+            <td colspan="4" style="text-align: center; padding: 20px;">
+              ${translations[currentLang]['wheel.no_history']}
+            </td>
+          </tr>
+        `;
+        return;
+      }
+      
+      let html = '';
+      userData.spinHistory.forEach(item => {
+        const date = item.date.toDate ? item.date.toDate() : new Date(item.date);
+        const formattedDate = date.toLocaleDateString('fr-FR');
+        const formattedTime = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        
+        let gainClass = 'gain-neutral';
+        if (item.gain > 0) gainClass = 'gain-positive';
+        else if (item.gain < 0) gainClass = 'gain-negative';
+        
+        html += `
+          <tr>
+            <td>${formattedDate} ${formattedTime}</td>
+            <td>${item.bet} FCFA</td>
+            <td>${item.result}</td>
+            <td class="${gainClass}">${item.gain >= 0 ? '+' : ''}${item.gain} FCFA</td>
+          </tr>
+        `;
+      });
+      
+      spinHistoryBody.innerHTML = html;
+    }
+
+    /******** Fonctions Firestore ********/
+    async function saveUserData(key = null, value = null) {
       if (!currentUser) return;
-
       try {
-        const snapshot = await db.collection('users').doc(currentUser.uid)
-          .collection('spinHistory')
-          .orderBy('date', 'desc')
-          .limit(10)
-          .get();
-
-        const tbody = document.getElementById('historyBody');
-
-        if (snapshot.empty) {
-          tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 20px;">Aucun tour pour le moment</td></tr>';
-          return;
-        }
-
-        let html = '';
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          const date = data.date?.toDate ? data.date.toDate() : new Date();
-          const formattedDate = date.toLocaleDateString('fr-FR') + ' ' + date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-          const resultClass = data.result > 0 ? 'result-positive' : 'result-negative';
-          const resultText = data.result > 0 ? '+' + data.result : data.result;
-
-          html += `<tr>
-            <td>${formattedDate}</td>
-            <td>${data.bet || 0} FCFA</td>
-            <td class="${resultClass}">${resultText} FCFA</td>
-          </tr>`;
-        });
-
-        tbody.innerHTML = html;
+        const userRef = db.collection('users').doc(currentUser.uid);
+        const dataToSave = key ? { [key]: value } : userData;
+        await userRef.set({ ...dataToSave, lastUpdate: new Date() }, { merge: true });
+        console.log('Données utilisateur enregistrées avec succès.');
       } catch (error) {
-        console.error('Erreur chargement historique:', error);
+        console.error("Erreur lors de la sauvegarde des données :", error);
+        showNotification('error', translations[currentLang]['notification.error'], 'Impossible de sauvegarder vos données.');
       }
     }
 
-    // Menu hamburger
-    document.getElementById('hamburgerBtn').addEventListener('click', function() {
-      this.classList.toggle('open');
-      document.getElementById('sidebar').classList.toggle('open');
-      document.getElementById('overlay').classList.toggle('active');
-    });
-
-    document.getElementById('overlay').addEventListener('click', function() {
-      document.getElementById('hamburgerBtn').classList.remove('open');
-      document.getElementById('sidebar').classList.remove('open');
-      this.classList.remove('active');
-    });
-
-    // Auth listener
-    auth.onAuthStateChanged(async function(user) {
-      if (user) {
-        currentUser = user;
-
-        try {
-          const doc = await db.collection('users').doc(user.uid).get();
-          userData = doc.exists ? doc.data() : {};
-
-          // Vérifier activation
-          const status = (userData.status || '').toString().toLowerCase().trim();
-          if (status !== 'active') {
-            showNotification('info', 'Action requise', 'Veuillez activer votre compte.');
-            setTimeout(() => window.location.href = 'paiement.html', 2000);
-            return;
-          }
-
-          // Afficher infos utilisateur
-          const displayName = userData.username || user.email.split('@')[0];
-          document.getElementById('sidebarUsername').textContent = displayName;
-          document.getElementById('userAvatar').textContent = displayName.charAt(0).toUpperCase();
-
-          // Récupérer solde
-          userBalance = userData.solde || 0;
-          document.getElementById('userBalance').textContent = userBalance + ' FCFA';
-
-          // Vérifier si tour gratuit utilisé
-          hasUsedFreeSpin = userData.hasUsedFreeSpin || false;
-
-          if (!hasUsedFreeSpin) {
-            // Afficher badge tour gratuit
-            document.getElementById('freeSpinBadge').style.display = 'inline-block';
-            document.getElementById('betSection').style.display = 'none';
-            document.getElementById('spinBtn').classList.add('free-spin');
-            document.getElementById('spinBtn').innerHTML = '<i class="fas fa-gift"></i> TOUR GRATUIT (+10 FCFA)';
-          }
-
-          await loadHistory();
-
-          document.getElementById('loader').classList.add('hidden');
-
-        } catch (error) {
-          console.error('Erreur init:', error);
-          showNotification('error', 'Erreur', 'Impossible de charger vos données.');
-          auth.signOut();
-          setTimeout(() => window.location.href = 'login.html', 2000);
-        }
+    async function loadUserData() {
+      if (!currentUser) throw new Error("Aucun utilisateur connecté pour charger les données.");
+      const userRef = db.collection('users').doc(currentUser.uid);
+      const doc = await userRef.get();
+      if (doc.exists) {
+          const data = doc.data() || {};
+          userData = {
+              displayName: data.displayName || currentUser.displayName,
+              email: data.email || currentUser.email,
+              phoneNumber: data.phoneNumber || data.phone || "",
+              country: data.country || data.pays || "",
+              theme: data.theme || 'light',
+              solde: data.solde || 0,
+              spinHistory: data.spinHistory || []
+          };
       } else {
-        window.location.href = 'login.html';
+        userData = { 
+          theme: 'light', 
+          solde: 0,
+          spinHistory: []
+        };
+        await saveUserData();
       }
+    }
+
+    /******** Initialisation de l'application ********/
+    function updateUserInfoUI(user, dbData = {}) {
+        const displayName = dbData.displayName || user.displayName || user.email.split('@')[0];
+        if (sidebarUsername) sidebarUsername.textContent = displayName;
+        if (userAvatar) userAvatar.textContent = displayName.charAt(0).toUpperCase();
+    }
+
+    function applyTheme() {
+        const isDarkMode = userData.theme === 'dark';
+        document.body.classList.toggle('dark-mode', isDarkMode);
+        themeToggle.innerHTML = isDarkMode 
+            ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+            : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
+    }
+
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            currentUser = user;
+            try {
+                await loadUserData();
+                updateUserInfoUI(user, userData);
+                applyTheme();
+                
+                // Charger la langue sauvegardée
+                const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
+                setLanguage(savedLang);
+                
+                initWheel();
+                updateHistoryUI();
+                updateBalanceUI();
+                
+                // Configurer le bouton de spin
+                spinBtn.addEventListener('click', spinWheel);
+                
+                // Mettre à jour l'état du bouton quand la mise change
+                betAmount.addEventListener('input', updateSpinButtonState);
+                
+                document.body.classList.add('loaded');
+                loader.classList.add('hidden');
+                
+            } catch (error) {
+                console.error("Erreur critique lors de l'initialisation :", error);
+                showNotification('error', translations[currentLang]['notification.error'], "Impossible de charger vos données. Veuillez vous reconnecter.");
+                auth.signOut();
+                setTimeout(() => { window.location.href = 'login.html'; }, 3000);
+            }
+        } else {
+            window.location.href = 'login.html';
+        }
+    });
+
+    /******** Gestion du sélecteur de langue ********/
+    languageSelector.addEventListener('click', () => {
+      // Basculer entre français et anglais
+      const newLang = currentLang === 'fr' ? 'en' : 'fr';
+      setLanguage(newLang);
+    });
+
+    /******** Initialisation au chargement de la page ********/
+    document.addEventListener('DOMContentLoaded', () => {
+      // Rien de spécifique pour le moment
     });
   </script>
 </body>
