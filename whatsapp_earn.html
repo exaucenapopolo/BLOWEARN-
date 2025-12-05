@@ -6,7 +6,6 @@
   <title>BLOWEARN AGENCIES - Gagner via WhatsApp</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -14,17 +13,14 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
   
   <style>
-    /* -------------------------------------------------------------------------- */
-    /* --- VARIABLES CSS COHÉRENTES AVEC LE DASHBOARD --- */
-    /* -------------------------------------------------------------------------- */
     :root {
-      --color-primary: #4A90E2; /* Bleu Énergique */
-      --color-secondary: #FFC107; /* Jaune Vif/Or pour l'accent */
-      --color-text-dark: #2C3E50; /* Texte Sombre (lisible) */
-      --color-text-light: #ECF0F1; /* Texte Clair */
-      --color-bg-light: #FFFFFF; /* Fond de Carte */
-      --color-bg-gradient-1: #6DD5FA; /* Dégradé Fond 1 */
-      --color-bg-gradient-2: #FF7582; /* Dégradé Fond 2 */
+      --color-primary: #4A90E2;
+      --color-secondary: #FFC107;
+      --color-text-dark: #2C3E50;
+      --color-text-light: #ECF0F1;
+      --color-bg-light: #FFFFFF;
+      --color-bg-gradient-1: #6DD5FA;
+      --color-bg-gradient-2: #FF7582;
       --success-color: #4CD964;
       --warning-color: #FF9500;
       --danger-color: #FF3B30;
@@ -32,15 +28,11 @@
       --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- STYLES GÉNÉRAUX COHÉRENTS --- */
-    /* -------------------------------------------------------------------------- */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       font-family: 'Montserrat', sans-serif;
-      transition: var(--transition);
     }
 
     body {
@@ -51,29 +43,16 @@
       flex-direction: column;
       position: relative;
       overflow-x: hidden;
-      visibility: hidden; 
-      opacity: 0;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
     }
 
-    body.loaded {
-      visibility: visible;
-      opacity: 1;
-    }
-
-    /* Effet de bulles animées en arrière-plan */
     body::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      top: 0; left: 0; right: 0; bottom: 0;
       background-image: 
         radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 25%),
         radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
-        radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
-        radial-gradient(circle at 90% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 25%);
+        radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 25%);
       animation: float 20s ease-in-out infinite;
       z-index: -1;
     }
@@ -83,15 +62,10 @@
       50% { transform: translateY(-15px) scale(1.02); }
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- LOADER --- */
-    /* -------------------------------------------------------------------------- */
     .loader-container {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
       display: flex;
       justify-content: center;
@@ -100,27 +74,18 @@
       transition: opacity 0.5s ease, visibility 0.5s ease;
     }
 
-    .loader-container.hidden {
-      opacity: 0;
-      visibility: hidden;
-    }
+    .loader-container.hidden { opacity: 0; visibility: hidden; }
 
     .loader {
-      width: 60px;
-      height: 60px;
+      width: 60px; height: 60px;
       border-radius: 50%;
       background: conic-gradient(#0000 10%, var(--color-primary));
       -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
       animation: spin 1s infinite linear;
     }
 
-    @keyframes spin {
-      to { transform: rotate(1turn); }
-    }
+    @keyframes spin { to { transform: rotate(1turn); } }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- HEADER --- */
-    /* -------------------------------------------------------------------------- */
     .header {
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(15px);
@@ -132,36 +97,21 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      border-bottom: 1px solid rgba(255,255,255,0.7);
     }
 
     .logo {
       font-size: 1.8rem;
       font-weight: 800;
-      color: var(--color-text-dark);
-      display: flex;
-      align-items: center;
       font-family: 'Poppins', sans-serif;
       text-transform: uppercase;
       letter-spacing: 2px;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
       background: linear-gradient(45deg, var(--color-primary) 0%, var(--color-secondary) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      animation: logoGlow 3s ease-in-out infinite alternate;
-    }
-    
-    @keyframes logoGlow {
-      from { filter: drop-shadow(0 0 5px rgba(74, 144, 226, 0.5)); }
-      to { filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.7)); }
     }
 
-    .header-controls {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
+    .header-controls { display: flex; align-items: center; gap: 15px; }
 
     .language-selector {
       background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
@@ -174,8 +124,6 @@
       align-items: center;
       gap: 8px;
       font-weight: 500;
-      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
-      position: relative;
     }
 
     .language-dropdown {
@@ -192,15 +140,10 @@
       gap: 5px;
       min-width: 140px;
       z-index: 200;
-      transform-origin: top right;
-      animation: scaleIn 0.2s ease-out forwards;
-      border: 1px solid rgba(255,255,255,0.7);
       margin-top: 5px;
     }
 
-    .language-dropdown.active {
-      display: flex;
-    }
+    .language-dropdown.active { display: flex; }
 
     .language-option {
       padding: 8px 12px;
@@ -209,18 +152,10 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      transition: background-color 0.2s ease;
     }
 
-    .language-option:hover {
-      background-color: rgba(0, 0, 0, 0.05);
-    }
-
-    .language-option.active {
-      background-color: rgba(74, 144, 226, 0.1);
-      color: var(--color-primary);
-      font-weight: 600;
-    }
+    .language-option:hover { background-color: rgba(0, 0, 0, 0.05); }
+    .language-option.active { background-color: rgba(74, 144, 226, 0.1); color: var(--color-primary); font-weight: 600; }
 
     .theme-toggle {
       background-color: transparent;
@@ -229,21 +164,14 @@
       cursor: pointer;
       padding: 5px;
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
+      width: 40px; height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background-color 0.3s ease;
     }
 
-    .theme-toggle:hover {
-      background-color: rgba(0, 0, 0, 0.05);
-    }
-
-    .theme-toggle i {
-      font-size: 1.2rem;
-    }
+    .theme-toggle:hover { background-color: rgba(0, 0, 0, 0.05); }
+    .theme-toggle i { font-size: 1.2rem; }
 
     .user-profile {
       display: flex;
@@ -254,8 +182,7 @@
     }
     
     .user-profile .avatar {
-      width: 45px;
-      height: 45px;
+      width: 45px; height: 45px;
       border-radius: 50%;
       background-color: var(--color-primary);
       display: flex;
@@ -265,7 +192,6 @@
       font-size: 1.2rem;
       font-weight: bold;
       border: 2px solid var(--color-secondary);
-      box-shadow: var(--shadow);
     }
 
     .profile-dropdown {
@@ -282,89 +208,42 @@
       gap: 5px;
       min-width: 150px;
       z-index: 200;
-      transform-origin: top right;
-      animation: scaleIn 0.2s ease-out forwards;
-      border: 1px solid rgba(255,255,255,0.7);
     }
 
-    .profile-dropdown.active {
-      display: flex;
-    }
-    
-    @keyframes scaleIn {
-      from { transform: scale(0.9); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
+    .profile-dropdown.active { display: flex; }
 
     .profile-dropdown .theme-toggle {
       width: 100%;
       border-radius: 8px;
       background-color: rgba(0, 0, 0, 0.05);
-      color: var(--text-color);
       justify-content: flex-start;
       padding: 10px;
-      transition: background-color 0.2s ease, transform 0.2s ease;
-      text-align: left;
       gap: 10px;
     }
 
-    .profile-dropdown .theme-toggle:hover {
-      background-color: rgba(0, 0, 0, 0.1);
-      transform: translateY(-2px);
-    }
-    
-    .profile-dropdown .theme-toggle span {
-      flex-grow: 1;
-      text-align: left;
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- BOUTON HAMBURGER (DÉPLACÉ À DROITE) --- */
-    /* -------------------------------------------------------------------------- */
     .hamburger-btn {
       display: none;
       background: none;
       border: none;
       cursor: pointer;
-      display: flex;
       flex-direction: column;
       justify-content: space-around;
-      width: 30px;
-      height: 25px;
+      width: 30px; height: 25px;
       padding: 0;
-      order: 2; /* Pour le placer à droite dans le header */
     }
     
     .hamburger-btn .bar {
-      width: 100%;
-      height: 3px;
+      width: 100%; height: 3px;
       background-color: var(--color-text-dark);
       transition: transform 0.3s ease, opacity 0.3s ease;
     }
     
-    .hamburger-btn.open .bar:nth-child(2) {
-      opacity: 0;
-    }
-    
-    .hamburger-btn.open .bar:nth-child(1) {
-      transform: translateY(11px) rotate(45deg);
-    }
-    
-    .hamburger-btn.open .bar:nth-child(3) {
-      transform: translateY(-11px) rotate(-45deg);
-    }
+    .hamburger-btn.open .bar:nth-child(2) { opacity: 0; }
+    .hamburger-btn.open .bar:nth-child(1) { transform: translateY(11px) rotate(45deg); }
+    .hamburger-btn.open .bar:nth-child(3) { transform: translateY(-11px) rotate(-45deg); }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- STRUCTURE PRINCIPALE --- */
-    /* -------------------------------------------------------------------------- */
-    .main-container {
-      display: flex;
-      flex: 1;
-    }
+    .main-container { display: flex; flex: 1; }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- SIDEBAR (MENU) AMÉLIORÉ AVEC NOUVEAU FOND ET POLICE --- */
-    /* -------------------------------------------------------------------------- */
     .sidebar {
       width: 280px;
       background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.95) 100%);
@@ -376,11 +255,6 @@
       top: 80px;
       padding: 25px 0;
       overflow-y: auto;
-      transition: transform 0.4s ease-in-out; 
-    }
-    
-    .sidebar.open {
-      transform: translateX(0);
     }
 
     .welcome-section {
@@ -412,7 +286,6 @@
       letter-spacing: 1px;
       font-weight: 600;
       font-family: 'Quicksand', sans-serif;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
 
     .menu-item {
@@ -425,29 +298,7 @@
       font-weight: 500;
       border-left: 4px solid transparent;
       position: relative;
-      overflow: hidden;
-      animation: fadeIn 0.5s ease-out;
       font-family: 'Quicksand', sans-serif;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateX(-20px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-    
-    .menu-item::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
-      transition: all 0.5s ease;
-    }
-    
-    .menu-item:hover::before {
-      left: 100%;
     }
 
     .menu-item:hover, .menu-item.active {
@@ -456,16 +307,7 @@
       color: var(--color-primary);
     }
 
-    .menu-item i {
-      width: 20px;
-      text-align: center;
-      font-size: 1.1rem;
-      transition: transform 0.3s ease;
-    }
-
-    .menu-item:hover i {
-      transform: scale(1.1) rotate(5deg);
-    }
+    .menu-item i { width: 20px; text-align: center; font-size: 1.1rem; }
 
     .menu-badge {
       position: absolute;
@@ -474,32 +316,11 @@
       font-weight: 700;
       padding: 2px 8px;
       border-radius: 10px;
-      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-      animation: popIn 0.5s ease-out;
     }
     
-    @keyframes popIn {
-      from { transform: scale(0); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-    
-    .menu-badge.active {
-      background-color: var(--success-color);
-      color: white;
-    }
-    
-    .menu-badge.inactive {
-      background-color: var(--danger-color);
-      color: white;
-    }
+    .menu-badge.active { background-color: var(--success-color); color: white; }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- CONTENU PRINCIPAL --- */
-    /* -------------------------------------------------------------------------- */
-    .content {
-      flex: 1;
-      padding: 30px;
-    }
+    .content { flex: 1; padding: 30px; }
 
     .page-title {
       font-size: 1.5rem;
@@ -512,13 +333,32 @@
       font-family: 'Poppins', sans-serif;
     }
 
-    .page-title i {
-      color: var(--color-primary);
+    .page-title i { color: #25D366; }
+
+    .day-alert {
+      background: linear-gradient(135deg, var(--warning-color) 0%, #FF6B00 100%);
+      border-radius: 18px;
+      padding: 25px;
+      margin-bottom: 25px;
+      color: white;
+      text-align: center;
+      box-shadow: var(--shadow);
+      display: none;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- BANNIÈRE WHATSAPP AMÉLIORÉE --- */
-    /* -------------------------------------------------------------------------- */
+    .day-alert.show { display: block; }
+    .day-alert h3 { font-size: 1.3rem; margin-bottom: 10px; }
+
+    .day-countdown {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-top: 15px;
+      background: rgba(255,255,255,0.2);
+      padding: 10px 20px;
+      border-radius: 10px;
+      display: inline-block;
+    }
+
     .whatsapp-banner {
       background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
       border-radius: 18px;
@@ -528,21 +368,13 @@
       color: white;
       position: relative;
       overflow: hidden;
-      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(40px) scale(0.95); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .whatsapp-banner::before {
       content: '';
       position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
       background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
       transform: rotate(45deg);
       animation: shimmer 3s infinite;
@@ -570,9 +402,19 @@
       line-height: 1.6;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- SECTIONS WHATSAPP AMÉLIORÉES --- */
-    /* -------------------------------------------------------------------------- */
+    .reward-box {
+      background: rgba(255,255,255,0.2);
+      border-radius: 12px;
+      padding: 15px 20px;
+      text-align: center;
+      margin-top: 15px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .reward-amount { font-size: 2rem; font-weight: bold; }
+    .reward-label { font-size: 0.9rem; opacity: 0.9; }
+
     .whatsapp-section {
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(15px);
@@ -582,16 +424,12 @@
       margin-bottom: 30px;
       position: relative;
       overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.7);
-      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .whatsapp-section::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
+      top: 0; left: 0; right: 0;
       height: 5px;
       background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
       border-radius: 18px 18px 0 0;
@@ -605,14 +443,10 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      position: relative;
-      z-index: 1;
       font-family: 'Poppins', sans-serif;
     }
 
-    .section-title i {
-      color: #25D366;
-    }
+    .section-title i { color: #25D366; }
 
     .section-subtitle {
       font-size: 1rem;
@@ -621,45 +455,50 @@
       opacity: 0.8;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- COMMISSION DU JOUR AMÉLIORÉE --- */
-    /* -------------------------------------------------------------------------- */
-    .daily-commission {
-      background: linear-gradient(135deg, rgba(37, 211, 102, 0.1) 0%, rgba(18, 140, 126, 0.1) 100%);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 25px;
-      text-align: center;
-      border: 1px solid rgba(37, 211, 102, 0.2);
-    }
-
-    .commission-date {
-      font-size: 0.9rem;
-      color: var(--color-text-dark);
-      margin-bottom: 10px;
-      font-weight: 600;
-    }
-
-    .commission-content {
+    .article-card {
+      background: linear-gradient(135deg, rgba(37, 211, 102, 0.1) 0%, rgba(18, 140, 126, 0.15) 100%);
+      border-radius: 15px;
+      padding: 25px;
       margin-bottom: 20px;
+      border: 2px solid rgba(37, 211, 102, 0.3);
     }
 
-    .commission-text {
-      font-size: 1.1rem;
-      font-weight: 500;
+    .article-badge {
+      background: #25D366;
+      color: white;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: inline-block;
+      margin-bottom: 15px;
+    }
+
+    .article-title {
+      font-size: 1.3rem;
+      font-weight: 600;
       color: var(--color-text-dark);
       margin-bottom: 15px;
-      line-height: 1.5;
-      padding: 15px;
-      background: rgba(255, 255, 255, 0.7);
-      border-radius: 8px;
     }
 
-    .commission-image {
-      max-width: 100%;
-      border-radius: 8px;
+    .article-content {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--color-text-dark);
+      background: rgba(255,255,255,0.7);
+      padding: 20px;
+      border-radius: 10px;
       margin-bottom: 15px;
-      box-shadow: var(--shadow);
+      white-space: pre-line;
+    }
+
+    .article-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #25D366;
+      font-weight: 600;
+      margin-top: 10px;
     }
 
     .commission-actions {
@@ -667,11 +506,9 @@
       justify-content: center;
       gap: 15px;
       flex-wrap: wrap;
+      margin-top: 20px;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- BOUTONS AMÉLIORÉS --- */
-    /* -------------------------------------------------------------------------- */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -718,28 +555,16 @@
       box-shadow: 0 6px 20px rgba(76, 217, 100, 0.4);
     }
 
-    .btn-large {
-      padding: 15px 25px;
-      font-size: 1.1rem;
+    .btn-large { padding: 15px 25px; font-size: 1.1rem; }
+    .btn-full { width: 100%; }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
     }
 
-    .btn-full {
-      width: 100%;
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- FORMULAIRES AMÉLIORÉS --- */
-    /* -------------------------------------------------------------------------- */
-    .whatsapp-form {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 20px;
-      margin-top: 25px;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
+    .form-group { margin-bottom: 20px; }
 
     .form-label {
       display: block;
@@ -756,8 +581,6 @@
       background-color: rgba(255, 255, 255, 0.8);
       color: var(--color-text-dark);
       font-size: 0.95rem;
-      transition: all 0.3s ease;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
     }
 
     .form-input:focus, .form-textarea:focus {
@@ -766,14 +589,8 @@
       box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
     }
 
-    .form-textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-
-    .form-required {
-      color: var(--danger-color);
-    }
+    .form-textarea { min-height: 80px; resize: vertical; }
+    .form-required { color: var(--danger-color); }
 
     .form-hint {
       font-size: 0.85rem;
@@ -782,16 +599,12 @@
       margin-top: 5px;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- UPLOAD D'IMAGE AMÉLIORÉ --- */
-    /* -------------------------------------------------------------------------- */
     .image-upload {
       border: 2px dashed rgba(0, 0, 0, 0.2);
       border-radius: 8px;
       padding: 25px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.3s ease;
       margin-bottom: 15px;
       background: rgba(255, 255, 255, 0.5);
     }
@@ -821,13 +634,6 @@
       box-shadow: var(--shadow);
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- HISTORIQUE DES GAINS AMÉLIORÉ --- */
-    /* -------------------------------------------------------------------------- */
-    .earnings-history {
-      margin-top: 30px;
-    }
-
     .history-table {
       width: 100%;
       border-collapse: collapse;
@@ -835,7 +641,6 @@
       background: rgba(255, 255, 255, 0.8);
       border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     }
 
     .history-table th, .history-table td {
@@ -847,15 +652,6 @@
     .history-table th {
       background-color: rgba(0, 0, 0, 0.05);
       font-weight: 600;
-      color: var(--color-text-dark);
-    }
-
-    .history-table tr {
-      transition: background-color 0.2s ease;
-    }
-
-    .history-table tr:hover {
-      background-color: rgba(0, 0, 0, 0.03);
     }
 
     .status-badge {
@@ -866,24 +662,10 @@
       font-weight: 600;
     }
 
-    .status-pending {
-      background-color: var(--warning-color);
-      color: white;
-    }
+    .status-pending { background-color: var(--warning-color); color: white; }
+    .status-approved { background-color: var(--success-color); color: white; }
+    .status-rejected { background-color: var(--danger-color); color: white; }
 
-    .status-approved {
-      background-color: var(--success-color);
-      color: white;
-    }
-
-    .status-rejected {
-      background-color: var(--danger-color);
-      color: white;
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- FOOTER AMÉLIORÉ --- */
-    /* -------------------------------------------------------------------------- */
     .footer {
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(15px);
@@ -891,13 +673,6 @@
       text-align: center;
       box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
       margin-top: auto;
-      border-top: 1px solid rgba(255,255,255,0.7);
-    }
-
-    .footer-content {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
     }
 
     .footer-links {
@@ -905,46 +680,29 @@
       justify-content: center;
       gap: 20px;
       flex-wrap: wrap;
+      margin-bottom: 10px;
     }
 
     .footer-link {
       color: var(--color-primary);
       text-decoration: none;
       font-weight: 500;
-      transition: color 0.2s ease;
     }
 
-    .footer-link:hover {
-      text-decoration: underline;
-      color: var(--color-secondary);
-    }
+    .footer-link:hover { text-decoration: underline; }
 
-    .footer-text {
-      color: var(--color-text-dark);
-      font-size: 0.9rem;
-    }
+    .footer-text { color: var(--color-text-dark); font-size: 0.9rem; }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- OVERLAY ET MODAL --- */
-    /* -------------------------------------------------------------------------- */
     .overlay {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      top: 0; left: 0; right: 0; bottom: 0;
       background-color: rgba(0, 0, 0, 0.5);
       z-index: 98;
     }
     
-    .overlay.active {
-      display: block;
-    }
+    .overlay.active { display: block; }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- ANIMATION FOR NOTIFICATIONS --- */
-    /* -------------------------------------------------------------------------- */
     .notification-container {
       position: fixed;
       top: 20px;
@@ -953,7 +711,6 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      pointer-events: none;
     }
 
     .notification {
@@ -965,60 +722,22 @@
       gap: 10px;
       max-width: 350px;
       animation: slideIn 0.3s ease forwards;
-      position: relative;
-      overflow: hidden;
       color: white;
-      pointer-events: auto;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.2);
     }
 
-    .notification.success {
-      background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%);
-    }
-
-    .notification.error {
-      background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%);
-    }
-
-    .notification.info { 
-      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); 
-    }
+    .notification.success { background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%); }
+    .notification.error { background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%); }
+    .notification.info { background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); }
 
     @keyframes slideIn {
-      from {
-        transform: translateX(110%);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
+      from { transform: translateX(110%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- MODE NUIT --- */
-    /* -------------------------------------------------------------------------- */
     .dark-mode {
-      --color-primary: #5e81ac;
-      --color-secondary: #d08770;
       --color-text-dark: #eceff4;
-      --color-text-light: #2e3440;
-      --color-bg-light: #3b4252;
       --color-bg-gradient-1: #2e3440;
       --color-bg-gradient-2: #4c566a;
-      --success-color: #a3be8c;
-      --warning-color: #ebcb8b;
-      --danger-color: #bf616a;
-      --shadow: 0 15px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
-    }
-
-    .dark-mode body::before {
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(76, 86, 106, 0.4) 0%, transparent 25%),
-        radial-gradient(circle at 80% 10%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
-        radial-gradient(circle at 40% 80%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
-        radial-gradient(circle at 90% 90%, rgba(76, 86, 106, 0.2) 0%, transparent 25%);
     }
 
     .dark-mode .header,
@@ -1026,15 +745,6 @@
     .dark-mode .whatsapp-section,
     .dark-mode .footer {
       background: rgba(59, 66, 82, 0.95);
-      color: var(--color-text-dark);
-    }
-
-    .dark-mode .whatsapp-banner {
-      background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-    }
-
-    .dark-mode .daily-commission {
-      background: linear-gradient(135deg, rgba(37, 211, 102, 0.2) 0%, rgba(18, 140, 126, 0.2) 100%);
     }
 
     .dark-mode .form-input, 
@@ -1044,41 +754,10 @@
       border-color: rgba(255, 255, 255, 0.1);
     }
 
-    .dark-mode .history-table {
-      background: rgba(59, 66, 82, 0.8);
-    }
-
-    .dark-mode .image-upload {
-      background: rgba(59, 66, 82, 0.5);
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- RESPONSIVE ADJUSTMENTS --- */
-    /* -------------------------------------------------------------------------- */
-    @media (max-width: 992px) {
-      .sidebar {
-        width: 230px;
-      }
-      
-      .commission-actions {
-        flex-direction: column;
-      }
-      
-      .btn-full-mobile {
-        width: 100%;
-      }
-    }
-
     @media (max-width: 768px) {
-      .main-container {
-        flex-direction: column;
-      }
+      .main-container { flex-direction: column; }
       
-      .hamburger-btn {
-        display: flex;
-        position: static;
-        order: 2;
-      }
+      .hamburger-btn { display: flex; }
 
       .sidebar {
         width: 85%;
@@ -1089,41 +768,12 @@
         left: -100%;
         z-index: 99;
         transition: left 0.4s ease-in-out;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.97) 100%);
       }
       
-      .sidebar.open {
-        left: 0;
-      }
-      
-      .overlay.active {
-        display: block;
-      }
-      
-      .header {
-        padding: 15px;
-      }
-      
-      .logo {
-        font-size: 1.5rem;
-        margin-left: 0;
-      }
-      
-      .content {
-        padding: 20px;
-      }
-      
-      .history-table {
-        display: block;
-        overflow-x: auto;
-      }
-    }
-
-    @media (max-width: 576px) {
-      .footer-links {
-        flex-direction: column;
-        gap: 10px;
-      }
+      .sidebar.open { left: 0; }
+      .header { padding: 15px; }
+      .logo { font-size: 1.5rem; }
+      .content { padding: 20px; }
     }
   </style>
 </head>
@@ -1135,43 +785,39 @@
   <div class="notification-container" id="notificationContainer"></div>
 
   <header class="header">
-    <div class="logo">
-      <span>BLOWEARN</span>
-    </div>
+    <div class="logo">BLOWEARN</div>
     
     <div class="header-controls">
-      <div class="language-selector-container">
+      <div class="language-selector-container" style="position: relative;">
         <button class="language-selector" id="languageSelector">
           <i class="fas fa-globe"></i>
-          <span id="currentLanguage">French</span>
+          <span id="currentLanguage">FR</span>
           <i class="fas fa-chevron-down"></i>
         </button>
         <div class="language-dropdown" id="languageDropdown">
           <div class="language-option active" data-lang="fr">
-            <i class="fas fa-check"></i>
-            <span>Français</span>
+            <i class="fas fa-check"></i> Français
           </div>
           <div class="language-option" data-lang="en">
-            <i class="fas fa-check" style="opacity: 0;"></i>
-            <span>English</span>
+            <i class="fas fa-check" style="opacity: 0;"></i> English
           </div>
         </div>
       </div>
       
-      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+      <button class="hamburger-btn" id="hamburgerBtn">
         <div class="bar"></div>
         <div class="bar"></div>
         <div class="bar"></div>
       </button>
       
       <div class="user-profile" id="userProfile">
-          <div class="avatar" id="userAvatar">U</div>
-          <div class="profile-dropdown" id="profileDropdown">
-              <button class="theme-toggle" id="themeToggle">
-                  <i class="fas fa-moon"></i>
-                  <span data-i18n="header.night_mode">Mode nuit</span>
-              </button>
-          </div>
+        <div class="avatar" id="userAvatar">U</div>
+        <div class="profile-dropdown" id="profileDropdown">
+          <button class="theme-toggle" id="themeToggle">
+            <i class="fas fa-moon"></i>
+            <span>Mode nuit</span>
+          </button>
+        </div>
       </div>
     </div>
   </header>
@@ -1181,223 +827,151 @@
   <div class="main-container">
     <aside class="sidebar" id="sidebar">
       <div class="welcome-section">
-        <div class="welcome-text" data-i18n="whatsapp.title">Gagner via WhatsApp >> BLOWEARN AGENCIES</div>
+        <div class="welcome-text">WhatsApp Earn >> BLOWEARN</div>
         <div class="username" id="sidebarUsername">Utilisateur</div>
       </div>
       
-      <div class="menu-category" data-i18n="menu.main">PRINCIPAL</div>
-      <a href="dashboard.html" class="menu-item">
-        <i class="fas fa-home"></i>
-        <span data-i18n="menu.dashboard">Tableau de bord</span>
-      </a>
+      <div class="menu-category">PRINCIPAL</div>
+      <a href="dashboard.html" class="menu-item"><i class="fas fa-home"></i><span>Tableau de bord</span></a>
+      <a href="depot.html" class="menu-item"><i class="fas fa-wallet"></i><span>Dépôt 💵</span></a>
+      <a href="bonus_bienvenue.html" class="menu-item"><i class="fas fa-gift"></i><span>Bonus de bienvenue</span></a>
       
-      <a href="depot.html" class="menu-item">
-        <i class="fas fa-wallet"></i>
-        <span data-i18n="menu.deposit">Dépôt 💵</span>
-      </a>
-      
-      <a href="bonus_bienvenue.html" class="menu-item">
-        <i class="fas fa-gift"></i>
-        <span data-i18n="menu.welcome_bonus">Bonus de bienvenue</span>
-      </a>
-      
-      <div class="menu-category" data-i18n="menu.accounts">COMPTES</div>
-      <a href="retrait.html" class="menu-item">
-        <i class="fas fa-money-bill-wave"></i>
-        <span data-i18n="menu.withdrawal">Retrait</span>
-      </a>
-      
-      <a href="equipe.html" class="menu-item">
-        <i class="fas fa-users"></i>
-        <span data-i18n="menu.team">Équipe</span>
-      </a>
+      <div class="menu-category">COMPTES</div>
+      <a href="retrait.html" class="menu-item"><i class="fas fa-money-bill-wave"></i><span>Retrait</span></a>
+      <a href="equipe.html" class="menu-item"><i class="fas fa-users"></i><span>Équipe</span></a>
 
-      <div class="menu-category" data-i18n="menu.special">SPÉCIAL</div>
-      <a href="love_earn.html" class="menu-item">
-        <i class="fas fa-heart"></i>
-        <span>LoveEarn</span>
-      </a>
+      <div class="menu-category">SPÉCIAL</div>
+      <a href="love_earn.html" class="menu-item"><i class="fas fa-heart"></i><span>LoveEarn</span></a>
+      <a href="social_boost.html" class="menu-item"><i class="fas fa-rocket"></i><span>SBH</span></a>
+      <a href="challenge_reward.html" class="menu-item"><i class="fas fa-medal"></i><span>Challenge and Reward</span></a>
       
-      <a href="social_boost.html" class="menu-item">
-        <i class="fas fa-rocket"></i>
-        <span data-i18n="menu.sbh">SBH</span>
-      </a>
+      <div class="menu-category">PRODUIT / TÂCHE</div>
+      <a href="whatsapp_earn.html" class="menu-item active"><i class="fab fa-whatsapp"></i><span>Gagner via Whatsapp</span><span class="menu-badge active">☑</span></a>
+      <a href="movies.html" class="menu-item"><i class="fas fa-film"></i><span>Movies</span></a>
+      <a href="paris_fixes.html" class="menu-item"><i class="fas fa-chart-line"></i><span>Paris fixes</span></a>
+      <a href="gains_publicitaires.html" class="menu-item"><i class="fas fa-ad"></i><span>Gains publicitaires</span></a>
+      <a href="spin_wheel.html" class="menu-item"><i class="fas fa-trophy"></i><span>Roue de la fortune 🏆</span></a>
+      <a href="tiktok_earn.html" class="menu-item"><i class="fab fa-tiktok"></i><span>TikTok Earn</span></a>
+      <a href="youtube_earn.html" class="menu-item"><i class="fab fa-youtube"></i><span>YouTube Earn</span></a>
+      <a href="instagram_earn.html" class="menu-item"><i class="fab fa-instagram"></i><span>Instagram Earn</span></a>
+      <a href="trivia_challenge.html" class="menu-item"><i class="fas fa-brain"></i><span>TRIVIA challenge</span></a>
       
-      <a href="challenge_reward.html" class="menu-item">
-        <i class="fas fa-medal"></i>
-        <span data-i18n="menu.challenge">Challenge and Reward</span>
-      </a>
-      
-      <div class="menu-category" data-i18n="menu.products">PRODUIT / TÂCHE</div>
-      <a href="whatsapp_earn.html" class="menu-item active">
-        <i class="fab fa-whatsapp"></i>
-        <span data-i18n="menu.whatsapp_earn">Gagner via Whatsapp</span>
-        <span class="menu-badge active">☑</span>
-      </a>
-      
-      <a href="movies.html" class="menu-item">
-        <i class="fas fa-film"></i>
-        <span>Movies</span>
-      </a>
-      
-      <a href="paris_fixes.html" class="menu-item">
-        <i class="fas fa-chart-line"></i>
-        <span>Paris fixes</span>
-      </a>
-      
-      <a href="gains_publicitaires.html" class="menu-item">
-        <i class="fas fa-ad"></i>
-        <span data-i18n="menu.ad_earnings">Gains publicitaires</span>
-      </a>
-      
-      <a href="spin_wheel.html" class="menu-item">
-        <i class="fas fa-trophy"></i>
-        <span data-i18n="menu.fortune_wheel">Roue de la fortune 🏆</span>
-      </a>
-      
-      <a href="tiktok_earn.html" class="menu-item">
-        <i class="fab fa-tiktok"></i>
-        <span data-i18n="menu.tiktok_earn">TikTok Earn</span>
-      </a>
-      
-      <a href="youtube_earn.html" class="menu-item">
-        <i class="fab fa-youtube"></i>
-        <span data-i18n="menu.youtube_earn">YouTube Earn</span>
-      </a>
-      
-      <a href="instagram_earn.html" class="menu-item">
-        <i class="fab fa-instagram"></i>
-        <span data-i18n="menu.instagram_earn">Instagram Earn</span>
-      </a>
-      
-      <a href="trivia_challenge.html" class="menu-item">
-        <i class="fas fa-brain"></i>
-        <span data-i18n="menu.trivia">TRIVIA challenge</span>
-      </a>
-      
-      <div class="menu-category" data-i18n="menu.bonus">BONUS</div>
-      <a href="liste_contacts.html" class="menu-item">
-        <i class="fas fa-address-book"></i>
-        <span data-i18n="menu.contact_list">Liste de contacts gratuit 🆓</span>
-      </a>
-      
-      <a href="booster_visibilite.html" class="menu-item">
-        <i class="fas fa-rocket"></i>
-        <span data-i18n="menu.visibility_booster">Booster ma visibilité</span>
-      </a>
-
-      <a href="canva_pro.html" class="menu-item">
-        <i class="fas fa-palette"></i>
-        <span data-i18n="menu.canva_pro">Canva Pro</span>
-      </a>
-      
-      <a href="connexion_gratuite.html" class="menu-item">
-        <i class="fas fa-shield-alt"></i>
-        <span data-i18n="menu.free_connection">Connexion gratuite</span>
-      </a>
+      <div class="menu-category">BONUS</div>
+      <a href="liste_contacts.html" class="menu-item"><i class="fas fa-address-book"></i><span>Liste de contacts 🆓</span></a>
+      <a href="booster_visibilite.html" class="menu-item"><i class="fas fa-rocket"></i><span>Booster ma visibilité</span></a>
+      <a href="canva_pro.html" class="menu-item"><i class="fas fa-palette"></i><span>Canva Pro</span></a>
+      <a href="connexion_gratuite.html" class="menu-item"><i class="fas fa-shield-alt"></i><span>Connexion gratuite</span></a>
     </aside>
 
     <main class="content">
-      <h1 class="page-title">
-        <i class="fab fa-whatsapp"></i>
-        <span data-i18n="whatsapp.title">Gagner via WhatsApp</span>
-      </h1>
-      
-      <div class="whatsapp-banner">
-        <h2 class="banner-title" data-i18n="whatsapp.banner.title">Gagnez de l'argent en partageant sur WhatsApp!</h2>
-        <div class="banner-text" data-i18n="whatsapp.banner.text">
-          Partagez notre contenu sur WhatsApp et gagnez de l'argent facilement! Pour chaque partage validé, vous recevez 50 FCFA. De plus, vous gagnez 10 FCFA supplémentaires par vue sur votre statut! Plus vos publications sont vues, plus vous gagnez d'argent. Commencez dès maintenant!
-        </div>
+      <h1 class="page-title"><i class="fab fa-whatsapp"></i> Gagner via WhatsApp</h1>
+
+      <div class="day-alert" id="dayAlert">
+        <h3><i class="fas fa-calendar-times"></i> Disponible uniquement le VENDREDI</h3>
+        <p>Cette fonctionnalité est disponible chaque vendredi. Revenez vendredi pour partager du contenu et gagner de l'argent!</p>
+        <div class="day-countdown" id="dayCountdown">Prochain vendredi dans: --</div>
       </div>
       
-      <div class="whatsapp-section">
-        <h2 class="section-title"><i class="fas fa-gift"></i> <span data-i18n="whatsapp.commission.title">Commission du Jour</span></h2>
-        <p class="section-subtitle" data-i18n="whatsapp.commission.subtitle">Partagez ce contenu sur WhatsApp pour gagner de l'argent aujourd'hui!</p>
-        
-        <div class="daily-commission">
-          <div class="commission-date" id="commissionDate"></div>
-          <div class="commission-content">
-            <div class="commission-text" id="commissionText">
-              Chargement de la commission du jour...
-            </div>
-            <img src="" id="commissionImage" class="commission-image" style="display: none;">
+      <div id="mainContent">
+        <div class="whatsapp-banner">
+          <h2 class="banner-title"><i class="fab fa-whatsapp"></i> Gagnez de l'argent chaque VENDREDI!</h2>
+          <div class="banner-text">
+            Partagez notre article sur votre statut WhatsApp et gagnez de l'argent! Vous gagnez <strong>10 FCFA par vue</strong> sur votre statut. Plus vos amis regardent votre statut, plus vous gagnez!
           </div>
+          <div class="reward-box">
+            <div class="reward-amount">10 FCFA</div>
+            <div class="reward-label">par vue sur votre statut</div>
+          </div>
+        </div>
+        
+        <div class="whatsapp-section">
+          <h2 class="section-title"><i class="fas fa-gift"></i> Article de la Semaine</h2>
+          <p class="section-subtitle">Partagez cet article sur votre statut WhatsApp pour gagner!</p>
+          
+          <div class="article-card">
+            <span class="article-badge">📢 Article du Vendredi</span>
+            <h3 class="article-title" id="articleTitle">Chargement...</h3>
+            <div class="article-content" id="articleContent">Chargement de l'article...</div>
+            <div class="article-link">
+              <i class="fas fa-link"></i>
+              <span id="articleLinkText">social-boost-horizon-new-sbh.vercel.app</span>
+            </div>
+          </div>
+
           <div class="commission-actions">
-            <button class="btn btn-whatsapp btn-large" id="shareTextBtn">
-              <i class="fab fa-whatsapp"></i> <span data-i18n="whatsapp.commission.share_text">Partager le texte</span>
+            <button class="btn btn-whatsapp btn-large" id="shareBtn">
+              <i class="fab fa-whatsapp"></i> Partager sur WhatsApp
             </button>
-            <button class="btn btn-primary btn-large" id="downloadImageBtn" style="display: none;">
-              <i class="fas fa-download"></i> <span data-i18n="whatsapp.commission.download_image">Télécharger l'image</span>
+            <button class="btn btn-primary btn-large" id="copyTextBtn">
+              <i class="fas fa-copy"></i> Copier le texte
             </button>
+          </div>
+          
+          <div class="section-subtitle" style="margin-top: 25px;">
+            <strong>Comment ça marche:</strong>
+            <ol style="margin-left: 20px; margin-top: 10px; line-height: 1.8;">
+              <li>Copiez le texte ou partagez directement sur WhatsApp</li>
+              <li>Publiez-le sur votre statut WhatsApp</li>
+              <li>Attendez que vos contacts le regardent</li>
+              <li>Prenez une capture d'écran montrant le nombre de vues</li>
+              <li>Soumettez votre demande ci-dessous</li>
+              <li>Vous recevez <strong>10 FCFA par vue</strong>!</li>
+            </ol>
           </div>
         </div>
         
-        <div class="section-subtitle">
-          <strong data-i18n="whatsapp.commission.how_it_works">Comment ça marche:</strong>
-          <ol style="margin-left: 20px; margin-top: 10px;">
-            <li data-i18n="whatsapp.commission.step1">Partagez le contenu ci-dessus sur WhatsApp (statut ou groupe)</li>
-            <li data-i18n="whatsapp.commission.step2">Prenez une capture d'écran de votre partage</li>
-            <li data-i18n="whatsapp.commission.step3">Renseignez le nombre de vues que votre publication a obtenues</li>
-            <li data-i18n="whatsapp.commission.step4">Soumettez votre demande de gain</li>
-            <li data-i18n="whatsapp.commission.step5">Nous vérifions et validons votre demande sous 24h</li>
-            <li data-i18n="whatsapp.commission.step6">Vous recevez 50 FCFA + 10 FCFA par vue!</li>
-          </ol>
-        </div>
-      </div>
-      
-      <div class="whatsapp-section">
-        <h2 class="section-title"><i class="fas fa-money-bill-wave"></i> <span data-i18n="whatsapp.submit.title">Soumettre une Demande de Gain</span></h2>
-        <p class="section-subtitle" data-i18n="whatsapp.submit.subtitle">Remplissez ce formulaire pour recevoir votre argent après avoir partagé sur WhatsApp</p>
-        
-        <form id="earningsForm" class="whatsapp-form">
-          <div class="form-group">
-            <label for="screenshot" class="form-label" data-i18n="whatsapp.submit.screenshot">Capture d'écran de votre partage <span class="form-required">*</span></label>
-            <div class="image-upload" id="imageUpload">
-              <i class="fas fa-cloud-upload-alt"></i>
-              <p data-i18n="whatsapp.submit.upload_text">Cliquez pour télécharger votre capture d'écran</p>
-              <span data-i18n="whatsapp.submit.upload_formats">Formats acceptés: JPG, PNG (Max 5MB)</span>
-              <input type="file" id="screenshot" accept="image/*" style="display: none;">
+        <div class="whatsapp-section">
+          <h2 class="section-title"><i class="fas fa-money-bill-wave"></i> Soumettre une Demande de Gain</h2>
+          <p class="section-subtitle">Remplissez ce formulaire après avoir partagé sur WhatsApp</p>
+          
+          <form id="earningsForm">
+            <div class="form-group">
+              <label class="form-label">Capture d'écran de votre statut <span class="form-required">*</span></label>
+              <div class="image-upload" id="imageUpload">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Cliquez pour télécharger votre capture d'écran</p>
+                <span>Formats acceptés: JPG, PNG (Max 5MB)</span>
+                <input type="file" id="screenshotInput" accept="image/*" style="display: none;">
+              </div>
+              <img id="imagePreview" class="image-preview">
             </div>
-            <img id="imagePreview" class="image-preview">
-          </div>
-          
-          <div class="form-group">
-            <label for="viewsCount" class="form-label" data-i18n="whatsapp.submit.views">Nombre de vues sur votre statut <span class="form-required">*</span></label>
-            <input type="number" id="viewsCount" class="form-input" min="0" required>
-            <p class="form-hint" data-i18n="whatsapp.submit.views_hint">Vous gagnez 10 FCFA par vue en plus des 50 FCFA de base</p>
-          </div>
-          
-          <div class="form-group">
-            <label for="notes" class="form-label" data-i18n="whatsapp.submit.notes">Notes supplémentaires (optionnel)</label>
-            <textarea id="notes" class="form-textarea" placeholder="Ajoutez toute information utile..." data-i18n-placeholder="whatsapp.submit.notes_placeholder"></textarea>
-          </div>
-          
-          <div class="form-group">
-            <button type="submit" class="btn btn-success btn-full btn-large">
-              <i class="fas fa-paper-plane"></i> <span data-i18n="whatsapp.submit.submit_button">Soumettre la demande</span>
-            </button>
-          </div>
-        </form>
-      </div>
-      
-      <div class="whatsapp-section">
-        <h2 class="section-title"><i class="fas fa-history"></i> <span data-i18n="whatsapp.history.title">Historique de vos Gains</span></h2>
-        <p class="section-subtitle" data-i18n="whatsapp.history.subtitle">Suivez l'état de vos demandes et vos gains via WhatsApp</p>
+            
+            <div class="form-group">
+              <label for="viewsCount" class="form-label">Nombre de vues sur votre statut <span class="form-required">*</span></label>
+              <input type="number" id="viewsCount" class="form-input" min="1" placeholder="Ex: 25" required>
+              <p class="form-hint">💰 Vous gagnez <strong>10 FCFA par vue</strong>. Exemple: 25 vues = 250 FCFA</p>
+            </div>
+            
+            <div class="form-group">
+              <label for="notes" class="form-label">Notes (optionnel)</label>
+              <textarea id="notes" class="form-textarea" placeholder="Ajoutez toute information utile..."></textarea>
+            </div>
+            
+            <div class="form-group">
+              <button type="submit" class="btn btn-success btn-full btn-large" id="submitBtn">
+                <i class="fas fa-paper-plane"></i> Soumettre la demande
+              </button>
+            </div>
+          </form>
+        </div>
         
-        <div class="earnings-history">
+        <div class="whatsapp-section">
+          <h2 class="section-title"><i class="fas fa-history"></i> Historique de vos Gains</h2>
+          <p class="section-subtitle">Suivez l'état de vos demandes WhatsApp</p>
+          
           <table class="history-table">
             <thead>
               <tr>
-                <th data-i18n="whatsapp.history.date">Date</th>
-                <th data-i18n="whatsapp.history.views">Vues</th>
-                <th data-i18n="whatsapp.history.earning">Gain</th>
-                <th data-i18n="whatsapp.history.status">Statut</th>
+                <th>Date</th>
+                <th>Vues</th>
+                <th>Gain</th>
+                <th>Statut</th>
               </tr>
             </thead>
             <tbody id="earningsHistoryBody">
               <tr>
                 <td colspan="4" style="text-align: center; padding: 20px;">
-                  <span data-i18n="whatsapp.history.no_data">Aucune demande pour le moment</span>
+                  Aucune demande pour le moment
                 </td>
               </tr>
             </tbody>
@@ -1408,629 +982,422 @@
   </div>
 
   <footer class="footer">
-    <div class="footer-content">
-      <div class="footer-links">
-        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Pro Tech Management</a>
-        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Site propulsé par Social Boost Horizon</a>
-      </div>
-      <div class="footer-text">
-        © 2025 BLOWEARN AGENCIES. <span data-i18n="footer.rights">Tous droits réservés.</span>
-      </div>
+    <div class="footer-links">
+      <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link" target="_blank">Pro Tech Management</a>
+      <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link" target="_blank">Social Boost Horizon</a>
     </div>
+    <div class="footer-text">© 2025 BLOWEARN AGENCIES. Tous droits réservés.</div>
   </footer>
 
   <script>
-    /******** CONFIG FIREBASE ********/
+    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyCjGisjgbFc2ZE0BFgdhlUao8bCCeuKP1k",
       authDomain: "cash-flowr.firebaseapp.com",
       projectId: "cash-flowr",
       storageBucket: "cash-flowr.appspot.com",
       messagingSenderId: "1091928501310",
-      appId: "1:1091928501310:web:4f4de306cde36f378ff56f",
-      measurementId: "G-5SF6VDLZCB"
+      appId: "1:1091928501310:web:4f4de306cde36f378ff56f"
     };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
-    const storage = firebase.storage();
 
-    /******** DOM Elements ********/
-    const hamburgerBtn = document.getElementById('hamburgerBtn');
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('overlay');
-    const themeToggle = document.getElementById('themeToggle');
-    const userProfile = document.getElementById('userProfile');
-    const profileDropdown = document.getElementById('profileDropdown');
-    const languageSelector = document.getElementById('languageSelector');
-    const languageDropdown = document.getElementById('languageDropdown');
-    const currentLanguage = document.getElementById('currentLanguage');
-    const sidebarUsername = document.getElementById('sidebarUsername');
-    const userAvatar = document.getElementById('userAvatar');
-    const loader = document.getElementById('loader');
-    const commissionDate = document.getElementById('commissionDate');
-    const commissionText = document.getElementById('commissionText');
-    const commissionImage = document.getElementById('commissionImage');
-    const shareTextBtn = document.getElementById('shareTextBtn');
-    const downloadImageBtn = document.getElementById('downloadImageBtn');
-    const imageUpload = document.getElementById('imageUpload');
-    const screenshotInput = document.getElementById('screenshot');
-    const imagePreview = document.getElementById('imagePreview');
-    const earningsForm = document.getElementById('earningsForm');
-    const viewsCount = document.getElementById('viewsCount');
-    const earningsHistoryBody = document.getElementById('earningsHistoryBody');
+    // Configuration
+    const SERVER_URL = window.location.origin;
+    const FCFA_PER_VIEW = 10;
 
-    /******** Variables d'état ********/
+    // Articles hebdomadaires
+    const WEEKLY_ARTICLES = [
+      {
+        id: 'sbh-boost',
+        title: '🚀 Boostez votre visibilité avec Social Boost Horizon!',
+        content: `Tu veux plus de followers, de likes et de vues sur tes réseaux sociaux?
+
+Social Boost Horizon est LA solution qu'il te faut! 
+
+✅ Instagram, TikTok, YouTube, Facebook...
+✅ Followers réels et actifs
+✅ Likes et vues garantis
+✅ Service rapide et fiable
+
+👉 Clique sur le lien pour découvrir:`,
+        link: 'https://social-boost-horizon-new-sbh.vercel.app',
+        shareText: `🚀 Tu veux plus de followers et de likes?\n\nDécouvre Social Boost Horizon!\n✅ Instagram, TikTok, YouTube\n✅ Followers réels\n✅ Service rapide\n\n👉 `
+      },
+      {
+        id: 'sbh-reseller',
+        title: '💼 Deviens Revendeur Social Boost Horizon - 20% de réduction!',
+        content: `Tu veux gagner de l'argent en vendant des services de visibilité?
+
+Deviens REVENDEUR Social Boost Horizon:
+
+💰 20% de réduction sur TOUTES tes commandes
+💼 Deviens une vraie agence de visibilité
+💵 Vends les services à TES propres prix
+🏦 Retire ta réduction en CASH ou utilise-la
+
+👉 Commence maintenant:`,
+        link: 'https://social-boost-horizon-new-sbh.vercel.app',
+        shareText: `💼 DEVIENS REVENDEUR et gagne de l'argent!\n\n💰 20% de réduction\n💵 Retire en cash ou utilise\n🏦 Vends à tes propres prix\n\n👉 `
+      },
+      {
+        id: 'sbh-referral',
+        title: '👥 Programme de Parrainage - Gagne 10% sur chaque dépôt!',
+        content: `Parraine tes amis sur Social Boost Horizon et GAGNE DE L'ARGENT!
+
+🎁 POUR TOI (le parrain):
+✅ Tu reçois 10% de CHAQUE dépôt de ton filleul
+✅ Tu peux retirer cet argent en CASH
+✅ Ou l'utiliser sur Social Boost Horizon
+
+🎁 POUR TON FILLEUL:
+✅ 10% de réduction sur ses 10 PREMIÈRES commandes
+
+👉 Rejoins maintenant:`,
+        link: 'https://social-boost-horizon-new-sbh.vercel.app',
+        shareText: `👥 PARRAINAGE Social Boost Horizon!\n\n🎁 Toi: 10% de chaque dépôt\n🎁 Ton filleul: 10% réduction x10\n\n💵 Retire en cash!\n\n👉 `
+      },
+      {
+        id: 'blowearn-promo',
+        title: '💵 BLOWEARN AGENCIES - Gagne jusqu\'à 5000 FCFA/jour!',
+        content: `Tu veux gagner de l'argent en ligne FACILEMENT?
+
+BLOWEARN AGENCIES te permet de:
+
+💰 Gagner jusqu'à 5000 FCFA par jour
+📱 Regarder des vidéos TikTok (Lundi)
+▶️ Regarder des vidéos YouTube (Mardi)
+📲 Partager sur WhatsApp (Vendredi)
+
+🎁 PARRAINAGE:
+✅ Niveau 1: 1700 FCFA
+✅ Niveau 2: 750 FCFA
+✅ Niveau 3: 350 FCFA
+
+👉 Inscris-toi:`,
+        link: 'https://blowearn-agencies.vercel.app',
+        shareText: `💵 BLOWEARN AGENCIES!\n\n💰 5000 FCFA/jour\n📱 TikTok, YouTube, WhatsApp\n🎁 1700 FCFA par parrainage!\n\n👉 `
+      }
+    ];
+
+    // Variables globales
     let currentUser = null;
     let userData = {};
-    let dailyCommission = null;
+    let currentArticle = null;
     let screenshotFile = null;
-    let currentLang = 'fr'; // Langue par défaut
 
-    /******** Système de traduction ********/
-    const translations = {
-      fr: {
-        // Header
-        "header.language": "French",
-        "header.night_mode": "Mode nuit",
-        "header.day_mode": "Mode jour",
-        
-        // Menu
-        "menu.main": "PRINCIPAL",
-        "menu.dashboard": "Tableau de bord",
-        "menu.deposit": "Dépôt 💵",
-        "menu.welcome_bonus": "Bonus de bienvenue",
-        "menu.accounts": "COMPTES",
-        "menu.withdrawal": "Retrait",
-        "menu.team": "Équipe",
-        "menu.special": "SPÉCIAL",
-        "menu.sbh": "SBH",
-        "menu.challenge": "Challenge and Reward",
-        "menu.products": "PRODUIT / TÂCHE",
-        "menu.whatsapp_earn": "Gagner via Whatsapp",
-        "menu.ad_earnings": "Gains publicitaires",
-        "menu.fortune_wheel": "Roue de la fortune 🏆",
-        "menu.tiktok_earn": "TikTok Earn",
-        "menu.youtube_earn": "YouTube Earn",
-        "menu.instagram_earn": "Instagram Earn",
-        "menu.trivia": "TRIVIA challenge",
-        "menu.bonus": "BONUS",
-        "menu.contact_list": "Liste de contacts gratuit 🆓",
-        "menu.visibility_booster": "Booster ma visibilité",
-        "menu.canva_pro": "Canva Pro",
-        "menu.free_connection": "Connexion gratuite",
-        
-        // WhatsApp
-        "whatsapp.title": "Gagner via WhatsApp",
-        "whatsapp.banner.title": "Gagnez de l'argent en partageant sur WhatsApp!",
-        "whatsapp.banner.text": "Partagez notre contenu sur WhatsApp et gagnez de l'argent facilement! Pour chaque partage validé, vous recevez 50 FCFA. De plus, vous gagnez 10 FCFA supplémentaires par vue sur votre statut! Plus vos publications sont vues, plus vous gagnez d'argent. Commencez dès maintenant!",
-        "whatsapp.commission.title": "Commission du Jour",
-        "whatsapp.commission.subtitle": "Partagez ce contenu sur WhatsApp pour gagner de l'argent aujourd'hui!",
-        "whatsapp.commission.share_text": "Partager le texte",
-        "whatsapp.commission.download_image": "Télécharger l'image",
-        "whatsapp.commission.how_it_works": "Comment ça marche:",
-        "whatsapp.commission.step1": "Partagez le contenu ci-dessus sur WhatsApp (statut ou groupe)",
-        "whatsapp.commission.step2": "Prenez une capture d'écran de votre partage",
-        "whatsapp.commission.step3": "Renseignez le nombre de vues que votre publication a obtenues",
-        "whatsapp.commission.step4": "Soumettez votre demande de gain",
-        "whatsapp.commission.step5": "Nous vérifions et validons votre demande sous 24h",
-        "whatsapp.commission.step6": "Vous recevez 50 FCFA + 10 FCFA par vue!",
-        "whatsapp.submit.title": "Soumettre une Demande de Gain",
-        "whatsapp.submit.subtitle": "Remplissez ce formulaire pour recevoir votre argent après avoir partagé sur WhatsApp",
-        "whatsapp.submit.screenshot": "Capture d'écran de votre partage",
-        "whatsapp.submit.upload_text": "Cliquez pour télécharger votre capture d'écran",
-        "whatsapp.submit.upload_formats": "Formats acceptés: JPG, PNG (Max 5MB)",
-        "whatsapp.submit.views": "Nombre de vues sur votre statut",
-        "whatsapp.submit.views_hint": "Vous gagnez 10 FCFA par vue en plus des 50 FCFA de base",
-        "whatsapp.submit.notes": "Notes supplémentaires (optionnel)",
-        "whatsapp.submit.notes_placeholder": "Ajoutez toute information utile...",
-        "whatsapp.submit.submit_button": "Soumettre la demande",
-        "whatsapp.history.title": "Historique de vos Gains",
-        "whatsapp.history.subtitle": "Suivez l'état de vos demandes et vos gains via WhatsApp",
-        "whatsapp.history.date": "Date",
-        "whatsapp.history.views": "Vues",
-        "whatsapp.history.earning": "Gain",
-        "whatsapp.history.status": "Statut",
-        "whatsapp.history.no_data": "Aucune demande pour le moment",
-        
-        // Footer
-        "footer.rights": "Tous droits réservés.",
-        
-        // Notifications
-        "notification.success": "Succès",
-        "notification.error": "Erreur",
-        "notification.info": "Information"
-      },
-      en: {
-        // Header
-        "header.language": "English",
-        "header.night_mode": "Night mode",
-        "header.day_mode": "Day mode",
-        
-        // Menu
-        "menu.main": "MAIN",
-        "menu.dashboard": "Dashboard",
-        "menu.deposit": "Deposit 💵",
-        "menu.welcome_bonus": "Welcome Bonus",
-        "menu.accounts": "ACCOUNTS",
-        "menu.withdrawal": "Withdrawal",
-        "menu.team": "Team",
-        "menu.special": "SPECIAL",
-        "menu.sbh": "SBH",
-        "menu.challenge": "Challenge and Reward",
-        "menu.products": "PRODUCT / TASK",
-        "menu.whatsapp_earn": "Earn via Whatsapp",
-        "menu.ad_earnings": "Advertising earnings",
-        "menu.fortune_wheel": "Fortune Wheel 🏆",
-        "menu.tiktok_earn": "TikTok Earn",
-        "menu.youtube_earn": "YouTube Earn",
-        "menu.instagram_earn": "Instagram Earn",
-        "menu.trivia": "TRIVIA challenge",
-        "menu.bonus": "BONUS",
-        "menu.contact_list": "Free contact list 🆓",
-        "menu.visibility_booster": "Boost my visibility",
-        "menu.canva_pro": "Canva Pro",
-        "menu.free_connection": "Free connection",
-        
-        // WhatsApp
-        "whatsapp.title": "Earn via WhatsApp",
-        "whatsapp.banner.title": "Earn money by sharing on WhatsApp!",
-        "whatsapp.banner.text": "Share our content on WhatsApp and earn money easily! For each validated share, you receive 50 FCFA. Plus, you earn an additional 10 FCFA per view on your status! The more your posts are viewed, the more money you earn. Start now!",
-        "whatsapp.commission.title": "Daily Commission",
-        "whatsapp.commission.subtitle": "Share this content on WhatsApp to earn money today!",
-        "whatsapp.commission.share_text": "Share text",
-        "whatsapp.commission.download_image": "Download image",
-        "whatsapp.commission.how_it_works": "How it works:",
-        "whatsapp.commission.step1": "Share the content above on WhatsApp (status or group)",
-        "whatsapp.commission.step2": "Take a screenshot of your share",
-        "whatsapp.commission.step3": "Enter the number of views your post received",
-        "whatsapp.commission.step4": "Submit your earnings request",
-        "whatsapp.commission.step5": "We verify and validate your request within 24h",
-        "whatsapp.commission.step6": "You receive 50 FCFA + 10 FCFA per view!",
-        "whatsapp.submit.title": "Submit Earnings Request",
-        "whatsapp.submit.subtitle": "Fill out this form to receive your money after sharing on WhatsApp",
-        "whatsapp.submit.screenshot": "Screenshot of your share",
-        "whatsapp.submit.upload_text": "Click to upload your screenshot",
-        "whatsapp.submit.upload_formats": "Accepted formats: JPG, PNG (Max 5MB)",
-        "whatsapp.submit.views": "Number of views on your status",
-        "whatsapp.submit.views_hint": "You earn 10 FCFA per view in addition to the 50 FCFA base",
-        "whatsapp.submit.notes": "Additional notes (optional)",
-        "whatsapp.submit.notes_placeholder": "Add any useful information...",
-        "whatsapp.submit.submit_button": "Submit request",
-        "whatsapp.history.title": "Your Earnings History",
-        "whatsapp.history.subtitle": "Track the status of your requests and your WhatsApp earnings",
-        "whatsapp.history.date": "Date",
-        "whatsapp.history.views": "Views",
-        "whatsapp.history.earning": "Earning",
-        "whatsapp.history.status": "Status",
-        "whatsapp.history.no_data": "No requests yet",
-        
-        // Footer
-        "footer.rights": "All rights reserved.",
-        
-        // Notifications
-        "notification.success": "Success",
-        "notification.error": "Error",
-        "notification.info": "Information"
-      }
-    };
-
-    /******** Fonctions de traduction ********/
-    function setLanguage(lang) {
-      currentLang = lang;
-      localStorage.setItem('preferredLanguage', lang);
-      
-      // Mettre à jour le sélecteur de langue
-      currentLanguage.textContent = lang === 'fr' ? 'French' : 'English';
-      
-      // Mettre à jour les options de langue
-      document.querySelectorAll('.language-option').forEach(option => {
-        const icon = option.querySelector('i');
-        if (option.dataset.lang === lang) {
-          option.classList.add('active');
-          icon.style.opacity = '1';
-        } else {
-          option.classList.remove('active');
-          icon.style.opacity = '0';
-        }
-      });
-      
-      // Traduire tous les éléments avec data-i18n
-      document.querySelectorAll('[data-i18n]').forEach(element => {
-        const key = element.getAttribute('data-i18n');
-        if (translations[lang] && translations[lang][key]) {
-          if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-            element.placeholder = translations[lang][key];
-          } else {
-            element.textContent = translations[lang][key];
-          }
-        }
-      });
-      
-      // Traduire les placeholders
-      document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
-        const key = element.getAttribute('data-i18n-placeholder');
-        if (translations[lang] && translations[lang][key]) {
-          element.placeholder = translations[lang][key];
-        }
-      });
-      
-      // Mettre à jour le texte du thème
-      const isDarkMode = document.body.classList.contains('dark-mode');
-      if (themeToggle) {
-        themeToggle.innerHTML = isDarkMode 
-          ? `<i class="fas fa-sun"></i><span>${translations[lang]['header.day_mode']}</span>` 
-          : `<i class="fas fa-moon"></i><span>${translations[lang]['header.night_mode']}</span>`;
-      }
-    }
-
-    /******** UI helpers ********/
-    function showNotification(type, title, message, duration = 4000) {
+    // Notification
+    function showNotification(type, title, message) {
       const container = document.getElementById('notificationContainer');
       const notification = document.createElement('div');
       notification.className = `notification ${type}`;
-      const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle');
       notification.innerHTML = `
-        <i class="fas ${icon}" style="font-size: 1.5rem;"></i>
-        <div>
-          <strong style="display: block; margin-bottom: 5px;">${title}</strong>
-          <span>${message}</span>
-        </div>
+        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}" style="font-size: 1.5rem;"></i>
+        <div><strong style="display: block; margin-bottom: 5px;">${title}</strong><span>${message}</span></div>
       `;
       container.appendChild(notification);
-      setTimeout(() => {
-        notification.style.animation = 'slideIn 0.3s ease reverse forwards';
-        setTimeout(() => { if (container.contains(notification)) container.removeChild(notification); }, 300);
-      }, duration);
+      setTimeout(() => notification.remove(), 4000);
     }
 
-    /******** Gestion du menu ********/
-    hamburgerBtn.addEventListener('click', () => {
-        sidebar.classList.toggle('open');
-        overlay.classList.toggle('active');
-        hamburgerBtn.classList.toggle('open');
-    });
-    overlay.addEventListener('click', () => {
-        sidebar.classList.remove('open');
-        overlay.classList.remove('active');
-        hamburgerBtn.classList.remove('open');
-    });
+    // Vérifier si c'est vendredi
+    function isTodayFriday() {
+      const now = new Date();
+      return now.getDay() === 5;
+    }
 
-    /******** Gestion du profil utilisateur ********/
-    userProfile.addEventListener('click', (event) => {
-        event.stopPropagation();
-        profileDropdown.classList.toggle('active');
-    });
-    document.addEventListener('click', (event) => {
-        if (!userProfile.contains(event.target)) {
-            profileDropdown.classList.remove('active');
-        }
-    });
+    // Compte à rebours
+    function updateCountdown() {
+      const now = new Date();
+      let daysUntilFriday = (5 - now.getDay() + 7) % 7;
+      if (daysUntilFriday === 0) daysUntilFriday = 7;
+      
+      const nextFriday = new Date(now);
+      nextFriday.setDate(now.getDate() + daysUntilFriday);
+      nextFriday.setHours(0, 0, 0, 0);
+      
+      const diff = nextFriday - now;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      document.getElementById('dayCountdown').textContent = `Prochain vendredi dans: ${days}j ${hours}h ${minutes}m ${seconds}s`;
+    }
 
-    /******** Gestion du thème ********/
-    themeToggle.addEventListener('click', (event) => {
-        event.stopPropagation();
+    // Article de la semaine
+    function getWeeklyArticle() {
+      const now = new Date();
+      const startOfYear = new Date(now.getFullYear(), 0, 1);
+      const weekNumber = Math.ceil(((now - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7);
+      return WEEKLY_ARTICLES[weekNumber % WEEKLY_ARTICLES.length];
+    }
+
+    // Initialiser l'interface
+    function initUI() {
+      console.log('🔧 Initialisation de l\'interface...');
+      
+      // Afficher l'article
+      currentArticle = getWeeklyArticle();
+      document.getElementById('articleTitle').textContent = currentArticle.title;
+      document.getElementById('articleContent').textContent = currentArticle.content;
+      document.getElementById('articleLinkText').textContent = currentArticle.link.replace('https://', '');
+
+      // Vérifier le jour
+      if (!isTodayFriday()) {
+        document.getElementById('dayAlert').classList.add('show');
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+      }
+
+      // Menu hamburger
+      document.getElementById('hamburgerBtn').addEventListener('click', function() {
+        document.getElementById('sidebar').classList.toggle('open');
+        document.getElementById('overlay').classList.toggle('active');
+        this.classList.toggle('open');
+      });
+
+      document.getElementById('overlay').addEventListener('click', function() {
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('overlay').classList.remove('active');
+        document.getElementById('hamburgerBtn').classList.remove('open');
+      });
+
+      // Profile dropdown
+      document.getElementById('userProfile').addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('profileDropdown').classList.toggle('active');
+      });
+
+      // Language dropdown
+      document.getElementById('languageSelector').addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('languageDropdown').classList.toggle('active');
+      });
+
+      document.addEventListener('click', function() {
+        document.getElementById('profileDropdown').classList.remove('active');
+        document.getElementById('languageDropdown').classList.remove('active');
+      });
+
+      // Theme toggle
+      document.getElementById('themeToggle').addEventListener('click', function() {
         document.body.classList.toggle('dark-mode');
-        const isDarkMode = document.body.classList.contains('dark-mode');
-        themeToggle.innerHTML = isDarkMode 
-            ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
-            : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
-        if(currentUser) saveUserData('theme', isDarkMode ? 'dark' : 'light');
-    });
-
-    /******** Gestion du sélecteur de langue ********/
-    if (languageSelector) {
-      languageSelector.addEventListener('click', (event) => {
-        event.stopPropagation();
-        languageDropdown.classList.toggle('active');
       });
-    }
 
-    // Fermer le dropdown de langue quand on clique ailleurs
-    document.addEventListener('click', () => {
-      if (languageDropdown) languageDropdown.classList.remove('active');
-    });
-
-    // Changer de langue
-    document.querySelectorAll('.language-option').forEach(option => {
-      option.addEventListener('click', () => {
-        const lang = option.dataset.lang;
-        setLanguage(lang);
-        languageDropdown.classList.remove('active');
+      // Partage WhatsApp
+      document.getElementById('shareBtn').addEventListener('click', function() {
+        if (!currentArticle) return;
+        const fullText = currentArticle.shareText + currentArticle.link;
+        window.open(`https://wa.me/?text=${encodeURIComponent(fullText)}`, '_blank');
+        showNotification('info', 'Partage lancé', 'N\'oubliez pas de faire une capture d\'écran!');
       });
-    });
 
-    /******** Gestion de l'upload d'image ********/
-    imageUpload.addEventListener('click', () => {
-      screenshotInput.click();
-    });
+      // Copier texte
+      document.getElementById('copyTextBtn').addEventListener('click', function() {
+        if (!currentArticle) return;
+        const fullText = currentArticle.shareText + currentArticle.link;
+        navigator.clipboard.writeText(fullText)
+          .then(() => showNotification('success', 'Copié!', 'Texte copié dans le presse-papier.'))
+          .catch(() => showNotification('error', 'Erreur', 'Impossible de copier.'));
+      });
 
-    screenshotInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) {
+      // Upload image
+      document.getElementById('imageUpload').addEventListener('click', function() {
+        document.getElementById('screenshotInput').click();
+      });
+
+      document.getElementById('screenshotInput').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
         if (file.size > 5 * 1024 * 1024) {
-          showNotification('error', translations[currentLang]['notification.error'], 'Le fichier est trop volumineux (max 5MB)');
+          showNotification('error', 'Erreur', 'Fichier trop volumineux (max 5MB)');
           return;
         }
         
         screenshotFile = file;
         const reader = new FileReader();
-        reader.onload = (e) => {
-          imagePreview.src = e.target.result;
-          imagePreview.style.display = 'block';
+        reader.onload = function(e) {
+          const preview = document.getElementById('imagePreview');
+          preview.src = e.target.result;
+          preview.style.display = 'block';
         };
         reader.readAsDataURL(file);
-      }
-    });
+        showNotification('success', 'Image chargée', 'Capture d\'écran prête à être envoyée.');
+      });
 
-    /******** Commission du jour ********/
-    function getDailyCommission() {
-      const commissions = [
-        {
-          type: 'text',
-          content: 'Découvrez BLOWEARN AGENCIES, la plateforme qui vous permet de gagner de l\'argent en ligne facilement! Rejoignez-nous dès maintenant ➡️ blowearn.com',
-          date: new Date()
-        },
-        {
-          type: 'text', 
-          content: 'Gagnez de l\'argent avec Social Boost Horizon! Des opportunités uniques pour monétiser votre présence en ligne. Inscription gratuite!',
-          date: new Date()
-        },
-        {
-          type: 'image',
-          content: 'https://example.com/promotion1.jpg',
-          date: new Date()
-        },
-        {
-          type: 'text',
-          content: '🚀 Offre spéciale! Rejoignez BLOWEARN AGENCIES aujourd\'hui et recevez un bonus de bienvenue de 1000 FCFA! Profitez-en maintenant!',
-          date: new Date()
+      // FORMULAIRE - SOUMISSION
+      document.getElementById('earningsForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        console.log('📤 Soumission du formulaire...');
+        
+        if (!currentUser) {
+          showNotification('error', 'Non connecté', 'Veuillez vous connecter.');
+          console.error('❌ Utilisateur non connecté');
+          return;
         }
-      ];
-      
-      // Utiliser le jour de l'année pour choisir une commission différente chaque jour
-      const now = new Date();
-      const start = new Date(now.getFullYear(), 0, 0);
-      const diff = now - start;
-      const oneDay = 1000 * 60 * 60 * 24;
-      const dayOfYear = Math.floor(diff / oneDay);
-      
-      return commissions[dayOfYear % commissions.length];
+        
+        if (!screenshotFile) {
+          showNotification('error', 'Erreur', 'Veuillez télécharger une capture d\'écran.');
+          return;
+        }
+        
+        const views = parseInt(document.getElementById('viewsCount').value) || 0;
+        if (views < 1) {
+          showNotification('error', 'Erreur', 'Le nombre de vues doit être au moins 1.');
+          return;
+        }
+        
+        const notes = document.getElementById('notes').value || '';
+        const totalReward = views * FCFA_PER_VIEW;
+        
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
+        
+        try {
+          console.log('🔑 Récupération du token...');
+          const idToken = await currentUser.getIdToken(true);
+          
+          const formData = new FormData();
+          formData.append('screenshot', screenshotFile);
+          formData.append('idToken', idToken);
+          formData.append('views', views.toString());
+          formData.append('notes', notes);
+          formData.append('articleId', currentArticle ? currentArticle.id : 'unknown');
+          formData.append('articleTitle', currentArticle ? currentArticle.title : 'Article inconnu');
+          formData.append('rewardAmount', totalReward.toString());
+          
+          // Ajouter les infos utilisateur pour le message Twilio
+          formData.append('username', userData.username || userData.displayName || currentUser.email.split('@')[0]);
+          formData.append('userEmail', currentUser.email || 'N/A');
+          formData.append('userCountry', userData.country || userData.pays || 'Non spécifié');
+          formData.append('userPhone', userData.phone || userData.phoneNumber || 'N/A');
+          
+          console.log('📤 Envoi au serveur:', SERVER_URL + '/api/whatsapp-claim');
+          
+          const response = await fetch(SERVER_URL + '/api/whatsapp-claim', {
+            method: 'POST',
+            body: formData
+          });
+          
+          console.log('📥 Réponse reçue, status:', response.status);
+          
+          const data = await response.json();
+          console.log('📥 Données:', data);
+          
+          if (!response.ok) {
+            throw new Error(data.error || 'Erreur serveur');
+          }
+          
+          showNotification('success', 'Demande envoyée!', `Votre demande de ${totalReward} FCFA (${views} vues × 10 FCFA) a été soumise.`);
+          
+          // Reset form
+          document.getElementById('earningsForm').reset();
+          document.getElementById('imagePreview').style.display = 'none';
+          screenshotFile = null;
+          
+          // Recharger l'historique
+          loadEarningsHistory();
+          
+        } catch (error) {
+          console.error('❌ Erreur soumission:', error);
+          showNotification('error', 'Erreur', error.message || 'Impossible de soumettre votre demande.');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Soumettre la demande';
+        }
+      });
+
+      console.log('✅ Interface initialisée');
     }
 
-    function setupDailyCommission() {
-      dailyCommission = getDailyCommission();
-      
-      // Formater la date
-      const options = { day: 'numeric', month: 'long', year: 'numeric' };
-      commissionDate.textContent = `Commission du ${new Date().toLocaleDateString('fr-FR', options)}`;
-      
-      if (dailyCommission.type === 'text') {
-        commissionText.textContent = dailyCommission.content;
-        commissionImage.style.display = 'none';
-        downloadImageBtn.style.display = 'none';
-        shareTextBtn.style.display = 'flex';
-      } else if (dailyCommission.type === 'image') {
-        commissionText.textContent = 'Partagez cette image sur WhatsApp pour gagner de l\'argent!';
-        commissionImage.src = dailyCommission.content;
-        commissionImage.style.display = 'block';
-        downloadImageBtn.style.display = 'flex';
-        shareTextBtn.style.display = 'none';
-      }
-    }
-
-    shareTextBtn.addEventListener('click', () => {
-      const text = encodeURIComponent(dailyCommission.content);
-      window.open(`https://wa.me/?text=${text}`, '_blank');
-    });
-
-    downloadImageBtn.addEventListener('click', () => {
-      const link = document.createElement('a');
-      link.href = dailyCommission.content;
-      link.download = 'promotion-blowearn.jpg';
-      link.click();
-    });
-
-    /******** Soumission du formulaire ********/
-    earningsForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      if (!screenshotFile) {
-        showNotification('error', translations[currentLang]['notification.error'], 'Veuillez télécharger une capture d\'écran');
-        return;
-      }
-      
-      const views = parseInt(viewsCount.value);
-      if (isNaN(views) || views < 0) {
-        showNotification('error', translations[currentLang]['notification.error'], 'Veuillez entrer un nombre de vues valide');
-        return;
-      }
-      
-      try {
-        // Calcul du gain
-        const baseEarning = 50;
-        const viewsEarning = views * 10;
-        const totalEarning = baseEarning + viewsEarning;
-        
-        // Upload de l'image
-        const storageRef = storage.ref();
-        const screenshotRef = storageRef.child(`whatsapp-screenshots/${currentUser.uid}/${Date.now()}_${screenshotFile.name}`);
-        const uploadTask = await screenshotRef.put(screenshotFile);
-        const screenshotUrl = await uploadTask.ref.getDownloadURL();
-        
-        // Enregistrement de la demande
-        const earningsRef = db.collection('users').doc(currentUser.uid).collection('whatsappEarnings').doc();
-        await earningsRef.set({
-          date: new Date(),
-          views: views,
-          baseEarning: baseEarning,
-          viewsEarning: viewsEarning,
-          totalEarning: totalEarning,
-          screenshotUrl: screenshotUrl,
-          status: 'pending',
-          notes: document.getElementById('notes').value || ''
-        });
-        
-        // Mise à jour du solde de l'utilisateur
-        const newWhatsappGains = (userData.whatsappGains || 0) + totalEarning;
-        const newBalance = (userData.solde || 0) + totalEarning;
-        
-        await db.collection('users').doc(currentUser.uid).update({
-          whatsappGains: newWhatsappGains,
-          solde: newBalance
-        });
-        
-        showNotification('success', translations[currentLang]['notification.success'], `Votre demande a été soumise! Gain: ${totalEarning} FCFA`);
-        
-        // Réinitialiser le formulaire
-        earningsForm.reset();
-        imagePreview.style.display = 'none';
-        screenshotFile = null;
-        
-        // Mettre à jour l'historique
-        loadEarningsHistory();
-        
-      } catch (error) {
-        console.error('Erreur lors de la soumission:', error);
-        showNotification('error', translations[currentLang]['notification.error'], 'Une erreur s\'est produite lors de la soumission');
-      }
-    });
-
-    /******** Historique des gains ********/
+    // Charger l'historique
     async function loadEarningsHistory() {
       if (!currentUser) return;
       
       try {
-        const earningsRef = db.collection('users').doc(currentUser.uid).collection('whatsappEarnings')
+        const snapshot = await db.collection('users').doc(currentUser.uid)
+          .collection('whatsappClaims')
           .orderBy('date', 'desc')
-          .limit(10);
+          .limit(10)
+          .get();
         
-        const snapshot = await earningsRef.get();
+        const tbody = document.getElementById('earningsHistoryBody');
         
         if (snapshot.empty) {
-          earningsHistoryBody.innerHTML = `
-            <tr>
-              <td colspan="4" style="text-align: center; padding: 20px;">
-                ${translations[currentLang]['whatsapp.history.no_data']}
-              </td>
-            </tr>
-          `;
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 20px;">Aucune demande pour le moment</td></tr>';
           return;
         }
         
         let html = '';
         snapshot.forEach(doc => {
           const data = doc.data();
-          const date = data.date.toDate();
-          const formattedDate = date.toLocaleDateString('fr-FR');
+          const dateObj = data.date?.toDate ? data.date.toDate() : new Date();
+          const formattedDate = dateObj.toLocaleDateString('fr-FR');
           
-          let statusClass = '';
-          if (data.status === 'approved') statusClass = 'status-approved';
-          else if (data.status === 'rejected') statusClass = 'status-rejected';
-          else statusClass = 'status-pending';
+          let statusClass = 'status-pending', statusText = 'En attente';
+          if (data.status === 'approved') { statusClass = 'status-approved'; statusText = 'Approuvé'; }
+          else if (data.status === 'rejected') { statusClass = 'status-rejected'; statusText = 'Rejeté'; }
           
-          let statusText = '';
-          if (data.status === 'approved') statusText = 'Approuvé';
-          else if (data.status === 'rejected') statusText = 'Rejeté';
-          else statusText = 'En attente';
-          
-          html += `
-            <tr>
-              <td>${formattedDate}</td>
-              <td>${data.views}</td>
-              <td>${data.totalEarning} FCFA</td>
-              <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-            </tr>
-          `;
+          html += `<tr>
+            <td>${formattedDate}</td>
+            <td>${data.views || 0}</td>
+            <td>${data.rewardAmount || data.views * FCFA_PER_VIEW} FCFA</td>
+            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+          </tr>`;
         });
         
-        earningsHistoryBody.innerHTML = html;
+        tbody.innerHTML = html;
       } catch (error) {
-        console.error('Erreur lors du chargement de l\'historique:', error);
+        console.error('Erreur chargement historique:', error);
       }
     }
 
-    /******** Fonctions Firestore ********/
-    async function saveUserData(key = null, value = null) {
-      if (!currentUser) return;
-      try {
-        const userRef = db.collection('users').doc(currentUser.uid);
-        const dataToSave = key ? { [key]: value } : userData;
-        await userRef.set({ ...dataToSave, lastUpdate: new Date() }, { merge: true });
-        console.log('Données utilisateur enregistrées avec succès.');
-      } catch (error) {
-        console.error("Erreur lors de la sauvegarde des données :", error);
-        showNotification('error', translations[currentLang]['notification.error'], 'Impossible de sauvegarder vos données.');
-      }
-    }
-
-    async function loadUserData() {
-      if (!currentUser) throw new Error("Aucun utilisateur connecté pour charger les données.");
-      const userRef = db.collection('users').doc(currentUser.uid);
-      const doc = await userRef.get();
-      if (doc.exists) {
-          const data = doc.data() || {};
-          userData = {
-              displayName: data.displayName || currentUser.displayName,
-              email: data.email || currentUser.email,
-              phoneNumber: data.phoneNumber || data.phone || "",
-              country: data.country || data.pays || "",
-              theme: data.theme || 'light',
-              whatsappGains: data.whatsappGains || 0,
-              solde: data.solde || 0
-          };
-      } else {
-        userData = { theme: 'light', whatsappGains: 0, solde: 0 };
-        await saveUserData();
-      }
-    }
-
-    /******** Initialisation de l'application ********/
-    function updateUserInfoUI(user, dbData = {}) {
-        const displayName = dbData.displayName || user.displayName || user.email.split('@')[0];
-        if (sidebarUsername) sidebarUsername.textContent = displayName;
-        if (userAvatar) userAvatar.textContent = displayName.charAt(0).toUpperCase();
-    }
-
-    function applyTheme() {
-        const isDarkMode = userData.theme === 'dark';
-        document.body.classList.toggle('dark-mode', isDarkMode);
-        themeToggle.innerHTML = isDarkMode 
-            ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
-            : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
-    }
-
-    auth.onAuthStateChanged(async (user) => {
-        if (user) {
-            currentUser = user;
-            try {
-                await loadUserData();
-                updateUserInfoUI(user, userData);
-                applyTheme();
-                
-                setupDailyCommission();
-                loadEarningsHistory();
-                
-                document.body.classList.add('loaded');
-                loader.classList.add('hidden');
-                
-            } catch (error) {
-                console.error("Erreur critique lors de l'initialisation :", error);
-                showNotification('error', translations[currentLang]['notification.error'], "Impossible de charger vos données. Veuillez vous reconnecter.");
-                auth.signOut();
-                setTimeout(() => { window.location.href = 'login.html'; }, 3000);
-            }
-        } else {
-            window.location.href = 'login.html';
+    // Auth listener
+    auth.onAuthStateChanged(async function(user) {
+      console.log('🔐 Auth state changed:', user ? user.email : 'Non connecté');
+      
+      if (user) {
+        currentUser = user;
+        
+        try {
+          const doc = await db.collection('users').doc(user.uid).get();
+          userData = doc.exists ? doc.data() : {};
+          
+          // Vérifier activation
+          const status = (userData.status || '').toString().toLowerCase().trim();
+          if (status !== 'active') {
+            showNotification('info', 'Action requise', 'Veuillez activer votre compte.');
+            setTimeout(() => window.location.href = 'paiement.html', 2000);
+            return;
+          }
+          
+          // Mettre à jour l'UI utilisateur
+          const displayName = userData.username || userData.displayName || user.email.split('@')[0];
+          document.getElementById('sidebarUsername').textContent = displayName;
+          document.getElementById('userAvatar').textContent = displayName.charAt(0).toUpperCase();
+          
+          // Initialiser l'interface
+          initUI();
+          
+          // Charger l'historique
+          await loadEarningsHistory();
+          
+          // Cacher le loader
+          document.getElementById('loader').classList.add('hidden');
+          
+        } catch (error) {
+          console.error('Erreur init:', error);
+          showNotification('error', 'Erreur', 'Impossible de charger vos données.');
+          auth.signOut();
+          setTimeout(() => window.location.href = 'login.html', 2000);
         }
-    });
-
-    /******** Initialisation au chargement de la page ********/
-    document.addEventListener('DOMContentLoaded', () => {
-      // Charger la langue sauvegardée ou utiliser le français par défaut
-      const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
-      setLanguage(savedLang);
+      } else {
+        window.location.href = 'login.html';
+      }
     });
   </script>
 </body>
