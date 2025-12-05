@@ -798,29 +798,31 @@
         </button>
         <div class="language-dropdown" id="languageDropdown">
           <div class="language-option active" data-lang="fr">
-            <i class="fas fa-check"></i> Français
+            <span>🇫🇷</span>
+            <span>Français</span>
           </div>
           <div class="language-option" data-lang="en">
-            <i class="fas fa-check" style="opacity: 0;"></i> English
+            <span>🇬🇧</span>
+            <span>English</span>
           </div>
         </div>
       </div>
-      
-      <button class="hamburger-btn" id="hamburgerBtn">
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-      </button>
       
       <div class="user-profile" id="userProfile">
         <div class="avatar" id="userAvatar">U</div>
         <div class="profile-dropdown" id="profileDropdown">
           <button class="theme-toggle" id="themeToggle">
             <i class="fas fa-moon"></i>
-            <span>Mode nuit</span>
+            <span>Mode sombre</span>
           </button>
         </div>
       </div>
+      
+      <button class="hamburger-btn" id="hamburgerBtn">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
     </div>
   </header>
 
@@ -829,7 +831,7 @@
   <div class="main-container">
     <aside class="sidebar" id="sidebar">
       <div class="welcome-section">
-        <div class="welcome-text">WhatsApp Earn >> BLOWEARN</div>
+        <div class="welcome-text">Bienvenue,</div>
         <div class="username" id="sidebarUsername">Utilisateur</div>
       </div>
       
@@ -871,7 +873,7 @@
         <div class="day-countdown" id="dayCountdown">Prochain vendredi dans: --</div>
       </div>
       
-      <div id="mainContent">
+      <div id="mainContent" style="display: none;">
         <div class="whatsapp-banner">
           <h2 class="banner-title"><i class="fab fa-whatsapp"></i> Gagnez de l'argent chaque VENDREDI!</h2>
           <div class="banner-text">
@@ -1104,14 +1106,14 @@ BLOWEARN AGENCIES te permet de:
     // Vérifier si c'est vendredi
     function isTodayFriday() {
       const now = new Date();
-      return now.getDay() === 5;
+      return now.getDay() === 5; // 5 = Vendredi
     }
 
-    // Compte à rebours
+    // Compte à rebours vers le prochain vendredi
     function updateCountdown() {
       const now = new Date();
       let daysUntilFriday = (5 - now.getDay() + 7) % 7;
-      if (daysUntilFriday === 0) daysUntilFriday = 7;
+      if (daysUntilFriday === 0) daysUntilFriday = 7; // Si on est vendredi, afficher prochain vendredi
       
       const nextFriday = new Date(now);
       nextFriday.setDate(now.getDate() + daysUntilFriday);
@@ -1138,15 +1140,30 @@ BLOWEARN AGENCIES te permet de:
     function initUI() {
       console.log('🔧 Initialisation de l\'interface...');
       
-      // Afficher l'article
-      currentArticle = getWeeklyArticle();
-      document.getElementById('articleTitle').textContent = currentArticle.title;
-      document.getElementById('articleContent').textContent = currentArticle.content;
-      document.getElementById('articleLinkText').textContent = currentArticle.link.replace('https://', '');
-
-      // Vérifier le jour
-      if (!isTodayFriday()) {
-        document.getElementById('dayAlert').classList.add('show');
+      const dayAlertEl = document.getElementById('dayAlert');
+      const mainContentEl = document.getElementById('mainContent');
+      
+      // LOGIQUE PRINCIPALE: Vérifier si c'est vendredi
+      if (isTodayFriday()) {
+        // C'est vendredi: Afficher le contenu, cacher l'alerte
+        console.log('✅ C\'est vendredi! Affichage du contenu.');
+        dayAlertEl.classList.remove('show');
+        dayAlertEl.style.display = 'none';
+        mainContentEl.style.display = 'block';
+        
+        // Afficher l'article
+        currentArticle = getWeeklyArticle();
+        document.getElementById('articleTitle').textContent = currentArticle.title;
+        document.getElementById('articleContent').textContent = currentArticle.content;
+        document.getElementById('articleLinkText').textContent = currentArticle.link.replace('https://', '');
+      } else {
+        // Ce n'est PAS vendredi: Cacher TOUT le contenu, afficher seulement l'alerte avec compte à rebours
+        console.log('⏳ Ce n\'est pas vendredi. Affichage du compte à rebours seulement.');
+        dayAlertEl.classList.add('show');
+        dayAlertEl.style.display = 'block';
+        mainContentEl.style.display = 'none'; // CACHER tout le contenu
+        
+        // Démarrer le compte à rebours
         updateCountdown();
         setInterval(updateCountdown, 1000);
       }
@@ -1186,16 +1203,24 @@ BLOWEARN AGENCIES te permet de:
         document.body.classList.toggle('dark-mode');
       });
 
-      // Partage WhatsApp
+      // Partage WhatsApp (seulement si c'est vendredi)
       document.getElementById('shareBtn').addEventListener('click', function() {
+        if (!isTodayFriday()) {
+          showNotification('error', 'Non disponible', 'Cette fonctionnalité est disponible uniquement le vendredi.');
+          return;
+        }
         if (!currentArticle) return;
         const fullText = currentArticle.shareText + currentArticle.link;
         window.open(`https://wa.me/?text=${encodeURIComponent(fullText)}`, '_blank');
         showNotification('info', 'Partage lancé', 'N\'oubliez pas de faire une capture d\'écran!');
       });
 
-      // Copier texte
+      // Copier texte (seulement si c'est vendredi)
       document.getElementById('copyTextBtn').addEventListener('click', function() {
+        if (!isTodayFriday()) {
+          showNotification('error', 'Non disponible', 'Cette fonctionnalité est disponible uniquement le vendredi.');
+          return;
+        }
         if (!currentArticle) return;
         const fullText = currentArticle.shareText + currentArticle.link;
         navigator.clipboard.writeText(fullText)
@@ -1205,6 +1230,10 @@ BLOWEARN AGENCIES te permet de:
 
       // Upload image
       document.getElementById('imageUpload').addEventListener('click', function() {
+        if (!isTodayFriday()) {
+          showNotification('error', 'Non disponible', 'Cette fonctionnalité est disponible uniquement le vendredi.');
+          return;
+        }
         document.getElementById('screenshotInput').click();
       });
 
@@ -1231,6 +1260,13 @@ BLOWEARN AGENCIES te permet de:
       // FORMULAIRE - SOUMISSION
       document.getElementById('earningsForm').addEventListener('submit', async function(e) {
         e.preventDefault();
+        
+        // Vérifier si c'est vendredi avant de soumettre
+        if (!isTodayFriday()) {
+          showNotification('error', 'Non disponible', 'Les soumissions sont acceptées uniquement le vendredi.');
+          return;
+        }
+        
         console.log('📤 Soumission du formulaire...');
         
         if (!currentUser) {
@@ -1399,8 +1435,10 @@ BLOWEARN AGENCIES te permet de:
           // Initialiser l'interface
           initUI();
           
-          // Charger l'historique
-          await loadEarningsHistory();
+          // Charger l'historique seulement si c'est vendredi
+          if (isTodayFriday()) {
+            await loadEarningsHistory();
+          }
           
           // Cacher le loader
           document.getElementById('loader').classList.add('hidden');
