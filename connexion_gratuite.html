@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BLOWEARN AGENCIES - Connexion Gratuite</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  
+  <style>
+    /* -------------------------------------------------------------------------- */
+    /* --- VARIABLES CSS COHÉRENTES AVEC LE DASHBOARD --- */
+    /* -------------------------------------------------------------------------- */
+    :root {
+      --color-primary: #4A90E2;
+      --color-secondary: #FFC107;
+      --color-text-dark: #2C3E50;
+      --color-text-light: #ECF0F1;
+      --color-bg-light: #FFFFFF;
+      --color-bg-gradient-1: #6DD5FA;
+      --color-bg-gradient-2: #FF7582;
+      --success-color: #4CD964;
+      --warning-color: #FF9500;
+      --danger-color: #FF3B30;
+      --shadow: 0 15px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.8);
+      --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+      transition: var(--transition);
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
+      color: var(--color-text-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 25%),
+        radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 90% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 25%);
+      animation: float 20s ease-in-out infinite;
+      z-index: -1;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-15px) scale(1.02); }
+    }
+
+    .loader-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .loader-container.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loader {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: conic-gradient(#0000 10%, var(--color-primary));
+      -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
+      animation: spin 1s infinite linear;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(1turn); }
+    }
+
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--color-text-dark);
+      display: flex;
+      align-items: center;
+      font-family: 'Poppins', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      background: linear-gradient(45deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: logoGlow 3s ease-in-out infinite alternate;
+    }
+    
+    @keyframes logoGlow {
+      from { filter: drop-shadow(0 0 5px rgba(74, 144, 226, 0.5)); }
+      to { filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.7)); }
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .language-selector {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      position: relative;
+    }
+
+    .language-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      border-radius: 12px;
+      padding: 8px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 140px;
+      z-index: 200;
+      transform-origin: top right;
+      animation: scaleIn 0.2s ease-out forwards;
+      border: 1px solid rgba(255,255,255,0.7);
+      margin-top: 5px;
+    }
+
+    .language-dropdown.active {
+      display: flex;
+    }
+
+    .language-option {
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s ease;
+    }
+
+    .language-option:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .language-option.active {
+      background-color: rgba(74, 144, 226, 0.1);
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    .theme-toggle {
+      background-color: transparent;
+      border: none;
+      color: var(--color-text-dark);
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .theme-toggle i {
+      font-size: 1.2rem;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .user-profile .avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background-color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border: 2px solid var(--color-secondary);
+      box-shadow: var(--shadow);
+    }
+
+    .profile-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      border-radius: 18px;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 150px;
+      z-index: 200;
+      transform-origin: top right;
+      animation: scaleIn 0.2s ease-out forwards;
+      border: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .profile-dropdown.active {
+      display: flex;
+    }
+    
+    @keyframes scaleIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+        .hamburger-btn {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 30px;
+      height: 25px;
+      padding: 0;
+      order: 2;
+    }
+    
+    .hamburger-btn .bar {
+      width: 100%;
+      height: 3px;
+      background-color: var(--color-text-dark);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    
+    .hamburger-btn.open .bar:nth-child(2) {
+      opacity: 0;
+    }
+    
+    .hamburger-btn.open .bar:nth-child(1) {
+      transform: translateY(11px) rotate(45deg);
+    }
+    
+    .hamburger-btn.open .bar:nth-child(3) {
+      transform: translateY(-11px) rotate(-45deg);
+    }
+
+    .main-container {
+      display: flex;
+      flex: 1;
+    }
+
+    .sidebar {
+      width: 280px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.95) 100%);
+      backdrop-filter: blur(15px);
+      border-right: 1px solid rgba(255,255,255,0.7);
+      box-shadow: var(--shadow);
+      height: calc(100vh - 80px);
+      position: sticky;
+      top: 80px;
+      padding: 25px 0;
+      overflow-y: auto;
+      transition: transform 0.4s ease-in-out;
+    }
+    
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .welcome-section {
+      padding: 0 25px 25px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .welcome-text {
+      color: var(--color-text-dark);
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+      font-weight: 500;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    .username {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: var(--color-primary);
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    .menu-category {
+      padding: 15px 25px 5px;
+      font-size: 0.85rem;
+      color: var(--color-text-dark);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+      font-family: 'Quicksand', sans-serif;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .menu-item {
+      padding: 12px 25px 12px 35px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: var(--color-text-dark);
+      text-decoration: none;
+      font-weight: 500;
+      border-left: 4px solid transparent;
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 0.5s ease-out;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .menu-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
+      transition: all 0.5s ease;
+    }
+    
+    .menu-item:hover::before {
+      left: 100%;
+    }
+
+    .menu-item:hover, .menu-item.active {
+      background-color: rgba(0, 0, 0, 0.05);
+      border-left-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .menu-item i {
+      width: 20px;
+      text-align: center;
+      font-size: 1.1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .menu-item:hover i {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .menu-badge {
+      position: absolute;
+      right: 25px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+      animation: popIn 0.5s ease-out;
+    }
+    
+    @keyframes popIn {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    
+    .menu-badge.active {
+      background-color: var(--success-color);
+      color: white;
+    }
+    
+    .menu-badge.inactive {
+      background-color: var(--danger-color);
+      color: white;
+    }
+
+    .content {
+      flex: 1;
+      padding: 30px;
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+      margin-bottom: 25px;
+      color: var(--color-text-dark);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .page-title i {
+      color: var(--color-primary);
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 98;
+    }
+    
+    .overlay.active {
+      display: block;
+    }
+
+    /* Styles spécifiques pour la page Connexion Gratuite */
+    .free-connection-section {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 18px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.7);
+      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .free-connection-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: 18px 18px 0 0;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      color: var(--color-text-dark);
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .info-card {
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-left: 5px solid var(--color-primary);
+      transition: var(--transition);
+    }
+
+    .info-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .info-card-title {
+      font-size: 1.1rem;
+      color: var(--color-primary);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .info-card-content {
+      color: var(--color-text-dark);
+      line-height: 1.6;
+    }
+
+    .whatsapp-group-card {
+      background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+      color: white;
+      border-radius: 15px;
+      padding: 25px;
+      text-align: center;
+      margin: 30px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .whatsapp-group-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transform: rotate(45deg);
+      animation: shimmer 3s infinite;
+    }
+
+    .whatsapp-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+    }
+
+    .whatsapp-group-card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 15px;
+    }
+
+    .whatsapp-link {
+      display: inline-block;
+      background-color: white;
+      color: #25D366;
+      padding: 12px 25px;
+      border-radius: 10px;
+      font-weight: 600;
+      text-decoration: none;
+      margin-top: 15px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .whatsapp-link:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    .steps-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .step-card {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .step-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    .step-number {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin: 0 auto 15px;
+    }
+
+    .step-title {
+      font-size: 1.1rem;
+      color: var(--color-primary);
+      margin-bottom: 10px;
+    }
+
+    .benefits-list {
+      list-style: none;
+      padding: 0;
+      margin: 20px 0;
+    }
+
+    .benefits-list li {
+      padding: 10px 15px;
+      margin-bottom: 10px;
+      background: rgba(74, 144, 226, 0.1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .benefits-list li i {
+      color: var(--color-primary);
+    }
+
+    .footer {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      padding: 20px 30px;
+      text-align: center;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+      margin-top: auto;
+      border-top: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-link {
+      color: var(--color-primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .footer-link:hover {
+      text-decoration: underline;
+      color: var(--color-secondary);
+    }
+
+    .footer-text {
+      color: var(--color-text-dark);
+      font-size: 0.9rem;
+    }
+
+    .support-btn {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      margin-top: 10px;
+    }
+
+    .support-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(74, 144, 226, 0.4);
+    }
+
+    .notification-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .notification {
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 350px;
+      animation: slideIn 0.3s ease forwards;
+      position: relative;
+      overflow: hidden;
+      color: white;
+      pointer-events: auto;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .notification.success {
+      background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%);
+    }
+
+    .notification.error {
+      background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%);
+    }
+
+    .notification.info { 
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); 
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(110%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* Mode Nuit */
+    .dark-mode {
+      --color-primary: #5e81ac;
+      --color-secondary: #d08770;
+      --color-text-dark: #eceff4;
+      --color-text-light: #2e3440;
+      --color-bg-light: #3b4252;
+      --color-bg-gradient-1: #2e3440;
+      --color-bg-gradient-2: #4c566a;
+      --success-color: #a3be8c;
+      --warning-color: #ebcb8b;
+      --danger-color: #bf616a;
+      --shadow: 0 15px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
+    }
+
+    .dark-mode body::before {
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(76, 86, 106, 0.4) 0%, transparent 25%),
+        radial-gradient(circle at 80% 10%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 40% 80%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 90% 90%, rgba(76, 86, 106, 0.2) 0%, transparent 25%);
+    }
+
+    .dark-mode .header,
+    .dark-mode .sidebar,
+    .dark-mode .free-connection-section,
+    .dark-mode .footer,
+    .dark-mode .info-card,
+    .dark-mode .step-card {
+      background: rgba(59, 66, 82, 0.95);
+      color: var(--color-text-dark);
+    }
+
+    .dark-mode .info-card {
+      background: rgba(59, 66, 82, 0.9);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .main-container {
+        flex-direction: column;
+      }
+      
+      .hamburger-btn {
+        display: flex;
+        position: static;
+        order: 2;
+      }
+
+      .sidebar {
+        width: 85%;
+        max-width: 320px;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: -100%;
+        z-index: 99;
+        transition: left 0.4s ease-in-out;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.97) 100%);
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+        border-radius: 0 25px 25px 0;
+        overflow-y: auto;
+      }
+      
+      .sidebar.open {
+        left: 0;
+      }
+      
+      .header {
+        padding: 15px;
+      }
+      
+      .logo {
+        font-size: 1.5rem;
+        margin-left: 0;
+      }
+      
+      .content {
+        padding: 20px;
+      }
+      
+      .steps-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .footer-links {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .whatsapp-group-card {
+        padding: 20px;
+      }
+      
+      .whatsapp-group-card h3 {
+        font-size: 1.2rem;
+      }
+      
+      .user-name {
+        display: none;
+      }
+      
+      .language-selector span {
+        display: none;
+      }
+      
+      .language-selector {
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="debugBanner" style="display:none;">Chargement...</div>
+
+  <div class="loader-container" id="loader">
+    <div class="loader"></div>
+  </div>
+
+  <div class="notification-container" id="notificationContainer"></div>
+  <header class="header">
+  <div class="logo">
+    <span>BLOWEARN</span>
+  </div>
+  
+  <div class="header-controls">
+    <div class="language-selector-container">
+      <button class="language-selector" id="languageSelector">
+        <i class="fas fa-globe"></i>
+        <span id="currentLanguage">French</span>
+        <i class="fas fa-chevron-down"></i>
+      </button>
+      <div class="language-dropdown" id="languageDropdown">
+        <div class="language-option active" data-lang="fr">
+          <i class="fas fa-check"></i>
+          <span>Français</span>
+        </div>
+        <div class="language-option" data-lang="en">
+          <i class="fas fa-check" style="opacity: 0;"></i>
+          <span>English</span>
+        </div>
+      </div>
+    </div>
+    
+    <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </button>
+    
+    <div class="user-profile" id="userProfile">
+        <div class="avatar" id="userAvatar">U</div>
+        <div class="profile-dropdown" id="profileDropdown">
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+                <span>Mode nuit</span>
+            </button>
+        </div>
+    </div>
+  </div>
+</header>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="main-container">
+  <aside class="sidebar" id="sidebar">
+    <div class="welcome-section">
+      <div class="welcome-text" data-i18n="dashboard.title">Dashboard >> BLOWEARN AGENCIES</div>
+      <div class="username" id="sidebarUsername">Utilisateur</div>
+    </div>
+    
+    <div class="menu-category" data-i18n="menu.main">PRINCIPAL</div>
+    <a href="dashboard.html" class="menu-item">
+      <i class="fas fa-home"></i>
+      <span data-i18n="menu.dashboard">Tableau de bord</span>
+      <span class="menu-badge active">☑</span>
+    </a>
+    
+    <a href="depot.html" class="menu-item">
+      <i class="fas fa-wallet"></i>
+      <span data-i18n="menu.deposit">Dépôt 💵</span>
+      <span class="menu-badge inactive">☐</span>
+    </a>
+    
+    <a href="bonus_bienvenue.html" class="menu-item">
+      <i class="fas fa-gift"></i>
+      <span data-i18n="menu.welcome_bonus">Bonus de bienvenue</span>
+      <span class="menu-badge inactive">☒</span>
+    </a>
+    
+    <div class="menu-category" data-i18n="menu.accounts">COMPTES</div>
+    <a href="retrait.html" class="menu-item">
+      <i class="fas fa-money-bill-wave"></i>
+      <span data-i18n="menu.withdrawal">Retrait</span>
+      <span class="menu-badge inactive">☐</span>
+    </a>
+    
+    <a href="equipe.html" class="menu-item">
+      <i class="fas fa-users"></i>
+      <span data-i18n="menu.team">Équipe</span>
+      <span class="menu-badge inactive">☒</span>
+    </a>
+
+    <div class="menu-category" data-i18n="menu.special">SPÉCIAL</div>
+    
+    <a href="social_boost.html" class="menu-item">
+      <i class="fas fa-rocket"></i>
+      <span data-i18n="menu.sbh">SBH</span>
+      <span class="menu-badge inactive">☐</span>
+    </a>
+    
+    <a href="challenge_reward.html" class="menu-item">
+      <i class="fas fa-medal"></i>
+      <span data-i18n="menu.challenge">Challenge and Reward</span>
+      <span class="menu-badge inactive">☐</span>
+    </a>
+    
+    <div class="menu-category" data-i18n="menu.products">PRODUIT / TÂCHE</div>
+    <a href="whatsapp_earn.html" class="menu-item">
+      <i class="fab fa-whatsapp"></i>
+      <span data-i18n="menu.whatsapp_earn">Gagner via Whatsapp</span>
+      <span class="menu-badge inactive">☐</span>
+    </a>
+    
+    <a href="gains_publicitaires.html" class="menu-item">
+      <i class="fas fa-ad"></i>
+      <span data-i18n="menu.ad_earnings">Gains publicitaires</span>
+      <span class="menu-badge inactive">☐</span>
+    </a>
+    
+    <a href="spin_wheel.html" class="menu-item">
+      <i class="fas fa-trophy"></i>
+      <span data-i18n="menu.fortune_wheel">Roue de la fortune 🏆</span>
+      <span class="menu-badge inactive">☐</span>
+    </a>
+    
+    <a href="tiktok_earn.html" class="menu-item">
+      <i class="fab fa-tiktok"></i>
+      <span data-i18n="menu.tiktok_earn">TikTok Earn</span>
+      <span class="menu-badge inactive">☐</span>
+    </a>
+    
+    <a href="youtube_earn.html" class="menu-item">
+      <i class="fab fa-youtube"></i>
+      <span data-i18n="menu.youtube_earn">YouTube Earn</span>
+      <span class="menu-badge inactive">☐</span>
+    </a>
+    
+    <a href="instagram_earn.html" class="menu-item">
+      <i class="fab fa-instagram"></i>
+      <span data-i18n="menu.instagram_earn">Instagram Earn</span>
+      <span class="menu-badge inactive">☐</span>
+    </a>
+    
+    <a href="trivia_challenge.html" class="menu-item">
+      <i class="fas fa-brain"></i>
+      <span data-i18n="menu.trivia">TRIVIA challenge</span>
+      <span class="menu-badge inactive">☐</span>
+    </a>
+    
+    <div class="menu-category" data-i18n="menu.bonus">BONUS</div>
+    <a href="liste_contacts.html" class="menu-item">
+      <i class="fas fa-address-book"></i>
+      <span data-i18n="menu.contact_list">Liste de contacts gratuit 🆓</span>
+      <span class="menu-badge inactive">☐</span>
+    </a>
+    
+    <a href="booster_visibilite.html" class="menu-item">
+      <i class="fas fa-rocket"></i>
+      <span data-i18n="menu.visibility_booster">Booster ma visibilité</span>
+      <span class="menu-badge inactive">☐</span>
+    </a>
+
+    <a href="canva_pro.html" class="menu-item">
+      <i class="fas fa-palette"></i>
+      <span data-i18n="menu.canva_pro">Canva Pro</span>
+      <span class="menu-badge inactive">☐</span>
+    </a>
+    
+    <a href="connexion_gratuite.html" class="menu-item active">
+      <i class="fas fa-shield-alt"></i>
+      <span data-i18n="menu.free_connection">Connexion gratuite</span>
+      <span class="menu-badge inactive">☐</span>
+    </a>
+  </aside>
+    <main class="content">
+    <h1 class="page-title">
+      <i class="fas fa-shield-alt"></i>
+      <span data-i18n="free_connection.title">Connexion Gratuite - Accès Internet Illimité</span>
+    </h1>
+    
+    <div class="free-connection-section">
+      <div class="info-card">
+        <div class="info-card-title">
+          <i class="fas fa-info-circle"></i>
+          <span data-i18n="free_connection.what_is">Qu'est-ce que la Connexion Gratuite ?</span>
+        </div>
+        <div class="info-card-content" data-i18n="free_connection.description">
+          Notre service de <strong>Connexion Gratuite</strong> vous permet d'accéder à internet sans frais pour travailler sur BLOWEARN AGENCIES. Grâce à nos fichiers VPN professionnels, vous pourrez parrainer, regarder des vidéos, et effectuer toutes vos tâches sans problèmes de connexion.
+        </div>
+      </div>
+      
+      <div class="whatsapp-group-card">
+        <div class="whatsapp-icon">
+          <i class="fab fa-whatsapp"></i>
+        </div>
+        <h3 data-i18n="free_connection.join_group">Rejoignez notre Groupe WhatsApp</h3>
+        <p data-i18n="free_connection.group_description">
+          Pour bénéficier de la connexion gratuite, rejoignez notre groupe WhatsApp où nous partageons quotidiennement les fichiers VPN nécessaires.
+        </p>
+        <a href="https://chat.whatsapp.com/JFpK3r1QdlSHsO1hkpkxu9?mode=hqrt2" 
+           class="whatsapp-link" 
+           target="_blank"
+           data-i18n="free_connection.join_now">
+          Rejoindre le Groupe Maintenant
+        </a>
+      </div>
+      
+      <h2 class="section-title" data-i18n="free_connection.how_it_works">Comment ça marche ?</h2>
+      
+      <div class="steps-container">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-title" data-i18n="free_connection.step1_title">Rejoignez le Groupe</div>
+          <p data-i18n="free_connection.step1_description">
+            Cliquez sur le bouton ci-dessus pour rejoindre notre groupe WhatsApp officiel.
+          </p>
+        </div>
+        
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-title" data-i18n="free_connection.step2_title">Recevez les Fichiers</div>
+          <p data-i18n="free_connection.step2_description">
+            Chaque jour, nous partageons gratuitement les fichiers VPN professionnels dans le groupe.
+          </p>
+        </div>
+        
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-title" data-i18n="free_connection.step3_title">Installez et Connectez</div>
+          <p data-i18n="free_connection.step3_description">
+            Suivez les instructions simples pour installer les fichiers et connectez-vous à internet.
+          </p>
+        </div>
+        
+        <div class="step-card">
+          <div class="step-number">4</div>
+          <div class="step-title" data-i18n="free_connection.step4_title">Travaillez sans Limite</div>
+          <p data-i18n="free_connection.step4_description">
+            Accédez à BLOWEARN AGENCIES et travaillez sans problèmes de connexion.
+          </p>
+        </div>
+      </div>
+      
+      <div class="info-card">
+        <div class="info-card-title">
+          <i class="fas fa-star"></i>
+          <span data-i18n="free_connection.benefits_title">Avantages de notre Service</span>
+        </div>
+        <div class="info-card-content">
+          <ul class="benefits-list">
+            <li>
+              <i class="fas fa-check-circle"></i>
+              <span data-i18n="free_connection.benefit1">Connexion internet gratuite et illimitée</span>
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i>
+              <span data-i18n="free_connection.benefit2">Fichiers VPN professionnels mis à jour quotidiennement</span>
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i>
+              <span data-i18n="free_connection.benefit3">Support technique via WhatsApp</span>
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i>
+              <span data-i18n="free_connection.benefit4">Compatible avec tous les appareils (Android, iOS, PC)</span>
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i>
+              <span data-i18n="free_connection.benefit5">Sécurité et anonymat garantis</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="info-card">
+        <div class="info-card-title">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span data-i18n="free_connection.important_title">Informations Importantes</span>
+        </div>
+        <div class="info-card-content" data-i18n="free_connection.important_content">
+          <strong>Attention :</strong> Ce service est réservé exclusivement aux membres actifs de BLOWEARN AGENCIES. Les fichiers partagés sont à usage personnel uniquement. Tout partage avec des non-membres est strictement interdit et entraînera la suspension de votre compte.
+        </div>
+      </div>
+      
+      <div class="info-card">
+        <div class="info-card-title">
+          <i class="fas fa-question-circle"></i>
+          <span data-i18n="free_connection.faq_title">Questions Fréquentes</span>
+        </div>
+        <div class="info-card-content">
+          <p><strong data-i18n="free_connection.faq1_question">Q: Est-ce vraiment gratuit ?</strong><br>
+          <span data-i18n="free_connection.faq1_answer">R: Oui, absolument gratuit pour tous les membres actifs de BLOWEARN AGENCIES.</span></p>
+          
+          <p><strong data-i18n="free_connection.faq2_question">Q: Dois-je avoir des connaissances techniques ?</strong><br>
+          <span data-i18n="free_connection.faq2_answer">R: Non, nous fournissons des instructions simples étape par étape.</span></p>
+          
+          <p><strong data-i18n="free_connection.faq3_question">Q: Que faire en cas de problème ?</strong><br>
+          <span data-i18n="free_connection.faq3_answer">R: Contactez notre support technique dans le groupe WhatsApp.</span></p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-links">
+      <a href="terms.html" class="footer-link" data-i18n="footer.terms">Conditions d'utilisation</a>
+      <a href="privacy.html" class="footer-link" data-i18n="footer.privacy">Politique de confidentialité</a>
+      <button class="support-btn" id="supportBtn" data-i18n="footer.support">Support</button>
+      <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Propulsé par SBH</a>
+      <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Boost Tech Management</a>
+    </div>
+    <div class="footer-text">
+      © 2025 BLOWEARN AGENCIES. <span data-i18n="footer.rights">Tous droits réservés.</span>
+    </div>
+  </div>
+</footer>
+<script>
+/******** CONFIG FIREBASE ********/
+const firebaseConfig = {
+  apiKey: "AIzaSyCjGisjgbFc2ZE0BFgdhlUao8bCCeuKP1k",
+  authDomain: "cash-flowr.firebaseapp.com",
+  projectId: "cash-flowr",
+  storageBucket: "cash-flowr.appspot.com",
+  messagingSenderId: "1091928501310",
+  appId: "1:1091928501310:web:4f4de306cde36f378ff56f",
+  measurementId: "G-5SF6VDLZCB"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+/******** DOM Elements ********/
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+const themeToggle = document.getElementById('themeToggle');
+const userProfile = document.getElementById('userProfile');
+const profileDropdown = document.getElementById('profileDropdown');
+const languageSelector = document.getElementById('languageSelector');
+const languageDropdown = document.getElementById('languageDropdown');
+const currentLanguage = document.getElementById('currentLanguage');
+const sidebarUsername = document.getElementById('sidebarUsername');
+const userAvatar = document.getElementById('userAvatar');
+const loader = document.getElementById('loader');
+const supportBtn = document.getElementById('supportBtn');
+
+/******** Variables d'état ********/
+let currentUser = null;
+let currentLang = 'fr';
+let userData = {};
+
+/******** Système de traduction ********/
+const translations = {
+  fr: {
+    "header.language": "French",
+    "header.night_mode": "Mode nuit",
+    "header.day_mode": "Mode jour",
+    "dashboard.title": "Dashboard >> BLOWEARN AGENCIES",
+    "menu.main": "PRINCIPAL",
+    "menu.dashboard": "Tableau de bord",
+    "menu.deposit": "Dépôt 💵",
+    "menu.welcome_bonus": "Bonus de bienvenue",
+    "menu.accounts": "COMPTES",
+    "menu.withdrawal": "Retrait",
+    "menu.team": "Équipe",
+    "menu.special": "SPÉCIAL",
+    "menu.sbh": "SBH",
+    "menu.challenge": "Challenge and Reward",
+    "menu.products": "PRODUIT / TÂCHE",
+    "menu.whatsapp_earn": "Gagner via Whatsapp",
+    "menu.ad_earnings": "Gains publicitaires",
+    "menu.fortune_wheel": "Roue de la fortune 🏆",
+    "menu.tiktok_earn": "TikTok Earn",
+    "menu.youtube_earn": "YouTube Earn",
+    "menu.instagram_earn": "Instagram Earn",
+    "menu.trivia": "TRIVIA challenge",
+    "menu.bonus": "BONUS",
+    "menu.contact_list": "Liste de contacts gratuit 🆓",
+    "menu.visibility_booster": "Booster ma visibilité",
+    "menu.canva_pro": "Canva Pro",
+    "menu.free_connection": "Connexion gratuite",
+    "free_connection.title": "Connexion Gratuite - Accès Internet Illimité",
+    "free_connection.what_is": "Qu'est-ce que la Connexion Gratuite ?",
+    "free_connection.description": "Notre service de <strong>Connexion Gratuite</strong> vous permet d'accéder à internet sans frais pour travailler sur BLOWEARN AGENCIES. Grâce à nos fichiers VPN professionnels, vous pourrez parrainer, regarder des vidéos, et effectuer toutes vos tâches sans problèmes de connexion.",
+    "free_connection.join_group": "Rejoignez notre Groupe WhatsApp",
+    "free_connection.group_description": "Pour bénéficier de la connexion gratuite, rejoignez notre groupe WhatsApp où nous partageons quotidiennement les fichiers VPN nécessaires.",
+    "free_connection.join_now": "Rejoindre le Groupe Maintenant",
+    "free_connection.how_it_works": "Comment ça marche ?",
+    "free_connection.step1_title": "Rejoignez le Groupe",
+    "free_connection.step1_description": "Cliquez sur le bouton ci-dessus pour rejoindre notre groupe WhatsApp officiel.",
+    "free_connection.step2_title": "Recevez les Fichiers",
+    "free_connection.step2_description": "Chaque jour, nous partageons gratuitement les fichiers VPN professionnels dans le groupe.",
+    "free_connection.step3_title": "Installez et Connectez",
+    "free_connection.step3_description": "Suivez les instructions simples pour installer les fichiers et connectez-vous à internet.",
+    "free_connection.step4_title": "Travaillez sans Limite",
+    "free_connection.step4_description": "Accédez à BLOWEARN AGENCIES et travaillez sans problèmes de connexion.",
+    "free_connection.benefits_title": "Avantages de notre Service",
+    "free_connection.benefit1": "Connexion internet gratuite et illimitée",
+    "free_connection.benefit2": "Fichiers VPN professionnels mis à jour quotidiennement",
+    "free_connection.benefit3": "Support technique via WhatsApp",
+    "free_connection.benefit4": "Compatible avec tous les appareils (Android, iOS, PC)",
+    "free_connection.benefit5": "Sécurité et anonymat garantis",
+    "free_connection.important_title": "Informations Importantes",
+    "free_connection.important_content": "<strong>Attention :</strong> Ce service est réservé exclusivement aux membres actifs de BLOWEARN AGENCIES. Les fichiers partagés sont à usage personnel uniquement. Tout partage avec des non-membres est strictement interdit et entraînera la suspension de votre compte.",
+    "free_connection.faq_title": "Questions Fréquentes",
+    "free_connection.faq1_question": "Q: Est-ce vraiment gratuit ?",
+    "free_connection.faq1_answer": "R: Oui, absolument gratuit pour tous les membres actifs de BLOWEARN AGENCIES.",
+    "free_connection.faq2_question": "Q: Dois-je avoir des connaissances techniques ?",
+    "free_connection.faq2_answer": "R: Non, nous fournissons des instructions simples étape par étape.",
+    "free_connection.faq3_question": "Q: Que faire en cas de problème ?",
+    "free_connection.faq3_answer": "R: Contactez notre support technique dans le groupe WhatsApp.",
+    "footer.terms": "Conditions d'utilisation",
+    "footer.privacy": "Politique de confidentialité",
+    "footer.support": "Support",
+    "footer.rights": "Tous droits réservés.",
+    "notification.success": "Succès",
+    "notification.error": "Erreur",
+    "notification.info": "Information"
+  },
+  en: {
+    "header.language": "English",
+    "header.night_mode": "Night mode",
+    "header.day_mode": "Day mode",
+    "dashboard.title": "Dashboard >> BLOWEARN AGENCIES",
+    "menu.main": "MAIN",
+    "menu.dashboard": "Dashboard",
+    "menu.deposit": "Deposit 💵",
+    "menu.welcome_bonus": "Welcome Bonus",
+    "menu.accounts": "ACCOUNTS",
+    "menu.withdrawal": "Withdrawal",
+    "menu.team": "Team",
+    "menu.special": "SPECIAL",
+    "menu.sbh": "SBH",
+    "menu.challenge": "Challenge and Reward",
+    "menu.products": "PRODUCT / TASK",
+    "menu.whatsapp_earn": "Earn via Whatsapp",
+    "menu.ad_earnings": "Advertising earnings",
+    "menu.fortune_wheel": "Fortune Wheel 🏆",
+    "menu.tiktok_earn": "TikTok Earn",
+    "menu.youtube_earn": "YouTube Earn",
+    "menu.instagram_earn": "Instagram Earn",
+    "menu.trivia": "TRIVIA challenge",
+    "menu.bonus": "BONUS",
+    "menu.contact_list": "Free contact list 🆓",
+    "menu.visibility_booster": "Boost my visibility",
+    "menu.canva_pro": "Canva Pro",
+    "menu.free_connection": "Free connection",
+    "free_connection.title": "Free Connection - Unlimited Internet Access",
+    "free_connection.what_is": "What is Free Connection?",
+    "free_connection.description": "Our <strong>Free Connection</strong> service allows you to access the internet for free to work on BLOWEARN AGENCIES. Thanks to our professional VPN files, you can refer, watch videos, and perform all your tasks without connection problems.",
+    "free_connection.join_group": "Join our WhatsApp Group",
+    "free_connection.group_description": "To benefit from free connection, join our WhatsApp group where we share the necessary VPN files daily.",
+    "free_connection.join_now": "Join Group Now",
+    "free_connection.how_it_works": "How it works?",
+    "free_connection.step1_title": "Join the Group",
+    "free_connection.step1_description": "Click the button above to join our official WhatsApp group.",
+    "free_connection.step2_title": "Receive the Files",
+    "free_connection.step2_description": "Every day, we share professional VPN files for free in the group.",
+    "free_connection.step3_title": "Install and Connect",
+    "free_connection.step3_description": "Follow the simple instructions to install the files and connect to the internet.",
+    "free_connection.step4_title": "Work Without Limits",
+    "free_connection.step4_description": "Access BLOWEARN AGENCIES and work without connection problems.",
+    "free_connection.benefits_title": "Benefits of Our Service",
+    "free_connection.benefit1": "Free and unlimited internet connection",
+    "free_connection.benefit2": "Professional VPN files updated daily",
+    "free_connection.benefit3": "Technical support via WhatsApp",
+    "free_connection.benefit4": "Compatible with all devices (Android, iOS, PC)",
+    "free_connection.benefit5": "Guaranteed security and anonymity",
+    "free_connection.important_title": "Important Information",
+    "free_connection.important_content": "<strong>Warning:</strong> This service is reserved exclusively for active members of BLOWEARN AGENCIES. Shared files are for personal use only. Any sharing with non-members is strictly prohibited and will result in account suspension.",
+    "free_connection.faq_title": "Frequently Asked Questions",
+    "free_connection.faq1_question": "Q: Is it really free?",
+    "free_connection.faq1_answer": "A: Yes, completely free for all active members of BLOWEARN AGENCIES.",
+    "free_connection.faq2_question": "Q: Do I need technical knowledge?",
+    "free_connection.faq2_answer": "A: No, we provide simple step-by-step instructions.",
+    "free_connection.faq3_question": "Q: What to do in case of a problem?",
+    "free_connection.faq3_answer": "A: Contact our technical support in the WhatsApp group.",
+    "footer.terms": "Terms of Use",
+    "footer.privacy": "Privacy Policy",
+    "footer.support": "Support",
+    "footer.rights": "All rights reserved.",
+    "notification.success": "Success",
+    "notification.error": "Error",
+    "notification.info": "Information"
+  }
+};
+
+/******** Fonctions de traduction ********/
+function setLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem('preferredLanguage', lang);
+  currentLanguage.textContent = lang === 'fr' ? 'French' : 'English';
+  
+  document.querySelectorAll('.language-option').forEach(option => {
+    const icon = option.querySelector('i');
+    if (option.dataset.lang === lang) {
+      option.classList.add('active');
+      icon.style.opacity = '1';
+    } else {
+      option.classList.remove('active');
+      icon.style.opacity = '0';
+    }
+  });
+  
+  document.querySelectorAll('[data-i18n]').forEach(element => {
+    const key = element.getAttribute('data-i18n');
+    if (translations[lang] && translations[lang][key]) {
+      if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+        element.placeholder = translations[lang][key];
+      } else {
+        element.textContent = translations[lang][key];
+      }
+    }
+  });
+  
+  const isDarkMode = document.body.classList.contains('dark-mode');
+  if (themeToggle) {
+    themeToggle.innerHTML = isDarkMode 
+      ? `<i class="fas fa-sun"></i><span>${translations[lang]['header.day_mode']}</span>` 
+      : `<i class="fas fa-moon"></i><span>${translations[lang]['header.night_mode']}</span>`;
+  }
+}
+
+/******** UI helpers ********/
+function showNotification(type, title, message, duration = 4000) {
+  const container = document.getElementById('notificationContainer');
+  if (!container) return;
+  const notification = document.createElement('div');
+  notification.className = `notification ${type}`;
+  const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle');
+  notification.innerHTML = `
+    <i class="fas ${icon}" style="font-size: 1.5rem;"></i>
+    <div>
+      <strong style="display: block; margin-bottom: 5px;">${title}</strong>
+      <span>${message}</span>
+    </div>
+  `;
+  container.appendChild(notification);
+  setTimeout(() => {
+    notification.style.animation = 'slideIn 0.3s ease reverse forwards';
+    setTimeout(() => { if (container.contains(notification)) container.removeChild(notification); }, 300);
+  }, duration);
+}
+
+/******** UI events ********/
+if (hamburgerBtn) {
+  hamburgerBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('active');
+      hamburgerBtn.classList.toggle('open');
+  });
+}
+if (overlay) {
+  overlay.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('active');
+      hamburgerBtn.classList.remove('open');
+  });
+}
+if (userProfile) {
+  userProfile.addEventListener('click', (event) => {
+      event.stopPropagation();
+      profileDropdown.classList.toggle('active');
+  });
+}
+document.addEventListener('click', (event) => {
+  if (!userProfile || !userProfile.contains(event.target)) {
+    if (profileDropdown) profileDropdown.classList.remove('active');
+  }
+});
+
+if (languageSelector) {
+  languageSelector.addEventListener('click', (event) => {
+    event.stopPropagation();
+    languageDropdown.classList.toggle('active');
+  });
+}
+
+document.addEventListener('click', () => {
+  if (languageDropdown) languageDropdown.classList.remove('active');
+});
+
+document.querySelectorAll('.language-option').forEach(option => {
+  option.addEventListener('click', () => {
+    const lang = option.dataset.lang;
+    setLanguage(lang);
+    languageDropdown.classList.remove('active');
+  });
+});
+
+if (themeToggle) {
+  themeToggle.addEventListener('click', (event) => {
+      event.stopPropagation();
+      document.body.classList.toggle('dark-mode');
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      themeToggle.innerHTML = isDarkMode 
+          ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+          : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
+      if(currentUser) saveUserData('theme', isDarkMode ? 'dark' : 'light');
+  });
+}
+
+/******** Bouton Support ********/
+if (supportBtn) {
+  supportBtn.addEventListener('click', () => {
+    window.open('https://wa.me/681144638', '_blank');
+  });
+}
+
+/******** Chargement des données utilisateur ********/
+async function loadUserData() {
+  if (!currentUser) throw new Error("Aucun utilisateur connecté.");
+  
+  let userRef = db.collection('users').doc(currentUser.uid);
+  let doc = await userRef.get();
+  let foundViaEmail = false;
+
+  if (!doc.exists && currentUser.email) {
+    const emailQuery = await db.collection('users').where('email', '==', currentUser.email).limit(1).get();
+    if (!emailQuery.empty) {
+      doc = emailQuery.docs[0];
+      userRef = doc.ref;
+      foundViaEmail = true;
+    }
+  }
+
+  if (doc.exists) {
+    const data = doc.data() || {};
+    const displayName = data.displayName || currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'Utilisateur');
+    
+    userData = {
+      displayName: displayName,
+      email: data.email || currentUser.email,
+      theme: data.theme || 'light'
+    };
+  } else {
+    userData = {
+      displayName: currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'Utilisateur'),
+      email: currentUser.email,
+      theme: 'light'
+    };
+  }
+}
+
+/******** Mise à jour UI utilisateur ********/
+function updateUserInfoUI(user, dbData = {}) {
+  const displayName = dbData.displayName || user.displayName || (user.email ? user.email.split('@')[0] : 'Utilisateur');
+  
+  if (sidebarUsername) sidebarUsername.textContent = displayName;
+  if (userAvatar) userAvatar.textContent = displayName.charAt(0).toUpperCase();
+}
+
+/******** Sauvegarde des données utilisateur ********/
+async function saveUserData(key = null, value = null) {
+  if (!currentUser) return;
+  try {
+    const userRef = db.collection('users').doc(currentUser.uid);
+    const dataToSave = key ? { [key]: value } : userData;
+    await userRef.set({ ...dataToSave, lastUpdate: new Date() }, { merge: true });
+  } catch (error) {
+    console.error("Erreur sauvegarde:", error);
+    showNotification('error', translations[currentLang]['notification.error'], 'Impossible sauvegarder données.');
+  }
+}
+
+/******** Vérification statut utilisateur (sécurité) ********/
+function checkUserStatusAndRedirect(userStatus) {
+  const status = (userStatus || '').toString().toLowerCase().trim();
+  
+  if (status !== 'active') {
+    console.log('🚫 Utilisateur NON ACTIF. Redirection...');
+    
+    setTimeout(() => {
+      auth.signOut().then(() => {
+        window.location.href = 'login.html';
+      }).catch(() => {
+        window.location.href = 'login.html';
+      });
+    }, 2000);
+    
+    return false;
+  }
+  
+  console.log('✅ Utilisateur ACTIF. Accès autorisé.');
+  return true;
+}
+
+/******** Auth state change ********/
+auth.onAuthStateChanged(async (user) => {
+  if (user) {
+    currentUser = user;
+    try {
+      await loadUserData();
+
+      // Vérification sécurité
+      const userStatus = userData.status || userData.statut || '';
+      const isAuthorized = checkUserStatusAndRedirect(userStatus);
+      
+      if (!isAuthorized) return;
+
+      // Charger préférences
+      const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
+      setLanguage(savedLang);
+
+      // Mettre à jour UI
+      updateUserInfoUI(currentUser, userData);
+
+      // Appliquer thème
+      if (userData.theme === 'dark') {
+        document.body.classList.add('dark-mode');
+        if (themeToggle) {
+          themeToggle.innerHTML = `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>`;
+        }
+      }
+
+      // Cacher loader
+      if (loader) loader.classList.add('hidden');
+
+    } catch (err) {
+      console.error('Erreur chargement:', err);
+      if (loader) loader.classList.add('hidden');
+    }
+  } else {
+    console.log('🚫 Pas utilisateur. Redirection login.html');
+    window.location.href = 'login.html';
+  }
+});
+</script>
+</body>
+</html>
