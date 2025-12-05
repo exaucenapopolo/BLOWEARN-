@@ -1191,15 +1191,21 @@
     });
 
     function initWheel() {
+      // NOUVELLE LOGIQUE: Les valeurs représentent le GAIN après avoir misé
+      // 0 = tu perds ta mise (rien en retour)
+      // 5, 10, 15 = petits gains
+      // 25, 50, 75 = gros gains
+      // La mise est prélevée AVANT, puis le gain est ajouté
       wheelSections = [
-        { text: "-200", value: -200, color: "#FF3B30", prob: 20 },
-        { text: "-150", value: -150, color: "#FF453A", prob: 25 },
-        { text: "-100", value: -100, color: "#FF375F", prob: 25 },
-        { text: "-50", value: -50, color: "#FF6B6B", prob: 15 },
-        { text: "+10", value: 10, color: "#4CD964", prob: 8 },
-        { text: "+15", value: 15, color: "#34C759", prob: 4 },
-        { text: "+50", value: 50, color: "#30D158", prob: 2 },
-        { text: "+75", value: 75, color: "#32D74B", prob: 1 }
+        { text: "0", value: 0, color: "#FF3B30", prob: 25 },
+        { text: "0", value: 0, color: "#FF453A", prob: 20 },
+        { text: "0", value: 0, color: "#FF375F", prob: 15 },
+        { text: "5", value: 5, color: "#FF9500", prob: 15 },
+        { text: "10", value: 10, color: "#FFCC00", prob: 12 },
+        { text: "15", value: 15, color: "#4CD964", prob: 8 },
+        { text: "25", value: 25, color: "#34C759", prob: 3 },
+        { text: "50", value: 50, color: "#30D158", prob: 1.5 },
+        { text: "75", value: 75, color: "#32D74B", prob: 0.5 }
       ];
       ctx = wheel.getContext('2d');
       drawWheel();
@@ -1391,18 +1397,26 @@
           if (isFreeSpin) {
             hasUsedFreeSpin = true;
             userData.hasUsedFreeSpin = true;
-          }
-          
-          updateBalanceUI();
-          updateSpinButtonUI();
-          showResult(data.result, data.message);
-          
-          if (data.result > 0) {
+            updateBalanceUI();
+            updateSpinButtonUI();
+            showResult(data.result, data.message);
             showNotification('success', 'Bravo!', `+${data.result} FCFA`);
-          } else if (data.result < 0) {
-            showNotification('error', 'Dommage!', `${data.result} FCFA`);
           } else {
-            showNotification('info', 'Info', data.message);
+            // Tour payant - afficher le résultat net
+            const gain = data.gain || 0;
+            const netResult = data.netResult || (gain - bet);
+            
+            updateBalanceUI();
+            updateSpinButtonUI();
+            showResult(netResult, data.message, gain, bet);
+            
+            if (netResult > 0) {
+              showNotification('success', 'Bravo!', `Gain net: +${netResult} FCFA`);
+            } else if (netResult === 0) {
+              showNotification('info', 'Match nul!', 'Vous récupérez votre mise');
+            } else {
+              showNotification('error', 'Dommage!', `Perte: ${netResult} FCFA`);
+            }
           }
         } else {
           showNotification('error', 'Erreur', data.error || 'Une erreur est survenue');
@@ -1415,8 +1429,19 @@
       resetSpinState();
     }
 
-    function showResult(result, message) {
-      resultValue.textContent = `${result >= 0 ? '+' : ''}${result} FCFA`;
+    function showResult(result, message, gain = null, bet = null) {
+      // Afficher le résultat net
+      if (gain !== null && bet !== null) {
+        // Tour payant: afficher détails
+        resultValue.innerHTML = `
+          <div style="font-size: 0.8em; opacity: 0.8;">Mise: -${bet} FCFA | Gain: +${gain} FCFA</div>
+          <div style="font-size: 1.2em; font-weight: bold;">${result >= 0 ? '+' : ''}${result} FCFA net</div>
+        `;
+      } else {
+        // Tour gratuit
+        resultValue.textContent = `+${result} FCFA`;
+      }
+      
       resultMessage.textContent = message;
       
       if (result > 0) {
