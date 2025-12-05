@@ -25,6 +25,7 @@
       --danger-color: #FF3B30;
       --shadow: 0 15px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.8);
       --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      --attention-color: #FF3B30;
     }
 
     * {
@@ -272,7 +273,7 @@
       from { transform: scale(0.9); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
-    .hamburger-btn {
+        .hamburger-btn {
   display: none;
   background: none;
   border: none;
@@ -561,16 +562,31 @@
   background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
   transform: rotate(45deg);
   animation: shimmer 3s infinite;
+  z-index: 1;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) rotate(45deg); }
 }
 
 .whatsapp-icon {
   font-size: 3rem;
   margin-bottom: 15px;
+  position: relative;
+  z-index: 2;
 }
 
 .whatsapp-group-card h3 {
   font-size: 1.4rem;
   margin-bottom: 15px;
+  position: relative;
+  z-index: 2;
+}
+
+.whatsapp-group-card p {
+  position: relative;
+  z-index: 2;
 }
 
 .whatsapp-link {
@@ -583,6 +599,8 @@
   text-decoration: none;
   margin-top: 15px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  z-index: 3;
 }
 
 .whatsapp-link:hover {
@@ -648,6 +666,23 @@
 
     .benefits-list li i {
       color: var(--color-primary);
+    }
+
+    .attention-text {
+      color: var(--attention-color);
+      font-size: 1.3em;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: inline-block;
+      margin-right: 8px;
+      text-shadow: 0 2px 4px rgba(255, 59, 48, 0.3);
+      animation: pulseAttention 2s infinite;
+    }
+
+    @keyframes pulseAttention {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
     }
 
     .footer {
@@ -770,6 +805,7 @@
       --warning-color: #ebcb8b;
       --danger-color: #bf616a;
       --shadow: 0 15px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
+      --attention-color: #bf616a;
     }
 
     .dark-mode body::before {
@@ -982,8 +1018,7 @@
         <span data-i18n="menu.whatsapp_earn">Gagner via Whatsapp</span>
         <span class="menu-badge inactive">☐</span>
       </a>
-      
-      <a href="gains_publicitaires.html" class="menu-item">
+            <a href="gains_publicitaires.html" class="menu-item">
         <i class="fas fa-ad"></i>
         <span data-i18n="menu.ad_earnings">Gains publicitaires</span>
         <span class="menu-badge inactive">☐</span>
@@ -1148,8 +1183,8 @@
           <i class="fas fa-exclamation-triangle"></i>
           <span data-i18n="free_connection.important_title">Informations Importantes</span>
         </div>
-        <div class="info-card-content" data-i18n="free_connection.important_content">
-          <strong>Attention :</strong> Ce service est réservé exclusivement aux membres actifs de BLOWEARN AGENCIES. Les fichiers partagés sont à usage personnel uniquement. Tout partage avec des non-membres est strictement interdit et entraînera la suspension de votre compte.
+        <div class="info-card-content">
+          <span class="attention-text">ATTENTION :</span> Ce service est réservé exclusivement aux membres actifs de BLOWEARN AGENCIES. Les fichiers partagés sont à usage personnel uniquement. Tout partage avec des non-membres est strictement interdit et entraînera la suspension de votre compte.
         </div>
       </div>
       
@@ -1275,7 +1310,6 @@ const translations = {
     "free_connection.benefit4": "Compatible avec tous les appareils (Android, iOS, PC)",
     "free_connection.benefit5": "Sécurité et anonymat garantis",
     "free_connection.important_title": "Informations Importantes",
-    "free_connection.important_content": "<strong>Attention :</strong> Ce service est réservé exclusivement aux membres actifs de BLOWEARN AGENCIES. Les fichiers partagés sont à usage personnel uniquement. Tout partage avec des non-membres est strictement interdit et entraînera la suspension de votre compte.",
     "free_connection.faq_title": "Questions Fréquentes",
     "free_connection.faq1_question": "Q: Est-ce vraiment gratuit ?",
     "free_connection.faq1_answer": "R: Oui, absolument gratuit pour tous les membres actifs de BLOWEARN AGENCIES.",
@@ -1292,8 +1326,7 @@ const translations = {
     "notification.info": "Information",
     "security.inactive_account": "Compte inactif",
     "security.payment_required": "Votre compte n'est pas encore activé. Veuillez effectuer le paiement pour accéder au tableau de bord."
-  },
-  en: {
+  },  en: {
     "header.language": "English",
     "header.night_mode": "Night mode",
     "header.day_mode": "Day mode",
@@ -1343,7 +1376,6 @@ const translations = {
     "free_connection.benefit4": "Compatible with all devices (Android, iOS, PC)",
     "free_connection.benefit5": "Guaranteed security and anonymity",
     "free_connection.important_title": "Important Information",
-    "free_connection.important_content": "<strong>Warning:</strong> This service is reserved exclusively for active members of BLOWEARN AGENCIES. Shared files are for personal use only. Any sharing with non-members is strictly prohibited and will result in account suspension.",
     "free_connection.faq_title": "Frequently Asked Questions",
     "free_connection.faq1_question": "Q: Is it really free?",
     "free_connection.faq1_answer": "A: Yes, completely free for all active members of BLOWEARN AGENCIES.",
@@ -1508,9 +1540,7 @@ function isUserPaidFromDoc(docData) {
     }
   }
   return false;
-}
-
-/******** Chargement des données utilisateur ********/
+}/******** Chargement des données utilisateur ********/
 async function loadUserData() {
   if (!currentUser) throw new Error("Aucun utilisateur connecté.");
   
