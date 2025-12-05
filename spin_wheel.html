@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MULAFLOWR - Spin Wheel</title>
+  <title>BLOWEARN AGENCIES - Spin Wheel</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
@@ -13,9 +13,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   
   <style>
-    /* -------------------------------------------------------------------------- */
-    /* --- VARIABLES CSS COHÉRENTES AVEC LE DASHBOARD --- */
-    /* -------------------------------------------------------------------------- */
     :root {
       --color-primary: #4A90E2;
       --color-secondary: #FFC107;
@@ -63,9 +60,6 @@
       --wheel-light: #5D4037;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- STYLES GÉNÉRAUX COHÉRENTS --- */
-    /* -------------------------------------------------------------------------- */
     * {
       margin: 0;
       padding: 0;
@@ -92,7 +86,6 @@
       opacity: 1;
     }
 
-    /* Effet de bulles animées en arrière-plan */
     body::before {
       content: '';
       position: absolute;
@@ -114,9 +107,6 @@
       50% { transform: translateY(-15px) scale(1.02); }
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- LOADER --- */
-    /* -------------------------------------------------------------------------- */
     .loader-container {
       position: fixed;
       top: 0;
@@ -149,9 +139,6 @@
       to { transform: rotate(1turn); }
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- HEADER --- */
-    /* -------------------------------------------------------------------------- */
     .header {
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(15px);
@@ -209,26 +196,57 @@
       position: relative;
     }
 
+    .language-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      border-radius: 12px;
+      padding: 8px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 140px;
+      z-index: 200;
+      margin-top: 5px;
+    }
+
+    .language-dropdown.active { display: flex; }
+
+    .language-option {
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .language-option:hover { background-color: rgba(0, 0, 0, 0.05); }
+    .language-option.active { background-color: rgba(74, 144, 226, 0.1); color: var(--color-primary); font-weight: 600; }
+
     .theme-toggle {
-        background-color: transparent;
-        border: none;
-        color: var(--color-text-dark);
-        cursor: pointer;
-        padding: 5px;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background-color 0.3s ease;
+      background-color: transparent;
+      border: none;
+      color: var(--color-text-dark);
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease;
     }
 
     .theme-toggle:hover {
-        background-color: rgba(0, 0, 0, 0.05);
+      background-color: rgba(0, 0, 0, 0.05);
     }
     .theme-toggle i {
-        font-size: 1.2rem;
+      font-size: 1.2rem;
     }
 
     .user-profile {
@@ -255,98 +273,90 @@
     }
 
     .profile-dropdown {
-        position: absolute;
-        top: 100%;
-        right: 0;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(15px);
-        box-shadow: var(--shadow);
-        border-radius: 18px;
-        padding: 10px;
-        display: none;
-        flex-direction: column;
-        gap: 5px;
-        min-width: 150px;
-        z-index: 200;
-        transform-origin: top right;
-        animation: scaleIn 0.2s ease-out forwards;
-        border: 1px solid rgba(255,255,255,0.7);
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      border-radius: 18px;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 150px;
+      z-index: 200;
+      transform-origin: top right;
+      animation: scaleIn 0.2s ease-out forwards;
+      border: 1px solid rgba(255,255,255,0.7);
     }
 
     .profile-dropdown.active {
-        display: flex;
+      display: flex;
     }
     
     @keyframes scaleIn {
-        from { transform: scale(0.9); opacity: 0; }
-        to { transform: scale(1); opacity: 1; }
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
     }
 
     .profile-dropdown .theme-toggle {
-        width: 100%;
-        border-radius: 8px;
-        background-color: rgba(0, 0, 0, 0.05);
-        color: var(--text-color);
-        justify-content: flex-start;
-        padding: 10px;
-        transition: background-color 0.2s ease, transform 0.2s ease;
-        text-align: left;
-        gap: 10px;
+      width: 100%;
+      border-radius: 8px;
+      background-color: rgba(0, 0, 0, 0.05);
+      color: var(--text-color);
+      justify-content: flex-start;
+      padding: 10px;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+      text-align: left;
+      gap: 10px;
     }
     .profile-dropdown .theme-toggle:hover {
-        background-color: rgba(0, 0, 0, 0.1);
-        transform: translateY(-2px);
+      background-color: rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
     }
     
     .profile-dropdown .theme-toggle span {
-        flex-grow: 1;
-        text-align: left;
+      flex-grow: 1;
+      text-align: left;
     }
 
-    /* Styles du bouton hamburger animé */
     .hamburger-btn {
-        display: none;
-        background: none;
-        border: none;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-        width: 30px;
-        height: 25px;
-        padding: 0;
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 30px;
+      height: 25px;
+      padding: 0;
     }
     
     .hamburger-btn .bar {
-        width: 100%;
-        height: 3px;
-        background-color: var(--color-text-dark);
-        transition: transform 0.3s ease, opacity 0.3s ease;
+      width: 100%;
+      height: 3px;
+      background-color: var(--color-text-dark);
+      transition: transform 0.3s ease, opacity 0.3s ease;
     }
     
     .hamburger-btn.open .bar:nth-child(2) {
-        opacity: 0;
+      opacity: 0;
     }
     
     .hamburger-btn.open .bar:nth-child(1) {
-        transform: translateY(11px) rotate(45deg);
+      transform: translateY(11px) rotate(45deg);
     }
     
     .hamburger-btn.open .bar:nth-child(3) {
-        transform: translateY(-11px) rotate(-45deg);
+      transform: translateY(-11px) rotate(-45deg);
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- STRUCTURE PRINCIPALE --- */
-    /* -------------------------------------------------------------------------- */
     .main-container {
       display: flex;
       flex: 1;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- SIDEBAR (MENU) AMÉLIORÉ --- */
-    /* -------------------------------------------------------------------------- */
     .sidebar {
       width: 280px;
       background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.95) 100%);
@@ -362,7 +372,7 @@
     }
     
     .sidebar.open {
-        transform: translateX(0);
+      transform: translateX(0);
     }
 
     .welcome-section {
@@ -474,9 +484,6 @@
       color: white;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- CONTENU PRINCIPAL --- */
-    /* -------------------------------------------------------------------------- */
     .content {
       flex: 1;
       padding: 30px;
@@ -497,9 +504,6 @@
       color: var(--color-primary);
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- BANNIÈRE SPIN WHEEL AMÉLIORÉE --- */
-    /* -------------------------------------------------------------------------- */
     .wheel-banner {
       background: linear-gradient(135deg, var(--wheel-color) 0%, #F57C00 100%);
       border-radius: 18px;
@@ -551,9 +555,24 @@
       line-height: 1.6;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- SECTIONS SPIN WHEEL AMÉLIORÉES --- */
-    /* -------------------------------------------------------------------------- */
+    .free-spin-alert {
+      background: linear-gradient(135deg, var(--color-secondary) 0%, #FFD700 100%);
+      color: var(--color-text-dark);
+      padding: 15px 25px;
+      border-radius: 15px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+      box-shadow: 0 5px 20px rgba(255, 193, 7, 0.4);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+
     .wheel-section {
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(15px);
@@ -602,9 +621,6 @@
       opacity: 0.8;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- CONTENEUR DE LA ROUE AMÉLIORÉ --- */
-    /* -------------------------------------------------------------------------- */
     .wheel-container {
       display: flex;
       flex-direction: column;
@@ -616,8 +632,8 @@
 
     .wheel-wrapper {
       position: relative;
-      width: 400px;
-      height: 400px;
+      width: 350px;
+      height: 350px;
       margin-bottom: 30px;
     }
 
@@ -647,9 +663,6 @@
       border-radius: 2px;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- FORMULAIRE DE MISE AMÉLIORÉ --- */
-    /* -------------------------------------------------------------------------- */
     .bet-form {
       background: linear-gradient(135deg, rgba(230, 255, 253, 0.9) 0%, rgba(178, 255, 248, 0.9) 100%);
       backdrop-filter: blur(10px);
@@ -726,9 +739,6 @@
       margin-top: 5px;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- BOUTONS AMÉLIORÉS --- */
-    /* -------------------------------------------------------------------------- */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -762,34 +772,24 @@
       left: 100%;
     }
 
-    .btn-primary {
-      background: linear-gradient(135deg, var(--wheel-color) 0%, #F57C00 100%);
-      color: white;
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     }
 
-    .btn-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 25px rgba(255, 149, 0, 0.4);
+    .btn-primary {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
+      color: white;
     }
 
     .btn-success {
-      background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%);
+      background: linear-gradient(135deg, var(--success-color) 0%, #2ecc71 100%);
       color: white;
     }
 
-    .btn-success:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 25px rgba(76, 217, 100, 0.4);
-    }
-
-    .btn-danger {
-      background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%);
-      color: white;
-    }
-
-    .btn-danger:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 25px rgba(255, 59, 48, 0.4);
+    .btn-warning {
+      background: linear-gradient(135deg, var(--color-secondary) 0%, #FFD700 100%);
+      color: var(--color-text-dark);
     }
 
     .btn-large {
@@ -812,15 +812,6 @@
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
     }
 
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- RÉSULTATS AMÉLIORÉS --- */
-    /* -------------------------------------------------------------------------- */
     .result-container {
       background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
       border-radius: 18px;
@@ -871,7 +862,6 @@
       opacity: 0.9;
     }
 
-    /* Effets spéciaux pour les gains et pertes */
     .result-win {
       background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%);
       animation: winEffect 0.5s ease-out;
@@ -896,71 +886,6 @@
       100% { transform: translateX(0); }
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- INFORMATIONS SUR LES GAINS AMÉLIORÉES --- */
-    /* -------------------------------------------------------------------------- */
-    .prizes-info {
-      background: linear-gradient(135deg, rgba(224, 247, 250, 0.9) 0%, rgba(178, 235, 242, 0.9) 100%);
-      backdrop-filter: blur(10px);
-      border-radius: 15px;
-      padding: 25px;
-      margin-top: 25px;
-      box-shadow: var(--shadow);
-      border: 1px solid rgba(255,255,255,0.7);
-    }
-
-    .prizes-title {
-      font-size: 1.2rem;
-      margin-bottom: 20px;
-      font-weight: 600;
-      color: var(--color-text-dark);
-      text-align: center;
-    }
-
-    .prizes-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-      gap: 15px;
-      margin-top: 15px;
-    }
-
-    .prize-item {
-      background-color: rgba(255, 255, 255, 0.8);
-      border-radius: 10px;
-      padding: 15px 10px;
-      text-align: center;
-      font-weight: 600;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s ease;
-      border: 2px solid transparent;
-    }
-
-    .prize-item:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
-    }
-
-    .prize-positive {
-      background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%);
-      color: white;
-      border-color: #2AB32A;
-    }
-
-    .prize-negative {
-      background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%);
-      color: white;
-      border-color: #c0392b;
-    }
-
-    .prize-neutral {
-      background: linear-gradient(135deg, #9E9E9E 0%, #616161 100%);
-      color: white;
-      border-color: #616161;
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- HISTORIQUE DES TOURS AMÉLIORÉ --- */
-    /* -------------------------------------------------------------------------- */
     .history-section {
       margin-top: 30px;
     }
@@ -1012,9 +937,6 @@
       opacity: 0.7;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- FOOTER AMÉLIORÉ --- */
-    /* -------------------------------------------------------------------------- */
     .footer {
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(15px);
@@ -1055,9 +977,6 @@
       font-size: 0.9rem;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- OVERLAY ET MODAL --- */
-    /* -------------------------------------------------------------------------- */
     .overlay {
       display: none;
       position: fixed;
@@ -1073,9 +992,6 @@
       display: block;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- NOTIFICATIONS AMÉLIORÉES --- */
-    /* -------------------------------------------------------------------------- */
     .notification-container {
       position: fixed;
       top: 20px;
@@ -1127,9 +1043,6 @@
       }
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- ANIMATIONS SPÉCIALES POUR LA ROUE --- */
-    /* -------------------------------------------------------------------------- */
     .wheel-spin-effect {
       animation: wheelGlow 2s ease-in-out infinite;
     }
@@ -1139,96 +1052,77 @@
       50% { filter: drop-shadow(0 0 20px rgba(255, 149, 0, 0.8)); }
     }
 
-    .confetti {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      background-color: #f00;
-      opacity: 0;
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- RESPONSIVE ADJUSTMENTS --- */
-    /* -------------------------------------------------------------------------- */
     @media (max-width: 992px) {
       .sidebar {
         width: 230px;
       }
       
       .wheel-wrapper {
-        width: 350px;
-        height: 350px;
+        width: 300px;
+        height: 300px;
       }
     }
 
     @media (max-width: 768px) {
-        .main-container {
-            flex-direction: column;
-        }
-        
-        .hamburger-btn {
-            display: flex;
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 101;
-        }
+      .main-container {
+        flex-direction: column;
+      }
+      
+      .hamburger-btn {
+        display: flex;
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 101;
+      }
 
-        .sidebar {
-            width: 75%;
-            max-width: 300px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: -100%;
-            z-index: 99;
-            transition: left 0.4s ease-in-out;
-        }
-        
-        .sidebar.open {
-            left: 0;
-        }
-        
-        .overlay.active {
-            display: block;
-        }
-        
-        .header {
-            padding: 15px;
-        }
-        
-        .logo {
-            font-size: 1.5rem;
-            margin-left: 50px;
-        }
-        
-        .content {
-            padding: 20px;
-        }
-        
-        .wheel-wrapper {
-            width: 300px;
-            height: 300px;
-        }
-        
-        .history-table {
-          display: block;
-          overflow-x: auto;
-        }
-        
-        .prizes-grid {
-          grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-        }
+      .sidebar {
+        width: 75%;
+        max-width: 300px;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: -100%;
+        z-index: 99;
+        transition: left 0.4s ease-in-out;
+      }
+      
+      .sidebar.open {
+        left: 0;
+      }
+      
+      .overlay.active {
+        display: block;
+      }
+      
+      .header {
+        padding: 15px;
+      }
+      
+      .logo {
+        font-size: 1.5rem;
+        margin-left: 50px;
+      }
+      
+      .content {
+        padding: 20px;
+      }
+      
+      .wheel-wrapper {
+        width: 280px;
+        height: 280px;
+      }
+      
+      .history-table {
+        display: block;
+        overflow-x: auto;
+      }
     }
 
     @media (max-width: 576px) {
       .footer-links {
         flex-direction: column;
         gap: 10px;
-      }
-      
-      .prizes-grid {
-        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
       }
       
       .wheel-wrapper {
@@ -1251,30 +1145,40 @@
 
   <header class="header">
     <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
     </button>
     
     <div class="logo">
-      <span>MULAFLOWR</span>
+      <span>BLOWEARN</span>
     </div>
     
     <div class="header-controls">
-      <button class="language-selector" id="languageSelector">
-        <i class="fas fa-globe"></i>
-        <span id="currentLanguage">French</span>
-        <i class="fas fa-chevron-down"></i>
-      </button>
+      <div class="language-selector-container" style="position: relative;">
+        <button class="language-selector" id="languageSelector">
+          <i class="fas fa-globe"></i>
+          <span id="currentLanguage">FR</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="language-dropdown" id="languageDropdown">
+          <div class="language-option active" data-lang="fr">
+            <i class="fas fa-check"></i> Francais
+          </div>
+          <div class="language-option" data-lang="en">
+            <i class="fas fa-check" style="opacity: 0;"></i> English
+          </div>
+        </div>
+      </div>
       
       <div class="user-profile" id="userProfile">
-          <div class="avatar" id="userAvatar">U</div>
-          <div class="profile-dropdown" id="profileDropdown">
-              <button class="theme-toggle" id="themeToggle">
-                  <i class="fas fa-moon"></i>
-                  <span data-i18n="header.night_mode">Mode nuit</span>
-              </button>
-          </div>
+        <div class="avatar" id="userAvatar">U</div>
+        <div class="profile-dropdown" id="profileDropdown">
+          <button class="theme-toggle" id="themeToggle">
+            <i class="fas fa-moon"></i>
+            <span data-i18n="header.night_mode">Mode nuit</span>
+          </button>
+        </div>
       </div>
     </div>
   </header>
@@ -1284,7 +1188,7 @@
   <div class="main-container">
     <aside class="sidebar" id="sidebar">
       <div class="welcome-section">
-        <div class="welcome-text" data-i18n="wheel.title">Spin Wheel >> MULAFLOWR</div>
+        <div class="welcome-text" data-i18n="wheel.sidebar_title">Spin Wheel >> BLOWEARN</div>
         <div class="username" id="sidebarUsername">Utilisateur</div>
       </div>
       
@@ -1296,7 +1200,7 @@
       
       <a href="depot.html" class="menu-item">
         <i class="fas fa-wallet"></i>
-        <span data-i18n="menu.deposit">Dépôt 💵</span>
+        <span data-i18n="menu.deposit">Depot</span>
       </a>
       
       <a href="bonus_bienvenue.html" class="menu-item">
@@ -1312,15 +1216,10 @@
       
       <a href="equipe.html" class="menu-item">
         <i class="fas fa-users"></i>
-        <span data-i18n="menu.team">Équipe</span>
+        <span data-i18n="menu.team">Equipe</span>
       </a>
 
-      <div class="menu-category" data-i18n="menu.special">SPÉCIAL</div>
-      <a href="love_earn.html" class="menu-item">
-        <i class="fas fa-heart"></i>
-        <span data-i18n="menu.love_earn">LoveEarn</span>
-      </a>
-      
+      <div class="menu-category" data-i18n="menu.special">SPECIAL</div>
       <a href="social_boost.html" class="menu-item">
         <i class="fas fa-rocket"></i>
         <span data-i18n="menu.sbh">SBH</span>
@@ -1331,20 +1230,10 @@
         <span data-i18n="menu.challenge">Challenge and Reward</span>
       </a>
       
-      <div class="menu-category" data-i18n="menu.products">PRODUIT / TÂCHE</div>
+      <div class="menu-category" data-i18n="menu.products">PRODUIT / TACHE</div>
       <a href="whatsapp_earn.html" class="menu-item">
         <i class="fab fa-whatsapp"></i>
         <span data-i18n="menu.whatsapp_earn">Gagner via Whatsapp</span>
-      </a>
-      
-      <a href="movies.html" class="menu-item">
-        <i class="fas fa-film"></i>
-        <span data-i18n="menu.movies">Movies</span>
-      </a>
-      
-      <a href="paris_fixes.html" class="menu-item">
-        <i class="fas fa-chart-line"></i>
-        <span data-i18n="menu.fixed_bets">Paris fixes</span>
       </a>
       
       <a href="gains_publicitaires.html" class="menu-item">
@@ -1354,8 +1243,8 @@
       
       <a href="spin_wheel.html" class="menu-item active">
         <i class="fas fa-trophy"></i>
-        <span data-i18n="menu.fortune_wheel">Spin wheel 🏆</span>
-        <span class="menu-badge active">☑</span>
+        <span data-i18n="menu.fortune_wheel">Roue de la fortune</span>
+        <span class="menu-badge active">PLAY</span>
       </a>
       
       <a href="tiktok_earn.html" class="menu-item">
@@ -1381,12 +1270,12 @@
       <div class="menu-category" data-i18n="menu.bonus">BONUS</div>
       <a href="liste_contacts.html" class="menu-item">
         <i class="fas fa-address-book"></i>
-        <span data-i18n="menu.contact_list">Liste de contacts gratuit 🆓</span>
+        <span data-i18n="menu.contact_list">Liste de contacts</span>
       </a>
       
       <a href="booster_visibilite.html" class="menu-item">
         <i class="fas fa-rocket"></i>
-        <span data-i18n="menu.visibility_booster">Booster ma visibilité</span>
+        <span data-i18n="menu.visibility_booster">Booster ma visibilite</span>
       </a>
 
       <a href="canva_pro.html" class="menu-item">
@@ -1403,89 +1292,52 @@
     <main class="content">
       <h1 class="page-title">
         <i class="fas fa-trophy"></i>
-        <span data-i18n="wheel.title">Spin Wheel - Roue de la Fortune</span>
+        <span data-i18n="wheel.title">Roue de la Fortune</span>
       </h1>
       
       <div class="wheel-banner">
-        <h2 class="banner-title" data-i18n="wheel.banner_title">Tentez votre chance à la Roue de la Fortune!</h2>
+        <h2 class="banner-title" data-i18n="wheel.banner_title">Tentez votre chance!</h2>
         <div class="banner-text" data-i18n="wheel.banner_text">
-          Faites tourner la roue et gagnez jusqu'à 250 FCFA! Misez un montant, faites tourner la roue et découvrez votre gain. Attention aux cases négatives qui réduisent votre solde! Mise minimale de 50 FCFA obligatoire.
+          Faites tourner la roue et gagnez! Votre 1er tour est GRATUIT (+10 FCFA garantis). Ensuite, misez min 50 FCFA. Misez +100 FCFA pour avoir une chance de gagner jusqu'a 75 FCFA max.
         </div>
+      </div>
+
+      <div class="free-spin-alert" id="freeSpinAlert" style="display: none;">
+        <i class="fas fa-gift"></i> <span data-i18n="wheel.free_spin_available">TOUR GRATUIT DISPONIBLE! (+10 FCFA garantis)</span>
       </div>
       
       <div class="wheel-section">
         <h2 class="section-title"><i class="fas fa-dice"></i> <span data-i18n="wheel.wheel_title">La Roue de la Fortune</span></h2>
-        <p class="section-subtitle" data-i18n="wheel.wheel_subtitle">Faites tourner la roue et découvrez votre gain!</p>
+        <p class="section-subtitle" data-i18n="wheel.wheel_subtitle">Faites tourner la roue et decouvrez votre gain!</p>
         
         <div class="wheel-container">
           <div class="wheel-wrapper">
             <div class="wheel-pointer"></div>
-            <canvas id="wheel" width="400" height="400"></canvas>
+            <canvas id="wheel" width="350" height="350"></canvas>
           </div>
           
-          <div class="bet-form">
+          <div class="bet-form" id="betForm">
             <div class="balance-info">
               <div data-i18n="wheel.your_balance">Votre solde</div>
               <div class="balance-amount" id="balanceAmount">0 FCFA</div>
             </div>
             
-            <div class="form-group">
+            <div class="form-group" id="betInputGroup">
               <label for="betAmount" class="form-label" data-i18n="wheel.bet_amount">Montant de votre mise <span class="form-required">*</span></label>
               <input type="number" id="betAmount" class="form-input" min="50" value="50" required>
-              <p class="form-hint" data-i18n="wheel.min_bet">Mise minimale: 50 FCFA</p>
+              <p class="form-hint" data-i18n="wheel.min_bet">Mise minimale: 50 FCFA. Misez +100 FCFA pour max 75 FCFA.</p>
             </div>
             
-            <button id="spinBtn" class="btn btn-primary btn-large btn-spin">
+            <button id="spinBtn" class="btn btn-primary btn-large btn-spin btn-full">
               <i class="fas fa-redo"></i> <span data-i18n="wheel.spin_button">Tourner la roue</span>
             </button>
           </div>
           
           <div class="result-container" id="resultContainer">
-            <div class="result-title" data-i18n="wheel.result">Résultat</div>
+            <div class="result-title" data-i18n="wheel.result">Resultat</div>
             <div class="result-value" id="resultValue">0 FCFA</div>
             <div class="result-message" id="resultMessage"></div>
           </div>
-        </div>
-      </div>
-      
-      <div class="wheel-section">
-        <h2 class="section-title"><i class="fas fa-info-circle"></i> <span data-i18n="wheel.how_to_play">Comment jouer</span></h2>
-        <p class="section-subtitle" data-i18n="wheel.rules_subtitle">Règles du jeu et informations importantes</p>
-        
-        <div class="prizes-info">
-          <div class="prizes-title" data-i18n="wheel.possible_prizes">Gains possibles sur la roue</div>
-          <div class="prizes-grid">
-            <div class="prize-item prize-positive">+50 FCFA</div>
-            <div class="prize-item prize-positive">+75 FCFA</div>
-            <div class="prize-item prize-positive">+10 FCFA</div>
-            <div class="prize-item prize-positive">+15 FCFA</div>
-            <div class="prize-item prize-positive">+150 FCFA</div>
-            <div class="prize-item prize-positive">+250 FCFA</div>
-            <div class="prize-item prize-negative">-200 FCFA</div>
-            <div class="prize-item prize-negative">-150 FCFA</div>
-            <div class="prize-item prize-negative">-600 FCFA</div>
-            <div class="prize-item prize-neutral">0 FCFA</div>
-          </div>
-        </div>
-        
-        <div style="margin-top: 25px;">
-          <h4 data-i18n="wheel.rules_title">Règles du jeu:</h4>
-          <ul style="margin-left: 20px; margin-bottom: 20px; color: var(--color-text-dark);">
-            <li data-i18n="wheel.rule1">La mise est <strong>obligatoire</strong> pour jouer</li>
-            <li data-i18n="wheel.rule2">La mise minimale est de <strong>50 FCFA</strong></li>
-            <li data-i18n="wheel.rule3">Vous devez avoir suffisamment de solde pour miser</li>
-            <li data-i18n="wheel.rule4">Les gains et pertes s'appliquent directement à votre solde</li>
-            <li data-i18n="wheel.rule5">Les cases positives <strong>ajoutent</strong> des FCFA à votre solde</li>
-            <li data-i18n="wheel.rule6">Les cases négatives <strong>retirent</strong> des FCFA de votre solde</li>
-            <li data-i18n="wheel.rule7">La case 0 FCFA ne modifie pas votre solde</li>
-          </ul>
-          
-          <h4 data-i18n="wheel.examples_title">Exemples de gains:</h4>
-          <ul style="margin-left: 20px; color: var(--color-text-dark);">
-            <li data-i18n="wheel.example1">Mise de 100 FCFA + case +50 FCFA = <strong>+50 FCFA</strong> ajoutés à votre solde</li>
-            <li data-i18n="wheel.example2">Mise de 200 FCFA + case +250 FCFA = <strong>+250 FCFA</strong> ajoutés à votre solde</li>
-            <li data-i18n="wheel.example3">Mise de 50 FCFA + case -200 FCFA = <strong>-200 FCFA</strong> retirés de votre solde</li>
-          </ul>
         </div>
       </div>
       
@@ -1499,13 +1351,12 @@
               <tr>
                 <th data-i18n="wheel.history_date">Date</th>
                 <th data-i18n="wheel.history_bet">Mise</th>
-                <th data-i18n="wheel.history_result">Résultat</th>
-                <th data-i18n="wheel.history_gain">Gain/Perte</th>
+                <th data-i18n="wheel.history_result">Resultat</th>
               </tr>
             </thead>
             <tbody id="spinHistoryBody">
               <tr>
-                <td colspan="4" style="text-align: center; padding: 20px;" data-i18n="wheel.no_history">
+                <td colspan="3" style="text-align: center; padding: 20px;" data-i18n="wheel.no_history">
                   Aucun historique pour le moment
                 </td>
               </tr>
@@ -1520,31 +1371,30 @@
     <div class="footer-content">
       <div class="footer-links">
         <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Pro Tech Management</a>
-        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Site propulsé par Social Boost Horizon</a>
+        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Social Boost Horizon</a>
       </div>
       <div class="footer-text">
-        © 2025 MULAFLOWR. <span data-i18n="footer.rights">Tous droits réservés.</span>
+        2025 BLOWEARN AGENCIES. <span data-i18n="footer.rights">Tous droits reserves.</span>
       </div>
     </div>
   </footer>
 
   <script>
-    /******** CONFIG FIREBASE ********/
     const firebaseConfig = {
       apiKey: "AIzaSyCjGisjgbFc2ZE0BFgdhlUao8bCCeuKP1k",
       authDomain: "cash-flowr.firebaseapp.com",
       projectId: "cash-flowr",
       storageBucket: "cash-flowr.appspot.com",
       messagingSenderId: "1091928501310",
-      appId: "1:1091928501310:web:4f4de306cde36f378ff56f",
-      measurementId: "G-5SF6VDLZCB"
+      appId: "1:1091928501310:web:4f4de306cde36f378ff56f"
     };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
 
-    /******** DOM Elements ********/
+    const SERVER_URL = 'https://mulaflowr-exaucenapopolo2.replit.app';
+
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
@@ -1552,6 +1402,7 @@
     const userProfile = document.getElementById('userProfile');
     const profileDropdown = document.getElementById('profileDropdown');
     const languageSelector = document.getElementById('languageSelector');
+    const languageDropdown = document.getElementById('languageDropdown');
     const sidebarUsername = document.getElementById('sidebarUsername');
     const userAvatar = document.getElementById('userAvatar');
     const loader = document.getElementById('loader');
@@ -1563,180 +1414,132 @@
     const resultMessage = document.getElementById('resultMessage');
     const spinHistoryBody = document.getElementById('spinHistoryBody');
     const balanceAmount = document.getElementById('balanceAmount');
+    const freeSpinAlert = document.getElementById('freeSpinAlert');
+    const betInputGroup = document.getElementById('betInputGroup');
 
-    /******** Variables d'état ********/
     let currentUser = null;
     let userData = {};
     let wheelSections = [];
     let isSpinning = false;
     let ctx = null;
     let lastRotation = 0;
+    let hasUsedFreeSpin = false;
+    let currentLang = 'fr';
 
-    /******** Système de traduction ********/
     const translations = {
       fr: {
-        // Header
         "header.night_mode": "Mode nuit",
         "header.day_mode": "Mode jour",
-        
-        // Wheel
-        "wheel.title": "Spin Wheel - Roue de la Fortune",
-        "wheel.banner_title": "Tentez votre chance à la Roue de la Fortune!",
-        "wheel.banner_text": "Faites tourner la roue et gagnez jusqu'à 250 FCFA! Misez un montant, faites tourner la roue et découvrez votre gain. Attention aux cases négatives qui réduisent votre solde! Mise minimale de 50 FCFA obligatoire.",
+        "wheel.title": "Roue de la Fortune",
+        "wheel.sidebar_title": "Spin Wheel >> BLOWEARN",
+        "wheel.banner_title": "Tentez votre chance!",
+        "wheel.banner_text": "Faites tourner la roue et gagnez! Votre 1er tour est GRATUIT (+10 FCFA garantis). Ensuite, misez min 50 FCFA. Misez +100 FCFA pour avoir une chance de gagner jusqu'a 75 FCFA max.",
         "wheel.wheel_title": "La Roue de la Fortune",
-        "wheel.wheel_subtitle": "Faites tourner la roue et découvrez votre gain!",
+        "wheel.wheel_subtitle": "Faites tourner la roue et decouvrez votre gain!",
         "wheel.your_balance": "Votre solde",
         "wheel.bet_amount": "Montant de votre mise",
-        "wheel.min_bet": "Mise minimale: 50 FCFA",
+        "wheel.min_bet": "Mise minimale: 50 FCFA. Misez +100 FCFA pour max 75 FCFA.",
         "wheel.spin_button": "Tourner la roue",
-        "wheel.result": "Résultat",
-        "wheel.how_to_play": "Comment jouer",
-        "wheel.rules_subtitle": "Règles du jeu et informations importantes",
-        "wheel.possible_prizes": "Gains possibles sur la roue",
-        "wheel.rules_title": "Règles du jeu:",
-        "wheel.rule1": "La mise est <strong>obligatoire</strong> pour jouer",
-        "wheel.rule2": "La mise minimale est de <strong>50 FCFA</strong>",
-        "wheel.rule3": "Vous devez avoir suffisamment de solde pour miser",
-        "wheel.rule4": "Les gains et pertes s'appliquent directement à votre solde",
-        "wheel.rule5": "Les cases positives <strong>ajoutent</strong> des FCFA à votre solde",
-        "wheel.rule6": "Les cases négatives <strong>retirent</strong> des FCFA de votre solde",
-        "wheel.rule7": "La case 0 FCFA ne modifie pas votre solde",
-        "wheel.examples_title": "Exemples de gains:",
-        "wheel.example1": "Mise de 100 FCFA + case +50 FCFA = <strong>+50 FCFA</strong> ajoutés à votre solde",
-        "wheel.example2": "Mise de 200 FCFA + case +250 FCFA = <strong>+250 FCFA</strong> ajoutés à votre solde",
-        "wheel.example3": "Mise de 50 FCFA + case -200 FCFA = <strong>-200 FCFA</strong> retirés de votre solde",
+        "wheel.free_spin_button": "TOUR GRATUIT (+10 FCFA)",
+        "wheel.free_spin_available": "TOUR GRATUIT DISPONIBLE! (+10 FCFA garantis)",
+        "wheel.result": "Resultat",
         "wheel.history_title": "Historique de vos Tours",
         "wheel.history_subtitle": "Suivez l'historique de vos gains et pertes",
         "wheel.history_date": "Date",
         "wheel.history_bet": "Mise",
-        "wheel.history_result": "Résultat",
-        "wheel.history_gain": "Gain/Perte",
+        "wheel.history_result": "Resultat",
         "wheel.no_history": "Aucun historique pour le moment",
-        
-        // Menu
         "menu.main": "PRINCIPAL",
         "menu.dashboard": "Tableau de bord",
-        "menu.deposit": "Dépôt 💵",
+        "menu.deposit": "Depot",
         "menu.welcome_bonus": "Bonus de bienvenue",
         "menu.accounts": "COMPTES",
         "menu.withdrawal": "Retrait",
-        "menu.team": "Équipe",
-        "menu.special": "SPÉCIAL",
-        "menu.love_earn": "LoveEarn",
+        "menu.team": "Equipe",
+        "menu.special": "SPECIAL",
         "menu.sbh": "SBH",
         "menu.challenge": "Challenge and Reward",
-        "menu.products": "PRODUIT / TÂCHE",
+        "menu.products": "PRODUIT / TACHE",
         "menu.whatsapp_earn": "Gagner via Whatsapp",
-        "menu.movies": "Movies",
-        "menu.fixed_bets": "Paris fixes",
         "menu.ad_earnings": "Gains publicitaires",
-        "menu.fortune_wheel": "Spin wheel 🏆",
+        "menu.fortune_wheel": "Roue de la fortune",
         "menu.tiktok_earn": "TikTok Earn",
         "menu.youtube_earn": "YouTube Earn",
         "menu.instagram_earn": "Instagram Earn",
         "menu.trivia": "TRIVIA challenge",
         "menu.bonus": "BONUS",
-        "menu.contact_list": "Liste de contacts gratuit 🆓",
-        "menu.visibility_booster": "Booster ma visibilité",
+        "menu.contact_list": "Liste de contacts",
+        "menu.visibility_booster": "Booster ma visibilite",
         "menu.canva_pro": "Canva Pro",
         "menu.free_connection": "Connexion gratuite",
-        
-        // Footer
-        "footer.rights": "Tous droits réservés.",
-        
-        // Notifications
-        "notification.success": "Succès",
+        "footer.rights": "Tous droits reserves.",
+        "notification.success": "Succes",
         "notification.error": "Erreur",
-        "notification.info": "Information"
+        "notification.info": "Information",
+        "notification.free_spin": "Tour Gratuit!",
+        "notification.congratulations": "Felicitations!",
+        "notification.too_bad": "Dommage!"
       },
       en: {
-        // Header
         "header.night_mode": "Night mode",
         "header.day_mode": "Day mode",
-        
-        // Wheel
-        "wheel.title": "Spin Wheel - Fortune Wheel",
-        "wheel.banner_title": "Try your luck at the Fortune Wheel!",
-        "wheel.banner_text": "Spin the wheel and win up to 250 FCFA! Place a bet, spin the wheel and discover your prize. Watch out for negative spaces that reduce your balance! Minimum bet of 50 FCFA required.",
+        "wheel.title": "Fortune Wheel",
+        "wheel.sidebar_title": "Spin Wheel >> BLOWEARN",
+        "wheel.banner_title": "Try your luck!",
+        "wheel.banner_text": "Spin the wheel and win! Your 1st spin is FREE (+10 FCFA guaranteed). After that, bet min 50 FCFA. Bet +100 FCFA for a chance to win up to 75 FCFA max.",
         "wheel.wheel_title": "The Fortune Wheel",
         "wheel.wheel_subtitle": "Spin the wheel and discover your prize!",
         "wheel.your_balance": "Your balance",
         "wheel.bet_amount": "Your bet amount",
-        "wheel.min_bet": "Minimum bet: 50 FCFA",
+        "wheel.min_bet": "Minimum bet: 50 FCFA. Bet +100 FCFA for max 75 FCFA.",
         "wheel.spin_button": "Spin the wheel",
+        "wheel.free_spin_button": "FREE SPIN (+10 FCFA)",
+        "wheel.free_spin_available": "FREE SPIN AVAILABLE! (+10 FCFA guaranteed)",
         "wheel.result": "Result",
-        "wheel.how_to_play": "How to play",
-        "wheel.rules_subtitle": "Game rules and important information",
-        "wheel.possible_prizes": "Possible prizes on the wheel",
-        "wheel.rules_title": "Game rules:",
-        "wheel.rule1": "Bet is <strong>required</strong> to play",
-        "wheel.rule2": "Minimum bet is <strong>50 FCFA</strong>",
-        "wheel.rule3": "You must have sufficient balance to bet",
-        "wheel.rule4": "Wins and losses apply directly to your balance",
-        "wheel.rule5": "Positive spaces <strong>add</strong> FCFA to your balance",
-        "wheel.rule6": "Negative spaces <strong>remove</strong> FCFA from your balance",
-        "wheel.rule7": "The 0 FCFA space does not change your balance",
-        "wheel.examples_title": "Winning examples:",
-        "wheel.example1": "Bet of 100 FCFA + +50 FCFA space = <strong>+50 FCFA</strong> added to your balance",
-        "wheel.example2": "Bet of 200 FCFA + +250 FCFA space = <strong>+250 FCFA</strong> added to your balance",
-        "wheel.example3": "Bet of 50 FCFA + -200 FCFA space = <strong>-200 FCFA</strong> removed from your balance",
         "wheel.history_title": "Your Spin History",
-        "wheel.history_subtitle": "Track your wins and losses history",
+        "wheel.history_subtitle": "Track your wins and losses",
         "wheel.history_date": "Date",
         "wheel.history_bet": "Bet",
         "wheel.history_result": "Result",
-        "wheel.history_gain": "Gain/Loss",
         "wheel.no_history": "No history yet",
-        
-        // Menu
         "menu.main": "MAIN",
         "menu.dashboard": "Dashboard",
-        "menu.deposit": "Deposit 💵",
+        "menu.deposit": "Deposit",
         "menu.welcome_bonus": "Welcome Bonus",
         "menu.accounts": "ACCOUNTS",
         "menu.withdrawal": "Withdrawal",
         "menu.team": "Team",
         "menu.special": "SPECIAL",
-        "menu.love_earn": "LoveEarn",
         "menu.sbh": "SBH",
         "menu.challenge": "Challenge and Reward",
         "menu.products": "PRODUCT / TASK",
         "menu.whatsapp_earn": "Earn via Whatsapp",
-        "menu.movies": "Movies",
-        "menu.fixed_bets": "Fixed bets",
         "menu.ad_earnings": "Advertising earnings",
-        "menu.fortune_wheel": "Spin wheel 🏆",
+        "menu.fortune_wheel": "Fortune Wheel",
         "menu.tiktok_earn": "TikTok Earn",
         "menu.youtube_earn": "YouTube Earn",
         "menu.instagram_earn": "Instagram Earn",
         "menu.trivia": "TRIVIA challenge",
         "menu.bonus": "BONUS",
-        "menu.contact_list": "Free contact list 🆓",
+        "menu.contact_list": "Contact list",
         "menu.visibility_booster": "Boost my visibility",
         "menu.canva_pro": "Canva Pro",
         "menu.free_connection": "Free connection",
-        
-        // Footer
         "footer.rights": "All rights reserved.",
-        
-        // Notifications
         "notification.success": "Success",
         "notification.error": "Error",
-        "notification.info": "Information"
+        "notification.info": "Information",
+        "notification.free_spin": "Free Spin!",
+        "notification.congratulations": "Congratulations!",
+        "notification.too_bad": "Too bad!"
       }
     };
 
-    let currentLang = 'fr';
-
-    /******** Fonctions de traduction ********/
     function setLanguage(lang) {
       currentLang = lang;
       localStorage.setItem('preferredLanguage', lang);
+      document.getElementById('currentLanguage').textContent = lang.toUpperCase();
       
-      // Mettre à jour le sélecteur de langue
-      currentLanguage.textContent = lang === 'fr' ? 'French' : 'English';
-      
-      // Traduire tous les éléments avec data-i18n
       document.querySelectorAll('[data-i18n]').forEach(element => {
         const key = element.getAttribute('data-i18n');
         if (translations[lang] && translations[lang][key]) {
@@ -1748,16 +1551,21 @@
         }
       });
       
-      // Mettre à jour le texte du thème
+      document.querySelectorAll('.language-option').forEach(opt => {
+        opt.classList.toggle('active', opt.dataset.lang === lang);
+        opt.querySelector('i').style.opacity = opt.dataset.lang === lang ? '1' : '0';
+      });
+      
       const isDarkMode = document.body.classList.contains('dark-mode');
       if (themeToggle) {
         themeToggle.innerHTML = isDarkMode 
           ? `<i class="fas fa-sun"></i><span>${translations[lang]['header.day_mode']}</span>` 
           : `<i class="fas fa-moon"></i><span>${translations[lang]['header.night_mode']}</span>`;
       }
+      
+      updateSpinButtonUI();
     }
 
-    /******** UI helpers ********/
     function showNotification(type, title, message, duration = 4000) {
       const container = document.getElementById('notificationContainer');
       const notification = document.createElement('div');
@@ -1777,63 +1585,67 @@
       }, duration);
     }
 
-    /******** Gestion du menu ********/
     hamburgerBtn.addEventListener('click', () => {
-        sidebar.classList.toggle('open');
-        overlay.classList.toggle('active');
-        hamburgerBtn.classList.toggle('open');
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('active');
+      hamburgerBtn.classList.toggle('open');
     });
     overlay.addEventListener('click', () => {
-        sidebar.classList.remove('open');
-        overlay.classList.remove('active');
-        hamburgerBtn.classList.remove('open');
+      sidebar.classList.remove('open');
+      overlay.classList.remove('active');
+      hamburgerBtn.classList.remove('open');
     });
 
-    /******** Gestion du profil utilisateur ********/
     userProfile.addEventListener('click', (event) => {
-        event.stopPropagation();
-        profileDropdown.classList.toggle('active');
+      event.stopPropagation();
+      profileDropdown.classList.toggle('active');
     });
+    
+    languageSelector.addEventListener('click', (event) => {
+      event.stopPropagation();
+      languageDropdown.classList.toggle('active');
+    });
+    
+    document.querySelectorAll('.language-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        setLanguage(opt.dataset.lang);
+        languageDropdown.classList.remove('active');
+      });
+    });
+    
     document.addEventListener('click', (event) => {
-        if (!userProfile.contains(event.target)) {
-            profileDropdown.classList.remove('active');
-        }
+      if (!userProfile.contains(event.target)) {
+        profileDropdown.classList.remove('active');
+      }
+      if (!languageSelector.parentElement.contains(event.target)) {
+        languageDropdown.classList.remove('active');
+      }
     });
 
-    /******** Gestion du thème ********/
     themeToggle.addEventListener('click', (event) => {
-        event.stopPropagation();
-        document.body.classList.toggle('dark-mode');
-        const isDarkMode = document.body.classList.contains('dark-mode');
-        themeToggle.innerHTML = isDarkMode 
-            ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
-            : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
-        if(currentUser) saveUserData('theme', isDarkMode ? 'dark' : 'light');
-        
-        // Redessiner la roue avec les nouvelles couleurs
-        drawWheel();
+      event.stopPropagation();
+      document.body.classList.toggle('dark-mode');
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      themeToggle.innerHTML = isDarkMode 
+        ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
+        : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
+      if(currentUser) saveUserData('theme', isDarkMode ? 'dark' : 'light');
+      drawWheel();
     });
 
-    /******** Configuration de la roue - 10 TRANCHES ********/
     function initWheel() {
-      // Définir les 10 sections de la roue avec les récompenses données
       wheelSections = [
-        { text: "+50", value: 50, color: "#4CD964" },
-        { text: "+75", value: 75, color: "#5AC8FA" },
-        { text: "+10", value: 10, color: "#34C759" },
-        { text: "+15", value: 15, color: "#30D158" },
-        { text: "+150", value: 150, color: "#32D74B" },
-        { text: "+250", value: 250, color: "#64D2FF" },
-        { text: "-200", value: -200, color: "#FF453A" },
-        { text: "-150", value: -150, color: "#FF375F" },
-        { text: "-600", value: -600, color: "#FF3B30" },
-        { text: "0", value: 0, color: "#8E8E93" }
+        { text: "-200", value: -200, color: "#FF3B30", prob: 20 },
+        { text: "-150", value: -150, color: "#FF453A", prob: 25 },
+        { text: "-100", value: -100, color: "#FF375F", prob: 25 },
+        { text: "-50", value: -50, color: "#FF6B6B", prob: 15 },
+        { text: "+10", value: 10, color: "#4CD964", prob: 8 },
+        { text: "+15", value: 15, color: "#34C759", prob: 4 },
+        { text: "+50", value: 50, color: "#30D158", prob: 2 },
+        { text: "+75", value: 75, color: "#32D74B", prob: 1 }
       ];
       
-      // Initialiser le contexte canvas
       ctx = wheel.getContext('2d');
-      
-      // Dessiner la roue initiale
       drawWheel();
     }
 
@@ -1843,24 +1655,22 @@
       const radius = Math.min(centerX, centerY) - 10;
       const anglePerSection = (2 * Math.PI) / wheelSections.length;
       
-      // Effacer le canvas
       ctx.clearRect(0, 0, wheel.width, wheel.height);
       
-      // Dessiner chaque section
       for (let i = 0; i < wheelSections.length; i++) {
         const startAngle = i * anglePerSection;
         const endAngle = (i + 1) * anglePerSection;
         
-        // Dessiner la section
         ctx.beginPath();
         ctx.moveTo(centerX, centerY);
         ctx.arc(centerX, centerY, radius, startAngle, endAngle);
         ctx.closePath();
         ctx.fillStyle = wheelSections[i].color;
         ctx.fill();
+        ctx.strokeStyle = '#FFF';
+        ctx.lineWidth = 2;
         ctx.stroke();
         
-        // Dessiner le texte
         ctx.save();
         ctx.translate(centerX, centerY);
         ctx.rotate(startAngle + anglePerSection / 2);
@@ -1868,37 +1678,66 @@
         ctx.textBaseline = 'middle';
         ctx.fillStyle = '#FFF';
         ctx.font = 'bold 16px Arial';
+        ctx.shadowColor = 'rgba(0,0,0,0.5)';
+        ctx.shadowBlur = 3;
         ctx.fillText(wheelSections[i].text, radius - 20, 0);
         ctx.restore();
       }
       
-      // Dessiner le centre de la roue
       ctx.beginPath();
-      ctx.arc(centerX, centerY, 15, 0, 2 * Math.PI);
+      ctx.arc(centerX, centerY, 20, 0, 2 * Math.PI);
       ctx.fillStyle = '#FFF';
       ctx.fill();
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 3;
+      ctx.strokeStyle = '#FFD700';
+      ctx.lineWidth = 4;
       ctx.stroke();
       
-      // Dessiner un cercle décoratif au centre
       ctx.beginPath();
-      ctx.arc(centerX, centerY, 8, 0, 2 * Math.PI);
+      ctx.arc(centerX, centerY, 10, 0, 2 * Math.PI);
       ctx.fillStyle = '#FF9500';
       ctx.fill();
     }
 
-    /******** Mise à jour de l'interface utilisateur ********/
+    function getWeightedRandomSection() {
+      const totalProb = wheelSections.reduce((sum, s) => sum + s.prob, 0);
+      let random = Math.random() * totalProb;
+      
+      for (let i = 0; i < wheelSections.length; i++) {
+        if (random < wheelSections[i].prob) {
+          return i;
+        }
+        random -= wheelSections[i].prob;
+      }
+      return 0;
+    }
+
     function updateBalanceUI() {
       if (balanceAmount) {
         balanceAmount.textContent = `${userData.solde || 0} FCFA`;
       }
-      
-      // Mettre à jour l'état du bouton de spin
       updateSpinButtonState();
     }
 
+    function updateSpinButtonUI() {
+      if (!hasUsedFreeSpin) {
+        freeSpinAlert.style.display = 'block';
+        betInputGroup.style.display = 'none';
+        spinBtn.className = 'btn btn-warning btn-large btn-spin btn-full';
+        spinBtn.innerHTML = `<i class="fas fa-gift"></i> <span>${translations[currentLang]['wheel.free_spin_button']}</span>`;
+      } else {
+        freeSpinAlert.style.display = 'none';
+        betInputGroup.style.display = 'block';
+        spinBtn.className = 'btn btn-primary btn-large btn-spin btn-full';
+        spinBtn.innerHTML = `<i class="fas fa-redo"></i> <span>${translations[currentLang]['wheel.spin_button']}</span>`;
+      }
+    }
+
     function updateSpinButtonState() {
+      if (!hasUsedFreeSpin) {
+        spinBtn.disabled = false;
+        return;
+      }
+      
       const bet = parseInt(betAmount.value) || 0;
       const hasEnoughBalance = userData.solde >= bet;
       const isValidBet = bet >= 50;
@@ -1914,50 +1753,55 @@
       }
     }
 
-    /******** Logique du jeu ********/
-    function spinWheel() {
+    async function spinWheel() {
       if (isSpinning) return;
       
-      const bet = parseInt(betAmount.value);
+      let bet = 0;
+      let sectionIndex;
+      let gain;
       
-      // Validation de la mise
-      if (isNaN(bet) || bet < 50) {
-        showNotification('error', translations[currentLang]['notification.error'], 'La mise minimale est de 50 FCFA');
-        return;
+      if (!hasUsedFreeSpin) {
+        bet = 0;
+        sectionIndex = 4;
+        gain = 10;
+      } else {
+        bet = parseInt(betAmount.value);
+        
+        if (isNaN(bet) || bet < 50) {
+          showNotification('error', translations[currentLang]['notification.error'], 'La mise minimale est de 50 FCFA');
+          return;
+        }
+        
+        if (userData.solde < bet) {
+          showNotification('error', translations[currentLang]['notification.error'], 'Solde insuffisant pour cette mise');
+          return;
+        }
+        
+        sectionIndex = getWeightedRandomSection();
+        gain = wheelSections[sectionIndex].value;
+        
+        if (bet < 100 && gain > 15) {
+          const lowGainIndexes = wheelSections.map((s, i) => s.value <= 15 ? i : -1).filter(i => i >= 0);
+          sectionIndex = lowGainIndexes[Math.floor(Math.random() * lowGainIndexes.length)];
+          gain = wheelSections[sectionIndex].value;
+        }
       }
-      
-      // Vérifier si l'utilisateur a assez d'argent
-      if (userData.solde < bet) {
-        showNotification('error', translations[currentLang]['notification.error'], 'Solde insuffisant pour cette mise');
-        return;
-      }
-      
-      // Déduire la mise du solde immédiatement
-      userData.solde -= bet;
-      updateBalanceUI();
-      saveUserData();
       
       isSpinning = true;
       spinBtn.disabled = true;
       spinBtn.classList.remove('btn-spin');
-      
-      // Ajouter un effet visuel à la roue
       wheel.classList.add('wheel-spin-effect');
       
-      // Générer un angle d'arrêt aléatoire (entre 5 et 10 tours + section aléatoire)
-      const sectionIndex = Math.floor(Math.random() * wheelSections.length);
       const anglePerSection = (2 * Math.PI) / wheelSections.length;
-      const targetAngle = 5 * 2 * Math.PI + sectionIndex * anglePerSection;
+      const targetAngle = 5 * 2 * Math.PI + (wheelSections.length - sectionIndex - 0.5) * anglePerSection;
       
-      // Animation de la roue
       const startTime = Date.now();
-      const duration = 5000; // 5 secondes
+      const duration = 5000;
       
       function animate() {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / duration, 1);
         
-        // Fonction d'accélération/décélération plus réaliste
         const easing = progress < 0.7 
           ? 2 * progress * progress 
           : -1 + (4 - 2 * progress) * progress;
@@ -1968,224 +1812,187 @@
         if (progress < 1) {
           requestAnimationFrame(animate);
         } else {
-          // Animation terminée
           isSpinning = false;
           spinBtn.disabled = false;
           updateSpinButtonState();
           lastRotation = rotation % (2 * Math.PI);
-          
-          // Retirer l'effet visuel
           wheel.classList.remove('wheel-spin-effect');
           
-          // Traiter le résultat
-          processResult(sectionIndex, bet);
+          processResult(sectionIndex, bet, gain);
         }
       }
       
       requestAnimationFrame(animate);
     }
 
-    function processResult(sectionIndex, bet) {
+    async function processResult(sectionIndex, bet, gain) {
       const section = wheelSections[sectionIndex];
-      let gain = section.value;
       let message = '';
       
-      // Appliquer le gain/perte au solde
-      userData.solde += gain;
-      updateBalanceUI();
-      saveUserData();
-      
-      // Déterminer le message et l'apparence du résultat
-      if (gain > 0) {
-        message = `Félicitations! Vous avez gagné ${gain} FCFA.`;
+      if (!hasUsedFreeSpin) {
+        hasUsedFreeSpin = true;
+        userData.hasUsedFreeSpin = true;
+        userData.solde = (userData.solde || 0) + 10;
+        message = 'Tour gratuit! Vous avez gagne 10 FCFA!';
         resultContainer.className = 'result-container result-win';
-      } else if (gain < 0) {
-        message = `Dommage! Vous avez perdu ${Math.abs(gain)} FCFA.`;
-        resultContainer.className = 'result-container result-lose';
+        showNotification('success', translations[currentLang]['notification.free_spin'], '+10 FCFA ajoutes a votre solde!');
       } else {
-        message = `Case neutre. Votre solde reste inchangé.`;
-        resultContainer.className = 'result-container';
+        userData.solde = (userData.solde || 0) + gain;
+        
+        if (gain > 0) {
+          message = `Felicitations! Vous avez gagne ${gain} FCFA.`;
+          resultContainer.className = 'result-container result-win';
+          showNotification('success', translations[currentLang]['notification.congratulations'], `+${gain} FCFA!`);
+        } else if (gain < 0) {
+          message = `Dommage! Vous avez perdu ${Math.abs(gain)} FCFA.`;
+          resultContainer.className = 'result-container result-lose';
+          showNotification('error', translations[currentLang]['notification.too_bad'], `${gain} FCFA`);
+        } else {
+          message = `Case neutre. Votre solde reste inchange.`;
+          resultContainer.className = 'result-container';
+          showNotification('info', translations[currentLang]['notification.info'], message);
+        }
       }
       
-      // Afficher le résultat
+      updateBalanceUI();
+      updateSpinButtonUI();
+      
       resultValue.textContent = `${gain >= 0 ? '+' : ''}${gain} FCFA`;
       resultMessage.textContent = message;
       resultContainer.style.display = 'block';
       
-      // Enregistrer dans l'historique
-      addToHistory(bet, section.text, gain);
-      
-      // Afficher une notification
-      if (gain > 0) {
-        showNotification('success', translations[currentLang]['notification.success'], `Vous avez gagné ${gain} FCFA!`);
-      } else if (gain < 0) {
-        showNotification('error', translations[currentLang]['notification.error'], `Vous avez perdu ${Math.abs(gain)} FCFA.`);
-      } else {
-        showNotification('info', translations[currentLang]['notification.info'], message);
-      }
+      await addToHistory(bet, section.text, gain);
+      await saveUserData();
     }
 
-    function addToHistory(bet, result, gain) {
-      const historyItem = {
-        date: new Date(),
-        bet: bet,
-        result: result,
-        gain: gain
-      };
-      
-      // Ajouter à l'historique local
-      if (!userData.spinHistory) {
-        userData.spinHistory = [];
-      }
-      userData.spinHistory.unshift(historyItem);
-      
-      // Limiter à 10 entrées
-      if (userData.spinHistory.length > 10) {
-        userData.spinHistory = userData.spinHistory.slice(0, 10);
-      }
-      
-      // Sauvegarder dans Firebase
-      saveUserData();
-      
-      // Mettre à jour l'affichage
-      updateHistoryUI();
-    }
-
-    function updateHistoryUI() {
-      if (!userData.spinHistory || userData.spinHistory.length === 0) {
-        spinHistoryBody.innerHTML = `
-          <tr>
-            <td colspan="4" style="text-align: center; padding: 20px;">
-              ${translations[currentLang]['wheel.no_history']}
-            </td>
-          </tr>
-        `;
-        return;
-      }
-      
-      let html = '';
-      userData.spinHistory.forEach(item => {
-        const date = item.date.toDate ? item.date.toDate() : new Date(item.date);
-        const formattedDate = date.toLocaleDateString('fr-FR');
-        const formattedTime = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-        
-        let gainClass = 'gain-neutral';
-        if (item.gain > 0) gainClass = 'gain-positive';
-        else if (item.gain < 0) gainClass = 'gain-negative';
-        
-        html += `
-          <tr>
-            <td>${formattedDate} ${formattedTime}</td>
-            <td>${item.bet} FCFA</td>
-            <td>${item.result}</td>
-            <td class="${gainClass}">${item.gain >= 0 ? '+' : ''}${item.gain} FCFA</td>
-          </tr>
-        `;
-      });
-      
-      spinHistoryBody.innerHTML = html;
-    }
-
-    /******** Fonctions Firestore ********/
-    async function saveUserData(key = null, value = null) {
+    async function addToHistory(bet, result, gain) {
       if (!currentUser) return;
+      
       try {
-        const userRef = db.collection('users').doc(currentUser.uid);
-        const dataToSave = key ? { [key]: value } : userData;
-        await userRef.set({ ...dataToSave, lastUpdate: new Date() }, { merge: true });
-        console.log('Données utilisateur enregistrées avec succès.');
+        await db.collection('users').doc(currentUser.uid).collection('spinHistory').add({
+          date: firebase.firestore.FieldValue.serverTimestamp(),
+          bet: bet,
+          result: result,
+          gain: gain,
+          isFreeSpin: bet === 0
+        });
+        
+        await loadSpinHistory();
       } catch (error) {
-        console.error("Erreur lors de la sauvegarde des données :", error);
-        showNotification('error', translations[currentLang]['notification.error'], 'Impossible de sauvegarder vos données.');
+        console.error('Erreur ajout historique:', error);
       }
     }
 
-    async function loadUserData() {
-      if (!currentUser) throw new Error("Aucun utilisateur connecté pour charger les données.");
-      const userRef = db.collection('users').doc(currentUser.uid);
-      const doc = await userRef.get();
-      if (doc.exists) {
-          const data = doc.data() || {};
-          userData = {
-              displayName: data.displayName || currentUser.displayName,
-              email: data.email || currentUser.email,
-              phoneNumber: data.phoneNumber || data.phone || "",
-              country: data.country || data.pays || "",
-              theme: data.theme || 'light',
-              solde: data.solde || 0,
-              spinHistory: data.spinHistory || []
-          };
-      } else {
-        userData = { 
-          theme: 'light', 
-          solde: 0,
-          spinHistory: []
-        };
-        await saveUserData();
-      }
-    }
-
-    /******** Initialisation de l'application ********/
-    function updateUserInfoUI(user, dbData = {}) {
-        const displayName = dbData.displayName || user.displayName || user.email.split('@')[0];
-        if (sidebarUsername) sidebarUsername.textContent = displayName;
-        if (userAvatar) userAvatar.textContent = displayName.charAt(0).toUpperCase();
-    }
-
-    function applyTheme() {
-        const isDarkMode = userData.theme === 'dark';
-        document.body.classList.toggle('dark-mode', isDarkMode);
-        themeToggle.innerHTML = isDarkMode 
-            ? `<i class="fas fa-sun"></i><span>${translations[currentLang]['header.day_mode']}</span>` 
-            : `<i class="fas fa-moon"></i><span>${translations[currentLang]['header.night_mode']}</span>`;
-    }
-
-    auth.onAuthStateChanged(async (user) => {
-        if (user) {
-            currentUser = user;
-            try {
-                await loadUserData();
-                updateUserInfoUI(user, userData);
-                applyTheme();
-                
-                // Charger la langue sauvegardée
-                const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
-                setLanguage(savedLang);
-                
-                initWheel();
-                updateHistoryUI();
-                updateBalanceUI();
-                
-                // Configurer le bouton de spin
-                spinBtn.addEventListener('click', spinWheel);
-                
-                // Mettre à jour l'état du bouton quand la mise change
-                betAmount.addEventListener('input', updateSpinButtonState);
-                
-                document.body.classList.add('loaded');
-                loader.classList.add('hidden');
-                
-            } catch (error) {
-                console.error("Erreur critique lors de l'initialisation :", error);
-                showNotification('error', translations[currentLang]['notification.error'], "Impossible de charger vos données. Veuillez vous reconnecter.");
-                auth.signOut();
-                setTimeout(() => { window.location.href = 'login.html'; }, 3000);
-            }
-        } else {
-            window.location.href = 'login.html';
+    async function loadSpinHistory() {
+      if (!currentUser) return;
+      
+      try {
+        const snapshot = await db.collection('users').doc(currentUser.uid)
+          .collection('spinHistory')
+          .orderBy('date', 'desc')
+          .limit(10)
+          .get();
+        
+        if (snapshot.empty) {
+          spinHistoryBody.innerHTML = `<tr><td colspan="3" style="text-align: center; padding: 20px;">${translations[currentLang]['wheel.no_history']}</td></tr>`;
+          return;
         }
-    });
+        
+        let html = '';
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const date = data.date?.toDate ? data.date.toDate() : new Date();
+          const formattedDate = date.toLocaleDateString('fr-FR') + ' ' + date.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+          
+          let gainClass = 'gain-neutral';
+          if (data.gain > 0) gainClass = 'gain-positive';
+          else if (data.gain < 0) gainClass = 'gain-negative';
+          
+          const betDisplay = data.isFreeSpin ? 'Gratuit' : `${data.bet} FCFA`;
+          const gainDisplay = data.gain >= 0 ? `+${data.gain}` : `${data.gain}`;
+          
+          html += `<tr>
+            <td>${formattedDate}</td>
+            <td>${betDisplay}</td>
+            <td class="${gainClass}">${gainDisplay} FCFA</td>
+          </tr>`;
+        });
+        
+        spinHistoryBody.innerHTML = html;
+      } catch (error) {
+        console.error('Erreur chargement historique:', error);
+      }
+    }
 
-    /******** Gestion du sélecteur de langue ********/
-    languageSelector.addEventListener('click', () => {
-      // Basculer entre français et anglais
-      const newLang = currentLang === 'fr' ? 'en' : 'fr';
-      setLanguage(newLang);
-    });
+    async function saveUserData(key, value) {
+      if (!currentUser) return;
+      
+      try {
+        const updateData = key ? { [key]: value } : {
+          solde: userData.solde || 0,
+          hasUsedFreeSpin: userData.hasUsedFreeSpin || false
+        };
+        
+        await db.collection('users').doc(currentUser.uid).update(updateData);
+      } catch (error) {
+        console.error('Erreur sauvegarde:', error);
+      }
+    }
 
-    /******** Initialisation au chargement de la page ********/
-    document.addEventListener('DOMContentLoaded', () => {
-      // Rien de spécifique pour le moment
+    if (betAmount) {
+      betAmount.addEventListener('input', updateSpinButtonState);
+      betAmount.addEventListener('change', updateSpinButtonState);
+    }
+
+    spinBtn.addEventListener('click', spinWheel);
+
+    auth.onAuthStateChanged(async function(user) {
+      console.log('Auth state:', user ? user.email : 'Non connecte');
+      
+      if (user) {
+        currentUser = user;
+        
+        try {
+          const doc = await db.collection('users').doc(user.uid).get();
+          userData = doc.exists ? doc.data() : {};
+          
+          const status = (userData.status || '').toString().toLowerCase().trim();
+          if (status !== 'active') {
+            showNotification('info', 'Action requise', 'Veuillez activer votre compte.');
+            setTimeout(() => window.location.href = 'paiement.html', 2000);
+            return;
+          }
+          
+          const displayName = userData.username || userData.displayName || user.email.split('@')[0];
+          sidebarUsername.textContent = displayName;
+          userAvatar.textContent = displayName.charAt(0).toUpperCase();
+          
+          hasUsedFreeSpin = userData.hasUsedFreeSpin || false;
+          
+          if (userData.theme === 'dark') {
+            document.body.classList.add('dark-mode');
+          }
+          
+          const savedLang = localStorage.getItem('preferredLanguage') || 'fr';
+          setLanguage(savedLang);
+          
+          initWheel();
+          updateBalanceUI();
+          updateSpinButtonUI();
+          await loadSpinHistory();
+          
+          loader.classList.add('hidden');
+          document.body.classList.add('loaded');
+          
+        } catch (error) {
+          console.error('Erreur init:', error);
+          showNotification('error', 'Erreur', 'Impossible de charger vos donnees.');
+          auth.signOut();
+          setTimeout(() => window.location.href = 'login.html', 2000);
+        }
+      } else {
+        window.location.href = 'login.html';
+      }
     });
   </script>
 </body>
