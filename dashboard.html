@@ -2057,12 +2057,12 @@
             </tr>
             <tr class="friday-task">
               <td data-i18n="calendar.friday">VENDREDI</td>
-              <td data-i18n="calendar.friday_task">Gagner sur WhatsApp</td>
+              <td data-i18n="calendar.friday_task">Gains Publicitaires</td>
               <td data-i18n="calendar.friday_bonus">Booster, Visibilité, Canva Pro, Connexion gratuite</td>
             </tr>
             <tr class="saturday-task">
               <td data-i18n="calendar.saturday">SAMEDI</td>
-              <td data-i18n="calendar.saturday_task">Gains Publicitaires</td>
+              <td data-i18n="calendar.saturday_task">Gagner sur WhatsApp</td>
               <td data-i18n="calendar.saturday_bonus">Liste de contact gratuite, Booster, Visibilité, Roue de la fortune</td>
             </tr>
             <tr class="sunday-task" style="opacity: 0.7;"> 
@@ -2230,8 +2230,8 @@ const translations = {
     "calendar.tuesday_task": "Vidéos YouTube",
     "calendar.wednesday_task": "Vidéos Instagram",
     "calendar.thursday_task": "Trivia Challenge",
-    "calendar.friday_task": "Game Publicitaire",
-    "calendar.saturday_task": "Gagner via WhatsApp",
+    "calendar.friday_task": "Gains Publicitaires",
+    "calendar.saturday_task": "Gagner sur WhatsApp",
     "calendar.sunday_task": "Aucune tâche (Repos)",
     "calendar.monday_bonus": "Liste de contact gratuite, Booster, Visibilité, Roue de la fortune",
     "calendar.tuesday_bonus": "Liste de contact gratuite, Canva Pro, Connexion gratuite, Roue de la fortune",
@@ -2327,7 +2327,7 @@ const translations = {
     "calendar.tuesday_task": "YouTube Videos",
     "calendar.wednesday_task": "Instagram Videos",
     "calendar.thursday_task": "Trivia Challenge",
-    "calendar.friday_task": "Advertising Game",
+    "calendar.friday_task": "Advertising Earnings",
     "calendar.saturday_task": "Earn via WhatsApp",
     "calendar.sunday_task": "No task (Rest)",
     "calendar.monday_bonus": "Free contact list, Booster, Visibility, Fortune Wheel",
@@ -2643,7 +2643,7 @@ async function loadUserData() {
       bonusAgent: Number(data.bonusAgent || data.agentBonus || 0),
       whatsappGains: Number(data.whatsappGains || 0),
       triviaGains: Number(data.triviaGains || 0),
-      publiciteGains: Number(data.publiciteGains || 0),
+      publiciteGains: Number(data.gainsPublicitaires || data.publiciteGains || 0),
       tiktokGains: Number(data.tiktokGains || 0),
       youtubeGains: Number(data.youtubeGains || 0),
       instagramGains: Number(data.instagramGains || data.instaGains || 0), 
