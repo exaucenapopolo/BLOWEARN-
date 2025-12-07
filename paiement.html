@@ -172,6 +172,143 @@
     let userCountryCode = 'CM';
     let isProcessing = false;
 
+    // ========== CURRENCY CONVERSION SYSTEM ==========
+    // Base amount in XAF (CFA Franc BEAC)
+    const BASE_AMOUNT_XAF = 3600;
+
+    // Country to currency mapping
+    const countryCurrencyMap = {
+      // CEMAC zone (XAF - CFA Franc BEAC)
+      'CM': 'XAF', // Cameroon
+      'GA': 'XAF', // Gabon
+      'TD': 'XAF', // Chad
+      'CF': 'XAF', // Central African Republic
+      'CG': 'XAF', // Congo-Brazzaville
+      'GQ': 'XAF', // Equatorial Guinea
+      // UEMOA zone (XOF - CFA Franc BCEAO) - same value as XAF
+      'SN': 'XOF', // Senegal
+      'CI': 'XOF', // Ivory Coast
+      'ML': 'XOF', // Mali
+      'BF': 'XOF', // Burkina Faso
+      'BJ': 'XOF', // Benin
+      'TG': 'XOF', // Togo
+      'NE': 'XOF', // Niger
+      'GW': 'XOF', // Guinea-Bissau
+      // Other African countries
+      'CD': 'CDF', // DR Congo (Congolese Franc)
+      'KE': 'KES', // Kenya (Kenyan Shilling)
+      'RW': 'RWF', // Rwanda (Rwandan Franc)
+      'TZ': 'TZS', // Tanzania (Tanzanian Shilling)
+      'UG': 'UGX', // Uganda (Ugandan Shilling)
+      'ZA': 'ZAR', // South Africa (Rand)
+      'NG': 'NGN', // Nigeria (Naira)
+      'GH': 'GHS', // Ghana (Cedi)
+      'ET': 'ETB', // Ethiopia (Birr)
+      'MA': 'MAD', // Morocco (Dirham)
+      'EG': 'EGP', // Egypt (Pound)
+      'DZ': 'DZD', // Algeria (Dinar)
+      'TN': 'TND', // Tunisia (Dinar)
+    };
+
+    // Exchange rates from XAF to other currencies (approximate rates - Dec 2024)
+    const exchangeRates = {
+      'XAF': 1,           // Base currency
+      'XOF': 1,           // Fixed parity with XAF (1:1)
+      'CDF': 4.74,        // 1 XAF ≈ 4.74 CDF
+      'KES': 0.21,        // 1 XAF ≈ 0.21 KES
+      'RWF': 2.11,        // 1 XAF ≈ 2.11 RWF
+      'TZS': 4.25,        // 1 XAF ≈ 4.25 TZS
+      'UGX': 6.29,        // 1 XAF ≈ 6.29 UGX
+      'ZAR': 0.031,       // 1 XAF ≈ 0.031 ZAR
+      'NGN': 2.70,        // 1 XAF ≈ 2.70 NGN
+      'GHS': 0.026,       // 1 XAF ≈ 0.026 GHS
+      'ETB': 0.19,        // 1 XAF ≈ 0.19 ETB
+      'MAD': 0.017,       // 1 XAF ≈ 0.017 MAD
+      'EGP': 0.083,       // 1 XAF ≈ 0.083 EGP
+      'DZD': 0.23,        // 1 XAF ≈ 0.23 DZD
+      'TND': 0.0053,      // 1 XAF ≈ 0.0053 TND
+    };
+
+    // Currency symbols/names for display
+    const currencyDisplayNames = {
+      'XAF': 'FCFA',
+      'XOF': 'FCFA',
+      'CDF': 'FC',
+      'KES': 'KSh',
+      'RWF': 'FRw',
+      'TZS': 'TSh',
+      'UGX': 'USh',
+      'ZAR': 'R',
+      'NGN': '₦',
+      'GHS': 'GH₵',
+      'ETB': 'Br',
+      'MAD': 'DH',
+      'EGP': 'E£',
+      'DZD': 'DA',
+      'TND': 'DT',
+    };
+
+    // Current converted amount and currency
+    let convertedAmount = BASE_AMOUNT_XAF;
+    let userCurrency = 'XAF';
+
+    // Function to get currency for a country
+    function getCurrencyForCountry(countryCode) {
+      return countryCurrencyMap[countryCode.toUpperCase()] || 'XAF';
+    }
+
+    // Function to convert XAF to target currency
+    function convertFromXAF(amountXAF, targetCurrency) {
+      const rate = exchangeRates[targetCurrency] || 1;
+      return Math.round(amountXAF * rate);
+    }
+
+    // Function to format currency amount for display
+    function formatCurrencyAmount(amount, currencyCode) {
+      const displayName = currencyDisplayNames[currencyCode] || currencyCode;
+      const formattedAmount = new Intl.NumberFormat('fr-FR').format(amount);
+      return `${formattedAmount} ${displayName}`;
+    }
+
+    // Function to update payment display with converted amount
+    function updatePaymentDisplay() {
+      userCurrency = getCurrencyForCountry(userCountryCode);
+      convertedAmount = convertFromXAF(BASE_AMOUNT_XAF, userCurrency);
+      
+      const formattedAmount = formatCurrencyAmount(convertedAmount, userCurrency);
+      
+      // Update main amount display
+      const amountEl = document.getElementById('activationAmount');
+      if (amountEl) {
+        amountEl.textContent = formattedAmount;
+      }
+      
+      // Update summary amount
+      const summaryAmountEl = document.querySelector('.right .card div[style*="font-weight:800"]');
+      if (summaryAmountEl) {
+        summaryAmountEl.textContent = formattedAmount;
+      }
+      
+      // Show conversion info if not XAF/XOF
+      if (userCurrency !== 'XAF' && userCurrency !== 'XOF') {
+        const conversionNote = document.getElementById('conversionNote');
+        if (!conversionNote) {
+          const noteDiv = document.createElement('div');
+          noteDiv.id = 'conversionNote';
+          noteDiv.className = 'small';
+          noteDiv.style.marginTop = '8px';
+          noteDiv.style.color = '#607d8b';
+          noteDiv.innerHTML = `<i class="fas fa-exchange-alt"></i> Equivalent à 3 600 FCFA`;
+          const amountContainer = document.querySelector('.center');
+          if (amountContainer) {
+            amountContainer.appendChild(noteDiv);
+          }
+        }
+      }
+      
+      console.log(`Currency updated: ${userCountryCode} -> ${userCurrency}, Amount: ${convertedAmount}`);
+    }
+
     // ========== HELPER: AFFICHER MESSAGE ==========
     function showMessage(text, type = 'info') {
       if (!messageEl) return;
@@ -223,6 +360,8 @@
           } else {
             accountStatusEl.textContent = 'En attente de paiement';
           }
+          // Update payment display with converted currency
+          updatePaymentDisplay();
         } else {
           const userRef = doc(db, 'users', user.uid);
           const snap = await getDoc(userRef);
@@ -238,6 +377,8 @@
             } else {
               accountStatusEl.textContent = 'En attente de paiement';
             }
+            // Update payment display with converted currency
+            updatePaymentDisplay();
           }
         }
       } catch (err) {
@@ -367,11 +508,12 @@
         const username = currentUser.displayName || email.split('@')[0];
         const country = userCountryCode || 'CM';
 
+        // Always send payment in XAF (base currency) - conversion is display-only
         const result = await createPayment({ 
           userId, 
           email,
           username,
-          amount: 3600, 
+          amount: BASE_AMOUNT_XAF, 
           currency: 'XAF', 
           country, 
           method: selectedMethod 
