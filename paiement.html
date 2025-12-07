@@ -508,13 +508,13 @@
         const username = currentUser.displayName || email.split('@')[0];
         const country = userCountryCode || 'CM';
 
-        // Always send payment in XAF (base currency) - conversion is display-only
+        // Send the converted amount in user's local currency to payment provider
         const result = await createPayment({ 
           userId, 
           email,
           username,
-          amount: BASE_AMOUNT_XAF, 
-          currency: 'XAF', 
+          amount: convertedAmount, 
+          currency: userCurrency, 
           country, 
           method: selectedMethod 
         });
