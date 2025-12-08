@@ -1545,9 +1545,9 @@ claimButton.addEventListener('click', async () => {
     }
     
     console.log('🔑 Token Firebase obtenu, envoi requête au serveur...');
-    const API_BASE = window.location.hostname === 'localhost' || window.location.hostname.includes('replit') 
+    const API_BASE = window.location.hostname.includes('replit') 
       ? '' 
-      : 'https://f3327ae8-67a6-4942-b619-32850f23c0c8-00-2kc4muggp01es.kirk.replit.dev';
+      : 'https://mulaflowr-exaucenapopolo2.replit.app';
     const response = await fetch(API_BASE + '/api/tiktok-claim-reward', {
       method: 'POST',
       headers: {
