@@ -508,13 +508,19 @@
         const username = currentUser.displayName || email.split('@')[0];
         const country = userCountryCode || 'CM';
 
+        // Recalculate conversion to ensure we have the correct amount
+        const paymentCurrency = getCurrencyForCountry(country);
+        const paymentAmount = convertFromXAF(BASE_AMOUNT_XAF, paymentCurrency);
+        
+        console.log(`Payment: Country=${country}, Currency=${paymentCurrency}, Amount=${paymentAmount}`);
+
         // Send the converted amount in user's local currency to payment provider
         const result = await createPayment({ 
           userId, 
           email,
           username,
-          amount: convertedAmount, 
-          currency: userCurrency, 
+          amount: paymentAmount, 
+          currency: paymentCurrency, 
           country, 
           method: selectedMethod 
         });
