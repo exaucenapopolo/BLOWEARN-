@@ -5,96 +5,76 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>BLOWEARN AGENCIES - TikTok Earn</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   
   <style>
-    /* Styles de base */
-    body {
-      background: linear-gradient(135deg, #d5e8d9 0%, #c5dfe6 100%);
-      color: var(--text-color);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      visibility: hidden; 
-      opacity: 0;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
-    }
-
-    body.loaded {
-      visibility: visible;
-      opacity: 1;
-    }
-
     :root {
-      --primary-color: #3a8ee6;
-      --primary-light: #4da6ff;
-      --primary-dark: #2c75c9;
-      --secondary-color: #4c566a;
-      --accent-color: #5e81ac;
-      --background-light: #f5f7fb;
-      --background-dark: #e5e9f0;
-      --card-bg: #ffffff;
-      --text-color: #2e3440;
-      --text-light: #4c566a;
+      --color-primary: #4A90E2;
+      --color-secondary: #FFC107;
+      --color-text-dark: #2C3E50;
+      --color-text-light: #ECF0F1;
+      --color-bg-light: #FFFFFF;
+      --color-bg-gradient-1: #6DD5FA;
+      --color-bg-gradient-2: #FF7582;
       --success-color: #4CD964;
       --warning-color: #FF9500;
       --danger-color: #FF3B30;
-      --purple-color: #AF52DE;
-      --teal-color: #5AC8FA;
-      --orange-color: #FF9500;
-      --pink-color: #FF2D55;
-      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      --transition: all 0.3s ease;
-      --badge-active: #4CD964;
-      --badge-pending: #FF9500;
-      --badge-inactive: #FF3B30;
-    }
-
-    .dark-mode {
-      --primary-color: #5e81ac;
-      --primary-light: #81a1c1;
-      --primary-dark: #4c566a;
-      --secondary-color: #d8dee9;
-      --accent-color: #88c0d0;
-      --background-light: #2e3440;
-      --background-dark: #3b4252;
-      --card-bg: #434c5e;
-      --text-color: #eceff4;
-      --text-light: #d8dee9;
-      --success-color: #4CD964;
-      --warning-color: #FF9500;
-      --danger-color: #FF3B30;
-      --purple-color: #AF52DE;
-      --teal-color: #5AC8FA;
-      --orange-color: #FF9500;
-      --pink-color: #FF2D55;
-      --shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-      --badge-active: #2ecc71;
-      --badge-pending: #f1c40f;
-      --badge-inactive: #e74c3c;
+      --shadow: 0 15px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.8);
+      --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Montserrat', sans-serif;
       transition: var(--transition);
     }
+
+    body {
+      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
+      color: var(--color-text-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 25%),
+        radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 90% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 25%);
+      animation: float 20s ease-in-out infinite;
+      z-index: -1;
+    }
     
-    /* Loader */
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-15px) scale(1.02); }
+    }
+
     .loader-container {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(135deg, #d5e8d9 0%, #c5dfe6 100%);
+      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -111,20 +91,18 @@
       width: 60px;
       height: 60px;
       border-radius: 50%;
-      background: conic-gradient(#0000 10%, var(--primary-color));
+      background: conic-gradient(#0000 10%, var(--color-primary));
       -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
       animation: spin 1s infinite linear;
     }
 
     @keyframes spin {
-      to {
-        transform: rotate(1turn);
-      }
+      to { transform: rotate(1turn); }
     }
 
-    /* Header styles */
     .header {
-      background-color: var(--card-bg);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
       box-shadow: var(--shadow);
       padding: 15px 30px;
       display: flex;
@@ -133,17 +111,29 @@
       position: sticky;
       top: 0;
       z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.7);
     }
 
     .logo {
       font-size: 1.8rem;
       font-weight: 800;
-      color: var(--primary-color);
+      color: var(--color-text-dark);
       display: flex;
       align-items: center;
-      font-family: 'Montserrat', sans-serif;
+      font-family: 'Poppins', sans-serif;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      background: linear-gradient(45deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: logoGlow 3s ease-in-out infinite alternate;
+    }
+    
+    @keyframes logoGlow {
+      from { filter: drop-shadow(0 0 5px rgba(74, 144, 226, 0.5)); }
+      to { filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.7)); }
     }
 
     .header-controls {
@@ -153,7 +143,7 @@
     }
 
     .language-selector {
-      background-color: var(--primary-light);
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
       color: white;
       border: none;
       border-radius: 20px;
@@ -163,28 +153,75 @@
       align-items: center;
       gap: 8px;
       font-weight: 500;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      position: relative;
+    }
+
+    .language-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      border-radius: 12px;
+      padding: 8px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 140px;
+      z-index: 200;
+      transform-origin: top right;
+      animation: scaleIn 0.2s ease-out forwards;
+      border: 1px solid rgba(255,255,255,0.7);
+      margin-top: 5px;
+    }
+
+    .language-dropdown.active {
+      display: flex;
+    }
+
+    .language-option {
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s ease;
+    }
+
+    .language-option:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .language-option.active {
+      background-color: rgba(74, 144, 226, 0.1);
+      color: var(--color-primary);
+      font-weight: 600;
     }
 
     .theme-toggle {
-        background-color: transparent;
-        border: none;
-        color: var(--secondary-color);
-        cursor: pointer;
-        padding: 5px;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background-color 0.3s ease;
+      background-color: transparent;
+      border: none;
+      color: var(--color-text-dark);
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease;
     }
 
     .theme-toggle:hover {
-        background-color: rgba(0, 0, 0, 0.05);
+      background-color: rgba(0, 0, 0, 0.05);
     }
+
     .theme-toggle i {
-        font-size: 1.2rem;
+      font-size: 1.2rem;
     }
 
     .user-profile {
@@ -199,110 +236,110 @@
       width: 45px;
       height: 45px;
       border-radius: 50%;
-      background-color: var(--primary-color);
+      background-color: var(--color-primary);
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       font-size: 1.2rem;
       font-weight: bold;
-      border: 2px solid var(--primary-light);
+      border: 2px solid var(--color-secondary);
       box-shadow: var(--shadow);
     }
 
     .profile-dropdown {
-        position: absolute;
-        top: 100%;
-        right: 0;
-        background-color: var(--card-bg);
-        box-shadow: var(--shadow);
-        border-radius: 8px;
-        padding: 10px;
-        display: none;
-        flex-direction: column;
-        gap: 5px;
-        min-width: 150px;
-        z-index: 200;
-        transform-origin: top right;
-        animation: scaleIn 0.2s ease-out forwards;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      border-radius: 18px;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 150px;
+      z-index: 200;
+      transform-origin: top right;
+      animation: scaleIn 0.2s ease-out forwards;
+      border: 1px solid rgba(255,255,255,0.7);
     }
 
     .profile-dropdown.active {
-        display: flex;
+      display: flex;
     }
     
     @keyframes scaleIn {
-        from { transform: scale(0.9); opacity: 0; }
-        to { transform: scale(1); opacity: 1; }
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
     }
 
     .profile-dropdown .theme-toggle {
-        width: 100%;
-        border-radius: 8px;
-        background-color: rgba(0, 0, 0, 0.05);
-        color: var(--text-color);
-        justify-content: flex-start;
-        padding: 10px;
-        transition: background-color 0.2s ease, transform 0.2s ease;
-        text-align: left;
-        gap: 10px;
+      width: 100%;
+      border-radius: 8px;
+      background-color: rgba(0, 0, 0, 0.05);
+      color: var(--color-text-dark);
+      justify-content: flex-start;
+      padding: 10px;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+      text-align: left;
+      gap: 10px;
     }
+
     .profile-dropdown .theme-toggle:hover {
-        background-color: rgba(0, 0, 0, 0.1);
-        transform: translateY(-2px);
+      background-color: rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
     }
     
     .profile-dropdown .theme-toggle span {
-        flex-grow: 1;
-        text-align: left;
+      flex-grow: 1;
+      text-align: left;
     }
 
-    /* Bouton hamburger */
     .hamburger-btn {
-        display: none;
-        background: none;
-        border: none;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-        width: 30px;
-        height: 25px;
-        padding: 0;
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 30px;
+      height: 25px;
+      padding: 0;
+      order: 2;
     }
     
     .hamburger-btn .bar {
-        width: 100%;
-        height: 3px;
-        background-color: var(--secondary-color);
-        transition: transform 0.3s ease, opacity 0.3s ease;
+      width: 100%;
+      height: 3px;
+      background-color: var(--color-text-dark);
+      transition: transform 0.3s ease, opacity 0.3s ease;
     }
     
     .hamburger-btn.open .bar:nth-child(2) {
-        opacity: 0;
+      opacity: 0;
     }
     
     .hamburger-btn.open .bar:nth-child(1) {
-        transform: translateY(11px) rotate(45deg);
+      transform: translateY(11px) rotate(45deg);
     }
     
     .hamburger-btn.open .bar:nth-child(3) {
-        transform: translateY(-11px) rotate(-45deg);
+      transform: translateY(-11px) rotate(-45deg);
     }
 
-    /* Main layout */
     .main-container {
       display: flex;
       flex: 1;
     }
 
-    /* Sidebar */
     .sidebar {
       width: 280px;
-      background: rgba(255, 255, 255, 0.75);
-      backdrop-filter: blur(10px);
-      -webkit-backcast-filter: blur(10px);
-      border-right: 1px solid rgba(255, 255, 255, 0.2);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.95) 100%);
+      backdrop-filter: blur(15px);
+      border-right: 1px solid rgba(255,255,255,0.7);
       box-shadow: var(--shadow);
       height: calc(100vh - 80px);
       position: sticky;
@@ -313,7 +350,7 @@
     }
     
     .sidebar.open {
-        transform: translateX(0);
+      transform: translateX(0);
     }
 
     .welcome-section {
@@ -323,24 +360,29 @@
     }
 
     .welcome-text {
-      color: var(--text-light);
+      color: var(--color-text-dark);
       font-size: 0.9rem;
       margin-bottom: 5px;
+      font-weight: 500;
+      font-family: 'Quicksand', sans-serif;
     }
 
     .username {
       font-weight: 600;
       font-size: 1.2rem;
-      color: var(--primary-color);
+      color: var(--color-primary);
+      font-family: 'Quicksand', sans-serif;
     }
 
     .menu-category {
       padding: 15px 25px 5px;
       font-size: 0.85rem;
-      color: var(--text-light);
+      color: var(--color-text-dark);
       text-transform: uppercase;
       letter-spacing: 1px;
       font-weight: 600;
+      font-family: 'Quicksand', sans-serif;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
 
     .menu-item {
@@ -348,13 +390,14 @@
       display: flex;
       align-items: center;
       gap: 15px;
-      color: var(--text-color);
+      color: var(--color-text-dark);
       text-decoration: none;
       font-weight: 500;
       border-left: 4px solid transparent;
       position: relative;
       overflow: hidden;
       animation: fadeIn 0.5s ease-out;
+      font-family: 'Quicksand', sans-serif;
     }
 
     @keyframes fadeIn {
@@ -372,14 +415,15 @@
       background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
       transition: all 0.5s ease;
     }
+    
     .menu-item:hover::before {
       left: 100%;
     }
 
     .menu-item:hover, .menu-item.active {
       background-color: rgba(0, 0, 0, 0.05);
-      border-left-color: var(--primary-color);
-      color: var(--primary-color);
+      border-left-color: var(--color-primary);
+      color: var(--color-primary);
     }
 
     .menu-item i {
@@ -410,16 +454,15 @@
     }
     
     .menu-badge.active {
-      background-color: var(--badge-active);
+      background-color: var(--success-color);
       color: white;
     }
     
     .menu-badge.inactive {
-      background-color: var(--badge-inactive);
+      background-color: var(--danger-color);
       color: white;
     }
 
-    /* Contenu principal */
     .content {
       flex: 1;
       padding: 30px;
@@ -428,29 +471,48 @@
     .page-title {
       font-size: 1.5rem;
       margin-bottom: 25px;
-      color: var(--secondary-color);
+      color: var(--color-text-dark);
       font-weight: 700;
       display: flex;
       align-items: center;
       gap: 10px;
+      font-family: 'Poppins', sans-serif;
     }
 
     .page-title i {
-      color: var(--primary-color);
+      color: var(--color-primary);
     }
 
-    /* Section de gain TikTok */
     .earn-section {
-      background: linear-gradient(135deg, #fff0f5 0%, #ffe4ec 100%);
-      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 18px;
       padding: 25px;
       box-shadow: var(--shadow);
       margin-bottom: 30px;
       position: relative;
       overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.7);
+      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .earn-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: 18px 18px 0 0;
+    }
+
+    .earn-section::after {
       content: '';
       position: absolute;
       top: -50%;
@@ -460,6 +522,7 @@
       background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
       transform: rotate(45deg);
       animation: shimmer 3s infinite;
+      pointer-events: none;
     }
 
     @keyframes shimmer {
@@ -470,10 +533,11 @@
     .section-title {
       font-size: 1.3rem;
       margin-bottom: 20px;
-      color: var(--secondary-color);
+      color: var(--color-text-dark);
       font-weight: 600;
       position: relative;
       z-index: 1;
+      font-family: 'Poppins', sans-serif;
     }
 
     .video-container {
@@ -481,15 +545,15 @@
       width: 100%;
       max-width: 400px;
       margin: 0 auto 20px;
-      border-radius: 12px;
+      border-radius: 18px;
       overflow: hidden;
       box-shadow: var(--shadow);
     }
 
     .video-placeholder {
       width: 100%;
-      padding-top: 177.78%; /* 16:9 Aspect Ratio */
-      background-color: #000;
+      padding-top: 177.78%;
+      background: linear-gradient(135deg, #2e3440 0%, #4c566a 100%);
       position: relative;
     }
 
@@ -507,9 +571,9 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 60px;
-      height: 60px;
-      background-color: rgba(255, 255, 255, 0.8);
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -517,16 +581,17 @@
       cursor: pointer;
       z-index: 10;
       transition: all 0.3s ease;
+      box-shadow: 0 8px 25px rgba(74, 144, 226, 0.4);
     }
 
     .play-button:hover {
-      background-color: rgba(255, 255, 255, 1);
       transform: translate(-50%, -50%) scale(1.1);
+      box-shadow: 0 12px 35px rgba(74, 144, 226, 0.5);
     }
 
     .play-button i {
-      font-size: 24px;
-      color: #000;
+      font-size: 28px;
+      color: white;
       margin-left: 4px;
     }
 
@@ -548,7 +613,7 @@
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      background-color: var(--background-light);
+      background: rgba(255, 255, 255, 0.5);
       box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
@@ -560,7 +625,7 @@
       height: 100%;
       border-radius: 50%;
       clip: rect(0, 60px, 120px, 0);
-      background: conic-gradient(var(--primary-color) 0%, var(--primary-light) 100%);
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
       transition: transform 0.1s linear;
     }
 
@@ -571,35 +636,40 @@
       transform: translate(-50%, -50%);
       font-size: 1.5rem;
       font-weight: 700;
-      color: var(--text-color);
+      color: var(--color-text-dark);
+      font-family: 'Roboto Mono', monospace;
     }
 
     .timer-label {
       margin-top: 10px;
       font-size: 1rem;
-      color: var(--text-light);
+      color: var(--color-text-dark);
+      font-family: 'Quicksand', sans-serif;
     }
 
     .reward-info {
-      background-color: rgba(255, 255, 255, 0.7);
-      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(76, 217, 100, 0.1) 0%, rgba(76, 217, 100, 0.2) 100%);
+      border-radius: 12px;
       padding: 15px;
       margin-bottom: 20px;
       text-align: center;
       position: relative;
       z-index: 1;
+      border: 1px solid rgba(76, 217, 100, 0.3);
     }
 
     .reward-amount {
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       font-weight: 700;
       color: var(--success-color);
       margin-bottom: 5px;
+      font-family: 'Poppins', sans-serif;
     }
 
     .reward-text {
       font-size: 0.9rem;
-      color: var(--text-light);
+      color: var(--color-text-dark);
+      font-family: 'Quicksand', sans-serif;
     }
 
     .action-buttons {
@@ -612,8 +682,8 @@
     }
 
     .btn {
-      padding: 12px 25px;
-      border-radius: 8px;
+      padding: 14px 28px;
+      border-radius: 12px;
       border: none;
       font-weight: 600;
       cursor: pointer;
@@ -621,16 +691,19 @@
       align-items: center;
       gap: 8px;
       transition: all 0.3s ease;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 0.95rem;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
       color: white;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
     }
 
     .btn-primary:hover {
       transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 8px 25px rgba(74, 144, 226, 0.4);
     }
 
     .btn-primary:disabled {
@@ -643,11 +716,12 @@
     .btn-success {
       background: linear-gradient(135deg, var(--success-color) 0%, #2AB32A 100%);
       color: white;
+      box-shadow: 0 4px 15px rgba(76, 217, 100, 0.3);
     }
 
     .btn-success:hover {
       transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 8px 25px rgba(76, 217, 100, 0.4);
     }
 
     .btn-success:disabled {
@@ -660,37 +734,68 @@
     .daily-stats {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
+      gap: 20px;
       margin-bottom: 30px;
     }
 
     .stat-card {
-      background: linear-gradient(135deg, #f0f8ff 0%, #e0f0ff 100%);
-      border-radius: 10px;
-      padding: 15px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 18px;
+      padding: 20px;
       box-shadow: var(--shadow);
       text-align: center;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.7);
+      animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: 18px 18px 0 0;
+    }
+
+    .stat-card:first-child {
+      background: linear-gradient(135deg, rgba(74, 144, 226, 0.1) 0%, rgba(74, 144, 226, 0.2) 100%);
+    }
+
+    .stat-card:last-child {
+      background: linear-gradient(135deg, rgba(76, 217, 100, 0.1) 0%, rgba(76, 217, 100, 0.2) 100%);
     }
 
     .stat-value {
-      font-size: 1.5rem;
+      font-size: 2rem;
       font-weight: 700;
-      color: var(--primary-color);
-      margin-bottom: 5px;
+      color: var(--color-primary);
+      margin-bottom: 8px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .stat-card:last-child .stat-value {
+      color: var(--success-color);
     }
 
     .stat-label {
       font-size: 0.9rem;
-      color: var(--text-light);
+      color: var(--color-text-dark);
+      font-family: 'Quicksand', sans-serif;
     }
 
-    /* Footer */
     .footer {
-      background-color: var(--card-bg);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
       padding: 20px 30px;
       text-align: center;
       box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
       margin-top: auto;
+      border-top: 1px solid rgba(255,255,255,0.7);
     }
 
     .footer-content {
@@ -707,23 +812,24 @@
     }
 
     .footer-link {
-      color: var(--primary-color);
+      color: var(--color-primary);
       text-decoration: none;
       font-weight: 500;
       transition: color 0.2s ease;
+      font-family: 'Quicksand', sans-serif;
     }
 
     .footer-link:hover {
       text-decoration: underline;
-      color: var(--primary-dark);
+      color: var(--color-secondary);
     }
 
     .footer-text {
-      color: var(--text-light);
+      color: var(--color-text-dark);
       font-size: 0.9rem;
+      font-family: 'Quicksand', sans-serif;
     }
 
-    /* Overlay */
     .overlay {
       display: none;
       position: fixed;
@@ -739,67 +845,16 @@
       display: block;
     }
 
-    /* Responsive */
-    @media (max-width: 768px) {
-        .main-container {
-            flex-direction: column;
-        }
-
-        .hamburger-btn {
-            display: flex;
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 101;
-        }
-
-        .sidebar {
-            width: 75%;
-            max-width: 300px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: -100%;
-            z-index: 99;
-            transition: left 0.4s ease-in-out;
-        }
-        
-        .sidebar.open {
-            left: 0;
-        }
-        
-        .header {
-            padding: 15px;
-        }
-        
-        .logo {
-            font-size: 1.5rem;
-            margin-left: 50px;
-        }
-        
-        .content {
-            padding: 20px;
-        }
-        
-        .daily-stats {
-            grid-template-columns: 1fr;
-        }
-        
-        .action-buttons {
-            flex-direction: column;
-        }
-    }
-
-    /* Monday Alert Banner */
     .monday-alert {
-      background: linear-gradient(135deg, #FF9500 0%, #FF6B00 100%);
+      background: linear-gradient(135deg, var(--warning-color) 0%, #FF6B00 100%);
       color: white;
       padding: 20px;
-      border-radius: 10px;
+      border-radius: 18px;
       margin-bottom: 20px;
       text-align: center;
       box-shadow: var(--shadow);
       animation: pulseGlow 2s infinite;
+      border: 1px solid rgba(255,255,255,0.3);
     }
 
     .monday-alert h3 {
@@ -809,11 +864,13 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
+      font-family: 'Poppins', sans-serif;
     }
 
     .monday-alert p {
       font-size: 1rem;
       margin-bottom: 5px;
+      font-family: 'Quicksand', sans-serif;
     }
 
     .monday-alert .countdown {
@@ -834,12 +891,12 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.8);
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 5;
-      border-radius: 12px;
+      border-radius: 18px;
       flex-direction: column;
       padding: 20px;
       text-align: center;
@@ -851,7 +908,7 @@
 
     .video-overlay i {
       font-size: 3rem;
-      color: #FF9500;
+      color: var(--warning-color);
       margin-bottom: 15px;
     }
 
@@ -859,14 +916,15 @@
       color: white;
       font-size: 1.3rem;
       margin-bottom: 10px;
+      font-family: 'Poppins', sans-serif;
     }
 
     .video-overlay p {
       color: rgba(255, 255, 255, 0.8);
       font-size: 1rem;
+      font-family: 'Quicksand', sans-serif;
     }
 
-    /* Animation for notifications */
     .notification-container {
       position: fixed;
       top: 20px;
@@ -880,8 +938,8 @@
 
     .notification {
       padding: 15px 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
       display: flex;
       align-items: center;
       gap: 10px;
@@ -891,6 +949,8 @@
       overflow: hidden;
       color: white;
       pointer-events: auto;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
     }
 
     .notification.success {
@@ -902,17 +962,115 @@
     }
 
     .notification.info { 
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); 
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); 
     }
 
     @keyframes slideIn {
-      from {
-        transform: translateX(110%);
-        opacity: 0;
+      from { transform: translateX(110%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .dark-mode {
+      --color-primary: #5e81ac;
+      --color-secondary: #d08770;
+      --color-text-dark: #eceff4;
+      --color-text-light: #2e3440;
+      --color-bg-light: #3b4252;
+      --color-bg-gradient-1: #2e3440;
+      --color-bg-gradient-2: #4c566a;
+      --success-color: #a3be8c;
+      --warning-color: #ebcb8b;
+      --danger-color: #bf616a;
+      --shadow: 0 15px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
+    }
+
+    .dark-mode body::before {
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(76, 86, 106, 0.4) 0%, transparent 25%),
+        radial-gradient(circle at 80% 10%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 40% 80%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 90% 90%, rgba(76, 86, 106, 0.2) 0%, transparent 25%);
+    }
+
+    .dark-mode .header,
+    .dark-mode .sidebar,
+    .dark-mode .earn-section,
+    .dark-mode .stat-card,
+    .dark-mode .footer {
+      background: rgba(59, 66, 82, 0.95);
+      color: var(--color-text-dark);
+    }
+
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 230px;
       }
-      to {
-        transform: translateX(0);
-        opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+      .main-container {
+        flex-direction: column;
+      }
+      
+      .hamburger-btn {
+        display: flex;
+        position: static;
+        order: 2;
+      }
+
+      .sidebar {
+        width: 85%;
+        max-width: 320px;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: -100%;
+        z-index: 99;
+        transition: left 0.4s ease-in-out;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.97) 100%);
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+        border-radius: 0 25px 25px 0;
+        overflow-y: auto;
+      }
+      
+      .sidebar.open {
+        left: 0;
+      }
+      
+      .header {
+        padding: 15px;
+      }
+      
+      .logo {
+        font-size: 1.5rem;
+        margin-left: 0;
+      }
+      
+      .content {
+        padding: 20px;
+      }
+      
+      .daily-stats {
+        grid-template-columns: 1fr;
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .footer-links {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .language-selector span {
+        display: none;
+      }
+      
+      .language-selector {
+        padding: 8px;
       }
     }
   </style>
@@ -925,31 +1083,43 @@
   <div class="notification-container" id="notificationContainer"></div>
 
   <header class="header">
-    <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-    </button>
-    
     <div class="logo">
-      <span>BLOWEARN AGENCIES</span>
+      <span>BLOWEARN</span>
     </div>
     
     <div class="header-controls">
-      <button class="language-selector" id="languageSelector">
-        <i class="fas fa-globe"></i>
-        <span>French</span>
-        <i class="fas fa-chevron-down"></i>
+      <div class="language-selector-container">
+        <button class="language-selector" id="languageSelector">
+          <i class="fas fa-globe"></i>
+          <span id="currentLanguage">French</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="language-dropdown" id="languageDropdown">
+          <div class="language-option active" data-lang="fr">
+            <i class="fas fa-check"></i>
+            <span>Français</span>
+          </div>
+          <div class="language-option" data-lang="en">
+            <i class="fas fa-check" style="opacity: 0;"></i>
+            <span>English</span>
+          </div>
+        </div>
+      </div>
+      
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
       </button>
       
       <div class="user-profile" id="userProfile">
-          <div class="avatar" id="userAvatar">U</div>
-          <div class="profile-dropdown" id="profileDropdown">
-              <button class="theme-toggle" id="themeToggle">
-                  <i class="fas fa-moon"></i>
-                  <span>Mode nuit</span>
-              </button>
-          </div>
+        <div class="avatar" id="userAvatar">U</div>
+        <div class="profile-dropdown" id="profileDropdown">
+          <button class="theme-toggle" id="themeToggle">
+            <i class="fas fa-moon"></i>
+            <span data-i18n="settings.dark_mode">Mode nuit</span>
+          </button>
+        </div>
       </div>
     </div>
   </header>
@@ -959,97 +1129,105 @@
   <div class="main-container">
     <aside class="sidebar" id="sidebar">
       <div class="welcome-section">
-        <p class="welcome-text">Bienvenue,</p>
-        <h3 class="username" id="sidebarUsername">Utilisateur</h3>
+        <div class="welcome-text" data-i18n="tiktok.title">TikTok Earn >> BLOWEARN AGENCIES</div>
+        <div class="username" id="sidebarUsername">Utilisateur</div>
       </div>
-
-      <div class="menu-category">MENU PRINCIPAL</div>
-      <a href="dashboard_SOLUTION_FINALE.html" class="menu-item">
+      
+      <div class="menu-category" data-i18n="menu.main">PRINCIPAL</div>
+      <a href="dashboard.html" class="menu-item">
         <i class="fas fa-home"></i>
-        <span>Accueil</span>
-      </a>
-      
-      <a href="equipe.html" class="menu-item">
-        <i class="fas fa-users"></i>
-        <span>Mon équipe</span>
-      </a>
-      
-      <a href="retrait.html" class="menu-item">
-        <i class="fas fa-money-bill-wave"></i>
-        <span>Retrait</span>
+        <span data-i18n="menu.dashboard">Tableau de bord</span>
+        <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="depot.html" class="menu-item">
         <i class="fas fa-wallet"></i>
-        <span>Dépôt</span>
+        <span data-i18n="menu.deposit">Dépôt 💵</span>
+        <span class="menu-badge inactive">☐</span>
       </a>
       
-      <div class="menu-category">PRODUIT / TACHE</div>
+      <a href="bonus_bienvenue.html" class="menu-item">
+        <i class="fas fa-gift"></i>
+        <span data-i18n="menu.welcome_bonus">Bonus de bienvenue</span>
+        <span class="menu-badge inactive">☒</span>
+      </a>
+      
+      <div class="menu-category" data-i18n="menu.accounts">COMPTES</div>
+      <a href="retrait.html" class="menu-item">
+        <i class="fas fa-money-bill-wave"></i>
+        <span data-i18n="menu.withdrawal">Retrait</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="equipe.html" class="menu-item">
+        <i class="fas fa-users"></i>
+        <span data-i18n="menu.team">Équipe</span>
+        <span class="menu-badge inactive">☒</span>
+      </a>
+
+      <div class="menu-category" data-i18n="menu.special">SPÉCIAL</div>
+      
+      <a href="social_boost.html" class="menu-item">
+        <i class="fas fa-rocket"></i>
+        <span data-i18n="menu.sbh">SBH</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="challenge_reward.html" class="menu-item">
+        <i class="fas fa-medal"></i>
+        <span data-i18n="menu.challenge">Challenge and Reward</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <div class="menu-category" data-i18n="menu.products">PRODUIT / TÂCHE</div>
       <a href="whatsapp_earn.html" class="menu-item">
         <i class="fab fa-whatsapp"></i>
-        <span>Gagner via Whatsapp</span>
+        <span data-i18n="menu.whatsapp_earn">Gagner via Whatsapp</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="gains_publicitaires.html" class="menu-item">
+        <i class="fas fa-ad"></i>
+        <span data-i18n="menu.ad_earnings">Gains publicitaires</span>
+        <span class="menu-badge inactive">☐</span>
+      </a>
+      
+      <a href="spin_wheel.html" class="menu-item">
+        <i class="fas fa-trophy"></i>
+        <span data-i18n="menu.fortune_wheel">Roue de la fortune 🏆</span>
+        <span class="menu-badge inactive">☐</span>
       </a>
       
       <a href="tiktok_earn.html" class="menu-item active">
         <i class="fab fa-tiktok"></i>
-        <span>Gagner via TikTok</span>
+        <span data-i18n="menu.tiktok_earn">TikTok Earn</span>
+        <span class="menu-badge active">☑</span>
       </a>
       
       <a href="youtube_earn.html" class="menu-item">
         <i class="fab fa-youtube"></i>
-        <span>Gagner via YouTube</span>
-      </a>
-      
-      <a href="publicite_earn.html" class="menu-item">
-        <i class="fas fa-ad"></i>
-        <span>Pub + Clics</span>
-      </a>
-      
-      <a href="trivia_challenge.html" class="menu-item">
-        <i class="fas fa-brain"></i>
-        <span>TRIVIA challenge</span>
-      </a>
-      
-      <div class="menu-category">BONUS</div>
-      <a href="liste_contacts.html" class="menu-item">
-        <i class="fas fa-address-book"></i>
-        <span>Liste de contacts gratuit 🆓</span>
-      </a>
-      
-      <a href="booster_visibilite.html" class="menu-item">
-        <i class="fas fa-rocket"></i>
-        <span>Booster ma visibilité</span>
-      </a>
-
-      <a href="canva_pro.html" class="menu-item">
-        <i class="fas fa-palette"></i>
-        <span>Canva Pro</span>
-      </a>
-      
-      <a href="connexion_gratuite.html" class="menu-item">
-        <i class="fas fa-shield-alt"></i>
-        <span>Connexion gratuite</span>
+        <span data-i18n="menu.youtube_earn">YouTube Earn</span>
+        <span class="menu-badge inactive">☐</span>
       </a>
     </aside>
 
     <main class="content">
       <h1 class="page-title">
         <i class="fab fa-tiktok"></i>
-        <span>TikTok Earn</span>
+        <span data-i18n="tiktok.page_title">TikTok Earn</span>
       </h1>
       
-      <!-- Bannière d'alerte Monday-only (masquée le lundi) -->
       <div class="monday-alert" id="mondayAlert" style="display: none;">
         <h3>
           <i class="fas fa-calendar-alt"></i>
-          <span>Disponible uniquement le lundi</span>
+          <span data-i18n="tiktok.monday_only">Disponible uniquement le lundi</span>
         </h3>
-        <p>Les vidéos TikTok sont accessibles chaque lundi pour gagner 250 FCFA par vidéo</p>
+        <p data-i18n="tiktok.monday_info">Les vidéos TikTok sont accessibles chaque lundi pour gagner 250 FCFA par vidéo</p>
         <div class="countdown" id="mondayCountdown">Calcul en cours...</div>
       </div>
       
       <div class="earn-section">
-        <h2 class="section-title">Gagnez de l'argent en regardant des vidéos TikTok</h2>
+        <h2 class="section-title" data-i18n="tiktok.earn_title">Gagnez de l'argent en regardant des vidéos TikTok</h2>
         
         <div class="video-container">
           <div class="video-placeholder">
@@ -1060,11 +1238,10 @@
             <div class="play-button" id="playButton">
               <i class="fas fa-play"></i>
             </div>
-            <!-- Overlay pour les jours non-lundi -->
             <div class="video-overlay" id="videoOverlay">
               <i class="fas fa-lock"></i>
-              <h4>Vidéo verrouillée</h4>
-              <p>Revenez lundi pour gagner 250 FCFA</p>
+              <h4 data-i18n="tiktok.video_locked">Vidéo verrouillée</h4>
+              <p data-i18n="tiktok.come_back_monday">Revenez lundi pour gagner 250 FCFA</p>
             </div>
           </div>
         </div>
@@ -1075,22 +1252,22 @@
             <div class="timer-progress" id="timerProgress"></div>
             <div class="timer-text" id="timerText">10s</div>
           </div>
-          <div class="timer-label">Temps restant</div>
+          <div class="timer-label" data-i18n="tiktok.time_remaining">Temps restant</div>
         </div>
         
         <div class="reward-info">
           <div class="reward-amount">+250 FCFA</div>
-          <div class="reward-text">Gagnez 250 FCFA pour chaque vidéo regardée jusqu'au bout</div>
+          <div class="reward-text" data-i18n="tiktok.reward_text">Gagnez 250 FCFA pour chaque vidéo regardée jusqu'au bout</div>
         </div>
         
         <div class="action-buttons">
           <button class="btn btn-primary" id="startButton" disabled>
             <i class="fas fa-play-circle"></i>
-            <span>Commencer à regarder</span>
+            <span data-i18n="tiktok.start_watching">Commencer à regarder</span>
           </button>
           <button class="btn btn-success" id="claimButton" disabled>
             <i class="fas fa-coins"></i>
-            <span>Réclamer la récompense</span>
+            <span data-i18n="tiktok.claim_reward">Réclamer la récompense</span>
           </button>
         </div>
       </div>
@@ -1098,12 +1275,12 @@
       <div class="daily-stats">
         <div class="stat-card">
           <div class="stat-value" id="videosWatched">0/2</div>
-          <div class="stat-label">Vidéos regardées aujourd'hui</div>
+          <div class="stat-label" data-i18n="tiktok.videos_watched">Vidéos regardées aujourd'hui</div>
         </div>
         
         <div class="stat-card">
           <div class="stat-value" id="earnedToday">0 FCFA</div>
-          <div class="stat-label">Gagné aujourd'hui</div>
+          <div class="stat-label" data-i18n="tiktok.earned_today">Gagné aujourd'hui</div>
         </div>
       </div>
     </main>
@@ -1112,11 +1289,11 @@
   <footer class="footer">
     <div class="footer-content">
       <div class="footer-links">
-        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Pro Tech Management</a>
-        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Site propulsé par Social Boost Horizon</a>
+        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link" data-i18n="footer.pro_tech">Pro Tech Management</a>
+        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link" data-i18n="footer.sbh">Site propulsé par Social Boost Horizon</a>
       </div>
       <div class="footer-text">
-        © 2025 BLOWEARN AGENCIES. Tous droits réservés.
+        © 2025 BLOWEARN AGENCIES. <span data-i18n="footer.rights">Tous droits réservés.</span>
       </div>
     </div>
   </footer>
@@ -1136,6 +1313,110 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
 
+/******** SYSTÈME DE TRADUCTION ********/
+const translations = {
+  fr: {
+    'menu.main': 'PRINCIPAL',
+    'menu.dashboard': 'Tableau de bord',
+    'menu.deposit': 'Dépôt 💵',
+    'menu.welcome_bonus': 'Bonus de bienvenue',
+    'menu.accounts': 'COMPTES',
+    'menu.withdrawal': 'Retrait',
+    'menu.team': 'Équipe',
+    'menu.special': 'SPÉCIAL',
+    'menu.sbh': 'SBH',
+    'menu.challenge': 'Challenge and Reward',
+    'menu.products': 'PRODUIT / TÂCHE',
+    'menu.whatsapp_earn': 'Gagner via Whatsapp',
+    'menu.ad_earnings': 'Gains publicitaires',
+    'menu.fortune_wheel': 'Roue de la fortune 🏆',
+    'menu.tiktok_earn': 'TikTok Earn',
+    'menu.youtube_earn': 'YouTube Earn',
+    'tiktok.title': 'TikTok Earn >> BLOWEARN AGENCIES',
+    'tiktok.page_title': 'TikTok Earn',
+    'tiktok.monday_only': 'Disponible uniquement le lundi',
+    'tiktok.monday_info': 'Les vidéos TikTok sont accessibles chaque lundi pour gagner 250 FCFA par vidéo',
+    'tiktok.earn_title': 'Gagnez de l\'argent en regardant des vidéos TikTok',
+    'tiktok.video_locked': 'Vidéo verrouillée',
+    'tiktok.come_back_monday': 'Revenez lundi pour gagner 250 FCFA',
+    'tiktok.time_remaining': 'Temps restant',
+    'tiktok.reward_text': 'Gagnez 250 FCFA pour chaque vidéo regardée jusqu\'au bout',
+    'tiktok.start_watching': 'Commencer à regarder',
+    'tiktok.claim_reward': 'Réclamer la récompense',
+    'tiktok.videos_watched': 'Vidéos regardées aujourd\'hui',
+    'tiktok.earned_today': 'Gagné aujourd\'hui',
+    'settings.dark_mode': 'Mode nuit',
+    'settings.light_mode': 'Mode jour',
+    'footer.pro_tech': 'Pro Tech Management',
+    'footer.sbh': 'Site propulsé par Social Boost Horizon',
+    'footer.rights': 'Tous droits réservés.'
+  },
+  en: {
+    'menu.main': 'MAIN',
+    'menu.dashboard': 'Dashboard',
+    'menu.deposit': 'Deposit 💵',
+    'menu.welcome_bonus': 'Welcome Bonus',
+    'menu.accounts': 'ACCOUNTS',
+    'menu.withdrawal': 'Withdrawal',
+    'menu.team': 'Team',
+    'menu.special': 'SPECIAL',
+    'menu.sbh': 'SBH',
+    'menu.challenge': 'Challenge and Reward',
+    'menu.products': 'PRODUCT / TASK',
+    'menu.whatsapp_earn': 'Earn via Whatsapp',
+    'menu.ad_earnings': 'Ad earnings',
+    'menu.fortune_wheel': 'Fortune Wheel 🏆',
+    'menu.tiktok_earn': 'TikTok Earn',
+    'menu.youtube_earn': 'YouTube Earn',
+    'tiktok.title': 'TikTok Earn >> BLOWEARN AGENCIES',
+    'tiktok.page_title': 'TikTok Earn',
+    'tiktok.monday_only': 'Available only on Monday',
+    'tiktok.monday_info': 'TikTok videos are available every Monday to earn 250 FCFA per video',
+    'tiktok.earn_title': 'Earn money by watching TikTok videos',
+    'tiktok.video_locked': 'Video locked',
+    'tiktok.come_back_monday': 'Come back Monday to earn 250 FCFA',
+    'tiktok.time_remaining': 'Time remaining',
+    'tiktok.reward_text': 'Earn 250 FCFA for each video watched completely',
+    'tiktok.start_watching': 'Start watching',
+    'tiktok.claim_reward': 'Claim reward',
+    'tiktok.videos_watched': 'Videos watched today',
+    'tiktok.earned_today': 'Earned today',
+    'settings.dark_mode': 'Dark mode',
+    'settings.light_mode': 'Light mode',
+    'footer.pro_tech': 'Pro Tech Management',
+    'footer.sbh': 'Powered by Social Boost Horizon',
+    'footer.rights': 'All rights reserved.'
+  }
+};
+
+let currentLang = localStorage.getItem('blowearn_lang') || 'fr';
+
+function applyTranslations(lang) {
+  currentLang = lang;
+  localStorage.setItem('blowearn_lang', lang);
+  
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (translations[lang] && translations[lang][key]) {
+      el.textContent = translations[lang][key];
+    }
+  });
+  
+  const currentLanguageSpan = document.getElementById('currentLanguage');
+  if (currentLanguageSpan) {
+    currentLanguageSpan.textContent = lang === 'fr' ? 'Français' : 'English';
+  }
+  
+  document.querySelectorAll('.language-option').forEach(opt => {
+    const optLang = opt.getAttribute('data-lang');
+    opt.classList.toggle('active', optLang === lang);
+    const checkIcon = opt.querySelector('i');
+    if (checkIcon) {
+      checkIcon.style.opacity = optLang === lang ? '1' : '0';
+    }
+  });
+}
+
 /******** DOM Elements ********/
 const hamburgerBtn = document.getElementById('hamburgerBtn');
 const sidebar = document.getElementById('sidebar');
@@ -1144,6 +1425,7 @@ const themeToggle = document.getElementById('themeToggle');
 const userProfile = document.getElementById('userProfile');
 const profileDropdown = document.getElementById('profileDropdown');
 const languageSelector = document.getElementById('languageSelector');
+const languageDropdown = document.getElementById('languageDropdown');
 const loader = document.getElementById('loader');
 const sidebarUsername = document.getElementById('sidebarUsername');
 const userAvatar = document.getElementById('userAvatar');
@@ -1216,7 +1498,7 @@ function updateUserCurrency(countryCode) {
 const REQUIRED_SECONDS = 10;
 const REWARD_AMOUNT = 250;
 const MAX_VIDEOS_PER_DAY = 2;
-const ENFORCE_MONDAY = true;  // 🔒 RESTRICTION ACTIVÉE: Vidéos disponibles uniquement le lundi
+const ENFORCE_MONDAY = true;
 
 /******** Variables d'état ********/
 let currentUser = null;
@@ -1274,19 +1556,36 @@ userProfile.addEventListener('click', (event) => {
 });
 document.addEventListener('click', (event) => {
   if (!userProfile.contains(event.target)) profileDropdown.classList.remove('active');
+  if (languageDropdown && !languageSelector.contains(event.target) && !languageDropdown.contains(event.target)) {
+    languageDropdown.classList.remove('active');
+  }
 });
+
+languageSelector.addEventListener('click', (event) => {
+  event.stopPropagation();
+  languageDropdown.classList.toggle('active');
+});
+
+document.querySelectorAll('.language-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    const lang = opt.getAttribute('data-lang');
+    applyTranslations(lang);
+    languageDropdown.classList.remove('active');
+  });
+});
+
 themeToggle.addEventListener('click', (event) => {
   event.stopPropagation();
   document.body.classList.toggle('dark-mode');
   const isDarkMode = document.body.classList.contains('dark-mode');
-  themeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i><span>Mode jour</span>' : '<i class="fas fa-moon"></i><span>Mode nuit</span>';
+  const themeText = isDarkMode ? translations[currentLang]['settings.light_mode'] : translations[currentLang]['settings.dark_mode'];
+  themeToggle.innerHTML = isDarkMode ? `<i class="fas fa-sun"></i><span>${themeText}</span>` : `<i class="fas fa-moon"></i><span>${themeText}</span>`;
   if (currentUser) saveUserData('theme', isDarkMode ? 'dark' : 'light');
 });
 
 /******** Helpers pour jour (Monday) - Timezone Africa/Douala ********/
 function isTodayMonday() {
   try {
-    // Utiliser le timezone Africa/Douala (CEMAC) pour cohérence avec le serveur
     const formatter = new Intl.DateTimeFormat('en-US', { 
       timeZone: 'Africa/Douala',
       weekday: 'long' 
@@ -1294,7 +1593,6 @@ function isTodayMonday() {
     const dayName = formatter.format(new Date());
     return dayName === 'Monday';
   } catch (error) {
-    // Fallback en cas d'erreur de timezone
     console.warn('Timezone Africa/Douala non supporté, utilisation locale');
     const d = new Date();
     return d.getDay() === 1;
@@ -1304,11 +1602,10 @@ function isTodayMonday() {
 function getNextMondayCountdown() {
   try {
     const now = new Date();
-    const currentDay = now.getDay(); // 0 = Dimanche, 1 = Lundi, etc.
+    const currentDay = now.getDay();
     
-    // Calculer combien de jours jusqu'au prochain lundi
     let daysUntilMonday = (8 - currentDay) % 7;
-    if (daysUntilMonday === 0) daysUntilMonday = 7; // Si on est lundi, prochain lundi = dans 7 jours
+    if (daysUntilMonday === 0) daysUntilMonday = 7;
     
     const nextMonday = new Date(now);
     nextMonday.setDate(now.getDate() + daysUntilMonday);
@@ -1334,25 +1631,22 @@ function updateMondayUI() {
   const isMonday = isTodayMonday();
   
   if (ENFORCE_MONDAY && !isMonday) {
-    // Afficher la bannière et l'overlay
     if (mondayAlert) mondayAlert.style.display = 'block';
     if (videoOverlay) videoOverlay.classList.add('active');
     
-    // Démarrer le compte à rebours
     if (countdownInterval) clearInterval(countdownInterval);
     countdownInterval = setInterval(() => {
       const countdown = getNextMondayCountdown();
       if (mondayCountdown) {
-        mondayCountdown.textContent = `Prochain lundi dans: ${countdown.days}j ${countdown.hours}h ${countdown.minutes}m ${countdown.seconds}s`;
+        const nextMondayText = currentLang === 'en' ? 'Next Monday in:' : 'Prochain lundi dans:';
+        mondayCountdown.textContent = `${nextMondayText} ${countdown.days}j ${countdown.hours}h ${countdown.minutes}m ${countdown.seconds}s`;
       }
       
-      // Recharger la page si on arrive à lundi
       if (countdown.days === 0 && countdown.hours === 0 && countdown.minutes === 0 && countdown.seconds === 0) {
         window.location.reload();
       }
     }, 1000);
   } else {
-    // Masquer la bannière et l'overlay
     if (mondayAlert) mondayAlert.style.display = 'none';
     if (videoOverlay) videoOverlay.classList.remove('active');
     if (countdownInterval) clearInterval(countdownInterval);
@@ -1368,16 +1662,19 @@ function ensureNextButtonExists() {
   nextButton.className = 'btn btn-primary';
   nextButton.id = 'nextButton';
   nextButton.style.display = 'none';
-  nextButton.innerHTML = '<i class="fas fa-forward"></i><span> Regarder la suivante</span>';
+  const nextText = currentLang === 'en' ? 'Watch next' : 'Regarder la suivante';
+  nextButton.innerHTML = `<i class="fas fa-forward"></i><span> ${nextText}</span>`;
   actionRow.appendChild(nextButton);
 
   nextButton.addEventListener('click', () => {
     const nextIndex = currentIndex + 1;
     if (nextIndex < publicIdList.length) {
       loadByIndex(nextIndex);
-      showNotification('info','Prochaine vidéo','Vous êtes sur la vidéo suivante. Bonne visualisation!');
+      const msg = currentLang === 'en' ? 'You are on the next video. Enjoy!' : 'Vous êtes sur la vidéo suivante. Bonne visualisation!';
+      showNotification('info', currentLang === 'en' ? 'Next video' : 'Prochaine vidéo', msg);
     } else {
-      showNotification('info','Info','Pas d\'autre vidéo disponible.');
+      const msg = currentLang === 'en' ? 'No more videos available.' : 'Pas d\'autre vidéo disponible.';
+      showNotification('info','Info', msg);
     }
   });
 }
@@ -1433,7 +1730,8 @@ function markVideoValidated(index) {
   if (index === currentIndex) {
     claimButton.disabled = claimedFlags[index];
     updateNextButtonVisibility();
-    showNotification('success','Vidéo validée','Vous pouvez réclamer la récompense ou regarder la suivante.');
+    const msg = currentLang === 'en' ? 'You can claim the reward or watch the next video.' : 'Vous pouvez réclamer la récompense ou regarder la suivante.';
+    showNotification('success', currentLang === 'en' ? 'Video validated' : 'Vidéo validée', msg);
   }
 }
 
@@ -1466,7 +1764,8 @@ const io = new IntersectionObserver(entries => {
     isVisible = e.isIntersecting;
     if (!isVisible && isPlaying) {
       tiktokVideo.pause();
-      showNotification('info','Lecture en pause','La vidéo est hors de l\'écran, la lecture a été mise en pause.');
+      const msg = currentLang === 'en' ? 'Video is off screen, playback paused.' : 'La vidéo est hors de l\'écran, la lecture a été mise en pause.';
+      showNotification('info', currentLang === 'en' ? 'Playback paused' : 'Lecture en pause', msg);
     }
   });
 }, { threshold: 0.6 });
@@ -1476,14 +1775,16 @@ io.observe(tiktokVideo);
 document.addEventListener('visibilitychange', () => {
   if (document.hidden && isPlaying) {
     tiktokVideo.pause();
-    showNotification('info','Lecture en pause','Vous avez quitté l\'onglet: la lecture est en pause.');
+    const msg = currentLang === 'en' ? 'You left the tab: playback paused.' : 'Vous avez quitté l\'onglet: la lecture est en pause.';
+    showNotification('info', currentLang === 'en' ? 'Playback paused' : 'Lecture en pause', msg);
   }
 });
 
 /******** Buttons events ********/
 playButton.addEventListener('click', () => {
   if (ENFORCE_MONDAY && !isTodayMonday()) {
-    showNotification('info','Non disponible', 'Les vidéos sont disponibles seulement le lundi.');
+    const msg = currentLang === 'en' ? 'Videos are only available on Monday.' : 'Les vidéos sont disponibles seulement le lundi.';
+    showNotification('info', currentLang === 'en' ? 'Not available' : 'Non disponible', msg);
     return;
   }
   tiktokVideo.muted = false;
@@ -1493,7 +1794,8 @@ playButton.addEventListener('click', () => {
 
 startButton.addEventListener('click', () => {
   if (ENFORCE_MONDAY && !isTodayMonday()) {
-    showNotification('info','Non disponible', 'Les vidéos sont disponibles seulement le lundi.');
+    const msg = currentLang === 'en' ? 'Videos are only available on Monday.' : 'Les vidéos sont disponibles seulement le lundi.';
+    showNotification('info', currentLang === 'en' ? 'Not available' : 'Non disponible', msg);
     return;
   }
   tiktokVideo.currentTime = 0;
@@ -1506,39 +1808,43 @@ startButton.addEventListener('click', () => {
 /******** 🚀 NOUVELLE FONCTION: Appel API serveur pour réclamation ********/
 claimButton.addEventListener('click', async () => {
   if (!currentUser) { 
-    showNotification('error','Non connecté','Veuillez vous connecter.'); 
+    const msg = currentLang === 'en' ? 'Please log in.' : 'Veuillez vous connecter.';
+    showNotification('error', currentLang === 'en' ? 'Not logged in' : 'Non connecté', msg); 
     return; 
   }
   if (!validatedFlags[currentIndex]) { 
-    showNotification('error','Non validé','Vous n\'avez pas encore regardé la vidéo suffisamment.'); 
+    const msg = currentLang === 'en' ? 'You haven\'t watched the video long enough.' : 'Vous n\'avez pas encore regardé la vidéo suffisamment.';
+    showNotification('error', currentLang === 'en' ? 'Not validated' : 'Non validé', msg); 
     return; 
   }
   if (claimedFlags[currentIndex]) { 
-    showNotification('info','Déjà réclamé','Vous avez déjà réclamé cette vidéo.'); 
+    const msg = currentLang === 'en' ? 'You have already claimed this video.' : 'Vous avez déjà réclamé cette vidéo.';
+    showNotification('info', currentLang === 'en' ? 'Already claimed' : 'Déjà réclamé', msg); 
     return; 
   }
   if (videosWatchedToday >= MAX_VIDEOS_PER_DAY) { 
-    showNotification('info','Limite atteinte','Vous avez atteint la limite quotidienne de réclamations.'); 
+    const msg = currentLang === 'en' ? 'You have reached the daily limit.' : 'Vous avez atteint la limite quotidienne de réclamations.';
+    showNotification('info', currentLang === 'en' ? 'Limit reached' : 'Limite atteinte', msg); 
     return; 
   }
 
   try {
-    // Obtenir l'utilisateur actuel
     const user = auth.currentUser;
     
     if (!user) {
-      showNotification('error','Non connecté','Session expirée. Reconnectez-vous.');
+      const msg = currentLang === 'en' ? 'Session expired. Please log in again.' : 'Session expirée. Reconnectez-vous.';
+      showNotification('error', currentLang === 'en' ? 'Not logged in' : 'Non connecté', msg);
       setTimeout(() => { window.location.href = 'login.html'; }, 2000);
       return;
     }
     
-    // Obtenir le token en le forçant à se rafraîchir
     let idToken;
     try {
       idToken = await user.getIdToken(true);
     } catch (tokenErr) {
       console.error('Erreur getIdToken:', tokenErr);
-      showNotification('error','Session invalide','Veuillez vous reconnecter.');
+      const msg = currentLang === 'en' ? 'Please log in again.' : 'Veuillez vous reconnecter.';
+      showNotification('error', currentLang === 'en' ? 'Invalid session' : 'Session invalide', msg);
       await auth.signOut();
       setTimeout(() => { window.location.href = 'login.html'; }, 1500);
       return;
@@ -1566,14 +1872,13 @@ claimButton.addEventListener('click', async () => {
       data = JSON.parse(responseText);
     } catch (parseErr) {
       console.error('Erreur parsing JSON:', parseErr);
-      throw new Error('Réponse serveur invalide. Réessayez.');
+      throw new Error(currentLang === 'en' ? 'Invalid server response. Try again.' : 'Réponse serveur invalide. Réessayez.');
     }
 
     if (!response.ok) {
       throw new Error(data.error || data.message || 'Erreur serveur');
     }
 
-    // Mise à jour de l'état local
     claimedFlags[currentIndex] = true;
     videosWatchedToday = data.videosWatchedToday || (videosWatchedToday + 1);
     earningsToday = data.earningsToday || (earningsToday + REWARD_AMOUNT);
@@ -1583,14 +1888,18 @@ claimButton.addEventListener('click', async () => {
 
     const convertedReward = convertFromXAF(REWARD_AMOUNT, userCurrency);
     const convertedTikTokGains = convertFromXAF(data.newTikTokGains || 0, userCurrency);
-    showNotification('success','Récompense ajoutée', `${formatCurrencyAmount(convertedReward, userCurrency)} ajouté à vos gains TikTok. Total: ${formatCurrencyAmount(convertedTikTokGains, userCurrency)}`);
+    const msg = currentLang === 'en' 
+      ? `${formatCurrencyAmount(convertedReward, userCurrency)} added to your TikTok gains. Total: ${formatCurrencyAmount(convertedTikTokGains, userCurrency)}`
+      : `${formatCurrencyAmount(convertedReward, userCurrency)} ajouté à vos gains TikTok. Total: ${formatCurrencyAmount(convertedTikTokGains, userCurrency)}`;
+    showNotification('success', currentLang === 'en' ? 'Reward added' : 'Récompense ajoutée', msg);
 
     claimButton.disabled = true;
     startButton.disabled = !(videosWatchedToday < MAX_VIDEOS_PER_DAY);
     
   } catch (err) {
     console.error('Erreur lors de la réclamation:', err);
-    showNotification('error','Erreur', err.message || 'Impossible d\'enregistrer la récompense. Réessayez.');
+    const msg = err.message || (currentLang === 'en' ? 'Unable to save reward. Try again.' : 'Impossible d\'enregistrer la récompense. Réessayez.');
+    showNotification('error', currentLang === 'en' ? 'Error' : 'Erreur', msg);
   }
 });
 
@@ -1604,111 +1913,75 @@ async function saveUserData(key = null, value = null) {
     console.log('Données utilisateur enregistrées.');
   } catch (error) {
     console.error('Erreur sauvegarde:', error);
-    showNotification('error','Erreur sauvegarde','Impossible de sauvegarder vos données.');
   }
 }
 
 async function loadUserData() {
-  if (!currentUser) throw new Error('Aucun utilisateur connecté.');
-  const userRef = db.collection('users').doc(currentUser.uid);
-  const doc = await userRef.get();
-  if (doc.exists) {
-    userData = doc.data() || {};
-    userData.country = userData.country || 'CM';
-    updateUserCurrency(userData.country);
-  } else {
-    userData = { country: 'CM' };
-    updateUserCurrency('CM');
-    await saveUserData();
+  if (!currentUser) return;
+  try {
+    const userRef = db.collection('users').doc(currentUser.uid);
+    const doc = await userRef.get();
+    if (doc.exists) {
+      userData = doc.data();
+      sidebarUsername.textContent = userData.username || userData.email || 'Utilisateur';
+      userAvatar.textContent = (userData.username || userData.email || 'U').charAt(0).toUpperCase();
+      
+      if (userData.country) {
+        updateUserCurrency(userData.country);
+      }
+      
+      if (userData.theme === 'dark') {
+        document.body.classList.add('dark-mode');
+        const themeText = translations[currentLang]['settings.light_mode'];
+        themeToggle.innerHTML = `<i class="fas fa-sun"></i><span>${themeText}</span>`;
+      }
+      
+      if (userData.language) {
+        applyTranslations(userData.language);
+      }
+      
+      const today = new Date().toISOString().split('T')[0];
+      if (userData.lastTikTokWatchDate === today) {
+        videosWatchedToday = userData.tikTokWatchedCount || 0;
+        earningsToday = userData.tikTokEarnedToday || 0;
+        
+        if (userData.tikTokClaimedVideos && Array.isArray(userData.tikTokClaimedVideos)) {
+          userData.tikTokClaimedVideos.forEach(idx => {
+            if (idx >= 0 && idx < claimedFlags.length) {
+              claimedFlags[idx] = true;
+            }
+          });
+        }
+      } else {
+        videosWatchedToday = 0;
+        earningsToday = 0;
+      }
+      
+      canWatchMore = videosWatchedToday < MAX_VIDEOS_PER_DAY;
+      updateDailyStatsUI();
+    }
+  } catch (error) {
+    console.error('Erreur chargement données:', error);
   }
 }
 
-/******** Mise à jour UI user ********/
-function updateUserInfoUI(user, dbData = {}) {
-  const displayName = dbData.username || user.displayName || (user.email ? user.email.split('@')[0] : 'Utilisateur');
-  if (sidebarUsername) sidebarUsername.textContent = displayName;
-  if (userAvatar) userAvatar.textContent = displayName.charAt(0).toUpperCase();
-}
-function applyTheme() {
-  const isDarkMode = userData.theme === 'dark';
-  document.body.classList.toggle('dark-mode', isDarkMode);
-  themeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i><span>Mode jour</span>' : '<i class="fas fa-moon"></i><span>Mode nuit</span>';
-}
-
-/******** Auth & init principal ********/
+/******** Auth state listener ********/
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     currentUser = user;
-    try {
-      await loadUserData();
-
-      // Vérification statut
-      const userStatus = (userData.status || userData.statut || '').toString().toLowerCase().trim();
-      const validStatuses = ['paid', 'active'];
-      if (!validStatuses.includes(userStatus)) {
-        showNotification('info','Action requise','Veuillez finaliser votre inscription pour continuer.');
-        setTimeout(() => { window.location.href = 'paiement.html'; }, 2000);
-        return;
-      }
-
-      updateUserInfoUI(user, userData);
-      applyTheme();
-
-      // Charger statistiques quotidiennes depuis Firestore
-      const today = new Date().toDateString();
-      if ((userData.lastTikTokWatchDate || '') !== today) {
-        videosWatchedToday = 0;
-        earningsToday = 0;
-      } else {
-        videosWatchedToday = userData.tikTokWatchesToday || 0;
-        earningsToday = userData.tikTokEarningsToday || 0;
-      }
-      canWatchMore = videosWatchedToday < MAX_VIDEOS_PER_DAY;
-      updateDailyStatsUI();
-
-      ensureNextButtonExists();
-
-      // 🔒 Gérer l'UI en fonction du jour (lundi uniquement)
-      updateMondayUI();
-
-      if (ENFORCE_MONDAY && !isTodayMonday()) {
-        startButton.disabled = true;
-        playButton.style.display = 'none';
-        claimButton.disabled = true;
-        showNotification('info','Non disponible', 'Les vidéos TikTok sont disponibles uniquement le lundi.');
-      } else {
-        startButton.disabled = !canWatchMore;
-        playButton.style.display = 'flex';
-        showNotification('success','Bienvenue','Prêt à gagner avec TikTok!');
-      }
-
-      loadByIndex(0);
-
-      document.body.classList.add('loaded');
-      if (loader) loader.classList.add('hidden');
-
-    } catch (error) {
-      console.error('Erreur initialisation:', error);
-      showNotification('error','Erreur critique','Impossible de charger vos données. Veuillez vous reconnecter.');
-      auth.signOut();
-      setTimeout(()=> { window.location.href = 'login.html'; }, 2000);
-    }
+    await loadUserData();
+    loadByIndex(0);
+    updateMondayUI();
   } else {
     window.location.href = 'login.html';
   }
+  
+  setTimeout(() => {
+    loader.classList.add('hidden');
+  }, 500);
 });
 
-/******** Petit preload ********/
-document.addEventListener('DOMContentLoaded', () => {
-  if (publicIdList.length) {
-    const link = document.createElement('link');
-    link.rel = 'preload';
-    link.as = 'video';
-    link.href = cloudinaryUrl(publicIdList[0]);
-    document.head.appendChild(link);
-  }
-  setTimeout(()=> { if (loader) loader.classList.add('hidden'); }, 700);
-});
+applyTranslations(currentLang);
 </script>
 </body>
 </html>
