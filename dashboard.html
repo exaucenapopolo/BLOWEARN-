@@ -2151,6 +2151,63 @@ let userData = {};
 let currentUser = null;
 let currentLang = 'fr'; // Langue par défaut
 
+/******** SYSTÈME DE CONVERSION DE DEVISES ********/
+// Country to currency mapping
+const countryCurrencyMap = {
+  // CEMAC zone (XAF - CFA Franc BEAC)
+  'CM': 'XAF', 'GA': 'XAF', 'TD': 'XAF', 'CF': 'XAF', 'CG': 'XAF', 'GQ': 'XAF',
+  // UEMOA zone (XOF - CFA Franc BCEAO) - same value as XAF
+  'SN': 'XOF', 'CI': 'XOF', 'ML': 'XOF', 'BF': 'XOF', 'BJ': 'XOF', 'TG': 'XOF', 'NE': 'XOF', 'GW': 'XOF',
+  // Other African countries
+  'CD': 'CDF', 'KE': 'KES', 'RW': 'RWF', 'TZ': 'TZS', 'UG': 'UGX',
+  'ZA': 'ZAR', 'NG': 'NGN', 'GH': 'GHS', 'ET': 'ETB', 'MA': 'MAD', 'EG': 'EGP', 'DZ': 'DZD', 'TN': 'TND'
+};
+
+// Exchange rates from XAF to other currencies (approximate rates - Dec 2024)
+const exchangeRates = {
+  'XAF': 1, 'XOF': 1, 'CDF': 4.74, 'KES': 0.21, 'RWF': 2.11, 'TZS': 4.25,
+  'UGX': 6.29, 'ZAR': 0.031, 'NGN': 2.70, 'GHS': 0.026, 'ETB': 0.19,
+  'MAD': 0.017, 'EGP': 0.083, 'DZD': 0.23, 'TND': 0.0053
+};
+
+// Currency symbols/names for display
+const currencyDisplayNames = {
+  'XAF': 'FCFA', 'XOF': 'FCFA', 'CDF': 'FC', 'KES': 'KSh', 'RWF': 'FRw',
+  'TZS': 'TSh', 'UGX': 'USh', 'ZAR': 'R', 'NGN': '₦', 'GHS': 'GH₵',
+  'ETB': 'Br', 'MAD': 'DH', 'EGP': 'E£', 'DZD': 'DA', 'TND': 'DT'
+};
+
+// Current user's currency (will be set based on user's country)
+let userCurrency = 'XAF';
+
+// Get currency for a country
+function getCurrencyForCountry(countryCode) {
+  if (!countryCode) return 'XAF';
+  return countryCurrencyMap[countryCode.toUpperCase()] || 'XAF';
+}
+
+// Convert XAF to target currency
+function convertFromXAF(amountXAF, targetCurrency) {
+  const rate = exchangeRates[targetCurrency] || 1;
+  return Math.round(amountXAF * rate);
+}
+
+// Format currency amount for display
+function formatCurrencyAmount(amount, currencyCode) {
+  const displayName = currencyDisplayNames[currencyCode] || currencyCode;
+  const formattedAmount = (typeof amount === 'number' && !isNaN(amount)) 
+    ? amount.toLocaleString('fr-FR') 
+    : '0';
+  return `${formattedAmount} ${displayName}`;
+}
+
+// Update user currency based on their country
+function updateUserCurrency() {
+  const countryCode = userData.country || 'CM';
+  userCurrency = getCurrencyForCountry(countryCode);
+  console.log(`Currency set to ${userCurrency} for country ${countryCode}`);
+}
+
 /******** Système de traduction ********/
 const translations = {
   fr: {
@@ -2678,31 +2735,40 @@ async function loadUserData() {
 /******** Mise à jour UI ********/
 function formatNumberSafe(n) { return (typeof n === 'number' && !isNaN(n)) ? n.toLocaleString('fr-FR') : '0'; }
 
+// Convert and format a value in user's currency
+function formatValueInUserCurrency(amountXAF) {
+  const converted = convertFromXAF(amountXAF, userCurrency);
+  return formatCurrencyAmount(converted, userCurrency);
+}
+
 function updateDashboardUI() {
   try {
+    // Update user currency based on country before displaying
+    updateUserCurrency();
+    
     const depenseBanner = document.querySelector('#banner-depense .banner-stat-value');
     const profitBanner = document.querySelector('#banner-profit .banner-stat-value');
-    if(depenseBanner) depenseBanner.textContent = `XAF ${formatNumberSafe(userData.depense)}`;
-    if(profitBanner) profitBanner.textContent = `XAF ${formatNumberSafe(userData.profit)}`;
+    if(depenseBanner) depenseBanner.textContent = formatValueInUserCurrency(userData.depense);
+    if(profitBanner) profitBanner.textContent = formatValueInUserCurrency(userData.profit);
 
     const solde = document.querySelector('#solde-card .large-stat-value');
     const retire = document.querySelector('#retire-card .medium-stat-value');
-    if(solde) solde.textContent = `XAF ${formatNumberSafe(userData.solde)}`;
-    if(retire) retire.textContent = `XAF ${formatNumberSafe(userData.retire)}`;
+    if(solde) solde.textContent = formatValueInUserCurrency(userData.solde);
+    if(retire) retire.textContent = formatValueInUserCurrency(userData.retire);
 
     const parrainageCard = document.querySelector('#parrainage-card .medium-stat-value');
-    if(parrainageCard) parrainageCard.textContent = `XAF ${formatNumberSafe(userData.parrainage)}`;
+    if(parrainageCard) parrainageCard.textContent = formatValueInUserCurrency(userData.parrainage);
 
     const bonusCard = document.querySelector('#bonus-agent-card .medium-stat-value');
-    if(bonusCard) bonusCard.textContent = `XAF ${formatNumberSafe(userData.bonusAgent)}`;
+    if(bonusCard) bonusCard.textContent = formatValueInUserCurrency(userData.bonusAgent);
 
-    if(document.querySelector('#whatsapp-gains .gain-stat-value')) document.querySelector('#whatsapp-gains .gain-stat-value').textContent = `XAF ${formatNumberSafe(userData.whatsappGains)}`;
-    if(document.querySelector('#trivia-gains .gain-stat-value')) document.querySelector('#trivia-gains .gain-stat-value').textContent = `XAF ${formatNumberSafe(userData.triviaGains)}`;
-    if(document.querySelector('#publicite-gains .gain-stat-value')) document.querySelector('#publicite-gains .gain-stat-value').textContent = `XAF ${formatNumberSafe(userData.publiciteGains)}`;
-    if(document.querySelector('#tiktok-gains .gain-stat-value')) document.querySelector('#tiktok-gains .gain-stat-value').textContent = `XAF ${formatNumberSafe(userData.tiktokGains)}`;
-    if(document.querySelector('#youtube-gains .gain-stat-value')) document.querySelector('#youtube-gains .gain-stat-value').textContent = `XAF ${formatNumberSafe(userData.youtubeGains)}`;
-    if(document.querySelector('#instagram-gains .gain-stat-value')) document.querySelector('#instagram-gains .gain-stat-value').textContent = `XAF ${formatNumberSafe(userData.instagramGains)}`; 
-    if(document.querySelector('#depot-solde .gain-stat-value')) document.querySelector('#depot-solde .gain-stat-value').textContent = `XAF ${formatNumberSafe(userData.depotSolde)}`;
+    if(document.querySelector('#whatsapp-gains .gain-stat-value')) document.querySelector('#whatsapp-gains .gain-stat-value').textContent = formatValueInUserCurrency(userData.whatsappGains);
+    if(document.querySelector('#trivia-gains .gain-stat-value')) document.querySelector('#trivia-gains .gain-stat-value').textContent = formatValueInUserCurrency(userData.triviaGains);
+    if(document.querySelector('#publicite-gains .gain-stat-value')) document.querySelector('#publicite-gains .gain-stat-value').textContent = formatValueInUserCurrency(userData.publiciteGains);
+    if(document.querySelector('#tiktok-gains .gain-stat-value')) document.querySelector('#tiktok-gains .gain-stat-value').textContent = formatValueInUserCurrency(userData.tiktokGains);
+    if(document.querySelector('#youtube-gains .gain-stat-value')) document.querySelector('#youtube-gains .gain-stat-value').textContent = formatValueInUserCurrency(userData.youtubeGains);
+    if(document.querySelector('#instagram-gains .gain-stat-value')) document.querySelector('#instagram-gains .gain-stat-value').textContent = formatValueInUserCurrency(userData.instagramGains); 
+    if(document.querySelector('#depot-solde .gain-stat-value')) document.querySelector('#depot-solde .gain-stat-value').textContent = formatValueInUserCurrency(userData.depotSolde);
   } catch (err) {
     console.error('Erreur updateDashboardUI', err);
   }
