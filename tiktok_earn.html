@@ -1557,7 +1557,14 @@ claimButton.addEventListener('click', async () => {
       })
     });
 
-    const data = await response.json();
+    let data;
+    try {
+      const responseText = await response.text();
+      data = JSON.parse(responseText);
+    } catch (parseErr) {
+      console.error('Erreur parsing JSON:', parseErr);
+      throw new Error('Réponse serveur invalide. Réessayez.');
+    }
 
     if (!response.ok) {
       throw new Error(data.error || data.message || 'Erreur serveur');
