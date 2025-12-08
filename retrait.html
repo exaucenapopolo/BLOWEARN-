@@ -1312,13 +1312,21 @@
                     <option value="BJ">Bénin</option>
                     <option value="BF">Burkina Faso</option>
                     <option value="CM">Cameroun</option>
+                    <option value="CD">RD Congo</option>
                     <option value="CI">Côte d'Ivoire</option>
+                    <option value="EG">Égypte</option>
+                    <option value="ET">Éthiopie</option>
+                    <option value="GA">Gabon</option>
                     <option value="GH">Ghana</option>
+                    <option value="KE">Kenya</option>
                     <option value="ML">Mali</option>
                     <option value="NE">Niger</option>
                     <option value="NG">Nigeria</option>
+                    <option value="RW">Rwanda</option>
                     <option value="SN">Sénégal</option>
                     <option value="TG">Togo</option>
+                    <option value="TZ">Tanzanie</option>
+                    <option value="UG">Ouganda</option>
                 </select>
             </div>
 
@@ -1797,13 +1805,21 @@
         BJ: { name: 'Bénin', methods: ['mtn', 'moov'], currency: 'XOF' },
         BF: { name: 'Burkina Faso', methods: ['orange', 'moov'], currency: 'XOF' },
         CM: { name: 'Cameroun', methods: ['mtn', 'orange'], currency: 'XAF' },
+        CD: { name: 'RD Congo', methods: ['orange', 'airtel', 'vodacom'], currency: 'CDF' },
         CI: { name: 'Côte d\'Ivoire', methods: ['orange', 'mtn', 'moov', 'wave'], currency: 'XOF' },
+        EG: { name: 'Égypte', methods: ['vodafone', 'bank_transfer'], currency: 'EGP' },
+        ET: { name: 'Éthiopie', methods: ['bank_transfer'], currency: 'ETB' },
+        GA: { name: 'Gabon', methods: ['airtel'], currency: 'XAF' },
         GH: { name: 'Ghana', methods: ['mtn', 'vodafone', 'airtel'], currency: 'GHS' },
+        KE: { name: 'Kenya', methods: ['mpesa', 'airtel'], currency: 'KES' },
         ML: { name: 'Mali', methods: ['orange', 'moov', 'wave'], currency: 'XOF' },
         NE: { name: 'Niger', methods: ['airtel'], currency: 'XOF' },
         NG: { name: 'Nigeria', methods: ['bank_transfer'], currency: 'NGN' },
+        RW: { name: 'Rwanda', methods: ['mtn', 'airtel'], currency: 'RWF' },
         SN: { name: 'Sénégal', methods: ['orange', 'free', 'wave'], currency: 'XOF' },
-        TG: { name: 'Togo', methods: ['tmoney', 'moov'], currency: 'XOF' }
+        TG: { name: 'Togo', methods: ['tmoney', 'moov'], currency: 'XOF' },
+        TZ: { name: 'Tanzanie', methods: ['mpesa', 'airtel', 'tigo'], currency: 'TZS' },
+        UG: { name: 'Ouganda', methods: ['mtn', 'airtel'], currency: 'UGX' }
     };
     
     // Noms affichables des méthodes de paiement (codes AccountPe)
@@ -1814,8 +1830,11 @@
         'wave': 'Wave',
         'free': 'Free Money',
         'vodafone': 'Vodafone Cash',
+        'vodacom': 'Vodacom M-Pesa',
         'airtel': 'Airtel Money',
         'tmoney': 'T-Money',
+        'mpesa': 'M-Pesa',
+        'tigo': 'Tigo Pesa',
         'bank_transfer': 'Virement Bancaire'
     };
 
