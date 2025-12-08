@@ -5,84 +5,96 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>BLOWEARN AGENCIES - TikTok Earn</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   
   <style>
-    /* -------------------------------------------------------------------------- */
-    /* --- VARIABLES CSS COHÉRENTES AVEC LE DASHBOARD --- */
-    /* -------------------------------------------------------------------------- */
+    /* Styles de base */
+    body {
+      background: linear-gradient(135deg, #d5e8d9 0%, #c5dfe6 100%);
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      visibility: hidden; 
+      opacity: 0;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    body.loaded {
+      visibility: visible;
+      opacity: 1;
+    }
+
     :root {
-      --color-primary: #4A90E2; /* Bleu Énergique */
-      --color-secondary: #FFC107; /* Jaune Vif/Or pour l'accent */
-      --color-text-dark: #2C3E50; /* Texte Sombre (lisible) */
-      --color-text-light: #ECF0F1; /* Texte Clair */
-      --color-bg-gradient-1: #6DD5FA; /* Dégradé Fond 1 */
-      --color-bg-gradient-2: #FF7582; /* Dégradé Fond 2 */
+      --primary-color: #3a8ee6;
+      --primary-light: #4da6ff;
+      --primary-dark: #2c75c9;
+      --secondary-color: #4c566a;
+      --accent-color: #5e81ac;
+      --background-light: #f5f7fb;
+      --background-dark: #e5e9f0;
+      --card-bg: #ffffff;
+      --text-color: #2e3440;
+      --text-light: #4c566a;
       --success-color: #4CD964;
       --warning-color: #FF9500;
       --danger-color: #FF3B30;
-      --shadow: 0 15px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.8);
-      --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      --purple-color: #AF52DE;
+      --teal-color: #5AC8FA;
+      --orange-color: #FF9500;
+      --pink-color: #FF2D55;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s ease;
+      --badge-active: #4CD964;
+      --badge-pending: #FF9500;
+      --badge-inactive: #FF3B30;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- STYLES GÉNÉRAUX COHÉRENTS --- */
-    /* -------------------------------------------------------------------------- */
+    .dark-mode {
+      --primary-color: #5e81ac;
+      --primary-light: #81a1c1;
+      --primary-dark: #4c566a;
+      --secondary-color: #d8dee9;
+      --accent-color: #88c0d0;
+      --background-light: #2e3440;
+      --background-dark: #3b4252;
+      --card-bg: #434c5e;
+      --text-color: #eceff4;
+      --text-light: #d8dee9;
+      --success-color: #4CD964;
+      --warning-color: #FF9500;
+      --danger-color: #FF3B30;
+      --purple-color: #AF52DE;
+      --teal-color: #5AC8FA;
+      --orange-color: #FF9500;
+      --pink-color: #FF2D55;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      --badge-active: #2ecc71;
+      --badge-pending: #f1c40f;
+      --badge-inactive: #e74c3c;
+    }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Montserrat', sans-serif;
+      font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       transition: var(--transition);
     }
-
-    body {
-      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
-      color: var(--color-text-dark);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow-x: hidden;
-    }
-
-    /* Effet de bulles animées en arrière-plan */
-    body::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 25%),
-        radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
-        radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 25%),
-        radial-gradient(circle at 90% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 25%);
-      animation: float 20s ease-in-out infinite;
-      z-index: -1;
-    }
     
-    @keyframes float {
-      0%, 100% { transform: translateY(0) scale(1); }
-      50% { transform: translateY(-15px) scale(1.02); }
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- LOADER --- */
-    /* -------------------------------------------------------------------------- */
+    /* Loader */
     .loader-container {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(135deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
+      background: linear-gradient(135deg, #d5e8d9 0%, #c5dfe6 100%);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -99,21 +111,20 @@
       width: 60px;
       height: 60px;
       border-radius: 50%;
-      background: conic-gradient(#0000 10%, var(--color-primary));
+      background: conic-gradient(#0000 10%, var(--primary-color));
       -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
       animation: spin 1s infinite linear;
     }
 
     @keyframes spin {
-      to { transform: rotate(1turn); }
+      to {
+        transform: rotate(1turn);
+      }
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- HEADER --- */
-    /* -------------------------------------------------------------------------- */
+    /* Header styles */
     .header {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(15px);
+      background-color: var(--card-bg);
       box-shadow: var(--shadow);
       padding: 15px 30px;
       display: flex;
@@ -122,23 +133,17 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      border-bottom: 1px solid rgba(255,255,255,0.7);
     }
 
     .logo {
       font-size: 1.8rem;
       font-weight: 800;
-      color: var(--color-text-dark);
+      color: var(--primary-color);
       display: flex;
       align-items: center;
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       text-transform: uppercase;
-      letter-spacing: 2px;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      background: linear-gradient(45deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      letter-spacing: 1px;
     }
 
     .header-controls {
@@ -148,7 +153,7 @@
     }
 
     .language-selector {
-      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
+      background-color: var(--primary-light);
       color: white;
       border: none;
       border-radius: 20px;
@@ -158,31 +163,28 @@
       align-items: center;
       gap: 8px;
       font-weight: 500;
-      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
-      position: relative;
     }
 
     .theme-toggle {
-      background-color: transparent;
-      border: none;
-      color: var(--color-text-dark);
-      cursor: pointer;
-      padding: 5px;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background-color 0.3s ease;
+        background-color: transparent;
+        border: none;
+        color: var(--secondary-color);
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s ease;
     }
 
     .theme-toggle:hover {
-      background-color: rgba(0, 0, 0, 0.05);
+        background-color: rgba(0, 0, 0, 0.05);
     }
-
     .theme-toggle i {
-      font-size: 1.2rem;
+        font-size: 1.2rem;
     }
 
     .user-profile {
@@ -197,73 +199,121 @@
       width: 45px;
       height: 45px;
       border-radius: 50%;
-      background-color: var(--color-primary);
+      background-color: var(--primary-color);
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       font-size: 1.2rem;
       font-weight: bold;
-      border: 2px solid var(--color-secondary);
+      border: 2px solid var(--primary-light);
       box-shadow: var(--shadow);
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- BOUTON HAMBURGER --- */
-    /* -------------------------------------------------------------------------- */
+    .profile-dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background-color: var(--card-bg);
+        box-shadow: var(--shadow);
+        border-radius: 8px;
+        padding: 10px;
+        display: none;
+        flex-direction: column;
+        gap: 5px;
+        min-width: 150px;
+        z-index: 200;
+        transform-origin: top right;
+        animation: scaleIn 0.2s ease-out forwards;
+    }
+
+    .profile-dropdown.active {
+        display: flex;
+    }
+    
+    @keyframes scaleIn {
+        from { transform: scale(0.9); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+
+    .profile-dropdown .theme-toggle {
+        width: 100%;
+        border-radius: 8px;
+        background-color: rgba(0, 0, 0, 0.05);
+        color: var(--text-color);
+        justify-content: flex-start;
+        padding: 10px;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+        text-align: left;
+        gap: 10px;
+    }
+    .profile-dropdown .theme-toggle:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+    
+    .profile-dropdown .theme-toggle span {
+        flex-grow: 1;
+        text-align: left;
+    }
+
+    /* Bouton hamburger */
     .hamburger-btn {
-      display: none;
-      background: none;
-      border: none;
-      cursor: pointer;
-      flex-direction: column;
-      justify-content: space-around;
-      width: 30px;
-      height: 25px;
-      padding: 0;
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        width: 30px;
+        height: 25px;
+        padding: 0;
     }
     
     .hamburger-btn .bar {
-      width: 100%;
-      height: 3px;
-      background-color: var(--color-text-dark);
-      transition: transform 0.3s ease, opacity 0.3s ease;
+        width: 100%;
+        height: 3px;
+        background-color: var(--secondary-color);
+        transition: transform 0.3s ease, opacity 0.3s ease;
     }
     
     .hamburger-btn.open .bar:nth-child(2) {
-      opacity: 0;
+        opacity: 0;
     }
     
     .hamburger-btn.open .bar:nth-child(1) {
-      transform: translateY(11px) rotate(45deg);
+        transform: translateY(11px) rotate(45deg);
     }
     
     .hamburger-btn.open .bar:nth-child(3) {
-      transform: translateY(-11px) rotate(-45deg);
+        transform: translateY(-11px) rotate(-45deg);
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- STRUCTURE PRINCIPALE --- */
-    /* -------------------------------------------------------------------------- */
+    /* Main layout */
     .main-container {
       display: flex;
       flex: 1;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- SIDEBAR --- */
-    /* -------------------------------------------------------------------------- */
+    /* Sidebar */
     .sidebar {
       width: 280px;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.95) 100%);
-      backdrop-filter: blur(15px);
-      border-right: 1px solid rgba(255,255,255,0.7);
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(10px);
+      -webkit-backcast-filter: blur(10px);
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
       box-shadow: var(--shadow);
       height: calc(100vh - 80px);
       position: sticky;
       top: 80px;
       padding: 25px 0;
       overflow-y: auto;
+      transition: transform 0.4s ease-in-out; 
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
     }
 
     .welcome-section {
@@ -273,29 +323,24 @@
     }
 
     .welcome-text {
-      color: var(--color-text-dark);
+      color: var(--text-light);
       font-size: 0.9rem;
       margin-bottom: 5px;
-      font-weight: 500;
-      font-family: 'Quicksand', sans-serif;
     }
 
     .username {
       font-weight: 600;
       font-size: 1.2rem;
-      color: var(--color-primary);
-      font-family: 'Quicksand', sans-serif;
+      color: var(--primary-color);
     }
 
     .menu-category {
       padding: 15px 25px 5px;
       font-size: 0.85rem;
-      color: var(--color-text-dark);
+      color: var(--text-light);
       text-transform: uppercase;
       letter-spacing: 1px;
       font-weight: 600;
-      font-family: 'Quicksand', sans-serif;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
 
     .menu-item {
@@ -303,30 +348,78 @@
       display: flex;
       align-items: center;
       gap: 15px;
-      color: var(--color-text-dark);
+      color: var(--text-color);
       text-decoration: none;
       font-weight: 500;
       border-left: 4px solid transparent;
       position: relative;
       overflow: hidden;
-      font-family: 'Quicksand', sans-serif;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .menu-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
+      transition: all 0.5s ease;
+    }
+    .menu-item:hover::before {
+      left: 100%;
     }
 
     .menu-item:hover, .menu-item.active {
       background-color: rgba(0, 0, 0, 0.05);
-      border-left-color: var(--color-primary);
-      color: var(--color-primary);
+      border-left-color: var(--primary-color);
+      color: var(--primary-color);
     }
 
     .menu-item i {
       width: 20px;
       text-align: center;
       font-size: 1.1rem;
+      transition: transform 0.3s ease;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- CONTENU PRINCIPAL --- */
-    /* -------------------------------------------------------------------------- */
+    .menu-item:hover i {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .menu-badge {
+      position: absolute;
+      right: 25px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+      animation: popIn 0.5s ease-out;
+    }
+    
+    @keyframes popIn {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    
+    .menu-badge.active {
+      background-color: var(--badge-active);
+      color: white;
+    }
+    
+    .menu-badge.inactive {
+      background-color: var(--badge-inactive);
+      color: white;
+    }
+
+    /* Contenu principal */
     .content {
       flex: 1;
       padding: 30px;
@@ -335,41 +428,52 @@
     .page-title {
       font-size: 1.5rem;
       margin-bottom: 25px;
-      color: var(--color-text-dark);
+      color: var(--secondary-color);
       font-weight: 700;
       display: flex;
       align-items: center;
       gap: 10px;
-      font-family: 'Poppins', sans-serif;
     }
 
     .page-title i {
-      color: var(--color-primary);
+      color: var(--primary-color);
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- SECTION EARN TIKTOK AMÉLIORÉE --- */
-    /* -------------------------------------------------------------------------- */
+    /* Section de gain TikTok */
     .earn-section {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(15px);
-      border-radius: 18px;
+      background: linear-gradient(135deg, #fff0f5 0%, #ffe4ec 100%);
+      border-radius: 12px;
       padding: 25px;
       box-shadow: var(--shadow);
       margin-bottom: 30px;
       position: relative;
       overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .earn-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transform: rotate(45deg);
+      animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) rotate(45deg); }
     }
 
     .section-title {
       font-size: 1.3rem;
       margin-bottom: 20px;
-      color: var(--color-text-dark);
+      color: var(--secondary-color);
       font-weight: 600;
       position: relative;
       z-index: 1;
-      font-family: 'Poppins', sans-serif;
     }
 
     .video-container {
@@ -405,7 +509,7 @@
       transform: translate(-50%, -50%);
       width: 60px;
       height: 60px;
-      background-color: rgba(255, 255, 255, 0.9);
+      background-color: rgba(255, 255, 255, 0.8);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -413,7 +517,6 @@
       cursor: pointer;
       z-index: 10;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
     .play-button:hover {
@@ -423,7 +526,7 @@
 
     .play-button i {
       font-size: 24px;
-      color: var(--color-primary);
+      color: #000;
       margin-left: 4px;
     }
 
@@ -445,7 +548,7 @@
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      background-color: rgba(255, 255, 255, 0.7);
+      background-color: var(--background-light);
       box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
@@ -457,7 +560,7 @@
       height: 100%;
       border-radius: 50%;
       clip: rect(0, 60px, 120px, 0);
-      background: conic-gradient(var(--color-primary) 0%, var(--color-secondary) 100%);
+      background: conic-gradient(var(--primary-color) 0%, var(--primary-light) 100%);
       transition: transform 0.1s linear;
     }
 
@@ -468,14 +571,13 @@
       transform: translate(-50%, -50%);
       font-size: 1.5rem;
       font-weight: 700;
-      color: var(--color-text-dark);
+      color: var(--text-color);
     }
 
     .timer-label {
       margin-top: 10px;
       font-size: 1rem;
-      color: var(--color-text-dark);
-      opacity: 0.8;
+      color: var(--text-light);
     }
 
     .reward-info {
@@ -486,7 +588,6 @@
       text-align: center;
       position: relative;
       z-index: 1;
-      border: 1px solid rgba(255,255,255,0.5);
     }
 
     .reward-amount {
@@ -498,8 +599,7 @@
 
     .reward-text {
       font-size: 0.9rem;
-      color: var(--color-text-dark);
-      opacity: 0.8;
+      color: var(--text-light);
     }
 
     .action-buttons {
@@ -521,15 +621,14 @@
       align-items: center;
       gap: 8px;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--color-primary) 0%, #79C3F8 100%);
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
       color: white;
     }
 
-    .btn-primary:hover:not(:disabled) {
+    .btn-primary:hover {
       transform: translateY(-3px);
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
@@ -546,7 +645,7 @@
       color: white;
     }
 
-    .btn-success:hover:not(:disabled) {
+    .btn-success:hover {
       transform: translateY(-3px);
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
@@ -566,115 +665,32 @@
     }
 
     .stat-card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(15px);
-      border-radius: 15px;
+      background: linear-gradient(135deg, #f0f8ff 0%, #e0f0ff 100%);
+      border-radius: 10px;
       padding: 15px;
       box-shadow: var(--shadow);
       text-align: center;
-      border: 1px solid rgba(255,255,255,0.7);
     }
 
     .stat-value {
       font-size: 1.5rem;
       font-weight: 700;
-      color: var(--color-primary);
+      color: var(--primary-color);
       margin-bottom: 5px;
     }
 
     .stat-label {
       font-size: 0.9rem;
-      color: var(--color-text-dark);
-      opacity: 0.8;
+      color: var(--text-light);
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- ALERTE LUNDI AMÉLIORÉE --- */
-    /* -------------------------------------------------------------------------- */
-    .monday-alert {
-      background: linear-gradient(135deg, var(--warning-color) 0%, #FF6B00 100%);
-      color: white;
-      padding: 20px;
-      border-radius: 18px;
-      margin-bottom: 20px;
-      text-align: center;
-      box-shadow: var(--shadow);
-      position: relative;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.3);
-    }
-
-    .monday-alert h3 {
-      font-size: 1.3rem;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .monday-alert p {
-      font-size: 1rem;
-      margin-bottom: 5px;
-      opacity: 0.9;
-    }
-
-    .monday-alert .countdown {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-top: 10px;
-      font-family: 'Roboto Mono', monospace;
-    }
-
-    .video-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 5;
-      border-radius: 12px;
-      flex-direction: column;
-      padding: 20px;
-      text-align: center;
-    }
-
-    .video-overlay.active {
-      display: flex;
-    }
-
-    .video-overlay i {
-      font-size: 3rem;
-      color: var(--warning-color);
-      margin-bottom: 15px;
-    }
-
-    .video-overlay h4 {
-      color: white;
-      font-size: 1.3rem;
-      margin-bottom: 10px;
-    }
-
-    .video-overlay p {
-      color: rgba(255, 255, 255, 0.8);
-      font-size: 1rem;
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- FOOTER AMÉLIORÉ --- */
-    /* -------------------------------------------------------------------------- */
+    /* Footer */
     .footer {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(15px);
+      background-color: var(--card-bg);
       padding: 20px 30px;
       text-align: center;
       box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
       margin-top: auto;
-      border-top: 1px solid rgba(255,255,255,0.7);
     }
 
     .footer-content {
@@ -691,7 +707,7 @@
     }
 
     .footer-link {
-      color: var(--color-primary);
+      color: var(--primary-color);
       text-decoration: none;
       font-weight: 500;
       transition: color 0.2s ease;
@@ -699,17 +715,15 @@
 
     .footer-link:hover {
       text-decoration: underline;
-      color: var(--color-secondary);
+      color: var(--primary-dark);
     }
 
     .footer-text {
-      color: var(--color-text-dark);
+      color: var(--text-light);
       font-size: 0.9rem;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- OVERLAY --- */
-    /* -------------------------------------------------------------------------- */
+    /* Overlay */
     .overlay {
       display: none;
       position: fixed;
@@ -725,9 +739,134 @@
       display: block;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* --- NOTIFICATIONS --- */
-    /* -------------------------------------------------------------------------- */
+    /* Responsive */
+    @media (max-width: 768px) {
+        .main-container {
+            flex-direction: column;
+        }
+
+        .hamburger-btn {
+            display: flex;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 101;
+        }
+
+        .sidebar {
+            width: 75%;
+            max-width: 300px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: -100%;
+            z-index: 99;
+            transition: left 0.4s ease-in-out;
+        }
+        
+        .sidebar.open {
+            left: 0;
+        }
+        
+        .header {
+            padding: 15px;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            margin-left: 50px;
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .daily-stats {
+            grid-template-columns: 1fr;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+    }
+
+    /* Monday Alert Banner */
+    .monday-alert {
+      background: linear-gradient(135deg, #FF9500 0%, #FF6B00 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      animation: pulseGlow 2s infinite;
+    }
+
+    .monday-alert h3 {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .monday-alert p {
+      font-size: 1rem;
+      margin-bottom: 5px;
+    }
+
+    .monday-alert .countdown {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-top: 10px;
+      font-family: 'Roboto Mono', monospace;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 20px rgba(255, 149, 0, 0.5); }
+      50% { box-shadow: 0 0 40px rgba(255, 149, 0, 0.8); }
+    }
+
+    .video-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+      border-radius: 12px;
+      flex-direction: column;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .video-overlay.active {
+      display: flex;
+    }
+
+    .video-overlay i {
+      font-size: 3rem;
+      color: #FF9500;
+      margin-bottom: 15px;
+    }
+
+    .video-overlay h4 {
+      color: white;
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+    }
+
+    .video-overlay p {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1rem;
+    }
+
+    /* Animation for notifications */
     .notification-container {
       position: fixed;
       top: 20px;
@@ -741,8 +880,8 @@
 
     .notification {
       padding: 15px 20px;
-      border-radius: 10px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       display: flex;
       align-items: center;
       gap: 10px;
@@ -752,8 +891,6 @@
       overflow: hidden;
       color: white;
       pointer-events: auto;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.2);
     }
 
     .notification.success {
@@ -765,7 +902,7 @@
     }
 
     .notification.info { 
-      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); 
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); 
     }
 
     @keyframes slideIn {
@@ -776,92 +913,6 @@
       to {
         transform: translateX(0);
         opacity: 1;
-      }
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- MODE NUIT --- */
-    /* -------------------------------------------------------------------------- */
-    .dark-mode {
-      --color-primary: #5e81ac;
-      --color-secondary: #d08770;
-      --color-text-dark: #eceff4;
-      --color-text-light: #2e3440;
-      --color-bg-gradient-1: #2e3440;
-      --color-bg-gradient-2: #4c566a;
-      --success-color: #a3be8c;
-      --warning-color: #ebcb8b;
-      --danger-color: #bf616a;
-      --shadow: 0 15px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
-    }
-
-    .dark-mode body::before {
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(76, 86, 106, 0.4) 0%, transparent 25%),
-        radial-gradient(circle at 80% 10%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
-        radial-gradient(circle at 40% 80%, rgba(76, 86, 106, 0.3) 0%, transparent 25%),
-        radial-gradient(circle at 90% 90%, rgba(76, 86, 106, 0.2) 0%, transparent 25%);
-    }
-
-    .dark-mode .header,
-    .dark-mode .sidebar,
-    .dark-mode .earn-section,
-    .dark-mode .stat-card,
-    .dark-mode .footer {
-      background: rgba(59, 66, 82, 0.95);
-      color: var(--color-text-dark);
-    }
-
-    .dark-mode .monday-alert {
-      background: linear-gradient(135deg, var(--warning-color) 0%, #d08770 100%);
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /* --- RESPONSIVE --- */
-    /* -------------------------------------------------------------------------- */
-    @media (max-width: 768px) {
-      .main-container {
-        flex-direction: column;
-      }
-      
-      .hamburger-btn {
-        display: flex;
-      }
-
-      .sidebar {
-        width: 85%;
-        max-width: 320px;
-        height: 100vh;
-        position: fixed;
-        top: 0;
-        left: -100%;
-        z-index: 99;
-        transition: left 0.4s ease-in-out;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 245, 255, 0.97) 100%);
-      }
-      
-      .sidebar.open {
-        left: 0;
-      }
-      
-      .header {
-        padding: 15px;
-      }
-      
-      .logo {
-        font-size: 1.5rem;
-      }
-      
-      .content {
-        padding: 20px;
-      }
-      
-      .daily-stats {
-        grid-template-columns: 1fr;
-      }
-      
-      .action-buttons {
-        flex-direction: column;
       }
     }
   </style>
@@ -875,27 +926,30 @@
 
   <header class="header">
     <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
     </button>
     
     <div class="logo">
-      <span>BLOWEARN</span>
+      <span>BLOWEARN AGENCIES</span>
     </div>
     
     <div class="header-controls">
       <button class="language-selector" id="languageSelector">
         <i class="fas fa-globe"></i>
         <span>French</span>
-      </button>
-      
-      <button class="theme-toggle" id="themeToggle">
-        <i class="fas fa-moon"></i>
+        <i class="fas fa-chevron-down"></i>
       </button>
       
       <div class="user-profile" id="userProfile">
-        <div class="avatar" id="userAvatar">U</div>
+          <div class="avatar" id="userAvatar">U</div>
+          <div class="profile-dropdown" id="profileDropdown">
+              <button class="theme-toggle" id="themeToggle">
+                  <i class="fas fa-moon"></i>
+                  <span>Mode nuit</span>
+              </button>
+          </div>
       </div>
     </div>
   </header>
@@ -910,7 +964,7 @@
       </div>
 
       <div class="menu-category">MENU PRINCIPAL</div>
-      <a href="dashboard.html" class="menu-item">
+      <a href="dashboard_SOLUTION_FINALE.html" class="menu-item">
         <i class="fas fa-home"></i>
         <span>Accueil</span>
       </a>
@@ -930,7 +984,7 @@
         <span>Dépôt</span>
       </a>
       
-      <div class="menu-category">PRODUIT / TÂCHE</div>
+      <div class="menu-category">PRODUIT / TACHE</div>
       <a href="whatsapp_earn.html" class="menu-item">
         <i class="fab fa-whatsapp"></i>
         <span>Gagner via Whatsapp</span>
@@ -984,7 +1038,7 @@
         <span>TikTok Earn</span>
       </h1>
       
-      <!-- Bannière d'alerte Monday-only -->
+      <!-- Bannière d'alerte Monday-only (masquée le lundi) -->
       <div class="monday-alert" id="mondayAlert" style="display: none;">
         <h3>
           <i class="fas fa-calendar-alt"></i>
@@ -1058,7 +1112,7 @@
   <footer class="footer">
     <div class="footer-content">
       <div class="footer-links">
-        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Boost Tech management</a>
+        <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Pro Tech Management</a>
         <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link">Site propulsé par Social Boost Horizon</a>
       </div>
       <div class="footer-text">
@@ -1078,12 +1132,7 @@ const firebaseConfig = {
   appId: "1:1091928501310:web:4f4de306cde36f378ff56f",
   measurementId: "G-5SF6VDLZCB"
 };
-
-// Vérifier si Firebase est déjà initialisé
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
-
+firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
 
@@ -1093,6 +1142,8 @@ const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('overlay');
 const themeToggle = document.getElementById('themeToggle');
 const userProfile = document.getElementById('userProfile');
+const profileDropdown = document.getElementById('profileDropdown');
+const languageSelector = document.getElementById('languageSelector');
 const loader = document.getElementById('loader');
 const sidebarUsername = document.getElementById('sidebarUsername');
 const userAvatar = document.getElementById('userAvatar');
@@ -1109,20 +1160,63 @@ const earnedToday = document.getElementById('earnedToday');
 /******** Config des vidéos Cloudinary ********/
 const CLOUD_NAME = 'do83voiqy';
 const publicIdList = [
-  'snaptik_7555599346184572178_v2_fojn5l',
-  'snaptik_7443138137112579360_v2_gwx7vh'
+  'SnapTik-dot-Kim-8880e96bbbe7ea05251cc1da93f9b307_sxo3i1',
+  'SnapTik-dot-Kim-9b755a26c8c9b35168185264a2c986ef_olfhkx'
 ];
-
 function cloudinaryUrl(publicId) {
   return `https://res.cloudinary.com/${CLOUD_NAME}/video/upload/q_auto,f_auto/${publicId}.mp4`;
+}
+
+/******** Système de conversion de devise (18 pays africains) ********/
+const countryCurrencyMap = {
+  'BJ': 'XOF', 'BF': 'XOF', 'CM': 'XAF', 'CD': 'CDF', 'CI': 'XOF',
+  'EG': 'EGP', 'ET': 'ETB', 'GA': 'XAF', 'GH': 'GHS', 'KE': 'KES',
+  'ML': 'XOF', 'NE': 'XOF', 'NG': 'NGN', 'RW': 'RWF', 'SN': 'XOF',
+  'TG': 'XOF', 'TZ': 'TZS', 'UG': 'UGX'
+};
+
+const exchangeRates = {
+  'XAF': 1, 'XOF': 1, 'CDF': 4.35, 'EGP': 0.083, 'ETB': 0.22,
+  'GHS': 0.025, 'KES': 0.22, 'NGN': 2.65, 'RWF': 2.25, 'TZS': 4.25, 'UGX': 6.30
+};
+
+const currencyDisplayNames = {
+  'XAF': 'FCFA', 'XOF': 'FCFA', 'CDF': 'FC', 'EGP': 'E£', 'ETB': 'Br',
+  'GHS': 'GH₵', 'KES': 'KSh', 'NGN': '₦', 'RWF': 'FRw', 'TZS': 'TSh', 'UGX': 'USh'
+};
+
+let userCurrency = 'XAF';
+let userCountryCode = 'CM';
+
+function getCurrencyForCountry(countryCode) {
+  return countryCurrencyMap[countryCode] || 'XAF';
+}
+
+function convertFromXAF(amountXAF, targetCurrency = userCurrency) {
+  const rate = exchangeRates[targetCurrency] || 1;
+  return Math.round(amountXAF * rate);
+}
+
+function convertToXAF(amount, fromCurrency = userCurrency) {
+  const rate = exchangeRates[fromCurrency] || 1;
+  return Math.round(amount / rate);
+}
+
+function formatCurrencyAmount(amount, currencyCode = userCurrency) {
+  const symbol = currencyDisplayNames[currencyCode] || currencyCode;
+  return `${amount.toLocaleString('fr-FR')} ${symbol}`;
+}
+
+function updateUserCurrency(countryCode) {
+  userCountryCode = countryCode || 'CM';
+  userCurrency = getCurrencyForCountry(userCountryCode);
 }
 
 /******** Paramètres modifiables ********/
 const REQUIRED_SECONDS = 10;
 const REWARD_AMOUNT = 250;
 const MAX_VIDEOS_PER_DAY = 2;
-const ENFORCE_MONDAY = true;
-const MAX_INCREMENT_PER_REQUEST = 500;
+const ENFORCE_MONDAY = true;  // 🔒 RESTRICTION ACTIVÉE: Vidéos disponibles uniquement le lundi
 
 /******** Variables d'état ********/
 let currentUser = null;
@@ -1164,95 +1258,149 @@ function showNotification(type, title, message, duration = 3500) {
 }
 
 /******** Menu & UI de base ********/
-if (hamburgerBtn) {
-  hamburgerBtn.addEventListener('click', () => {
-    sidebar.classList.toggle('open');
-    overlay.classList.toggle('active');
-    hamburgerBtn.classList.toggle('open');
-  });
-}
+hamburgerBtn.addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('active');
+  hamburgerBtn.classList.toggle('open');
+});
+overlay.addEventListener('click', () => {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('active');
+  hamburgerBtn.classList.remove('open');
+});
+userProfile.addEventListener('click', (event) => {
+  event.stopPropagation();
+  profileDropdown.classList.toggle('active');
+});
+document.addEventListener('click', (event) => {
+  if (!userProfile.contains(event.target)) profileDropdown.classList.remove('active');
+});
+themeToggle.addEventListener('click', (event) => {
+  event.stopPropagation();
+  document.body.classList.toggle('dark-mode');
+  const isDarkMode = document.body.classList.contains('dark-mode');
+  themeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i><span>Mode jour</span>' : '<i class="fas fa-moon"></i><span>Mode nuit</span>';
+  if (currentUser) saveUserData('theme', isDarkMode ? 'dark' : 'light');
+});
 
-if (overlay) {
-  overlay.addEventListener('click', () => {
-    sidebar.classList.remove('open');
-    overlay.classList.remove('active');
-    hamburgerBtn.classList.remove('open');
-  });
-}
-
-if (themeToggle) {
-  themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    const isDarkMode = document.body.classList.contains('dark-mode');
-    themeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-    if (currentUser) saveUserData('theme', isDarkMode ? 'dark' : 'light');
-  });
-}
-
-/******** Helpers pour jour (Monday) ********/
+/******** Helpers pour jour (Monday) - Timezone Africa/Douala ********/
 function isTodayMonday() {
-  const d = new Date();
-  return d.getDay() === 1;
-}
-
-function getTodayString() {
-  return new Date().toDateString();
+  try {
+    // Utiliser le timezone Africa/Douala (CEMAC) pour cohérence avec le serveur
+    const formatter = new Intl.DateTimeFormat('en-US', { 
+      timeZone: 'Africa/Douala',
+      weekday: 'long' 
+    });
+    const dayName = formatter.format(new Date());
+    return dayName === 'Monday';
+  } catch (error) {
+    // Fallback en cas d'erreur de timezone
+    console.warn('Timezone Africa/Douala non supporté, utilisation locale');
+    const d = new Date();
+    return d.getDay() === 1;
+  }
 }
 
 function getNextMondayCountdown() {
-  const now = new Date();
-  const currentDay = now.getDay();
-  let daysUntilMonday = (8 - currentDay) % 7;
-  if (daysUntilMonday === 0) daysUntilMonday = 7;
-  const nextMonday = new Date(now);
-  nextMonday.setDate(now.getDate() + daysUntilMonday);
-  nextMonday.setHours(0, 0, 0, 0);
-  const diff = nextMonday - now;
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-  return { days, hours, minutes, seconds };
+  try {
+    const now = new Date();
+    const currentDay = now.getDay(); // 0 = Dimanche, 1 = Lundi, etc.
+    
+    // Calculer combien de jours jusqu'au prochain lundi
+    let daysUntilMonday = (8 - currentDay) % 7;
+    if (daysUntilMonday === 0) daysUntilMonday = 7; // Si on est lundi, prochain lundi = dans 7 jours
+    
+    const nextMonday = new Date(now);
+    nextMonday.setDate(now.getDate() + daysUntilMonday);
+    nextMonday.setHours(0, 0, 0, 0);
+    
+    const diff = nextMonday - now;
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    
+    return { days, hours, minutes, seconds };
+  } catch (error) {
+    return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+  }
 }
 
 function updateMondayUI() {
   const mondayAlert = document.getElementById('mondayAlert');
   const videoOverlay = document.getElementById('videoOverlay');
   const mondayCountdown = document.getElementById('mondayCountdown');
+  
   const isMonday = isTodayMonday();
   
   if (ENFORCE_MONDAY && !isMonday) {
+    // Afficher la bannière et l'overlay
     if (mondayAlert) mondayAlert.style.display = 'block';
     if (videoOverlay) videoOverlay.classList.add('active');
-    if (countdownInterval) clearInterval(countdownInterval);
     
+    // Démarrer le compte à rebours
+    if (countdownInterval) clearInterval(countdownInterval);
     countdownInterval = setInterval(() => {
       const countdown = getNextMondayCountdown();
       if (mondayCountdown) {
         mondayCountdown.textContent = `Prochain lundi dans: ${countdown.days}j ${countdown.hours}h ${countdown.minutes}m ${countdown.seconds}s`;
       }
+      
+      // Recharger la page si on arrive à lundi
+      if (countdown.days === 0 && countdown.hours === 0 && countdown.minutes === 0 && countdown.seconds === 0) {
+        window.location.reload();
+      }
     }, 1000);
   } else {
+    // Masquer la bannière et l'overlay
     if (mondayAlert) mondayAlert.style.display = 'none';
     if (videoOverlay) videoOverlay.classList.remove('active');
     if (countdownInterval) clearInterval(countdownInterval);
   }
 }
 
-/******** Video logic ********/
+/******** Gestion du bouton "Regarder la suivante" ********/
+function ensureNextButtonExists() {
+  if (nextButton) return;
+  const actionRow = document.querySelector('.action-buttons');
+  if (!actionRow) return;
+  nextButton = document.createElement('button');
+  nextButton.className = 'btn btn-primary';
+  nextButton.id = 'nextButton';
+  nextButton.style.display = 'none';
+  nextButton.innerHTML = '<i class="fas fa-forward"></i><span> Regarder la suivante</span>';
+  actionRow.appendChild(nextButton);
+
+  nextButton.addEventListener('click', () => {
+    const nextIndex = currentIndex + 1;
+    if (nextIndex < publicIdList.length) {
+      loadByIndex(nextIndex);
+      showNotification('info','Prochaine vidéo','Vous êtes sur la vidéo suivante. Bonne visualisation!');
+    } else {
+      showNotification('info','Info','Pas d\'autre vidéo disponible.');
+    }
+  });
+}
+
+/******** Fonctions vidéo & logique ********/
 function loadByIndex(i) {
   if (i < 0 || i >= publicIdList.length) return;
   currentIndex = i;
+
   seenSeconds = {};
   seenCount = 0;
   isPlaying = false;
   validatedFlags[currentIndex] = validatedFlags[currentIndex] || false;
+  
   updateTimerUI();
   claimButton.disabled = claimedFlags[currentIndex] || !validatedFlags[currentIndex];
   startButton.disabled = !canWatchMore;
   playButton.style.display = 'flex';
+
   tiktokVideo.src = cloudinaryUrl(publicIdList[currentIndex]);
   tiktokVideo.load();
+
+  ensureNextButtonExists();
   updateNextButtonVisibility();
 }
 
@@ -1265,7 +1413,8 @@ function updateTimerUI() {
 
 function updateDailyStatsUI() {
   videosWatched.textContent = `${videosWatchedToday}/${MAX_VIDEOS_PER_DAY}`;
-  earnedToday.textContent = `${earningsToday} FCFA`;
+  const convertedEarnings = convertFromXAF(earningsToday, userCurrency);
+  earnedToday.textContent = formatCurrencyAmount(convertedEarnings, userCurrency);
 }
 
 function updateNextButtonVisibility() {
@@ -1284,11 +1433,11 @@ function markVideoValidated(index) {
   if (index === currentIndex) {
     claimButton.disabled = claimedFlags[index];
     updateNextButtonVisibility();
-    showNotification('success', 'Vidéo validée', 'Vous pouvez réclamer la récompense!');
+    showNotification('success','Vidéo validée','Vous pouvez réclamer la récompense ou regarder la suivante.');
   }
 }
 
-/******** Video event listeners ********/
+/******** timeupdate: compter secondes uniques ********/
 tiktokVideo.addEventListener('timeupdate', () => {
   if (!isPlaying || !isVisible) return;
   if (validatedFlags[currentIndex]) return;
@@ -1304,166 +1453,138 @@ tiktokVideo.addEventListener('timeupdate', () => {
   }
 });
 
+/******** play/pause/ended handlers ********/
 tiktokVideo.addEventListener('play', () => { isPlaying = true; });
 tiktokVideo.addEventListener('pause', () => { isPlaying = false; });
 tiktokVideo.addEventListener('ended', () => {
   if (seenCount >= REQUIRED_SECONDS) markVideoValidated(currentIndex);
 });
 
-/******** Visibility handlers ********/
+/******** IntersectionObserver: pause si hors viewport ********/
 const io = new IntersectionObserver(entries => {
   entries.forEach(e => {
     isVisible = e.isIntersecting;
     if (!isVisible && isPlaying) {
       tiktokVideo.pause();
-      showNotification('info', 'Lecture en pause', 'La vidéo est hors de l\'écran, la lecture a été mise en pause.');
+      showNotification('info','Lecture en pause','La vidéo est hors de l\'écran, la lecture a été mise en pause.');
     }
   });
 }, { threshold: 0.6 });
+io.observe(tiktokVideo);
 
-if (tiktokVideo) {
-  io.observe(tiktokVideo);
-}
-
+/******** Visibility API: pause si onglet caché ********/
 document.addEventListener('visibilitychange', () => {
   if (document.hidden && isPlaying) {
     tiktokVideo.pause();
-    showNotification('info', 'Lecture en pause', 'Vous avez quitté l\'onglet: la lecture est en pause.');
+    showNotification('info','Lecture en pause','Vous avez quitté l\'onglet: la lecture est en pause.');
   }
 });
 
-/******** Button event listeners ********/
-if (playButton) {
-  playButton.addEventListener('click', () => {
-    if (ENFORCE_MONDAY && !isTodayMonday()) {
-      showNotification('info', 'Non disponible', 'Les vidéos sont disponibles seulement le lundi.');
+/******** Buttons events ********/
+playButton.addEventListener('click', () => {
+  if (ENFORCE_MONDAY && !isTodayMonday()) {
+    showNotification('info','Non disponible', 'Les vidéos sont disponibles seulement le lundi.');
+    return;
+  }
+  tiktokVideo.muted = false;
+  tiktokVideo.play().catch(err => console.warn('play blocked', err));
+  playButton.style.display = 'none';
+});
+
+startButton.addEventListener('click', () => {
+  if (ENFORCE_MONDAY && !isTodayMonday()) {
+    showNotification('info','Non disponible', 'Les vidéos sont disponibles seulement le lundi.');
+    return;
+  }
+  tiktokVideo.currentTime = 0;
+  tiktokVideo.muted = false;
+  tiktokVideo.play().catch(err => console.warn('play blocked', err));
+  playButton.style.display = 'none';
+  startButton.disabled = true;
+});
+
+/******** 🚀 NOUVELLE FONCTION: Appel API serveur pour réclamation ********/
+claimButton.addEventListener('click', async () => {
+  if (!currentUser) { 
+    showNotification('error','Non connecté','Veuillez vous connecter.'); 
+    return; 
+  }
+  if (!validatedFlags[currentIndex]) { 
+    showNotification('error','Non validé','Vous n\'avez pas encore regardé la vidéo suffisamment.'); 
+    return; 
+  }
+  if (claimedFlags[currentIndex]) { 
+    showNotification('info','Déjà réclamé','Vous avez déjà réclamé cette vidéo.'); 
+    return; 
+  }
+  if (videosWatchedToday >= MAX_VIDEOS_PER_DAY) { 
+    showNotification('info','Limite atteinte','Vous avez atteint la limite quotidienne de réclamations.'); 
+    return; 
+  }
+
+  try {
+    // Obtenir l'utilisateur actuel
+    const user = auth.currentUser;
+    
+    if (!user) {
+      showNotification('error','Non connecté','Session expirée. Reconnectez-vous.');
+      setTimeout(() => { window.location.href = 'login.html'; }, 2000);
       return;
     }
-    tiktokVideo.muted = false;
-    tiktokVideo.play().catch(err => console.warn('play blocked', err));
-    playButton.style.display = 'none';
-  });
-}
-
-if (startButton) {
-  startButton.addEventListener('click', () => {
-    if (ENFORCE_MONDAY && !isTodayMonday()) {
-      showNotification('info', 'Non disponible', 'Les vidéos sont disponibles seulement le lundi.');
-      return;
-    }
-    tiktokVideo.currentTime = 0;
-    tiktokVideo.muted = false;
-    tiktokVideo.play().catch(err => console.warn('play blocked', err));
-    playButton.style.display = 'none';
-    startButton.disabled = true;
-  });
-}
-
-/******** Claim reward function ********/
-if (claimButton) {
-  claimButton.addEventListener('click', async () => {
-    if (!currentUser) { 
-      showNotification('error', 'Non connecté', 'Veuillez vous connecter.'); 
-      return; 
-    }
-    if (!validatedFlags[currentIndex]) { 
-      showNotification('error', 'Non validé', 'Vous n\'avez pas encore regardé la vidéo suffisamment.'); 
-      return; 
-    }
-    if (claimedFlags[currentIndex]) { 
-      showNotification('info', 'Déjà réclamé', 'Vous avez déjà réclamé cette vidéo cette journée.'); 
-      return; 
-    }
-    if (videosWatchedToday >= MAX_VIDEOS_PER_DAY) { 
-      showNotification('info', 'Limite atteinte', 'Vous avez atteint la limite quotidienne de réclamations.'); 
-      return; 
-    }
-
+    
+    // Obtenir le token en le forçant à se rafraîchir
+    let idToken;
     try {
-      const user = auth.currentUser;
-      if (!user) {
-        showNotification('error', 'Non connecté', 'Session expirée. Reconnectez-vous.');
-        return;
-      }
-
-      // Fallback: transaction client-side
-      const uid = user.uid;
-      const userRef = db.collection('users').doc(uid);
-      const todayStr = getTodayString();
-
-      await db.runTransaction(async (tx) => {
-        const snap = await tx.get(userRef);
-        if (!snap.exists) throw new Error('Utilisateur introuvable (transaction).');
-
-        const doc = snap.data() || {};
-
-        // Read existing day and claimed indices
-        const lastDate = doc.lastTikTokWatchDate || null;
-        const claimedArr = Array.isArray(doc.tiktokClaimedToday) ? doc.tiktokClaimedToday.slice() : [];
-        let watchesTodayDoc = Number(doc.tikTokWatchesToday || 0);
-        let earningsTodayDoc = Number(doc.tikTokEarningsToday || 0);
-        let profitDoc = Number(doc.profit || 0);
-        let tiktokGainsDoc = Number(doc.tiktokGains || 0);
-
-        // If doc date is not today -> reset per-day counters/array
-        if (lastDate !== todayStr) {
-          claimedArr.length = 0;
-          watchesTodayDoc = 0;
-          earningsTodayDoc = 0;
-        }
-
-        // Check if this video index already claimed today
-        if (claimedArr.indexOf(currentIndex) !== -1) {
-          throw new Error('Cette vidéo a déjà été réclamée aujourd\'hui.');
-        }
-
-        // Check per-day limit
-        if (watchesTodayDoc >= MAX_VIDEOS_PER_DAY) {
-          throw new Error('Limite quotidienne atteinte');
-        }
-
-        // Compute new values
-        const newProfit = profitDoc + REWARD_AMOUNT;
-        const newTiktokGains = tiktokGainsDoc + REWARD_AMOUNT;
-        const newEarningsToday = earningsTodayDoc + REWARD_AMOUNT;
-        const newWatchesToday = watchesTodayDoc + 1;
-
-        // Add the currentIndex to the claimed array
-        claimedArr.push(currentIndex);
-
-        // Build update object
-        const updateObj = {
-          profit: newProfit,
-          tiktokGains: newTiktokGains,
-          tikTokEarningsToday: newEarningsToday,
-          tikTokWatchesToday: newWatchesToday,
-          lastTikTokWatchDate: todayStr,
-          tiktokClaimedToday: claimedArr
-        };
-
-        tx.update(userRef, updateObj);
-      });
-
-      // If transaction succeeds:
-      claimedFlags[currentIndex] = true;
-      videosWatchedToday = videosWatchedToday + 1;
-      earningsToday = earningsToday + REWARD_AMOUNT;
-      updateDailyStatsUI();
-      updateNextButtonVisibility();
-      showNotification('success', 'Récompense ajoutée', '250 FCFA ajouté!');
-      claimButton.disabled = true;
-      startButton.disabled = !(videosWatchedToday < MAX_VIDEOS_PER_DAY);
-
-    } catch (err) {
-      console.error('Erreur lors de la réclamation:', err);
-      let msg = 'Impossible d\'enregistrer la récompense. Réessayez.';
-      if (err && err.message) msg = err.message;
-      showNotification('error', 'Erreur', msg);
+      idToken = await user.getIdToken(true);
+    } catch (tokenErr) {
+      console.error('Erreur getIdToken:', tokenErr);
+      showNotification('error','Session invalide','Veuillez vous reconnecter.');
+      await auth.signOut();
+      setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+      return;
     }
-  });
-}
+    
+    console.log('🔑 Token Firebase obtenu, envoi requête au serveur...');
+    const response = await fetch('/api/tiktok-claim-reward', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        idToken: idToken,
+        rewardAmount: REWARD_AMOUNT,
+        videoIndex: currentIndex
+      })
+    });
 
-/******** User data management ********/
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || data.message || 'Erreur serveur');
+    }
+
+    // Mise à jour de l'état local
+    claimedFlags[currentIndex] = true;
+    videosWatchedToday = data.videosWatchedToday || (videosWatchedToday + 1);
+    earningsToday = data.earningsToday || (earningsToday + REWARD_AMOUNT);
+    
+    updateDailyStatsUI();
+    updateNextButtonVisibility();
+
+    const convertedReward = convertFromXAF(REWARD_AMOUNT, userCurrency);
+    const convertedTikTokGains = convertFromXAF(data.newTikTokGains || 0, userCurrency);
+    showNotification('success','Récompense ajoutée', `${formatCurrencyAmount(convertedReward, userCurrency)} ajouté à vos gains TikTok. Total: ${formatCurrencyAmount(convertedTikTokGains, userCurrency)}`);
+
+    claimButton.disabled = true;
+    startButton.disabled = !(videosWatchedToday < MAX_VIDEOS_PER_DAY);
+    
+  } catch (err) {
+    console.error('Erreur lors de la réclamation:', err);
+    showNotification('error','Erreur', err.message || 'Impossible d\'enregistrer la récompense. Réessayez.');
+  }
+});
+
+/******** Sauvegarde / chargement utilisateur (Firestore) ********/
 async function saveUserData(key = null, value = null) {
   if (!currentUser) return;
   try {
@@ -1473,6 +1594,7 @@ async function saveUserData(key = null, value = null) {
     console.log('Données utilisateur enregistrées.');
   } catch (error) {
     console.error('Erreur sauvegarde:', error);
+    showNotification('error','Erreur sauvegarde','Impossible de sauvegarder vos données.');
   }
 }
 
@@ -1480,57 +1602,50 @@ async function loadUserData() {
   if (!currentUser) throw new Error('Aucun utilisateur connecté.');
   const userRef = db.collection('users').doc(currentUser.uid);
   const doc = await userRef.get();
-  
   if (doc.exists) {
     userData = doc.data() || {};
+    userData.country = userData.country || 'CM';
+    updateUserCurrency(userData.country);
   } else {
-    userData = {};
+    userData = { country: 'CM' };
+    updateUserCurrency('CM');
     await saveUserData();
-  }
-  
-  // Load claimed flags from Firestore for today
-  const todayStr = getTodayString();
-  const claimed = Array.isArray(userData.tiktokClaimedToday) && userData.lastTikTokWatchDate === todayStr ? userData.tiktokClaimedToday : [];
-  
-  if (Array.isArray(claimed)) {
-    claimed.forEach(idx => {
-      if (typeof idx === 'number' && idx >= 0 && idx < claimedFlags.length) {
-        claimedFlags[idx] = true;
-      }
-    });
   }
 }
 
-/******** User UI update ********/
+/******** Mise à jour UI user ********/
 function updateUserInfoUI(user, dbData = {}) {
   const displayName = dbData.username || user.displayName || (user.email ? user.email.split('@')[0] : 'Utilisateur');
   if (sidebarUsername) sidebarUsername.textContent = displayName;
   if (userAvatar) userAvatar.textContent = displayName.charAt(0).toUpperCase();
 }
-
 function applyTheme() {
   const isDarkMode = userData.theme === 'dark';
   document.body.classList.toggle('dark-mode', isDarkMode);
-  if (themeToggle) {
-    themeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-  }
+  themeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i><span>Mode jour</span>' : '<i class="fas fa-moon"></i><span>Mode nuit</span>';
 }
 
-/******** Auth state management - CORRIGÉ ********/
+/******** Auth & init principal ********/
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     currentUser = user;
     try {
       await loadUserData();
-      
-      // CORRECTION: Supprimer la vérification de statut qui bloquait l'affichage
-      // L'utilisateur peut accéder à la page même sans statut "paid"
-      
+
+      // Vérification statut
+      const userStatus = (userData.status || userData.statut || '').toString().toLowerCase().trim();
+      const validStatuses = ['paid', 'active'];
+      if (!validStatuses.includes(userStatus)) {
+        showNotification('info','Action requise','Veuillez finaliser votre inscription pour continuer.');
+        setTimeout(() => { window.location.href = 'paiement.html'; }, 2000);
+        return;
+      }
+
       updateUserInfoUI(user, userData);
       applyTheme();
 
-      // Charger statistiques quotidiennes
-      const today = getTodayString();
+      // Charger statistiques quotidiennes depuis Firestore
+      const today = new Date().toDateString();
       if ((userData.lastTikTokWatchDate || '') !== today) {
         videosWatchedToday = 0;
         earningsToday = 0;
@@ -1541,39 +1656,40 @@ auth.onAuthStateChanged(async (user) => {
       canWatchMore = videosWatchedToday < MAX_VIDEOS_PER_DAY;
       updateDailyStatsUI();
 
-      // Gérer l'UI en fonction du jour
+      ensureNextButtonExists();
+
+      // 🔒 Gérer l'UI en fonction du jour (lundi uniquement)
       updateMondayUI();
 
       if (ENFORCE_MONDAY && !isTodayMonday()) {
         startButton.disabled = true;
-        if (playButton) playButton.style.display = 'none';
+        playButton.style.display = 'none';
         claimButton.disabled = true;
-        showNotification('info', 'Non disponible', 'Les vidéos TikTok sont disponibles uniquement le lundi.');
+        showNotification('info','Non disponible', 'Les vidéos TikTok sont disponibles uniquement le lundi.');
       } else {
         startButton.disabled = !canWatchMore;
-        if (playButton) playButton.style.display = 'flex';
+        playButton.style.display = 'flex';
+        showNotification('success','Bienvenue','Prêt à gagner avec TikTok!');
       }
 
       loadByIndex(0);
 
-      // Masquer le loader
-      if (loader) {
-        loader.classList.add('hidden');
-      }
+      document.body.classList.add('loaded');
+      if (loader) loader.classList.add('hidden');
 
     } catch (error) {
       console.error('Erreur initialisation:', error);
-      showNotification('error', 'Erreur', 'Impossible de charger vos données.');
-      if (loader) loader.classList.add('hidden');
+      showNotification('error','Erreur critique','Impossible de charger vos données. Veuillez vous reconnecter.');
+      auth.signOut();
+      setTimeout(()=> { window.location.href = 'login.html'; }, 2000);
     }
   } else {
     window.location.href = 'login.html';
   }
 });
 
-/******** Initialisation ********/
+/******** Petit preload ********/
 document.addEventListener('DOMContentLoaded', () => {
-  // Précharger la première vidéo
   if (publicIdList.length) {
     const link = document.createElement('link');
     link.rel = 'preload';
@@ -1581,13 +1697,7 @@ document.addEventListener('DOMContentLoaded', () => {
     link.href = cloudinaryUrl(publicIdList[0]);
     document.head.appendChild(link);
   }
-  
-  // Masquer le loader après timeout de sécurité
-  setTimeout(() => {
-    if (loader && !loader.classList.contains('hidden')) {
-      loader.classList.add('hidden');
-    }
-  }, 3000);
+  setTimeout(()=> { if (loader) loader.classList.add('hidden'); }, 700);
 });
 </script>
 </body>
