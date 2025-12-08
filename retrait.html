@@ -1419,6 +1419,59 @@
     // URL du backend Replit (APIs)
     const BACKEND_URL = "https://mulaflowr-exaucenapopolo2.replit.app";
 
+    /******** SYSTÈME DE CONVERSION DE DEVISES ********/
+    // Country to currency mapping
+    const countryCurrencyMap = {
+      // CEMAC zone (XAF - CFA Franc BEAC)
+      'CM': 'XAF', 'GA': 'XAF', 'TD': 'XAF', 'CF': 'XAF', 'CG': 'XAF', 'GQ': 'XAF',
+      // UEMOA zone (XOF - CFA Franc BCEAO)
+      'SN': 'XOF', 'CI': 'XOF', 'ML': 'XOF', 'BF': 'XOF', 'BJ': 'XOF', 'TG': 'XOF', 'NE': 'XOF', 'GW': 'XOF',
+      // Other African countries
+      'CD': 'CDF', 'KE': 'KES', 'RW': 'RWF', 'TZ': 'TZS', 'UG': 'UGX',
+      'ZA': 'ZAR', 'NG': 'NGN', 'GH': 'GHS', 'ET': 'ETB', 'MA': 'MAD', 'EG': 'EGP', 'DZ': 'DZD', 'TN': 'TND'
+    };
+
+    // Exchange rates from XAF to other currencies
+    const exchangeRates = {
+      'XAF': 1, 'XOF': 1, 'CDF': 4.74, 'KES': 0.21, 'RWF': 2.11, 'TZS': 4.25, 'UGX': 6.29,
+      'ZAR': 0.031, 'NGN': 2.70, 'GHS': 0.026, 'ETB': 0.19, 'MAD': 0.017, 'EGP': 0.083, 'DZD': 0.23, 'TND': 0.0053
+    };
+
+    // Currency display names
+    const currencyDisplayNames = {
+      'XAF': 'FCFA', 'XOF': 'FCFA', 'CDF': 'FC', 'KES': 'KSh', 'RWF': 'FRw', 'TZS': 'TSh', 'UGX': 'USh',
+      'ZAR': 'R', 'NGN': '₦', 'GHS': 'GH₵', 'ETB': 'Br', 'MAD': 'DH', 'EGP': 'E£', 'DZD': 'DA', 'TND': 'DT'
+    };
+
+    let userCurrency = 'XAF';
+    let userCountryCode = 'CM';
+
+    function getCurrencyForCountry(countryCode) {
+      return countryCurrencyMap[countryCode?.toUpperCase()] || 'XAF';
+    }
+
+    function convertFromXAF(amountXAF, targetCurrency) {
+      const rate = exchangeRates[targetCurrency] || 1;
+      return Math.round(amountXAF * rate);
+    }
+
+    function convertToXAF(amount, fromCurrency) {
+      const rate = exchangeRates[fromCurrency] || 1;
+      return Math.round(amount / rate);
+    }
+
+    function formatCurrencyAmount(amount, currencyCode) {
+      const displayName = currencyDisplayNames[currencyCode] || currencyCode;
+      const formattedAmount = new Intl.NumberFormat('fr-FR').format(amount);
+      return `${formattedAmount} ${displayName}`;
+    }
+
+    function updateUserCurrency(countryCode) {
+      userCountryCode = countryCode?.toUpperCase() || 'CM';
+      userCurrency = getCurrencyForCountry(userCountryCode);
+      console.log(`💱 Devise utilisateur: ${userCountryCode} → ${userCurrency}`);
+    }
+
     /******** DOM Elements ********/
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const sidebar = document.getElementById('sidebar');
@@ -2020,8 +2073,12 @@
               solde: soldeFirebase,  // Lecture directe du solde depuis Firebase
               retire: retireTotal,
               paid: isUserPaidFromDoc(data),
-              theme: data.theme || 'light'
+              theme: data.theme || 'light',
+              country: data.country || 'CM'
           };
+          
+          // Mettre à jour la devise en fonction du pays de l'utilisateur
+          updateUserCurrency(userData.country);
       } else {
         userData = { 
             uid: currentUser.uid,
@@ -2030,8 +2087,10 @@
             solde: 0, 
             retire: 0, 
             paid: false, 
-            theme: 'light' 
+            theme: 'light',
+            country: 'CM'
         };
+        updateUserCurrency('CM');
         await saveUserData();
       }
     }
@@ -2039,7 +2098,12 @@
     function updateUI() {
         if (sidebarUsername) sidebarUsername.textContent = userData.username;
         if (userAvatar) userAvatar.textContent = userData.username.charAt(0).toUpperCase();
-        if (currentBalanceEl) currentBalanceEl.textContent = formatNumberSafe(userData.solde);
+        
+        // Afficher le solde converti dans la devise de l'utilisateur
+        if (currentBalanceEl) {
+          const convertedBalance = convertFromXAF(userData.solde, userCurrency);
+          currentBalanceEl.textContent = formatCurrencyAmount(convertedBalance, userCurrency);
+        }
         
         // Mettre à jour les informations utilisateur
         infoUsername.textContent = userData.username;
