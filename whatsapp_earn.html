@@ -982,7 +982,7 @@
 
   <footer class="footer">
     <div class="footer-links">
-      <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link" target="_blank">Pro Tech Management</a>
+      <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link" target="_blank">Boost Tech Management</a>
       <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link" target="_blank">Social Boost Horizon</a>
     </div>
     <div class="footer-text">© 2025 BLOWEARN AGENCIES. Tous droits réservés.</div>
@@ -1187,11 +1187,22 @@ BLOWEARN AGENCIES te permet de:
       document.getElementById('articleContent').textContent = currentArticle.content;
       document.getElementById('articleLinkText').textContent = currentArticle.link.replace('https://', '');
 
-      // Vérifier le jour
+      // Vérifier le jour - Si pas vendredi, cacher tout sauf le countdown
       if (!isTodayFriday()) {
         document.getElementById('dayAlert').classList.add('show');
         updateCountdown();
         setInterval(updateCountdown, 1000);
+        
+        // Cacher les sections principales
+        const articleSection = document.querySelector('.article-section');
+        const proofSection = document.querySelector('.proof-section');
+        const historySection = document.querySelector('.history-section');
+        
+        if (articleSection) articleSection.style.display = 'none';
+        if (proofSection) proofSection.style.display = 'none';
+        if (historySection) historySection.style.display = 'none';
+        
+        return; // Ne pas continuer l'initialisation des boutons
       }
 
       // Menu hamburger
