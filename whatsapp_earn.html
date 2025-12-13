@@ -1187,22 +1187,26 @@ BLOWEARN AGENCIES te permet de:
       document.getElementById('articleContent').textContent = currentArticle.content;
       document.getElementById('articleLinkText').textContent = currentArticle.link.replace('https://', '');
 
-      // Vérifier le jour - Si pas vendredi, cacher tout sauf le countdown
+      // Vérifier le jour - Si pas vendredi, cacher TOUT sauf le countdown
       if (!isTodayFriday()) {
         document.getElementById('dayAlert').classList.add('show');
         updateCountdown();
         setInterval(updateCountdown, 1000);
         
-        // Cacher les sections principales
-        const articleSection = document.querySelector('.article-section');
-        const proofSection = document.querySelector('.proof-section');
-        const historySection = document.querySelector('.history-section');
+        // Cacher TOUT le contenu principal (mainContent contient tout)
+        const mainContent = document.getElementById('mainContent');
+        if (mainContent) {
+          mainContent.style.display = 'none';
+        }
         
-        if (articleSection) articleSection.style.display = 'none';
-        if (proofSection) proofSection.style.display = 'none';
-        if (historySection) historySection.style.display = 'none';
+        // Désactiver aussi le formulaire au cas où
+        const form = document.getElementById('earningsForm');
+        if (form) {
+          form.style.display = 'none';
+        }
         
-        return; // Ne pas continuer l'initialisation des boutons
+        console.log('⛔ Pas vendredi - contenu masqué, seul countdown visible');
+        return; // NE PAS continuer - bloquer toute action
       }
 
       // Menu hamburger
