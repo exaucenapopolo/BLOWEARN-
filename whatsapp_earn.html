@@ -798,31 +798,29 @@
         </button>
         <div class="language-dropdown" id="languageDropdown">
           <div class="language-option active" data-lang="fr">
-            <span>🇫🇷</span>
-            <span>Français</span>
+            <i class="fas fa-check"></i> Français
           </div>
           <div class="language-option" data-lang="en">
-            <span>🇬🇧</span>
-            <span>English</span>
+            <i class="fas fa-check" style="opacity: 0;"></i> English
           </div>
         </div>
       </div>
+      
+      <button class="hamburger-btn" id="hamburgerBtn">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </button>
       
       <div class="user-profile" id="userProfile">
         <div class="avatar" id="userAvatar">U</div>
         <div class="profile-dropdown" id="profileDropdown">
           <button class="theme-toggle" id="themeToggle">
             <i class="fas fa-moon"></i>
-            <span>Mode sombre</span>
+            <span>Mode nuit</span>
           </button>
         </div>
       </div>
-      
-      <button class="hamburger-btn" id="hamburgerBtn">
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
-      </button>
     </div>
   </header>
 
@@ -831,7 +829,7 @@
   <div class="main-container">
     <aside class="sidebar" id="sidebar">
       <div class="welcome-section">
-        <div class="welcome-text">Bienvenue,</div>
+        <div class="welcome-text">WhatsApp Earn >> BLOWEARN</div>
         <div class="username" id="sidebarUsername">Utilisateur</div>
       </div>
       
@@ -859,7 +857,7 @@
       
       <div class="menu-category">BONUS</div>
       <a href="liste_contacts.html" class="menu-item"><i class="fas fa-address-book"></i><span>Liste de contacts 🆓</span></a>
-      <a href="social_boost.html" class="menu-item"><i class="fas fa-rocket"></i><span>Booster ma visibilité</span></a>
+      <a href="booster_visibilite.html" class="menu-item"><i class="fas fa-rocket"></i><span>Booster ma visibilité</span></a>
       <a href="canva_pro.html" class="menu-item"><i class="fas fa-palette"></i><span>Canva Pro</span></a>
       <a href="connexion_gratuite.html" class="menu-item"><i class="fas fa-shield-alt"></i><span>Connexion gratuite</span></a>
     </aside>
@@ -873,7 +871,7 @@
         <div class="day-countdown" id="dayCountdown">Prochain vendredi dans: --</div>
       </div>
       
-      <div id="mainContent" style="display: none;">
+      <div id="mainContent">
         <div class="whatsapp-banner">
           <h2 class="banner-title"><i class="fab fa-whatsapp"></i> Gagnez de l'argent chaque VENDREDI!</h2>
           <div class="banner-text">
@@ -984,7 +982,7 @@
 
   <footer class="footer">
     <div class="footer-links">
-      <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link" target="_blank">boost Tech Management</a>
+      <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link" target="_blank">Pro Tech Management</a>
       <a href="https://social-boost-horizon-new-sbh.vercel.app" class="footer-link" target="_blank">Social Boost Horizon</a>
     </div>
     <div class="footer-text">© 2025 BLOWEARN AGENCIES. Tous droits réservés.</div>
@@ -1106,14 +1104,14 @@ BLOWEARN AGENCIES te permet de:
     // Vérifier si c'est vendredi
     function isTodayFriday() {
       const now = new Date();
-      return now.getDay() === 5; // 5 = Vendredi
+      return now.getDay() === 5;
     }
 
-    // Compte à rebours vers le prochain vendredi
+    // Compte à rebours
     function updateCountdown() {
       const now = new Date();
       let daysUntilFriday = (5 - now.getDay() + 7) % 7;
-      if (daysUntilFriday === 0) daysUntilFriday = 7; // Si on est vendredi, afficher prochain vendredi
+      if (daysUntilFriday === 0) daysUntilFriday = 7;
       
       const nextFriday = new Date(now);
       nextFriday.setDate(now.getDate() + daysUntilFriday);
@@ -1136,34 +1134,62 @@ BLOWEARN AGENCIES te permet de:
       return WEEKLY_ARTICLES[weekNumber % WEEKLY_ARTICLES.length];
     }
 
+    // Vérifier si l'utilisateur a déjà une demande cette semaine
+    async function checkWeeklyClaimStatus() {
+      if (!currentUser) return;
+      
+      try {
+        const idToken = await currentUser.getIdToken(true);
+        const response = await fetch(API_BASE + '/api/whatsapp-claim/check-status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idToken })
+        });
+        
+        const data = await response.json();
+        
+        if (data.ok && data.hasClaimThisWeek) {
+          console.log('⚠️ Demande déjà existante cette semaine:', data.claim);
+          
+          // Désactiver le formulaire
+          const formSection = document.querySelector('.proof-section');
+          if (formSection) {
+            formSection.innerHTML = `
+              <div class="claim-status-card" style="background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 193, 7, 0.2) 100%); border-radius: 18px; padding: 25px; text-align: center; border: 2px solid #FFC107;">
+                <i class="fas fa-check-circle" style="font-size: 3rem; color: #FFC107; margin-bottom: 15px;"></i>
+                <h3 style="color: var(--color-text-dark); margin-bottom: 10px;">Demande déjà envoyée cette semaine</h3>
+                <p style="color: var(--color-text-dark); margin-bottom: 15px;">Vous avez soumis une demande pour cette semaine.</p>
+                <div style="background: rgba(255,255,255,0.5); border-radius: 12px; padding: 15px; margin-bottom: 15px;">
+                  <p><strong>Article:</strong> ${data.claim.articleTitle || 'N/A'}</p>
+                  <p><strong>Vues:</strong> ${data.claim.views || 0}</p>
+                  <p><strong>Montant:</strong> ${data.claim.rewardAmount || 0} FCFA</p>
+                  <p><strong>Statut:</strong> <span class="status-badge ${data.claim.status === 'approved' ? 'status-success' : data.claim.status === 'rejected' ? 'status-rejected' : 'status-pending'}">${data.claim.status === 'approved' ? 'Approuvé ✓' : data.claim.status === 'rejected' ? 'Rejeté' : 'En attente ⏳'}</span></p>
+                </div>
+                <p style="font-size: 0.9rem; color: #888;">Revenez vendredi prochain pour soumettre une nouvelle demande!</p>
+              </div>
+            `;
+          }
+          
+          showNotification('info', 'Demande existante', 'Vous avez déjà soumis une demande cette semaine.');
+        }
+      } catch (error) {
+        console.error('Erreur vérification statut:', error);
+      }
+    }
+
     // Initialiser l'interface
     function initUI() {
       console.log('🔧 Initialisation de l\'interface...');
       
-      const dayAlertEl = document.getElementById('dayAlert');
-      const mainContentEl = document.getElementById('mainContent');
-      
-      // LOGIQUE PRINCIPALE: Vérifier si c'est vendredi
-      if (isTodayFriday()) {
-        // C'est vendredi: Afficher le contenu, cacher l'alerte
-        console.log('✅ C\'est vendredi! Affichage du contenu.');
-        dayAlertEl.classList.remove('show');
-        dayAlertEl.style.display = 'none';
-        mainContentEl.style.display = 'block';
-        
-        // Afficher l'article
-        currentArticle = getWeeklyArticle();
-        document.getElementById('articleTitle').textContent = currentArticle.title;
-        document.getElementById('articleContent').textContent = currentArticle.content;
-        document.getElementById('articleLinkText').textContent = currentArticle.link.replace('https://', '');
-      } else {
-        // Ce n'est PAS vendredi: Cacher TOUT le contenu, afficher seulement l'alerte avec compte à rebours
-        console.log('⏳ Ce n\'est pas vendredi. Affichage du compte à rebours seulement.');
-        dayAlertEl.classList.add('show');
-        dayAlertEl.style.display = 'block';
-        mainContentEl.style.display = 'none'; // CACHER tout le contenu
-        
-        // Démarrer le compte à rebours
+      // Afficher l'article
+      currentArticle = getWeeklyArticle();
+      document.getElementById('articleTitle').textContent = currentArticle.title;
+      document.getElementById('articleContent').textContent = currentArticle.content;
+      document.getElementById('articleLinkText').textContent = currentArticle.link.replace('https://', '');
+
+      // Vérifier le jour
+      if (!isTodayFriday()) {
+        document.getElementById('dayAlert').classList.add('show');
         updateCountdown();
         setInterval(updateCountdown, 1000);
       }
@@ -1203,24 +1229,16 @@ BLOWEARN AGENCIES te permet de:
         document.body.classList.toggle('dark-mode');
       });
 
-      // Partage WhatsApp (seulement si c'est vendredi)
+      // Partage WhatsApp
       document.getElementById('shareBtn').addEventListener('click', function() {
-        if (!isTodayFriday()) {
-          showNotification('error', 'Non disponible', 'Cette fonctionnalité est disponible uniquement le vendredi.');
-          return;
-        }
         if (!currentArticle) return;
         const fullText = currentArticle.shareText + currentArticle.link;
         window.open(`https://wa.me/?text=${encodeURIComponent(fullText)}`, '_blank');
         showNotification('info', 'Partage lancé', 'N\'oubliez pas de faire une capture d\'écran!');
       });
 
-      // Copier texte (seulement si c'est vendredi)
+      // Copier texte
       document.getElementById('copyTextBtn').addEventListener('click', function() {
-        if (!isTodayFriday()) {
-          showNotification('error', 'Non disponible', 'Cette fonctionnalité est disponible uniquement le vendredi.');
-          return;
-        }
         if (!currentArticle) return;
         const fullText = currentArticle.shareText + currentArticle.link;
         navigator.clipboard.writeText(fullText)
@@ -1230,10 +1248,6 @@ BLOWEARN AGENCIES te permet de:
 
       // Upload image
       document.getElementById('imageUpload').addEventListener('click', function() {
-        if (!isTodayFriday()) {
-          showNotification('error', 'Non disponible', 'Cette fonctionnalité est disponible uniquement le vendredi.');
-          return;
-        }
         document.getElementById('screenshotInput').click();
       });
 
@@ -1260,13 +1274,6 @@ BLOWEARN AGENCIES te permet de:
       // FORMULAIRE - SOUMISSION
       document.getElementById('earningsForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        
-        // Vérifier si c'est vendredi avant de soumettre
-        if (!isTodayFriday()) {
-          showNotification('error', 'Non disponible', 'Les soumissions sont acceptées uniquement le vendredi.');
-          return;
-        }
-        
         console.log('📤 Soumission du formulaire...');
         
         if (!currentUser) {
@@ -1435,10 +1442,11 @@ BLOWEARN AGENCIES te permet de:
           // Initialiser l'interface
           initUI();
           
-          // Charger l'historique seulement si c'est vendredi
-          if (isTodayFriday()) {
-            await loadEarningsHistory();
-          }
+          // Vérifier si l'utilisateur a déjà une demande cette semaine
+          await checkWeeklyClaimStatus();
+          
+          // Charger l'historique
+          await loadEarningsHistory();
           
           // Cacher le loader
           document.getElementById('loader').classList.add('hidden');
